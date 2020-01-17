@@ -7,6 +7,10 @@
 //
 
 #include "Engine.h"
+#include "Rcpp.h"
+
+using namespace Rcpp;
+
 
 Engine::Engine(std::string of,
                  int mt,
@@ -53,7 +57,7 @@ Engine::Engine(std::string of,
     //     rando.setSeed();
     // seedType gs1, gs2;
     // rando.getSeed(gs1, gs2);
-    //std::cout << "\nSeeds = {" << gs1 << ", " << gs2 << "}" << std::endl;
+    //Rcout << "\nSeeds = {" << gs1 << ", " << gs2 << "}" << std::endl;
 }
 
 
@@ -86,7 +90,7 @@ void Engine::doRunRun(){
                                            treescale,
                                            printOutputToScreen);
         if(printOutputToScreen)
-            std::cout << "Simulating species tree replicate # " << k + 1 << std::endl;
+            Rcout << "Simulating species tree replicate # " << k + 1 << std::endl;
 
         switch(simType){
             case 1:
@@ -106,7 +110,7 @@ void Engine::doRunRun(){
                 treesim->simSpeciesTree();
                 break;
         }
-
+        // TODO: find seg fault between here and Rcout statement
         ti =  new TreeInfo(k, numLoci);
         ti->setWholeTreeStringInfo(treesim->printSpeciesTreeNewick());
         ti->setExtTreeStringInfo(treesim->printExtSpeciesTreeNewick());
@@ -114,9 +118,14 @@ void Engine::doRunRun(){
         ti->setExtSpeciesTreeDepth(treesim->calcExtantSpeciesTreeDepth());
         ti->setNumberTransfers(treesim->findNumberTransfers());
         for(int i = 0; i < numLoci; i++){
-            ti->setLocusTreeByIndx(k, treesim->printLocusTreeNewick(i));
+            ti->setLocusTreeByIndx(i, treesim->printLocusTreeNewick(i));
+
             if(simType == 3){
                 for(int j = 0; j < numGenes; j++){
+                    // Rcout << "gene index " << j << "?????????" << std::endl;
+                    // Rcout << treesim->printGeneTreeNewick(i, j) << std::endl;
+                    // Rcout << treesim->printExtantGeneTreeNewick(i, j) << std::endl;
+
                     ti->setGeneTreeByIndx(i, j, treesim->printGeneTreeNewick(i, j));
                     ti->setExtantGeneTreeByIndx(i, j, treesim->printExtantGeneTreeNewick(i, j));
                 }
@@ -126,8 +135,8 @@ void Engine::doRunRun(){
         delete treesim;
         treesim = nullptr;
     }
-
     this->writeTreeFiles();
+    return;
 }
 
 
@@ -175,7 +184,7 @@ void Engine::calcAverageRootAgeSpeciesTrees(){
     }
     out.close();
 
-    std::cout << "\n #### Average Root Age of Species Trees is " << (double) sumRH / numSpeciesTrees << " #####" << std::endl;
+    Rcout << "\n #### Average Root Age of Species Trees is " << (double) sumRH / numSpeciesTrees << " #####" << std::endl;
 
 
 }
@@ -243,13 +252,13 @@ SpeciesTree* Engine::buildTreeFromNewick(const std::string spTreeStr){
             continue;
         switch(ch){
             case ';': {
-                std::cout << "Species tree read in successfully.\n";
+                Rcout << "Species tree read in successfully.\n";
                 break;
             }
             case '(': {
                 if(!(previous & LParen_Valid)){
-                    std::cerr << "Your newick tree is not formatted properly. Exiting...\n";
-                    std::cerr << "A left parenthetical is not in the right place maybe...\n";
+                    Rcerr << "Your newick tree is not formatted properly. Exiting...\n";
+                    Rcerr << "A left parenthetical is not in the right place maybe...\n";
                     exit(1);
                 }
                 prevNode = currNode;
@@ -261,8 +270,8 @@ SpeciesTree* Engine::buildTreeFromNewick(const std::string spTreeStr){
             }
             case ':': {
                 if(!(previous & Colon_Valid)){
-                    std::cerr << "Your newick tree is not formatted properly. Exiting...\n";
-                    std::cerr << "A colon appears to be in the wrong place...\n";
+                    Rcerr << "Your newick tree is not formatted properly. Exiting...\n";
+                    Rcerr << "A colon appears to be in the wrong place...\n";
                     exit(1);
                 }
                 previous = Prev_Tok_Colon;
@@ -270,8 +279,8 @@ SpeciesTree* Engine::buildTreeFromNewick(const std::string spTreeStr){
             }
             case ')': {
                 if(!(previous & RParen_Valid)){
-                    std::cerr << "Your newick tree is not formatted properly. Exiting...\n";
-                    std::cerr << "A right parenthetical is not in the right place maybe...\n";
+                    Rcerr << "Your newick tree is not formatted properly. Exiting...\n";
+                    Rcerr << "A right parenthetical is not in the right place maybe...\n";
                     exit(1);
                 }
                 //prevNode = currNode;
@@ -282,8 +291,8 @@ SpeciesTree* Engine::buildTreeFromNewick(const std::string spTreeStr){
             }
             case ',': {
                 if(!(previous & Comma_Valid)){
-                    std::cerr << "Your newick tree is not formatted properly. Exiting...\n";
-                    std::cerr << "A comma is not in the right place maybe...\n";
+                    Rcerr << "Your newick tree is not formatted properly. Exiting...\n";
+                    Rcerr << "A comma is not in the right place maybe...\n";
                     exit(1);
                 }
                 prevNode = currNode;
@@ -336,7 +345,7 @@ SpeciesTree* Engine::buildTreeFromNewick(const std::string spTreeStr){
                         }
                         bool valid = (ch =='e' || ch == 'E' || ch =='.' || ch == '-' || ch == '+' || isdigit(ch));
                         if (!valid){
-                            std::cerr << "Invalid branch length character in tree description\n";
+                            Rcerr << "Invalid branch length character in tree description\n";
                             exit(1);
                         }
                         std::string edge_length_str = std::string(jit,it+1);
@@ -352,8 +361,8 @@ SpeciesTree* Engine::buildTreeFromNewick(const std::string spTreeStr){
                     for (; it != commentlessSpTreeStr.end(); ++it){
                         ch = *it;
                         if (ch == '('){
-                            std::cerr << "Didn't expect a left parenthesis here! Check your newick tree...\n";
-                            std::cerr << "Exiting... :(\n";
+                            Rcerr << "Didn't expect a left parenthesis here! Check your newick tree...\n";
+                            Rcerr << "Exiting... :(\n";
                             exit(1);
                         }
                         if (iswspace(ch) || ch == ':' || ch == ',' || ch == ')'){
@@ -365,7 +374,7 @@ SpeciesTree* Engine::buildTreeFromNewick(const std::string spTreeStr){
 
                     // Expect node name only after a left paren (child's name), a comma (sib's name) or a right paren (parent's name)
                     if (!(previous & Name_Valid)){
-                        std::cerr << "Unexpected placement of name of tip. Exiting...\n";
+                        Rcerr << "Unexpected placement of name of tip. Exiting...\n";
                         exit(1);
                     }
                     currNode->setIsTip(true);
@@ -386,7 +395,7 @@ SpeciesTree* Engine::buildTreeFromNewick(const std::string spTreeStr){
 
 void Engine::doRunSpTreeSet(){
 
-    std::cout << "Setting species tree to this newick tree: " << inputSpTree << std::endl;
+    Rcout << "Setting species tree to this newick tree: " << inputSpTree << std::endl;
 
     TreeInfo *ti = nullptr;
     Simulator *treesim = new Simulator(numTaxa,
@@ -438,6 +447,7 @@ void Engine::doRunSpTreeSet(){
     TreeInfo functions to write tree information to file in various file formats
                                                                 */
 TreeInfo::TreeInfo(int idx, int nl){
+    locusTrees.resize(nl);
     geneTrees.resize(nl);
     extGeneTrees.resize(nl);
     spTreeLength = 0.0;
@@ -516,7 +526,7 @@ void TreeInfo::writeWholeTreeFileInfo(int spIndx, std::string ofp){
 }
 
 void TreeInfo::writeExtantTreeFileInfo(int spIndx, std::string ofp){
-   std::string path = "";
+    std::string path = "";
 
     std::string fn = ofp;
     std::stringstream tn;

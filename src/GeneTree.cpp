@@ -81,7 +81,7 @@ bool GeneTree::censorCoalescentProcess(double startTime, double stopTime, int co
     Node *n;
     double t = startTime;
     bool allCoalesced = false;
-    // search extantNodes for members with Lindx = contempSpecisIndx 
+    // search extantNodes for members with Lindx = contempSpecisIndx
     std::vector<int> indInExtNodes;
     for(std::vector<Node*>::iterator it = extantNodes.begin(); it != extantNodes.end(); ++it){
         if((*it)->getLindx() == contempSpeciesIndx){
@@ -111,13 +111,15 @@ bool GeneTree::censorCoalescentProcess(double startTime, double stopTime, int co
             rightIndExtN = indInExtNodes[0];
             r = extantNodes[rightIndExtN];
 
-            leftInd = (0.1 + unif_rand()) *(indInExtNodes.size() - 1);
-            iter_swap(indInExtNodes.begin() + leftInd, indInExtNodes.begin() + 1);
-            leftIndExtN = indInExtNodes[1];
+            std::reverse(indInExtNodes.begin(), indInExtNodes.end());
+            leftInd = unif_rand() * (indInExtNodes.size() - 2);
+            iter_swap(indInExtNodes.begin() + leftInd, indInExtNodes.begin());
+            leftIndExtN = indInExtNodes[0];
             l = extantNodes[leftIndExtN];
+            std::reverse(indInExtNodes.begin(), indInExtNodes.end());
 
             n = coalescentEvent(t, l, r);
-            //iter_swap(extantNodes.begin() + rightIndExtN, extantNodes.end() - 1);            
+            //iter_swap(extantNodes.begin() + rightIndExtN, extantNodes.end() - 1);
             //iter_swap(extantNodes.begin() + leftIndExtN, extantNodes.end() - 2);
             if(leftIndExtN > rightIndExtN){
                 extantNodes.erase(extantNodes.begin() + leftIndExtN);
@@ -125,7 +127,7 @@ bool GeneTree::censorCoalescentProcess(double startTime, double stopTime, int co
             }
             else{
                 extantNodes.erase(extantNodes.begin() + rightIndExtN);
-                extantNodes.erase(extantNodes.begin() + leftIndExtN);                
+                extantNodes.erase(extantNodes.begin() + leftIndExtN);
             }
             indInExtNodes.clear();
             //indInExtNodes.erase(indInExtNodes.begin(), indInExtNodes.begin() + 2);
@@ -159,7 +161,7 @@ bool GeneTree::censorCoalescentProcess(double startTime, double stopTime, int co
         // std::cout << "this shouldn't even be happnening" << std::endl;
         allCoalesced = true;
     }
-    
+
     if(allCoalesced == true){
         for(int i = 0; i < indInExtNodes.size(); ++i){
           //  std::cout << "**************" << std::endl;
@@ -182,16 +184,16 @@ Node* GeneTree::coalescentEvent(double t, Node *p, Node *q){
     n->setLindx(p->getLindx());
     n->setIndx(p->getIndex());
     nodes.push_back(n);
-    
+
     p->setBirthTime(t);
     p->setAnc(n);
    // p->setSib(q);
-    
+
     q->setBirthTime(t);
     q->setAnc(n);
     // q->setSib(p);
-    
-    
+
+
     return n;
 }
 
@@ -203,9 +205,9 @@ std::multimap<int, double> GeneTree::rescaleTimes(std::multimap<int, double> tim
         p.second = ((*it).second);
         rescaledTimeMap.insert(p);
     }
-    
+
     return rescaledTimeMap;
-    
+
 }
 
 
@@ -215,7 +217,7 @@ void GeneTree::rootCoalescentProcess(double startTime, double ogf){
     Node *l, *r;
     Node *n;
     double t = startTime;
-    // search extantNodes for members with Lindx = contempSpecisIndx 
+    // search extantNodes for members with Lindx = contempSpecisIndx
     std::vector<int> indInExtNodes;
     for(std::vector<Node*>::iterator it = extantNodes.begin(); it != extantNodes.end(); ++it){
         (*it)->setLindx(0);
@@ -239,7 +241,7 @@ void GeneTree::rootCoalescentProcess(double startTime, double ogf){
         this->setRoot(extantNodes[0]);
     }
     else{
-        Node *nRoot = new Node(); 
+        Node *nRoot = new Node();
         t -= getCoalTime(2);
         extantNodes[0]->setBirthTime(t);
         nRoot->setBirthTime(t);
@@ -247,7 +249,7 @@ void GeneTree::rootCoalescentProcess(double startTime, double ogf){
         nRoot->setRdes(this->getOutgroup());
         nRoot->setDeathTime(extantNodes[0]->getBirthTime());
         nRoot->setAsRoot(true);
-        
+
         this->setRoot(nRoot);
         this->getOutgroup()->setBirthTime(extantNodes[0]->getBirthTime());
         this->getOutgroup()->setAnc(nRoot);
@@ -344,7 +346,7 @@ std::string GeneTree::printExtantNewickTree(){
 }
 
 
-void GeneTree::recGetExtNewickTree(Node *p, std::stringstream &ss, double brlen){ 
+void GeneTree::recGetExtNewickTree(Node *p, std::stringstream &ss, double brlen){
     if(p->getRdes() == NULL){
         if(p->getIsExtant())
             ss << p->getName();

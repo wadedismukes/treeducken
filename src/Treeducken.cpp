@@ -3,63 +3,79 @@
 #include "SpeciesTree.h"
 #include "Simulator.h"
 #include "Engine.h"
+#include <sstream>
+#include <Rcpp.h>
+
+using namespace Rcpp;
 
 void printHelp();
 void printSettings();
 void printVersion();
 //
 // void printHelp(){
-//     std::cout << "\tHere are the available options that you can change (default values are in []):\n";
-//     std::cout << "\t\t-i    : input settings file \n";
-//     std::cout << "\t\t-o    : output file name prefix [= ""]\n";
-//     std::cout << "\t\t-nt   : number of extant taxa [= 100]\n";
-//     std::cout << "\t\t-r    : number of replicates [= 10]\n";
-//     std::cout << "\t\t-nl : number of loci to simulate [= 0]\n";
-//     std::cout << "\t\t-sc   : tree scale [= 1.0]\n";
-//     std::cout << "\t\t-sd1  : seed 1 (use this if you only pass in one seed) \n";
-//     std::cout << "\t\t-sd2  : seed 2 \n";
-//     std::cout << "\t\t-sbr  : species birth rate [= 0.5]\n";
-//     std::cout << "\t\t-sdr  : species death rate [= 0.2]\n";
-//     std::cout << "\t\t-gbr  : gene birth rate [= 0.0]\n";
-//     std::cout << "\t\t-gdr  : gene death rate [= 0.0]\n";
-//     std::cout << "\t\t-lgtr : gene transfer rate [= 0.0]\n";
-//     std::cout << "\t\t-ipp  : individuals to sample per locus [= 0]\n";
-//     std::cout << "\t\t-ne   : effective population size per locus [= 0] \n";
-//     std::cout << "\t\t-ng   : number of genes to simulate per locus [= 0] \n";
-//     std::cout << "\t\t-og   : fraction of tree to use as length of branch between outgroup [=0.0] \n" ;
-//     std::cout << "\t\t-istnw  : input species tree (newick format) [=""] \n";
-//     std::cout << "\t\t-sc     : tree scale [=1.0] \n";
-//     std::cout << "\t\t-sout   : turn off standard output (improves runtime) \n";
-//     std::cout << "\t\t-mst    : Moran species tree ";
+//     Rcout << "\tHere are the available options that you can change (default values are in []):\n";
+//     Rcout << "\t\t-i    : input settings file \n";
+//     Rcout << "\t\t-o    : output file name prefix [= ""]\n";
+//     Rcout << "\t\t-nt   : number of extant taxa [= 100]\n";
+//     Rcout << "\t\t-r    : number of replicates [= 10]\n";
+//     Rcout << "\t\t-nl : number of loci to simulate [= 0]\n";
+//     Rcout << "\t\t-sc   : tree scale [= 1.0]\n";
+//     Rcout << "\t\t-sd1  : seed 1 (use this if you only pass in one seed) \n";
+//     Rcout << "\t\t-sd2  : seed 2 \n";
+//     Rcout << "\t\t-sbr  : species birth rate [= 0.5]\n";
+//     Rcout << "\t\t-sdr  : species death rate [= 0.2]\n";
+//     Rcout << "\t\t-gbr  : gene birth rate [= 0.0]\n";
+//     Rcout << "\t\t-gdr  : gene death rate [= 0.0]\n";
+//     Rcout << "\t\t-lgtr : gene transfer rate [= 0.0]\n";
+//     Rcout << "\t\t-ipp  : individuals to sample per locus [= 0]\n";
+//     Rcout << "\t\t-ne   : effective population size per locus [= 0] \n";
+//     Rcout << "\t\t-ng   : number of genes to simulate per locus [= 0] \n";
+//     Rcout << "\t\t-og   : fraction of tree to use as length of branch between outgroup [=0.0] \n" ;
+//     Rcout << "\t\t-istnw  : input species tree (newick format) [=""] \n";
+//     Rcout << "\t\t-sc     : tree scale [=1.0] \n";
+//     Rcout << "\t\t-sout   : turn off standard output (improves runtime) \n";
+//     Rcout << "\t\t-mst    : Moran species tree ";
 // }
 //
-// void printSettings(std::string of, int nt, int r, int nloc, int ts, double sbr, double sdr,
-//                    double gbr, double gdr, double lgtr, int ipp, int ne, int ngen, double og,
-//                    std::string stn, bool mst){
-//     std::cout << "\t\toutput file name prefix         = " << of << "\n";
-//     std::cout << "\t\tNumber of extant taxa           = " << nt << "\n";
-//     std::cout << "\t\tNumber of replicates            = " << r << "\n";
-//     std::cout << "\t\tNumber of loci to simulate      = " << nloc << "\n";
-//     std::cout << "\t\tNumber of gene trees to simulate     = " << ngen << "\n";
-//     std::cout << "\t\tSpecies birth rate              = " << sbr << "\n";
-//     std::cout << "\t\tSpecies death rate              = " << sdr << "\n";
-//     std::cout << "\t\tGene birth rate                 = " << gbr << "\n";
-//     std::cout << "\t\tGene death rate                 = " << gdr << "\n";
-//     std::cout << "\t\tGene transfer rate              = " << lgtr << "\n";
-//     std::cout << "\t\tIndividuals to sample per locus = " << ipp << "\n";
-//     std::cout << "\t\tEffective pop size per locus    = " << ne << "\n";
-//     std::cout << "\t\tTree fraction to set outgroup   = " << og << "\n";
-//     std::cout << "\t\tSpecies tree input as newick    = " << stn << "\n";
-//     std::cout << "\t\tTree scale                      = " << ts  << "\n";
-//     std::cout << "\t\tMoran process species tree      = " << mst << "\n";
-// }
+void printSettings(std::string of, int nt, int r, int nloc, int ts, double sbr, double sdr,
+                   double gbr, double gdr, double lgtr, int ipp, int ne, int ngen, double og,
+                   std::string stn, bool mst){
+    Rcout << "\t\toutput file name prefix         = " << of << "\n";
+    Rcout << "\t\tNumber of extant taxa           = " << nt << "\n";
+    Rcout << "\t\tNumber of replicates            = " << r << "\n";
+    Rcout << "\t\tNumber of loci to simulate      = " << nloc << "\n";
+    Rcout << "\t\tNumber of gene trees to simulate     = " << ngen << "\n";
+    Rcout << "\t\tSpecies birth rate              = " << sbr << "\n";
+    Rcout << "\t\tSpecies death rate              = " << sdr << "\n";
+    Rcout << "\t\tGene birth rate                 = " << gbr << "\n";
+    Rcout << "\t\tGene death rate                 = " << gdr << "\n";
+    Rcout << "\t\tGene transfer rate              = " << lgtr << "\n";
+    Rcout << "\t\tIndividuals to sample per locus = " << ipp << "\n";
+    Rcout << "\t\tEffective pop size per locus    = " << ne << "\n";
+    Rcout << "\t\tTree fraction to set outgroup   = " << og << "\n";
+    Rcout << "\t\tSpecies tree input as newick    = " << stn << "\n";
+    Rcout << "\t\tTree scale                      = " << ts  << "\n";
+    Rcout << "\t\tMoran process species tree      = " << mst << "\n";
+}
 //
 // void printVersion(){
-//     std::cout << "############################################################\n";
-//     std::cout << "####\ttreeducken, version 0.1 \t\t\t####\n";
-//     std::cout << "####\t" << GIT_HASH << "\t####\n";
-//     std::cout << "############################################################\n";
+//     Rcout << "############################################################\n";
+//     Rcout << "####\ttreeducken, version 0.1 \t\t\t####\n";
+//     Rcout << "####\t" << GIT_HASH << "\t####\n";
+//     Rcout << "############################################################\n";
 // }
+std::vector<std::string> split(std::string strToSplit, char delimeter)
+{
+    std::stringstream ss(strToSplit);
+    std::string item;
+    std::vector<std::string> splittedStrings;
+    while (std::getline(ss, item, delimeter))
+    {
+        splittedStrings.push_back(item);
+    }
+    return splittedStrings;
+}
+
 
 int run_treeducken(std::string params_file) {
     std::string setFileName;
@@ -70,104 +86,75 @@ int run_treeducken(std::string params_file) {
     }
     else{
         std::vector<std::string> params_vector;
-        int startIndex = 0;
-        int  endIndex = 0;
-        while( (endIndex = params_file.find(' ', startIndex)) < params_file.size() )
-        {
 
-            std::string val = params_file.substr(startIndex, endIndex - startIndex);
-            params_vector.push_back(val);
-            startIndex = endIndex + 1;
-
-        }
-        if(startIndex < params_file.size())
-        {
-            std::string val = params_file.substr(startIndex);
-            params_vector.push_back(val);
-        }
+        params_vector = split(params_file, ' ');
 
         std::string outName;
         std::string stn;
-        int nt = 100, r = 10, nloc = 10, ipp = 0, ne = 0, sd1 = 0, sd2 = 0, ngen = 0;
+        int nt = 100, r = 10, nloc = 10, ipp = 0, ne = 0, ngen = 0;
         double sbr = 0.5, sdr = 0.2, gbr = 0.0, gdr = 0.0, lgtr = 0.0, ts = -1, og = 0.0;
         bool sout = 1;
         bool mst = 0;
         for (int i = 0; i < params_vector.size(); i++){
             if(params_vector[i] == "-sbr"){
                 sbr = std::atof(params_vector[i+1].c_str());
-                i++;
             }
             else if(params_vector[i] == "-sdr"){
                 sdr = std::atof(params_vector[i+1].c_str());
-                i++;
             }
             else if(params_vector[i] == "-gbr"){
                 gbr = std::atof(params_vector[i+1].c_str());
-                i++;
             }
             else if(params_vector[i] == "-gdr"){
                 gdr = std::atof(params_vector[i+1].c_str());
-                i++;
             }
             else if(params_vector[i] == "-lgtr"){
                 lgtr = std::atof(params_vector[i+1].c_str());
-                i++;
             }
             else if(params_vector[i] == "-ne"){
                 ne = std::atof(params_vector[i+1].c_str());
-                i++;
             }
             else if(params_vector[i] == "-ipp"){
                 ipp = std::atof(params_vector[i+1].c_str());
-                i++;
             }
             else if(params_vector[i] == "-nt"){
                 nt = std::atoi(params_vector[i+1].c_str());
-                i++;
             }
             else if(params_vector[i] == "-sc"){
                 ts = std::atof(params_vector[i+1].c_str());
-                i++;
             }
             else if(params_vector[i] == "-nl"){
                 nloc = std::atof(params_vector[i+1].c_str());
-                i++;
             }
             else if(params_vector[i] == "-ng"){
                 ngen = std::atoi(params_vector[i+1].c_str());
-                i++;
             }
             else if(params_vector[i] == "-r"){
                 r = std::atoi(params_vector[i+1].c_str());
-                i++;
             }
             else if(params_vector[i] == "-o"){
                 outName = params_vector[i+1];
-                i++;
             }
             else if(params_vector[i] == "-istnw"){
                 stn = params_vector[i+1];
-                i++;
             }
             else if(params_vector[i] == "-og"){
                 og = std::atof(params_vector[i+1].c_str());
-                i++;
             }
             else if(params_vector[i] == "-sout"){
                 sout = std::atoi(params_vector[i+1].c_str());
-                i++;
             }
             else {
                 //TODO: need error handling
-                // std::cout << "\n############################ !!! ###########################\n";
-                // std::cout << "\n\n\tPerhaps you mis-typed something, here are the \n\tavailable options:\n";
+                // Rcout << "\n############################ !!! ###########################\n";
+                // Rcout << "\n\n\tPerhaps you mis-typed something, here are the \n\tavailable options:\n";
                 // printHelp();
-                // std::cout << "\n############################ !!! ###########################\n";
+                // Rcout << "\n############################ !!! ###########################\n";
             }
         }
         if(stn != ""){
             mt = 4;
-            // std::cout << "Species tree is set. Simulating only locus and gene trees...\n";
+            // Rcout << "Species tree is set. Simulating only locus and gene trees...\n";
             if(nloc > 0){
                 if (gbr <= 0.0){
                     if(gbr < 0.0){
@@ -177,7 +164,7 @@ int run_treeducken(std::string params_file) {
                     }
                     else{
                         if(ne >  0 && ipp > 0 && ipp <= ne){
-                            //   std::cout << "Gene birth rate is 0.0, locus trees will match species trees.\n";
+                            //   Rcout << "Gene birth rate is 0.0, locus trees will match species trees.\n";
                         }
                         else{
                             //    std::cerr << "Gene tree parameters are incorrectly specified. Only simulating species and locus trees\n";
@@ -194,7 +181,7 @@ int run_treeducken(std::string params_file) {
                     exit(1);
                 }
                 else{
-                    //    std::cout << "Simulating locus and gene trees on input species tree.\n";
+                    //    Rcout << "Simulating locus and gene trees on input species tree.\n";
                     // printSettings(outName, nt, r, nloc, ts, sbr, sdr, gbr, gdr, lgtr, ipp, ne, ngen, og, stn, mst);
                 }
             }
@@ -209,16 +196,16 @@ int run_treeducken(std::string params_file) {
                 if (gbr <= 0.0){
                     if(gbr < 0.0){
                         mt = 1;
-                        //         std::cout << "Gene birth rate is a negative number, no loci or gene trees will be simulated.\n";
+                        //         Rcout << "Gene birth rate is a negative number, no loci or gene trees will be simulated.\n";
                     }
                     else{
                         if(ne >  0 && ipp > 0 && ipp <= ne){
                             mt = 3;
-                            //            std::cout << "Gene birth rate is 0.0, locus trees will match species trees.\n";
+                            //            Rcout << "Gene birth rate is 0.0, locus trees will match species trees.\n";
                         }
                         else{
-                            //            std::cout << "Gene tree parameters are incorrectly specified. Only simulating species and locus trees\n";
-                            //            std::cout << "Population size and individuals per population must both be positive integers and individuals per population must be less than or equal to the population size.\n";
+                            //            Rcout << "Gene tree parameters are incorrectly specified. Only simulating species and locus trees\n";
+                            //            Rcout << "Population size and individuals per population must both be positive integers and individuals per population must be less than or equal to the population size.\n";
                             mt = 2;
                         }
                     }
@@ -227,24 +214,41 @@ int run_treeducken(std::string params_file) {
                 }
                 else if (ne <= 0 || ipp <= 0 || ipp > ne){
                     mt = 2;
-                    //   std::cout << "Gene tree parameters are incorrectly specified.\n";
-                    //    std::cout << "Population size and individuals per population must both be positive integers and individuals per population must be less than or equal to the population size.\n";
+                    //   Rcout << "Gene tree parameters are incorrectly specified.\n";
+                    //    Rcout << "Population size and individuals per population must both be positive integers and individuals per population must be less than or equal to the population size.\n";
                     //printSettings(outName, nt, r, nloc, ts, sbr, sdr, gbr, gdr, lgtr, ipp, ne, ngen, og, stn, mst);
                 }
                 else{
                     mt = 3;
-                    //    std::cout << "Simulating sets of three trees.\n";
+                    //    Rcout << "Simulating sets of three trees.\n";
                     //printSettings(outName, nt, r, nloc, ts, sbr, sdr, gbr, gdr, lgtr, ipp, ne, ngen, og, stn, mst);
                 }
             }
             else{
-                //    std::cout << "Number of loci to simulate is set to 0." << std::endl;
+                //    Rcout << "Number of loci to simulate is set to 0." << std::endl;
                 mt = 1;
                 //printSettings(outName, nt, r, nloc, ts, sbr, sdr, gbr, gdr, lgtr, ipp, ne, ngen, og, stn, mst);
                 if(mst)
                     mt = 5;
             }
         }
+        printSettings(outName,
+                      nt,
+                      r,
+                      nloc,
+                      ts,
+                      sbr,
+                      sdr,
+                      gbr,
+                      gdr,
+                      lgtr,
+                      ipp,
+                      ne,
+                      ngen,
+                      og,
+                      stn,
+                      mst);
+
         phyEngine = new Engine(outName,
                                mt,
                                sbr,
@@ -272,7 +276,7 @@ int run_treeducken(std::string params_file) {
 
 
     }
-
     delete phyEngine;
+
     return 0;
 }

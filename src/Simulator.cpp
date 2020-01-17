@@ -10,6 +10,8 @@
 #include <iostream>
 #include <Rcpp.h>
 
+using namespace Rcpp;
+
 Simulator::Simulator(unsigned nt, double lambda, double mu, double rho)
 {
     spTree = nullptr;
@@ -22,8 +24,8 @@ Simulator::Simulator(unsigned nt, double lambda, double mu, double rho)
     speciationRate = lambda;
     extinctionRate = mu;
     samplingRate = rho;
-    
-    
+
+
     numLoci = 0;
     numGenes = 0;
     geneBirthRate = 0.0;
@@ -32,7 +34,7 @@ Simulator::Simulator(unsigned nt, double lambda, double mu, double rho)
     propTransfer = 0.0;
     indPerPop = 0;
     popSize = 0;
-    
+
 }
 
 
@@ -48,7 +50,7 @@ Simulator::Simulator(unsigned ntax, double lambda, double mu, double rho, unsign
     speciationRate = lambda;
     extinctionRate = mu;
     samplingRate = rho;
-    
+
     numLoci = numLociToSim;
     geneBirthRate = gbr;
     geneDeathRate = gdr;
@@ -56,8 +58,8 @@ Simulator::Simulator(unsigned ntax, double lambda, double mu, double rho, unsign
     propTransfer = 0.0;
     indPerPop = 0;
     popSize = 0;
-    
-    
+
+
 }
 
 Simulator::Simulator(unsigned ntax,
@@ -116,8 +118,8 @@ Simulator::~Simulator(){
         ++i;
     }
     locusTrees.clear();
-    
-        
+
+
 }
 
 void Simulator::initializeSim(){
@@ -135,7 +137,7 @@ bool Simulator::gsaBDSim(){
     SpeciesTree st =  SpeciesTree(numTaxaToSim, currentSimTime, speciationRate, extinctionRate);
     spTree = &st;
     double eventTime;
-    
+
     while(gsaCheckStop()){
         eventTime = spTree->getTimeToNextEvent();
         currentSimTime += eventTime;
@@ -150,7 +152,7 @@ bool Simulator::gsaBDSim(){
             spTree->setPresentTime(sampTime);
             processGSASim();
         }
-        
+
     }
     unsigned gsaRandomTreeID = unif_rand() * (gsaTrees.size() - 1);
     // delete spTree;
@@ -165,19 +167,19 @@ bool Simulator::gsaBDSim(){
     }
 
     treeComplete = true;
-    
+
     return treeComplete;
 }
 
 
 bool Simulator::gsaCheckStop(){
-  
+
   bool keepSimulating = true;
-  
+
   if(spTree->getNumExtant() >= gsaStop){
       keepSimulating = false;
   }
-  
+
   return keepSimulating;
 }
 
@@ -187,7 +189,7 @@ void Simulator::processGSASim(){
     Node *simRoot = spTree->getRoot();
     tt->setRoot(simRoot);
     tt->reconstructTreeFromGSASim(simRoot);
-    gsaTrees.push_back(tt);    
+    gsaTrees.push_back(tt);
 }
 
 void Simulator::processSpTreeSim(){
@@ -215,7 +217,7 @@ bool Simulator::moranSpeciesSim(){
     spTree = &st;
     spTree->initializeMoranProcess(numTaxaToSim);
     double eventTime;
-    
+
     while(moranCheckStop()){
         eventTime = spTree->getTimeToNextEventMoran();
         currentSimTime += eventTime;
@@ -234,19 +236,19 @@ bool Simulator::moranSpeciesSim(){
     }
 
     treeComplete = true;
-    
+
     return treeComplete;
 }
 
 
 bool Simulator::moranCheckStop(){
-  
+
   bool keepSimulating = true;
-  
+
   if((spTree->getNumExtant() * 2) <= currentSimTime){
       keepSimulating = false;
   }
-  
+
   return keepSimulating;    ;
 }
 
@@ -293,14 +295,14 @@ bool Simulator::bdsaBDSim(){
     std::map<int,double> speciesDeathTimes = spTree->getDeathTimesFromNodes();
     std::set<int> contempSpecies;
     std::pair<int, int> sibs;
-    
+
     Node* spRoot = spTree->getRoot();
     lociTree->setStopTime(stopTime);
     currentSimTime = 0;
     if(!(contempSpecies.empty()))
         contempSpecies.clear();
     contempSpecies.insert(spRoot->getIndex());
-    
+
     while(currentSimTime < stopTime){
         eventTime = lociTree->getTimeToNextEvent();
         currentSimTime += eventTime;
@@ -328,14 +330,14 @@ bool Simulator::bdsaBDSim(){
             else{
                 ++it;
             }
-            
+
             if(lociTree->getNumExtant() < 1){
                 treesComplete = false;
                 return treesComplete;
             }
-            
+
         }
-        
+
         if(currentSimTime >= stopTime){
             currentSimTime = stopTime;
             lociTree->setCurrentTime(stopTime);
@@ -439,7 +441,7 @@ bool Simulator::coalescentSim(){
                     extinctFolks.erase(extFolksIt);
                 }
                 stopTimeLoci = stopTimes[contempLoci[epochCount][j]];
-                
+
                 if(stopTimeLoci > stopTimeEpoch){
                     stopTime = stopTimeLoci;
                     deathCheck = true;
@@ -451,8 +453,8 @@ bool Simulator::coalescentSim(){
 
                 ancIndx = lociTree->postOrderTraversalStep(contempLoci[epochCount][j]);
                 allCoalesced = geneTree->censorCoalescentProcess(currentSimTime, stopTime, contempLoci[epochCount][j], ancIndx, deathCheck);
-                
-                
+
+
                 // if all coalesced remove that loci from the matrix of loci
                 if(allCoalesced){
                     int check = contempLoci[epochCount][j];
@@ -468,7 +470,7 @@ bool Simulator::coalescentSim(){
                 allCoalesced = false;
                 is_ext = false;
             }
-            epIter = std::prev(epIter, 1); 
+            epIter = std::prev(epIter, 1);
         }
         else{
             // finish coalescing
@@ -494,7 +496,7 @@ bool Simulator::simThreeTree(){
     for(int i = 0; i < numLoci; i++){
         while(!loGood){
             if(printSOUT)
-                std::cout << "Simulating loci # " <<  i + 1 << std::endl;
+                Rcout << "Simulating loci # " <<  i + 1 << std::endl;
             loGood = bdsaBDSim();
         }
         if(outgroupFrac > 0.0){
@@ -503,7 +505,7 @@ bool Simulator::simThreeTree(){
         for(int j = 0; j < numGenes; j++){
             while(!gGood){
                 if(printSOUT)
-                    std::cout << "Simulating gene # " <<  j + 1 << " of loci # " << i + 1 << std::endl;
+                    Rcout << "Simulating gene # " <<  j + 1 << " of loci # " << i + 1 << std::endl;
                 gGood = coalescentSim();
             }
             geneTrees[i].push_back(geneTree);
@@ -529,7 +531,10 @@ std::string Simulator::printGeneTreeNewick(int i, int j){
 std::string Simulator::printExtantGeneTreeNewick(int i, int j){
     std::string newickTree;
     GeneTree *tt = new GeneTree(numTaxaToSim, indPerPop, popSize, generationTime);
+
     geneTrees[i][j]->getRootFromFlags(true);
+
+
     if(outgroupFrac > 0.0){
         tt->setOutgroup(geneTrees[i][j]->getOutgroup());
         tt->setRoot(geneTrees[i][j]->getOutgroup()->getAnc());
@@ -538,7 +543,7 @@ std::string Simulator::printExtantGeneTreeNewick(int i, int j){
         tt->setRoot(geneTrees[i][j]->getExtantRoot());
     tt->setExtantRoot(geneTrees[i][j]->getExtantRoot());
     tt->reconstructTreeFromSim(geneTrees[i][j]->getRoot());
-    newickTree = tt->printExtantNewickTree();
+    newickTree = tt->printNewickTree();
     delete tt;
     tt = nullptr;
     return newickTree;
@@ -606,7 +611,7 @@ int Simulator::findNumberTransfers(){
         numTrans += locusTrees[i]->getNumberTransfers();
     }
     return numTrans;
-} 
+}
 
 double Simulator::findTMRCAGeneTree(int i, int j){
     return geneTrees[i][j]->getTreeDepth();

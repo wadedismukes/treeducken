@@ -10,6 +10,9 @@
 #include <vector>
 #include <string>
 #include <cmath>
+#include <Rcpp.h>
+
+using namespace Rcpp;
 
 Node::Node()
 {
@@ -29,11 +32,11 @@ Node::Node()
     birthTime = 0.0;
     deathTime = 0.0;
 
-    
+
 }
 
 Node::~Node(){
-    
+
 }
 
 
@@ -54,7 +57,7 @@ Tree::Tree(unsigned numExta, double curTime){
     numTaxa = numExta;
     numExtinct = 0;
     currentTime = curTime;
-    
+
 }
 
 Tree::Tree(unsigned numTax){
@@ -132,13 +135,14 @@ void Tree::setExtantTreeFlags(){
         if((*p)->getIsExtant())
             (*p)->setFlag(1);
     }
+
     this->setSampleFromFlags();
 }
 
 
 void Tree::setSampleFromFlags(){
     int flag;
-    Node *q = NULL;
+    Node *q = nullptr;
     for(std::vector<Node *>::iterator p=nodes.begin(); p!=nodes.end(); ++p){
         if((*p)->getIsTip()){
             flag = (*p)->getFlag();
@@ -207,7 +211,7 @@ void Tree::reconstructLineageFromSim(Node *currN, Node *prevN, unsigned &tipCoun
                     brlen += prevAnc->getBranchLength();
             }
         }
-        
+
         p = new Node();
         tipCounter++;
         p->setBranchLength(brlen);
@@ -226,7 +230,7 @@ void Tree::reconstructLineageFromSim(Node *currN, Node *prevN, unsigned &tipCoun
             std::cerr << "ERROR: Problem adding a tip to the tree!" << std::endl;
             exit(1);
         }
-        
+
     }
     else{
         if(oFlag > 1){
@@ -236,8 +240,8 @@ void Tree::reconstructLineageFromSim(Node *currN, Node *prevN, unsigned &tipCoun
                 reconstructLineageFromSim(s1, prevN->getLdes(), tipCounter, intNodeCounter);
             if(prevN->getRdes()->getFlag() > 0)
                 reconstructLineageFromSim(s1, prevN->getRdes(), tipCounter, intNodeCounter);
-            
-            
+
+
             if(rootN == false){
                 Node *prevAnc = prevN->getAnc();
                 int ancFlag = prevAnc->getFlag();
@@ -250,7 +254,7 @@ void Tree::reconstructLineageFromSim(Node *currN, Node *prevN, unsigned &tipCoun
                             brlen += prevAnc->getBranchLength();
                     }
                 }
-                
+
                 if(currN != NULL){
                     s1->setBranchLength(brlen);
                     s1->setBirthTime(prevN->getBirthTime());
@@ -272,7 +276,7 @@ void Tree::reconstructLineageFromSim(Node *currN, Node *prevN, unsigned &tipCoun
                     s1->setBirthTime(prevN->getBirthTime());
                     s1->setDeathTime(prevN->getDeathTime());
                 }
-                
+
             }
             else{
                 s1->setAsRoot(true);
@@ -291,11 +295,11 @@ void Tree::reconstructLineageFromSim(Node *currN, Node *prevN, unsigned &tipCoun
         }
     }
 }
-// Gene tree version only 
+// Gene tree version only
 void Tree::getRootFromFlags(bool isGeneTree){
     Node *p;
 
-	setExtantTreeFlags();
+    this->setExtantTreeFlags();
     int numNodes = nodes.size() - 1;
     if(isGeneTree){
         for(int i=numNodes; i > 0; i--){
@@ -305,7 +309,7 @@ void Tree::getRootFromFlags(bool isGeneTree){
                 p->setAsRoot(true);
                 break;
             }
-            
+
         }
     }
     else{
@@ -325,7 +329,7 @@ void Tree::getRootFromFlags(bool isGeneTree){
                     p->setAsRoot(true);
                     break;
                 }
-                
+
             }
         }
     }
@@ -337,7 +341,7 @@ void Tree::rescaleTreeByOutgroupFrac(double outgroupFrac, double treeDepth){
     for(std::vector<Node*>::iterator it=nodes.begin(); it != nodes.end(); ++it){
         birthTime = (*it)->getBirthTime();
         deathTime = (*it)->getDeathTime();
-        
+
         (*it)->setBirthTime(birthTime + std::exp(rescaleFactor));
         (*it)->setDeathTime(deathTime + std::exp(rescaleFactor));
         (*it)->setBranchLength((*it)->getDeathTime() - (*it)->getBirthTime());
@@ -357,7 +361,7 @@ void Tree::setNewRootInfo(Node *rootN, Node *outgroupN, Node *currRoot, double t
 
     currRoot->setAsRoot(false);
     currRoot->setAnc(rootN);
-    
+
     outgroupN->setName("OUT");
     outgroupN->setBirthTime(currRoot->getBirthTime());
     outgroupN->setDeathTime(t);

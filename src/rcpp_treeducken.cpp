@@ -12,4 +12,5 @@
 // [[Rcpp::export]]
 int treeducken(std::string params_file) {
     run_treeducken(params_file);
+    return 0;
 }

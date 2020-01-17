@@ -56,7 +56,7 @@ class TreeInfo{
             void                        setNumberTransfers(int d) { numTransfers = d; }
             void                        setWholeTreeStringInfo(std::string ts ) { speciesTree = ts; }
             void                        setExtTreeStringInfo(std::string ts) { extSpeciesTree = ts; }
-            void                        setLocusTreeByIndx(int indx, std::string ts) { locusTrees.push_back(ts); }
+            void                        setLocusTreeByIndx(int indx, std::string ts) { locusTrees[indx] = ts; }
             void                        setGeneTreeByIndx(int Lindx, int indx, std::string ts) { geneTrees[Lindx].push_back(ts); }
             void                        setExtantGeneTreeByIndx(int Lindx, int indx, std::string ts) { extGeneTrees[Lindx].push_back(ts); }
             void                        setSpeciesTreeLength(double b) { spTreeLength = b; }
@@ -120,8 +120,6 @@ class Engine{
                                        int ipp,
                                        int popsize,
                                        double genTime,
-                                       int sd1,
-                                       int sd2,
                                        double treescale,
                                        int reps,
                                        int numTaxa,
