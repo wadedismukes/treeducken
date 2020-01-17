@@ -1,0 +1,3 @@
+useDynLib(treeducken, .registration=TRUE)
+exportPattern("^[[:alpha:]]+")
+importFrom(Rcpp, evalCpp)
