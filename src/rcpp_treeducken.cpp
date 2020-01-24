@@ -14,3 +14,8 @@ int treeducken(std::string params_file) {
     run_treeducken(params_file);
     return 0;
 }
+
+// [[Rcpp::export]]
+Rcpp::List sim_sptree_bdp(SEXP sbr_, SEXP sdr_, SEXP numbsim_, SEXP n_tips_){
+    return bdsim_species_tree(sbr_, sdr_, numbsim_, n_tips_);
+}

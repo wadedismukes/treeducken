@@ -19,7 +19,7 @@ SpeciesTree::SpeciesTree(unsigned numTaxa, double ct, double br, double dr) : Tr
     extantStop = numTaxa;
     speciationRate = br;
     extinctionRate = dr;
-    
+
 }
 
 SpeciesTree::SpeciesTree(unsigned numTaxa) : Tree(numTaxa){
@@ -27,7 +27,7 @@ SpeciesTree::SpeciesTree(unsigned numTaxa) : Tree(numTaxa){
 }
 
 SpeciesTree::~SpeciesTree(){
-    
+
 }
 
 double SpeciesTree::getTimeToNextEvent(){
@@ -71,7 +71,7 @@ void SpeciesTree::setNewLineageInfo(unsigned int indx, Node *r, Node *l){
     extantNodes[indx]->setDeathTime(currentTime);
     extantNodes[indx]->setIsTip(false);
     extantNodes[indx]->setIsExtant(false);
-    
+
     r->setLdes(NULL);
     r->setRdes(NULL);
     r->setSib(l);
@@ -80,7 +80,7 @@ void SpeciesTree::setNewLineageInfo(unsigned int indx, Node *r, Node *l){
     r->setIsTip(true);
     r->setIsExtant(true);
     r->setIsExtinct(false);
-    
+
     l->setLdes(NULL);
     l->setRdes(NULL);
     l->setSib(r);
@@ -89,7 +89,7 @@ void SpeciesTree::setNewLineageInfo(unsigned int indx, Node *r, Node *l){
     l->setIsTip(true);
     l->setIsExtinct(false);
     l->setIsExtant(true);
-    
+
     extantNodes.erase(extantNodes.begin() + indx);
     extantNodes.push_back(r);
     extantNodes.push_back(l);
@@ -98,7 +98,7 @@ void SpeciesTree::setNewLineageInfo(unsigned int indx, Node *r, Node *l){
     numExtant = (int) extantNodes.size();
     r->setIndx(numExtant - 2);
     l->setIndx(numExtant - 1);
-    
+
 }
 
 void SpeciesTree::setBranchLengths(){
@@ -169,7 +169,7 @@ void SpeciesTree::recTipNamer(Node *p, unsigned &extinctIndx, unsigned &tipIndx)
                 tn << p->getIndex();
                 std::string name = "X" + tn.str();
                 p->setName(name);
-                
+
             }
             else{
                 tn << p->getIndex();
@@ -180,7 +180,7 @@ void SpeciesTree::recTipNamer(Node *p, unsigned &extinctIndx, unsigned &tipIndx)
         else{
             recTipNamer(p->getLdes(), extinctIndx, tipIndx);
             recTipNamer(p->getRdes(), extinctIndx, tipIndx);
-            
+
         }
     }
 }
@@ -226,7 +226,7 @@ void SpeciesTree::setGSATipTreeFlags(){
         if((*it)->getIsTip()){
             numTotalTips++;
             (*it)->setFlag(1);
-            
+
         }
         else{
             (*it)->setFlag(2);
@@ -249,18 +249,17 @@ void SpeciesTree::setGSATipTreeFlags(){
 //                    flag = q->getFlag();
 //                    flag++;
 //                    q->setFlag(flag);
-//                    
+//
 //                }
 //            }
 //        }
 //    }
 //}
-
 void SpeciesTree::popNodes(){
     nodes.clear();
     extantNodes.clear();
     recPopNodes(this->getRoot());
-    
+
     int indx;
     for(std::vector<Node*>::iterator p=nodes.begin(); p!=nodes.end(); p++){
         indx = (int) (p - nodes.begin());
@@ -269,7 +268,7 @@ void SpeciesTree::popNodes(){
 }
 
 void SpeciesTree::recPopNodes(Node *p){
-    if(p != nullptr){    
+    if(p != nullptr){
         if(p->getIsTip()){
             if(p->getIsExtant()){
                 extantNodes.push_back(p);
@@ -313,7 +312,7 @@ void SpeciesTree::reconstructLineageFromGSASim(Node *currN, Node *prevN, unsigne
                     brlen += prevAnc->getBranchLength();
             }
         }
-        
+
         p = new Node();
         tipCounter++;
         p->setBranchLength(brlen);
@@ -331,7 +330,7 @@ void SpeciesTree::reconstructLineageFromGSASim(Node *currN, Node *prevN, unsigne
             std::cerr << "ERROR: Problem adding a tip to the tree!" << std::endl;
             exit(1);
         }
-        
+
     }
     else{
         if(oFlag > 1){
@@ -341,8 +340,8 @@ void SpeciesTree::reconstructLineageFromGSASim(Node *currN, Node *prevN, unsigne
                 reconstructLineageFromGSASim(s1, prevN->getLdes(), tipCounter, intNodeCounter);
             if(prevN->getRdes()->getFlag() > 0)
                 reconstructLineageFromGSASim(s1, prevN->getRdes(), tipCounter, intNodeCounter);
-            
-            
+
+
             if(rootN == false){
                 Node *prevAnc = prevN->getAnc();
                 int ancFlag = prevAnc->getFlag();
@@ -355,7 +354,7 @@ void SpeciesTree::reconstructLineageFromGSASim(Node *currN, Node *prevN, unsigne
                             brlen += prevAnc->getBranchLength();
                     }
                 }
-                
+
                 if(currN != NULL){
                     s1->setBranchLength(brlen);
                     s1->setBirthTime(prevN->getBirthTime());
@@ -377,7 +376,7 @@ void SpeciesTree::reconstructLineageFromGSASim(Node *currN, Node *prevN, unsigne
                     s1->setBirthTime(prevN->getBirthTime());
                     s1->setDeathTime(prevN->getDeathTime());
                 }
-                
+
             }
             else{
                 s1->setAsRoot(true);
@@ -444,52 +443,4 @@ bool SpeciesTree::macroEvent(int indx){
     else
         isSpec = true;
     return isSpec;
-}
-
-void SpeciesTree::moranEvent(double curTime){
-    currentTime = curTime;
-    int nodeIndDead = unif_rand()*(numExtant - 1);
-    lineageDeathEvent(nodeIndDead);
-    int nodeIndSpec = unif_rand()*(numExtant - 1);
-    lineageBirthEvent(nodeIndSpec);
-    for(int i = extantNodes.size() - 2; i < extantNodes.size(); ++i){
-        int prevFlag = extantNodes[i]->getFlag();
-        extantNodes[i]->setFlag(prevFlag++);
-        }
-}
-
-double SpeciesTree::getTimeToNextEventMoran(){
-    return -log(unif_rand()) / (double(numExtant) * speciationRate);
-}
-
-void SpeciesTree::initializeMoranProcess(unsigned numTaxaToSim){
-    // Make sure everything is clean
-    for(std::vector<Node*>::iterator p=extantNodes.begin(); p != extantNodes.end(); ++p){
-        delete (*p);
-        (*p) = nullptr;
-    }
-    extantNodes.clear();
-    nodes.clear();
-
-    Node *p;
-
-    // make nodes
-    for(int i = 0; i < numTaxaToSim; i++){
-        p = new Node();
-        p->setBirthTime(0.0);
-        p->setIndx(0);
-        p->setLdes(NULL);
-        p->setRdes(NULL);
-        p->setAnc(NULL);
-        p->setIsExtant(true);
-        p->setIsTip(true);
-        p->setIsExtinct(false);
-        extantNodes.push_back(p);
-        nodes.push_back(p);
-    }
-
-    numExtant = extantNodes.size();
-    numNodes = nodes.size();
-    root = nullptr;
-    extantRoot = nullptr;
 }

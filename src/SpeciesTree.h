@@ -34,9 +34,7 @@ class SpeciesTree : public Tree
         virtual void          lineageBirthEvent(unsigned indx);
         virtual void          lineageDeathEvent(unsigned indx);
         void          ermEvent(double curTime);
-        void          moranEvent(double curTime); 
         void          setNewLineageInfo(unsigned indx, Node *r, Node *l);
-        void          initializeMoranProcess(unsigned numTaxa);
     
         // set node parameters across tree
         void          setBranchLengths();
@@ -57,7 +55,6 @@ class SpeciesTree : public Tree
         void          recPopNodes(Node *p);
         void          reconstructLineageFromGSASim(Node *currN, Node *prevN, unsigned &tipCounter, unsigned &intNodeCounter);
       //  void          setSampleFromFlags();
-        void          initializeMoranProcess(); // TODO: Write this function
         std::map<int,double>        getBirthTimesFromNodes();
         std::map<int,double>        getDeathTimesFromNodes();
         double                      getCurrentTimeFromExtant() {return extantNodes[0]->getDeathTime();}
@@ -65,6 +62,9 @@ class SpeciesTree : public Tree
         bool                        macroEvent(int indx);
         std::pair<int, int>         preorderTraversalStep(int index);
         int                         postOrderTraversalStep(int index);
+        
+
+
 };
 
 

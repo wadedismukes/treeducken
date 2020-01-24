@@ -280,3 +280,45 @@ int run_treeducken(std::string params_file) {
 
     return 0;
 }
+
+
+Rcpp::List bdsim_species_tree(SEXP sbr_,
+                        SEXP sdr_,
+                        SEXP numbsim_,
+                        SEXP n_tips_){
+
+    std::vector<SpeciesTree*> speciesTrees;
+    Simulator *phySimulator;
+    double sbr = as<double>(sbr_);
+    double sdr = as<double>(sdr_);
+    unsigned numbsim = as<unsigned>(numbsim_);
+    unsigned n_tips = as<unsigned>(n_tips_);
+
+    List multiphy;
+    for(int i = 0; i < numbsim; i++){
+        phySimulator = new Simulator(n_tips,
+                                     sbr,
+                                     sdr,
+                                     1);
+        phySimulator->simSpeciesTree();
+        speciesTrees.push_back(phySimulator->getSpeciesTree());
+
+        NumericMatrix edges_rmat = speciesTrees[i]->getEdges();
+
+
+        List phy = List::create(Named("edge") = edges_rmat,
+                           Named("edge.length") = speciesTrees[i]->getEdgeLengths(),
+                           Named("Nnode") = speciesTrees[i]->getNnodes(),
+                           Named("tip.label") = speciesTrees[i]->getTipNames(),
+                           Named("root.edge") = speciesTrees[i]->getRoot()->getDeathTime() -
+                                    speciesTrees[i]->getRoot()->getBirthTime());
+        phy.attr("class") = "phylo";
+        multiphy.push_back(phy);
+    }
+
+
+
+
+    delete phySimulator;
+    return multiphy;
+}

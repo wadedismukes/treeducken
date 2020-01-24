@@ -5,3 +5,7 @@ treeducken <- function(params_file) {
     .Call(`_treeducken_treeducken`, params_file)
 }
 
+sim_sptree_bdp <- function(sbr_, sdr_, numbsim_, n_tips_) {
+    .Call(`_treeducken_sim_sptree_bdp`, sbr_, sdr_, numbsim_, n_tips_)
+}
+

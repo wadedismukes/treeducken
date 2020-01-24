@@ -25,7 +25,7 @@ Simulator::Simulator(unsigned nt, double lambda, double mu, double rho)
     extinctionRate = mu;
     samplingRate = rho;
 
-
+    treeScale = -1;
     numLoci = 0;
     numGenes = 0;
     geneBirthRate = 0.0;
@@ -203,54 +203,6 @@ void Simulator::prepGSATreeForReconstruction(){
     spTree->setGSATipTreeFlags();
 }
 
-bool Simulator::simMoranSpeciesTree(){
-    bool simgood = false;
-    while(!simgood){
-        simgood = moranSpeciesSim();
-    }
-    return simgood;
-}
-
-bool Simulator::moranSpeciesSim(){
-    bool treeComplete = false;
-    SpeciesTree st =  SpeciesTree(numTaxaToSim, currentSimTime, speciationRate, extinctionRate);
-    spTree = &st;
-    spTree->initializeMoranProcess(numTaxaToSim);
-    double eventTime;
-
-    while(moranCheckStop()){
-        eventTime = spTree->getTimeToNextEventMoran();
-        currentSimTime += eventTime;
-        spTree->moranEvent(currentSimTime);
-        if(spTree->getNumExtant() < 1){
-            treeComplete = false;
-            return treeComplete;
-        }
-    }
-    // processing will make a tree with extant and non extant tips
-    //spTree->setBranchLengths();
-    //spTree->setTreeTipNames();
-    if(treeScale > 0.0){
-        spTree->scaleTree(treeScale, currentSimTime);
-        currentSimTime = treeScale;
-    }
-
-    treeComplete = true;
-
-    return treeComplete;
-}
-
-
-bool Simulator::moranCheckStop(){
-
-  bool keepSimulating = true;
-
-  if((spTree->getNumExtant() * 2) <= currentSimTime){
-      keepSimulating = false;
-  }
-
-  return keepSimulating;    ;
-}
 
 bool Simulator::simSpeciesTree(){
     bool good = false;

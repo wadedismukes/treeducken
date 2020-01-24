@@ -13,7 +13,7 @@
 #include <iostream>
 #include <fstream>
 #include <regex>
-
+#include <Rcpp.h>
 /*
  tree info class
                 */
@@ -136,14 +136,17 @@ class Engine{
         std::string             getInputSpeciesTree() { return inputSpTree; }
         void                    doRunRun();
         void                    doRunSpTreeSet();
+
         void                    writeTreeFiles();
         TreeInfo                *findTreeByIndx(int i);
         void                    calcAverageRootAgeSpeciesTrees();
         SpeciesTree*            buildTreeFromNewick(std::string spTree);
 
+
 };
 
 
 extern int run_treeducken(std::string params);
+extern Rcpp::List bdsim_species_tree(SEXP sbr_, SEXP sdr_, SEXP numbsim_, SEXP n_tips_);
 
 #endif /* Engine_h */

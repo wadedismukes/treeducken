@@ -12,6 +12,9 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <Rcpp.h>
+
+using namespace Rcpp;
 
 class Node
 {
@@ -30,7 +33,7 @@ class Node
         bool    isDuplication;
         double  birthTime, deathTime;
         double  branchLength;
-        
+
     public:
                 Node();
                 ~Node();
@@ -96,12 +99,15 @@ class Tree
         void        setExtantRoot(Node *r) { extantRoot = r; }
         void        setRoot(Node *r) { root = r; }
         double      getNumExtant() {return numExtant; }
+        int         getNumTips() { return extantNodes.size(); }
         double      getNumExtinct() {return numExtinct; }
         int         getNodesSize() { return (int) nodes.size(); }
         double      getTotalTreeLength();
         double      getTreeDepth();
         double      getCurrentTime() {return currentTime; }
         double      getEndTime();
+        void        setNumExtant();
+        void        setNumExtinct();
         void        rescaleTreeByOutgroupFrac(double outgroupFrac, double getTreeDepth);
         void        clearNodes(Node *cur);
         void        zeroAllFlags();
@@ -118,6 +124,12 @@ class Tree
         void        reconstructLineageFromSim(Node *currN, Node *prevN, unsigned &tipCounter, unsigned &intNodeCounter);
         int         calculatePatristicDistance(Node *n1, Node *n2);
 
+        std::vector<std::string>    getTipNames();
+        NumericMatrix getEdges();
+        std::vector<double> getEdgeLengths();
+        int         getNnodes() { return (int) nodes.size() - (numExtant + numExtinct);}
+
+
         virtual double  getTimeToNextEvent() { return 0.0; }
         virtual void    lineageBirthEvent(unsigned int indx) { return; }
         virtual void    lineageDeathEvent(unsigned int indx) { return; }
@@ -127,6 +139,6 @@ class Tree
         virtual std::string    printNewickTree() { return "t";}
 
         friend class Node;
-        
+
 };
 #endif /* Tree_hpp */

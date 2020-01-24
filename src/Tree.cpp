@@ -214,6 +214,7 @@ void Tree::reconstructLineageFromSim(Node *currN, Node *prevN, unsigned &tipCoun
 
         p = new Node();
         tipCounter++;
+        p->setIndx(tipCounter);
         p->setBranchLength(brlen);
         p->setIsTip(true);
         p->setName(prevN->getName());
@@ -236,6 +237,7 @@ void Tree::reconstructLineageFromSim(Node *currN, Node *prevN, unsigned &tipCoun
         if(oFlag > 1){
             Node *s1 = new Node();
             intNodeCounter++;
+            s1->setIndx(intNodeCounter);
             if(prevN->getLdes()->getFlag() > 0)
                 reconstructLineageFromSim(s1, prevN->getLdes(), tipCounter, intNodeCounter);
             if(prevN->getRdes()->getFlag() > 0)
@@ -414,3 +416,109 @@ int Tree::calculatePatristicDistance(Node *n1, Node *n2){
     }
     return count;
 }
+
+
+std::vector<std::string> Tree::getTipNames(){
+    std::vector<std::string> tipNames;
+
+    for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it){
+        if((*it)->getIsTip())
+            tipNames.push_back((*it)->getName());
+    }
+    return tipNames;
+}
+
+void Tree::setNumExtant(){
+    numExtant = 0;
+    for(auto it = nodes.begin(); it != nodes.end(); ++it){
+        if((*it)->getIsTip() && (*it)->getIsExtant())
+            numExtant++;
+    }
+}
+
+void Tree::setNumExtinct(){
+    numExtinct = 0;
+    for(auto it = nodes.begin(); it != nodes.end(); ++it){
+        if((*it)->getIsTip() && (*it)->getIsExtinct())
+            numExtinct++;
+    }
+}
+
+
+// remember if something breaks you edited the notoriously sketchy reconstruct lineages WTD
+
+NumericMatrix Tree::getEdges(){
+    this->setNumExtant();
+    this->setNumExtinct();
+    int numRows = (int) nodes.size() - 1;
+    NumericMatrix edgeMat(numRows, 2);
+
+    int tipCount = 1;
+    int extinctTipCount = numExtant + 1;
+    int bicount = 0;
+    int intNodeCount = numExtant + numExtinct + 1;
+    for(int i = 1; i < nodes.size(); i++){
+        NumericMatrix::Row row = edgeMat(i - 1, _);
+        if(nodes[i]->getIsTip()){
+            row[0] = intNodeCount;
+            row[1] = tipCount;
+            if(nodes[i]->getIsExtinct()){
+                row[0] = intNodeCount;
+                row[1] = extinctTipCount;
+                bicount++;
+                extinctTipCount++;
+            }
+            else{
+                row[0] = intNodeCount;
+                row[1] = tipCount;
+                bicount++;
+                tipCount++;
+            }
+            if(bicount == 2)
+                intNodeCount--;
+        }
+        else if(nodes[i]->getIsRoot()){
+            // do nothing
+        }
+        else{
+            if(bicount == 2){
+                row[0] = intNodeCount;
+                intNodeCount += 2;
+                row[1] = intNodeCount;
+                bicount = 0;
+            }
+            else{
+                row[0] = intNodeCount;
+                intNodeCount++;
+                row[1] = intNodeCount;
+                bicount = 0;
+            }
+
+        }
+    }
+
+
+    return edgeMat;
+}
+
+
+
+std::vector<double> Tree::getEdgeLengths(){
+    std::vector<double> edgeLengths;
+    double brlen;
+    for(int i = 1; i < nodes.size(); i++){
+        if(nodes[i]->getIsTip()){
+            brlen = nodes[i]->getDeathTime() - nodes[i]->getBirthTime();
+            edgeLengths.push_back(brlen);
+        }
+        else if(nodes[i]->getIsRoot()){
+            // do nothing
+        }
+        else{
+            brlen = nodes[i]->getDeathTime() - nodes[i]->getBirthTime();
+            edgeLengths.push_back(brlen);
+        }
+    }
+    return edgeLengths;
+}
+
