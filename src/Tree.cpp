@@ -453,49 +453,58 @@ NumericMatrix Tree::getEdges(){
     int numRows = (int) nodes.size() - 1;
     NumericMatrix edgeMat(numRows, 2);
 
-    int tipCount = 1;
-    int extinctTipCount = numExtant + 1;
-    int bicount = 0;
-    int intNodeCount = numExtant + numExtinct + 1;
-    for(int i = 1; i < nodes.size(); i++){
-        NumericMatrix::Row row = edgeMat(i - 1, _);
-        if(nodes[i]->getIsTip()){
-            row[0] = intNodeCount;
-            row[1] = tipCount;
-            if(nodes[i]->getIsExtinct()){
-                row[0] = intNodeCount;
-                row[1] = extinctTipCount;
-                bicount++;
-                extinctTipCount++;
-            }
-            else{
-                row[0] = intNodeCount;
-                row[1] = tipCount;
-                bicount++;
-                tipCount++;
-            }
-            if(bicount == 2)
-                intNodeCount--;
-        }
-        else if(nodes[i]->getIsRoot()){
-            // do nothing
-        }
-        else{
-            if(bicount == 2){
-                row[0] = intNodeCount;
-                intNodeCount += 2;
-                row[1] = intNodeCount;
-                bicount = 0;
-            }
-            else{
-                row[0] = intNodeCount;
-                intNodeCount++;
-                row[1] = intNodeCount;
-                bicount = 0;
-            }
-
+    for(int i=1; i < nodes.size(); i++){
+        if(!(nodes[i]->getIsRoot())){
+            NumericMatrix::Row row = edgeMat(i - 1, _);
+            row[0] = nodes[i]->getAnc()->getIndex();
+            row[1] = nodes[i]->getIndex();
         }
     }
+
+
+
+    // TODO: fix for extinct species
+    // int tipCount = 1;
+    // int extinctTipCount = numExtant + 1;
+    // int bicount = 0;
+    // int intNodeCount = numExtant + numExtinct + 1;
+    // for(int i = 1; i < nodes.size(); i++){
+    //     NumericMatrix::Row row = edgeMat(i - 1, _);
+    //     if(nodes[i]->getIsTip()){
+    //         if(nodes[i]->getIsExtinct()){
+    //             row[0] = intNodeCount;
+    //             row[1] = extinctTipCount;
+    //             bicount++;
+    //             extinctTipCount++;
+    //         }
+    //         else{
+    //             row[0] = intNodeCount;
+    //             row[1] = tipCount;
+    //             bicount++;
+    //             tipCount++;
+    //         }
+    //         if(bicount == 2)
+    //             intNodeCount--;
+    //     }
+    //     else if(nodes[i]->getIsRoot()){
+    //         // do nothing
+    //     }
+    //     else{
+    //         if(bicount == 2){
+    //             row[0] = intNodeCount;
+    //             intNodeCount += 2;
+    //             row[1] = intNodeCount;
+    //             bicount = 0;
+    //         }
+    //         else{
+    //             row[0] = intNodeCount;
+    //             intNodeCount++;
+    //             row[1] = intNodeCount;
+    //             bicount = 0;
+    //         }
+
+    //     }
+    // }
 
 
     return edgeMat;

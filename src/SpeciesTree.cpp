@@ -258,13 +258,14 @@ void SpeciesTree::setGSATipTreeFlags(){
 void SpeciesTree::popNodes(){
     nodes.clear();
     extantNodes.clear();
+
     recPopNodes(this->getRoot());
 
-    int indx;
-    for(std::vector<Node*>::iterator p=nodes.begin(); p!=nodes.end(); p++){
-        indx = (int) (p - nodes.begin());
-        (*p)->setIndx(indx);
-    }
+   // int indx;
+    // for(std::vector<Node*>::iterator p=nodes.begin(); p!=nodes.end(); p++){
+    //     indx = (int) (p - nodes.begin());
+    //     (*p)->setIndx(indx);
+    // }
 }
 
 void SpeciesTree::recPopNodes(Node *p){
@@ -288,8 +289,8 @@ void SpeciesTree::recPopNodes(Node *p){
 
 void SpeciesTree::reconstructTreeFromGSASim(Node *oRoot){
     Node *n = new Node();
-    unsigned tipCounter = extantStop;
-    unsigned intNodeCounter = 0;
+    unsigned tipCounter = 0;
+    unsigned intNodeCounter = extantStop;
     reconstructLineageFromGSASim(n, oRoot, tipCounter, intNodeCounter);
     delete n;
 }
@@ -315,6 +316,7 @@ void SpeciesTree::reconstructLineageFromGSASim(Node *currN, Node *prevN, unsigne
 
         p = new Node();
         tipCounter++;
+        p->setIndx(tipCounter);
         p->setBranchLength(brlen);
         p->setIsTip(true);
         p->setBirthTime(prevN->getBirthTime());
@@ -336,6 +338,7 @@ void SpeciesTree::reconstructLineageFromGSASim(Node *currN, Node *prevN, unsigne
         if(oFlag > 1){
             Node *s1 = new Node();
             intNodeCounter++;
+            s1->setIndx(intNodeCounter);
             if(prevN->getLdes()->getFlag() > 0)
                 reconstructLineageFromGSASim(s1, prevN->getLdes(), tipCounter, intNodeCounter);
             if(prevN->getRdes()->getFlag() > 0)

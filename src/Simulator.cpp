@@ -38,7 +38,14 @@ Simulator::Simulator(unsigned nt, double lambda, double mu, double rho)
 }
 
 
-Simulator::Simulator(unsigned ntax, double lambda, double mu, double rho, unsigned numLociToSim, double gbr, double gdr, double lgtr)
+Simulator::Simulator(unsigned ntax,
+                     double lambda,
+                     double mu,
+                     double rho,
+                     unsigned numLociToSim,
+                     double gbr,
+                     double gdr,
+                     double lgtr)
 {
     spTree = nullptr;
     geneTree = nullptr;
@@ -196,6 +203,8 @@ void Simulator::processSpTreeSim(){
     spTree->setSpeciationRate(speciationRate);
     spTree->setExtinctionRate(extinctionRate);
     spTree->popNodes();
+    spTree->setNumExtant();
+    spTree->setNumExtinct();
 
 }
 

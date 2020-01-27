@@ -147,6 +147,14 @@ class Engine{
 
 
 extern int run_treeducken(std::string params);
-extern Rcpp::List bdsim_species_tree(SEXP sbr_, SEXP sdr_, SEXP numbsim_, SEXP n_tips_);
+extern Rcpp::List bdsim_species_tree(double sbr,
+                                     double sdr,
+                                     int numbsim,
+                                     int n_tips);
 
+extern Rcpp::List sim_locustree(Rcpp::List species_tree,
+                                double gbr,
+                                double gdr,
+                                double lgtr,
+                                int numLoci);
 #endif /* Engine_h */

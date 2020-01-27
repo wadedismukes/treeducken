@@ -213,8 +213,7 @@ void LocusTree::lineageTransferEvent(int indx, bool randTrans = 0){
 double LocusTree::getTimeToNextEvent(){
     double sumrt = geneBirthRate + geneDeathRate + transferRate;
     double returnTime = 0.0;
-    // TODO: this is wrong...
-    returnTime = -log(unif_rand()) / (sumrt);
+    returnTime = -log(unif_rand()) / (double(numExtant) * sumrt);
     currentTime += returnTime;
     return returnTime;
 }

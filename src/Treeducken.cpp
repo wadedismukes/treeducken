@@ -282,17 +282,14 @@ int run_treeducken(std::string params_file) {
 }
 
 
-Rcpp::List bdsim_species_tree(SEXP sbr_,
-                        SEXP sdr_,
-                        SEXP numbsim_,
-                        SEXP n_tips_){
+Rcpp::List bdsim_species_tree(double sbr,
+                        double sdr,
+                        int numbsim,
+                        int n_tips){
 
     std::vector<SpeciesTree*> speciesTrees;
     Simulator *phySimulator;
-    double sbr = as<double>(sbr_);
-    double sdr = as<double>(sdr_);
-    unsigned numbsim = as<unsigned>(numbsim_);
-    unsigned n_tips = as<unsigned>(n_tips_);
+
 
     List multiphy;
     for(int i = 0; i < numbsim; i++){
@@ -320,5 +317,47 @@ Rcpp::List bdsim_species_tree(SEXP sbr_,
 
 
     delete phySimulator;
+    return multiphy;
+}
+
+
+
+Rcpp::List sim_locus_tree(std::string species_tree,
+                          double gbr,
+                          double gdr,
+                          double numbsim){
+
+    std::vector<LocusTree*> LocusTrees;
+//Simulator *phySimulator = new Simulator();
+    List multiphy;
+    for(int i = 0; i < numbsim; i++){
+        //phySimulator = new Simulator(unsigned ntax,
+       //                       double lambda,
+        //                      double mu,
+        //                      double rho,
+        //                      unsigned numLociToSim,
+        //                      double gbr,
+        //                      double gdr,
+        //                      double lgtr);
+        // phySimulator->simSpeciesTree();
+        // speciesTrees.push_back(phySimulator->getSpeciesTree());
+        //
+        // NumericMatrix edges_rmat = speciesTrees[i]->getEdges();
+        //
+        //
+        // List phy = List::create(Named("edge") = edges_rmat,
+        //                         Named("edge.length") = speciesTrees[i]->getEdgeLengths(),
+        //                         Named("Nnode") = speciesTrees[i]->getNnodes(),
+        //                         Named("tip.label") = speciesTrees[i]->getTipNames(),
+        //                         Named("root.edge") = speciesTrees[i]->getRoot()->getDeathTime() -
+        //                             speciesTrees[i]->getRoot()->getBirthTime());
+        // phy.attr("class") = "phylo";
+        // multiphy.push_back(phy);
+    }
+
+
+
+
+    //delete phySimulator;
     return multiphy;
 }

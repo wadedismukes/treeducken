@@ -17,7 +17,7 @@
 class SpeciesTree : public Tree
 {
     private:
-    
+
         double        speciationRate, extinctionRate;
         unsigned      extantStop;
 
@@ -29,24 +29,24 @@ class SpeciesTree : public Tree
         void          setExtinctionRate(double er) {extinctionRate = er; }
 
         // tree-building functions
-        virtual double        getTimeToNextEvent(); 
+        virtual double        getTimeToNextEvent();
         double                getTimeToNextEventMoran();
         virtual void          lineageBirthEvent(unsigned indx);
         virtual void          lineageDeathEvent(unsigned indx);
         void          ermEvent(double curTime);
         void          setNewLineageInfo(unsigned indx, Node *r, Node *l);
-    
+
         // set node parameters across tree
         void          setBranchLengths();
         void          setPresentTime(double currentT);
         void          setTreeTipNames();
         void          recTipNamer(Node *p, unsigned &extinctCount, unsigned &tipCount);
-        
+
 
         std::string   printNewickTree();
         std::string   printExtNewickTree();
         void          recGetNewickTree(Node *p, std::stringstream &ss);
-    
+
         // simulation functions
         void          setGSATipTreeFlags();
         void          reconstructTreeFromGSASim(Node *oRoot);
@@ -62,7 +62,7 @@ class SpeciesTree : public Tree
         bool                        macroEvent(int indx);
         std::pair<int, int>         preorderTraversalStep(int index);
         int                         postOrderTraversalStep(int index);
-        
+
 
 
 };
