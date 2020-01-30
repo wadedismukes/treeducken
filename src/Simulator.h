@@ -107,6 +107,7 @@ class Simulator
         std::string    printExtantGeneTreeNewick(int i, int j);
         std::set<double, std::greater<double> > getEpochs();
         SpeciesTree*    getSpeciesTree() {return spTree;}
+
 };
 
 

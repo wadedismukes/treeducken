@@ -13,6 +13,9 @@
 #include <sstream>
 #include <map>
 #include <set>
+#include <Rcpp.h>
+
+using namespace Rcpp;
 
 class SpeciesTree : public Tree
 {
@@ -24,6 +27,7 @@ class SpeciesTree : public Tree
     public:
                       SpeciesTree(unsigned numTaxa, double curTime, double specRate, double extRate);
                       SpeciesTree(unsigned numTaxa);
+                      SpeciesTree(SEXP rtree);
         virtual       ~SpeciesTree();
         void          setSpeciationRate(double sr) {speciationRate = sr; }
         void          setExtinctionRate(double er) {extinctionRate = er; }
@@ -62,6 +66,7 @@ class SpeciesTree : public Tree
         bool                        macroEvent(int indx);
         std::pair<int, int>         preorderTraversalStep(int index);
         int                         postOrderTraversalStep(int index);
+
 
 
 

@@ -77,6 +77,37 @@ Tree::Tree(unsigned numTax){
     //currentTime = 0.0;
 }
 
+// Implicit converter from R tree object (ala APE) into C++ tree class
+Tree::Tree(SEXP rtree){
+    Rcpp::List tr(rtree);
+    Rcpp::NumericMatrix edge_mat = tr["edge"];
+    std::vector<double> edge_lengths = tr["edge.length"];
+    std::vector<std::string> tip_names = tr["tip.label"];
+    double root_edge = tr["root.edge"];
+    numNodes = tr["Nnode"];
+    numTaxa = (int) tip_names.size();
+    nodes.resize(numNodes + numTaxa);
+    root->setBirthTime(0.0);
+    root->setBranchLength(root_edge);
+    root->setDeathTime(root->getBranchLength() - root->getBirthTime());
+    root->setIndx(0);
+    nodes[0] = root;
+    root->setIsExtant(false);
+    nodes.push_back(root);
+    std::vector<int> nodeIndices;
+    for(int i = 1; i < numNodes + numTaxa; i++){
+        Node *p = new Node();
+        p->setBranchLength(edge_lengths[i-1]);
+        if(i < numTaxa){
+            p->setName(tip_names[i-1]);
+            p->setIsTip(true);
+
+        }
+        p->setIndx(i);
+        nodes[i] = p;
+    }
+}
+
 Tree::~Tree(){
     // if(root != nullptr){
     //     delete root;
@@ -448,8 +479,6 @@ void Tree::setNumExtinct(){
 // remember if something breaks you edited the notoriously sketchy reconstruct lineages WTD
 
 NumericMatrix Tree::getEdges(){
-    this->setNumExtant();
-    this->setNumExtinct();
     int numRows = (int) nodes.size() - 1;
     NumericMatrix edgeMat(numRows, 2);
 
@@ -461,52 +490,6 @@ NumericMatrix Tree::getEdges(){
         }
     }
 
-
-
-    // TODO: fix for extinct species
-    // int tipCount = 1;
-    // int extinctTipCount = numExtant + 1;
-    // int bicount = 0;
-    // int intNodeCount = numExtant + numExtinct + 1;
-    // for(int i = 1; i < nodes.size(); i++){
-    //     NumericMatrix::Row row = edgeMat(i - 1, _);
-    //     if(nodes[i]->getIsTip()){
-    //         if(nodes[i]->getIsExtinct()){
-    //             row[0] = intNodeCount;
-    //             row[1] = extinctTipCount;
-    //             bicount++;
-    //             extinctTipCount++;
-    //         }
-    //         else{
-    //             row[0] = intNodeCount;
-    //             row[1] = tipCount;
-    //             bicount++;
-    //             tipCount++;
-    //         }
-    //         if(bicount == 2)
-    //             intNodeCount--;
-    //     }
-    //     else if(nodes[i]->getIsRoot()){
-    //         // do nothing
-    //     }
-    //     else{
-    //         if(bicount == 2){
-    //             row[0] = intNodeCount;
-    //             intNodeCount += 2;
-    //             row[1] = intNodeCount;
-    //             bicount = 0;
-    //         }
-    //         else{
-    //             row[0] = intNodeCount;
-    //             intNodeCount++;
-    //             row[1] = intNodeCount;
-    //             bicount = 0;
-    //         }
-
-    //     }
-    // }
-
-
     return edgeMat;
 }
 
@@ -515,16 +498,21 @@ NumericMatrix Tree::getEdges(){
 std::vector<double> Tree::getEdgeLengths(){
     std::vector<double> edgeLengths;
     double brlen;
-    for(int i = 1; i < nodes.size(); i++){
-        if(nodes[i]->getIsTip()){
-            brlen = nodes[i]->getDeathTime() - nodes[i]->getBirthTime();
+    for(std::vector<Node*>::iterator it = nodes.begin(); it < nodes.end(); ++it){
+        if((*it)->getIsTip()){
+            Rcout << "%%%%% bt " << (*it)->getBirthTime() << std::endl;
+            Rcout << "%%%%% dt " << (*it)->getDeathTime() << std::endl;
+            brlen = (*it)->getDeathTime() - (*it)->getBirthTime();
+            Rcout << "#### brlen " << brlen << std::endl;
             edgeLengths.push_back(brlen);
         }
-        else if(nodes[i]->getIsRoot()){
-            // do nothing
+        else if((*it)->getIsRoot()){
+        //    Rcout << "birth time of root " << nodes[i]->getBirthTime() << std::endl;
+           // Rcout << "death time of root " << nodes[i]->getDeathTime() << std::endl;
         }
         else{
-            brlen = nodes[i]->getDeathTime() - nodes[i]->getBirthTime();
+            brlen = (*it)->getDeathTime() - (*it)->getBirthTime();
+            Rcout << "#### brlen " << brlen << std::endl;
             edgeLengths.push_back(brlen);
         }
     }

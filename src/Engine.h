@@ -152,7 +152,7 @@ extern Rcpp::List bdsim_species_tree(double sbr,
                                      int numbsim,
                                      int n_tips);
 
-extern Rcpp::List sim_locustree(Rcpp::List species_tree,
+extern Rcpp::List sim_locus_tree(SpeciesTree* species_tree,
                                 double gbr,
                                 double gdr,
                                 double lgtr,

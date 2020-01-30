@@ -322,15 +322,16 @@ Rcpp::List bdsim_species_tree(double sbr,
 
 
 
-Rcpp::List sim_locus_tree(std::string species_tree,
+Rcpp::List sim_locus_tree(SpeciesTree* species_tree,
                           double gbr,
                           double gdr,
-                          double numbsim){
+                          double lgtr,
+                          int numbsim){
 
-    std::vector<LocusTree*> LocusTrees;
+    //std::vector<LocusTree*> LocusTrees;
 //Simulator *phySimulator = new Simulator();
-    List multiphy;
-    for(int i = 0; i < numbsim; i++){
+    Rcpp::List multiphy = List::create();
+    //for(int i = 0; i < numbsim; i++){
         //phySimulator = new Simulator(unsigned ntax,
        //                       double lambda,
         //                      double mu,
@@ -353,7 +354,7 @@ Rcpp::List sim_locus_tree(std::string species_tree,
         //                             speciesTrees[i]->getRoot()->getBirthTime());
         // phy.attr("class") = "phylo";
         // multiphy.push_back(phy);
-    }
+    //}
 
 
 

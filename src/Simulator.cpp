@@ -10,6 +10,7 @@
 #include <iostream>
 #include <Rcpp.h>
 
+
 using namespace Rcpp;
 
 Simulator::Simulator(unsigned nt, double lambda, double mu, double rho)
@@ -169,8 +170,8 @@ bool Simulator::gsaBDSim(){
     spTree->setTreeTipNames();
     currentSimTime = spTree->getCurrentTimeFromExtant();
     if(treeScale > 0.0){
-        spTree->scaleTree(treeScale, currentSimTime);
-        currentSimTime = treeScale;
+      spTree->scaleTree(treeScale, currentSimTime);
+      currentSimTime = treeScale;
     }
 
     treeComplete = true;
@@ -577,3 +578,4 @@ int Simulator::findNumberTransfers(){
 double Simulator::findTMRCAGeneTree(int i, int j){
     return geneTrees[i][j]->getTreeDepth();
 }
+

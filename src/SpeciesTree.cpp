@@ -12,7 +12,6 @@
 
 using namespace Rcpp;
 
-RNGScope scope;
 
 SpeciesTree::SpeciesTree(unsigned numTaxa, double ct, double br, double dr) : Tree(numTaxa, 0.0){
     currentTime = 0.0;
@@ -24,6 +23,11 @@ SpeciesTree::SpeciesTree(unsigned numTaxa, double ct, double br, double dr) : Tr
 
 SpeciesTree::SpeciesTree(unsigned numTaxa) : Tree(numTaxa){
     extantStop = numTaxa;
+}
+
+SpeciesTree::SpeciesTree(SEXP rtree) : Tree(rtree){
+  speciationRate = 0.0;
+  extinctionRate = 0.0;
 }
 
 SpeciesTree::~SpeciesTree(){
@@ -104,8 +108,8 @@ void SpeciesTree::setNewLineageInfo(unsigned int indx, Node *r, Node *l){
 void SpeciesTree::setBranchLengths(){
     double bl;
     for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it){
-        bl = (*it)->getDeathTime() - (*it)->getBirthTime();
-        (*it)->setBranchLength(bl);
+      bl = (*it)->getDeathTime() - (*it)->getBirthTime();
+      (*it)->setBranchLength(bl);
     }
 }
 

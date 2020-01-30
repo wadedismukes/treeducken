@@ -91,6 +91,7 @@ class Tree
     public:
                     Tree(unsigned numExtant, double cTime);
                     Tree(unsigned numTaxa);
+                    Tree(SEXP rtree);
         virtual      ~Tree();
         void        setOutgroup(Node *og) { outgrp = og; }
         Node*       getOutgroup() { return outgrp; }

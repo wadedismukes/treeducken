@@ -8,6 +8,7 @@
 //   http://gallery.rcpp.org/
 //
 #include "Engine.h"
+#include <string.h>
 
 // [[Rcpp::export]]
 int treeducken(std::string params_file) {
@@ -29,24 +30,41 @@ Rcpp::List sim_sptree_bdp(SEXP sbr_, SEXP sdr_, SEXP numbsim_, SEXP n_tips_){
         stop("'numbsim' must be more than 1");
     if(sdr < 0.0)
         stop("'sdr' must be 0.0 or greater.");
-    if(n_tips > 1)
+    if(n_tips < 1)
         stop("'n_tips' must be greater than 1.");
     return bdsim_species_tree(sbr, sdr, numbsim, n_tips);
 }
 
-// Rcpp::List sim_locustree_bdp(Rcpp::List species_tree,
-//                          SEXP gbr,
-//                          SEXP gdr,
-//                          SEXP lgtr,
-//                          SEXP numLoci){
-//     if(species_tree.attr("class") != "phylo"){
-//         stop("species_tree must be an object of class phylo'.");
-//     }
-//     if(gbr <= 0.0 || gdr < 0.0){
-//         stop("'gbr' must be positive and greater than 'gdr'.");
-//     }
-//     if(gdr < 0.0){
-//         stop("'gdr' must be a positive value.");
-//     }
-//     return sim_locustree(species_tree, gbr, gdr, lgtr, numLoci);
-// }
+// [[Rcpp::export]]
+Rcpp::List sim_locustree_bdp(SEXP species_tree_,
+                          SEXP gbr_,
+                          SEXP gdr_,
+                          SEXP lgtr_,
+                          SEXP numLoci_){
+    Rcpp::List species_tree = as<Rcpp::List>(species_tree_);
+    double gbr = as<double>(gbr_);
+    double gdr = as<double>(gdr_);
+    double lgtr = as<double>(lgtr_);
+    int numLoci = as<int>(numLoci_);
+    if(strcmp(species_tree.attr("class"), "phylo") != 0){
+         stop("species_tree must be an object of class phylo'.");
+    }
+    if(gbr <= 0.0){
+         stop("'gbr' must be positive or 0.0.");
+    }
+    if(gbr < gdr){
+        stop("'gbr' must be greater than 'gdr'.");
+    }
+    if(gdr <= 0.0){
+        stop("'gdr' must be a positive value or 0.0.");
+    }
+    if(lgtr <= 0.0){
+        stop("'lgtr' must be a positive value or 0.0.");
+    }
+    if(numLoci < 1){
+        stop("'numLoci' must be larger than 1.");
+    }
+    SpeciesTree* specTree = new SpeciesTree(species_tree);
+
+    return sim_locus_tree(specTree, gbr, gdr, lgtr, numLoci);
+}
