@@ -288,6 +288,7 @@ Rcpp::List bdsim_species_tree(double sbr,
                         int n_tips){
 
     std::vector<SpeciesTree*> speciesTrees;
+    speciesTrees.resize(numbsim);
     Simulator *phySimulator;
 
 
@@ -298,16 +299,16 @@ Rcpp::List bdsim_species_tree(double sbr,
                                      sdr,
                                      1);
         phySimulator->simSpeciesTree();
-        speciesTrees.push_back(phySimulator->getSpeciesTree());
+        speciesTrees[i] = phySimulator->getSpeciesTree();
 
         NumericMatrix edges_rmat = speciesTrees[i]->getEdges();
 
 
         List phy = List::create(Named("edge") = edges_rmat,
-                           Named("edge.length") = speciesTrees[i]->getEdgeLengths(),
-                           Named("Nnode") = speciesTrees[i]->getNnodes(),
-                           Named("tip.label") = speciesTrees[i]->getTipNames(),
-                           Named("root.edge") = speciesTrees[i]->getRoot()->getDeathTime() -
+                                Named("edge.length") = speciesTrees[i]->getEdgeLengths(),
+                                Named("Nnode") = speciesTrees[i]->getNnodes(),
+                                Named("tip.label") = speciesTrees[i]->getTipNames(),
+                                Named("root.edge") = speciesTrees[i]->getRoot()->getDeathTime() -
                                     speciesTrees[i]->getRoot()->getBirthTime());
         phy.attr("class") = "phylo";
         multiphy.push_back(phy);

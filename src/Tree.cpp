@@ -476,7 +476,8 @@ void Tree::setNumExtinct(){
 }
 
 
-// remember if something breaks you edited the notoriously sketchy reconstruct lineages WTD
+// remember if something breaks you edited the notoriously
+//  sketchy reconstruct lineages WTD
 
 NumericMatrix Tree::getEdges(){
     int numRows = (int) nodes.size() - 1;
@@ -497,25 +498,27 @@ NumericMatrix Tree::getEdges(){
 
 std::vector<double> Tree::getEdgeLengths(){
     std::vector<double> edgeLengths;
-    double brlen;
-    for(std::vector<Node*>::iterator it = nodes.begin(); it < nodes.end(); ++it){
-        if((*it)->getIsTip()){
-            Rcout << "%%%%% bt " << (*it)->getBirthTime() << std::endl;
-            Rcout << "%%%%% dt " << (*it)->getDeathTime() << std::endl;
-            brlen = (*it)->getDeathTime() - (*it)->getBirthTime();
-            Rcout << "#### brlen " << brlen << std::endl;
-            edgeLengths.push_back(brlen);
-        }
-        else if((*it)->getIsRoot()){
-        //    Rcout << "birth time of root " << nodes[i]->getBirthTime() << std::endl;
-           // Rcout << "death time of root " << nodes[i]->getDeathTime() << std::endl;
-        }
-        else{
-            brlen = (*it)->getDeathTime() - (*it)->getBirthTime();
-            Rcout << "#### brlen " << brlen << std::endl;
-            edgeLengths.push_back(brlen);
-        }
-    }
+    // double brlen;
+    edgeLengths = branchLengths;
+    edgeLengths.erase(edgeLengths.begin());
+    // for(std::vector<Node*>::iterator it = nodes.begin() + 1; it < nodes.end(); ++it){
+    //     if((*it)->getIsTip()){
+    //         Rcout << "%%%%% bt " << (*it)->getBirthTime() << std::endl;
+    //         Rcout << "%%%%% dt " << (*it)->getDeathTime() << std::endl;
+    //         brlen = (*it)->getDeathTime() - (*it)->getBirthTime();
+    //         Rcout << "#### brlen " << brlen << std::endl;
+    //         edgeLengths.push_back(brlen);
+    //     }
+    //     else if((*it)->getIsRoot()){
+    //     //    Rcout << "birth time of root " << nodes[i]->getBirthTime() << std::endl;
+    //        // Rcout << "death time of root " << nodes[i]->getDeathTime() << std::endl;
+    //     }
+    //     else{
+    //         brlen = (*it)->getDeathTime() - (*it)->getBirthTime();
+    //         Rcout << "#### brlen " << brlen << std::endl;
+    //         edgeLengths.push_back(brlen);
+    //     }
+    // }
     return edgeLengths;
 }
 

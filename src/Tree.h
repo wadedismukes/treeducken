@@ -87,6 +87,7 @@ class Tree
         unsigned numTaxa, numNodes, numTotalTips;
         unsigned numExtant, numExtinct;
         double  currentTime;
+        std::vector<double> branchLengths;
 
     public:
                     Tree(unsigned numExtant, double cTime);

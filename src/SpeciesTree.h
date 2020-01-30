@@ -28,6 +28,7 @@ class SpeciesTree : public Tree
                       SpeciesTree(unsigned numTaxa, double curTime, double specRate, double extRate);
                       SpeciesTree(unsigned numTaxa);
                       SpeciesTree(SEXP rtree);
+                      SpeciesTree(const SpeciesTree& speciestree, unsigned numTaxa);
         virtual       ~SpeciesTree();
         void          setSpeciationRate(double sr) {speciationRate = sr; }
         void          setExtinctionRate(double er) {extinctionRate = er; }

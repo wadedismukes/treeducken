@@ -30,6 +30,22 @@ SpeciesTree::SpeciesTree(SEXP rtree) : Tree(rtree){
   extinctionRate = 0.0;
 }
 
+SpeciesTree::SpeciesTree(const SpeciesTree& speciestree, unsigned numTaxa) : Tree(numTaxa) {
+  extantStop = numTaxa;
+  nodes = speciestree.nodes;
+  extantNodes = speciestree.extantNodes;
+  root = speciestree.root;
+  speciationRate = speciestree.speciationRate;
+  extinctionRate = speciestree.extinctionRate;
+  extantStop = speciestree.extantStop;
+  extantRoot = speciestree.extantRoot;
+  currentTime = speciestree.currentTime;
+  numNodes = speciestree.numNodes;
+  numTotalTips = speciestree.numTotalTips;
+  numExtant = speciestree.numExtant;
+  numExtinct = speciestree.numExtinct;
+}
+
 SpeciesTree::~SpeciesTree(){
 
 }
@@ -109,6 +125,7 @@ void SpeciesTree::setBranchLengths(){
     double bl;
     for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it){
       bl = (*it)->getDeathTime() - (*it)->getBirthTime();
+      branchLengths.push_back(bl);
       (*it)->setBranchLength(bl);
     }
 }
