@@ -91,7 +91,7 @@ int run_treeducken(std::string params_file) {
 
         std::string outName;
         std::string stn;
-        int nt = 100, r = 10, nloc = 10, ipp = 0, ne = 0, ngen = 0;
+        int nt = 100, r = 100, nloc = 0, ipp = 0, ne = 0, ngen = 0;
         double sbr = 0.5, sdr = 0.2, gbr = 0.0, gdr = 0.0, lgtr = 0.0, ts = -1, og = 0.0;
         bool sout = 1;
         bool mst = 0;
@@ -292,7 +292,7 @@ Rcpp::List bdsim_species_tree(double sbr,
     Simulator *phySimulator;
 
 
-    List multiphy;
+    List multiphy(numbsim);
     for(int i = 0; i < numbsim; i++){
         phySimulator = new Simulator(n_tips,
                                      sbr,
@@ -308,10 +308,10 @@ Rcpp::List bdsim_species_tree(double sbr,
                                 Named("edge.length") = speciesTrees[i]->getEdgeLengths(),
                                 Named("Nnode") = speciesTrees[i]->getNnodes(),
                                 Named("tip.label") = speciesTrees[i]->getTipNames(),
-                                Named("root.edge") = speciesTrees[i]->getRoot()->getDeathTime() -
+                                Named("root.edge") = speciesTrees[i]->getCurrentTime() -
                                     speciesTrees[i]->getRoot()->getBirthTime());
         phy.attr("class") = "phylo";
-        multiphy.push_back(phy);
+        multiphy[i] = phy;
     }
 
 

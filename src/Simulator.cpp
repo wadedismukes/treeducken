@@ -168,9 +168,7 @@ bool Simulator::gsaBDSim(){
     processSpTreeSim();
     spTree->setBranchLengths();
     spTree->setTreeTipNames();
-    Rcout << "currenttime BEFORE " << currentSimTime << std::endl;
     currentSimTime = spTree->getCurrentTimeFromExtant();
-    Rcout << "currentTime AFTER " << currentSimTime << std::endl;
     if(treeScale > 0.0){
       spTree->scaleTree(treeScale, currentSimTime);
       currentSimTime = treeScale;
@@ -199,7 +197,7 @@ void Simulator::processGSASim(){
     Node *simRoot = spTree->getRoot();
     tt->setRoot(simRoot);
     tt->reconstructTreeFromGSASim(simRoot);
-    gsaTrees.push_back(tt);
+    gsaTrees.push_back(std::move(tt));
 }
 
 void Simulator::processSpTreeSim(){

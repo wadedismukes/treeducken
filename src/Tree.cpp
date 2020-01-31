@@ -51,8 +51,8 @@ Tree::Tree(unsigned numExta, double curTime){
     root->setBirthTime(0.0);
     root->setIndx(0);
     root->setIsExtant(true);
-    nodes.push_back(root);
-    extantNodes.push_back(root);
+    nodes.push_back(std::move(root));
+    extantNodes.push_back(std::move(root));
     numExtant = 1;
     numTaxa = numExta;
     numExtinct = 0;
@@ -89,23 +89,33 @@ Tree::Tree(SEXP rtree){
     nodes.resize(numNodes + numTaxa);
     root->setBirthTime(0.0);
     root->setBranchLength(root_edge);
-    root->setDeathTime(root->getBranchLength() - root->getBirthTime());
-    root->setIndx(0);
-    nodes[0] = root;
+    root->setDeathTime(root->getBranchLength() - 0.0);
+    root->setIndx(numTaxa + 1);
+    nodes[numTaxa + 1] = root;
     root->setIsExtant(false);
-    nodes.push_back(root);
+
     std::vector<int> nodeIndices;
     for(int i = 1; i < numNodes + numTaxa; i++){
+        NumericMatrix::Row edgeMatRow = edge_mat(i-1,_);
+        int indx1 = edgeMatRow[0];
+        int indx2 = edgeMatRow[1];
         Node *p = new Node();
         p->setBranchLength(edge_lengths[i-1]);
         if(i < numTaxa){
             p->setName(tip_names[i-1]);
             p->setIsTip(true);
-
+            p->setBranchLength(edge_lengths[i-1]);
+            p->setAnc(nodes[indx1]);
+            nodes[i] = p;
         }
-        p->setIndx(i);
-        nodes[i] = p;
+        else{
+            p->setIndx(i);
+            p->setBranchLength(edge_lengths[i-1]);
+            nodes[i] = p;
+        }
     }
+
+
 }
 
 Tree::~Tree(){

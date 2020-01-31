@@ -111,10 +111,10 @@ void SpeciesTree::setNewLineageInfo(unsigned int indx, Node *r, Node *l){
     l->setIsExtant(true);
 
     extantNodes.erase(extantNodes.begin() + indx);
-    extantNodes.push_back(r);
-    extantNodes.push_back(l);
-    nodes.push_back(r);
-    nodes.push_back(l);
+    extantNodes.push_back(std::move(r));
+    extantNodes.push_back(std::move(l));
+    nodes.push_back(std::move(r));
+    nodes.push_back(std::move(l));
     numExtant = (int) extantNodes.size();
     r->setIndx(numExtant - 2);
     l->setIndx(numExtant - 1);
@@ -125,7 +125,7 @@ void SpeciesTree::setBranchLengths(){
     double bl;
     for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it){
       bl = (*it)->getDeathTime() - (*it)->getBirthTime();
-      branchLengths.push_back(bl);
+      branchLengths.push_back(std::move(bl));
       (*it)->setBranchLength(bl);
     }
 }
@@ -164,7 +164,7 @@ void SpeciesTree::setTreeInfo(){
                 (*it)->setIsExtinct(false);
                 (*it)->setDeathTime(currentTime);
                 numTaxa++;
-                extantNodes.push_back(*it);
+                extantNodes.push_back(std::move(*it));
             }
             else{
                 (*it)->setIsExtant(false);
@@ -293,15 +293,15 @@ void SpeciesTree::recPopNodes(Node *p){
     if(p != nullptr){
         if(p->getIsTip()){
             if(p->getIsExtant()){
-                extantNodes.push_back(p);
-                nodes.push_back(p);
+                extantNodes.push_back(std::move(p));
+                nodes.push_back(std::move(p));
             }
             else{
-                nodes.push_back(p);
+                nodes.push_back(std::move(p));
             }
         }
         else{
-            nodes.push_back(p);
+            nodes.push_back(std::move(p));
             recPopNodes(p->getLdes());
             recPopNodes(p->getRdes());
         }
