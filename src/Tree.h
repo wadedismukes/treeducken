@@ -130,8 +130,8 @@ class Tree
         NumericMatrix getEdges();
         std::vector<double> getEdgeLengths();
         int         getNnodes() { return (int) nodes.size() - (numExtant + numExtinct);}
-
-
+        void        setTipsFromRtree();
+        double      findMaxNodeHeight();
         virtual double  getTimeToNextEvent() { return 0.0; }
         virtual void    lineageBirthEvent(unsigned int indx) { return; }
         virtual void    lineageDeathEvent(unsigned int indx) { return; }

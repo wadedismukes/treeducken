@@ -308,7 +308,7 @@ Rcpp::List bdsim_species_tree(double sbr,
                                 Named("edge.length") = speciesTrees[i]->getEdgeLengths(),
                                 Named("Nnode") = speciesTrees[i]->getNnodes(),
                                 Named("tip.label") = speciesTrees[i]->getTipNames(),
-                                Named("root.edge") = speciesTrees[i]->getCurrentTime() -
+                                Named("root.edge") = speciesTrees[i]->getRoot()->getDeathTime() -
                                     speciesTrees[i]->getRoot()->getBirthTime());
         phy.attr("class") = "phylo";
         multiphy[i] = phy;
@@ -328,38 +328,44 @@ Rcpp::List sim_locus_tree(SpeciesTree* species_tree,
                           double gdr,
                           double lgtr,
                           int numbsim){
+    std::vector<LocusTree*> locusTrees;
+    locusTrees.resize(numbsim);
+    Simulator *phySimulator = nullptr;
+    Rcpp::List multiphy;
+    int ntax = species_tree->getNumExtant();
+    double lambda = 0.0;
+    double mu = 0.0;
+    double rho = 0.0;
+    unsigned numLociToSim = numbsim;
+    for(int i = 0; i < numbsim; i++){
+        Simulator *phySimulator = new Simulator( ntax,
+                                     lambda,
+                                     mu,
+                                     rho,
+                                     numLociToSim,
+                                     gbr,
+                                     gdr,
+                                     lgtr);
+        phySimulator->setSpeciesTree(species_tree);
+        phySimulator->simLocusTree();
 
-    //std::vector<LocusTree*> LocusTrees;
-//Simulator *phySimulator = new Simulator();
-    Rcpp::List multiphy = List::create();
-    //for(int i = 0; i < numbsim; i++){
-        //phySimulator = new Simulator(unsigned ntax,
-       //                       double lambda,
-        //                      double mu,
-        //                      double rho,
-        //                      unsigned numLociToSim,
-        //                      double gbr,
-        //                      double gdr,
-        //                      double lgtr);
-        // phySimulator->simSpeciesTree();
-        // speciesTrees.push_back(phySimulator->getSpeciesTree());
+        locusTrees.push_back(phySimulator->getLocusTree());
         //
-        // NumericMatrix edges_rmat = speciesTrees[i]->getEdges();
-        //
-        //
-        // List phy = List::create(Named("edge") = edges_rmat,
-        //                         Named("edge.length") = speciesTrees[i]->getEdgeLengths(),
-        //                         Named("Nnode") = speciesTrees[i]->getNnodes(),
-        //                         Named("tip.label") = speciesTrees[i]->getTipNames(),
-        //                         Named("root.edge") = speciesTrees[i]->getRoot()->getDeathTime() -
-        //                             speciesTrees[i]->getRoot()->getBirthTime());
-        // phy.attr("class") = "phylo";
-        // multiphy.push_back(phy);
-    //}
+        NumericMatrix edges_rmat = locusTrees[i]->getEdges();
+
+        List phy = List::create(Named("edge") = edges_rmat,
+                                Named("edge.length") = locusTrees[i]->getEdgeLengths(),
+                                Named("Nnode") = locusTrees[i]->getNnodes(),
+                                Named("tip.label") = locusTrees[i]->getTipNames(),
+                                Named("root.edge") = locusTrees[i]->getRoot()->getDeathTime() -
+                                    locusTrees[i]->getRoot()->getBirthTime());
+
+        phy.attr("class") = "phylo";
+        multiphy.push_back(phy);
+    }
 
 
 
-
-    //delete phySimulator;
+    delete phySimulator;
     return multiphy;
 }

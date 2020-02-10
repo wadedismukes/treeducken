@@ -49,22 +49,22 @@ Rcpp::List sim_locustree_bdp(SEXP species_tree_,
     if(strcmp(species_tree.attr("class"), "phylo") != 0){
          stop("species_tree must be an object of class phylo'.");
     }
-    if(gbr <= 0.0){
+    if(gbr < 0.0){
          stop("'gbr' must be positive or 0.0.");
     }
     if(gbr < gdr){
         stop("'gbr' must be greater than 'gdr'.");
     }
-    if(gdr <= 0.0){
+    if(gdr < 0.0){
         stop("'gdr' must be a positive value or 0.0.");
     }
-    if(lgtr <= 0.0){
+    if(lgtr < 0.0){
         stop("'lgtr' must be a positive value or 0.0.");
     }
     if(numLoci < 1){
         stop("'numLoci' must be larger than 1.");
     }
-    SpeciesTree* specTree = new SpeciesTree(species_tree);
 
+    SpeciesTree* specTree = new SpeciesTree(species_tree);
     return sim_locus_tree(specTree, gbr, gdr, lgtr, numLoci);
 }

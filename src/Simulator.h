@@ -85,6 +85,7 @@ class Simulator
         bool    bdsaBDSim();
         bool    coalescentSim();
         bool    simSpeciesTree();
+        bool    simLocusTree();
         bool    simSpeciesLociTrees();
         bool    simThreeTree();
         bool    simLocusGeneTrees();
@@ -107,6 +108,7 @@ class Simulator
         std::string    printExtantGeneTreeNewick(int i, int j);
         std::set<double, std::greater<double> > getEpochs();
         SpeciesTree*    getSpeciesTree() {SpeciesTree* spec_tree = new SpeciesTree(*spTree); return spec_tree;}
+        LocusTree*      getLocusTree() {return lociTree;}
 
 };
 

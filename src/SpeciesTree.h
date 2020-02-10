@@ -1,11 +1,3 @@
-//
-//  SpeciesTree.h
-//  multiTree
-//
-//  Created by Dismukes, Wade T [EEOBS] on 11/8/17.
-//  Copyright © 2017 Dismukes, Wade T [EEOBS]. All rights reserved.
-//
-
 #ifndef SpeciesTree_h
 #define SpeciesTree_h
 

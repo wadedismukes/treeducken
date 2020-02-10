@@ -1,6 +1,6 @@
 //
 //  GeneTree.hpp
-//  multiTree
+//  treeducken
 //
 //  Created by Dismukes, Wade T [EEOBS] on 12/20/17.
 //  Copyright © 2017 Dismukes, Wade T [EEOBS]. All rights reserved.
@@ -17,7 +17,7 @@ class GeneTree : public Tree {
         unsigned individualsPerPop;
         unsigned popSize;
         double   generationTime; // specified in generations per year
-    
+
     public:
                     GeneTree(unsigned nt, unsigned ipp, unsigned ne, double genTime);
         virtual     ~GeneTree();
@@ -36,7 +36,7 @@ class GeneTree : public Tree {
         void        recGetExtNewickTree(Node *r, std::stringstream &ss, double brlen);
         void        setTreeTipNames();
         void        addExtinctSpecies(double bt, int indx);
-    
+
 };
 
 #endif /* GeneTree_hpp */

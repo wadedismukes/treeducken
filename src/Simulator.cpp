@@ -247,11 +247,14 @@ std::string Simulator::printSpeciesTreeNewick(){
 }
 
 bool Simulator::bdsaBDSim(){
+
     bool treesComplete = false;
     double stopTime = spTree->getCurrentTimeFromExtant();
+
     double eventTime;
     bool isSpeciation;
     lociTree = new LocusTree(numTaxaToSim, currentSimTime, geneBirthRate, geneDeathRate, transferRate);
+    Rcout << "end poooo" << std::endl;
 
     std::map<int,double> speciesBirthTimes = spTree->getBirthTimesFromNodes();
     std::map<int,double> speciesDeathTimes = spTree->getDeathTimesFromNodes();
@@ -339,6 +342,17 @@ bool Simulator::simSpeciesLociTrees(){
         good = false;
     }
     return good;
+}
+
+bool Simulator::simLocusTree(){
+  bool good = false;
+  Rcout << "start poooo" << std::endl;
+
+  while(!good){
+    good = bdsaBDSim();
+
+  }
+  return good;
 }
 
 std::string Simulator::printLocusTreeNewick(int i){

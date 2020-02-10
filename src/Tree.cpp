@@ -85,37 +85,61 @@ Tree::Tree(SEXP rtree){
     std::vector<std::string> tip_names = tr["tip.label"];
     double root_edge = tr["root.edge"];
     numNodes = tr["Nnode"];
+    std::map<int,int> indMap;
     numTaxa = (int) tip_names.size();
     nodes.resize(numNodes + numTaxa);
+    extantNodes.resize(numTaxa);
+    branchLengths.resize(numNodes + numTaxa);
+
+    root = new Node();
+    root->setAsRoot(true);
     root->setBirthTime(0.0);
     root->setBranchLength(root_edge);
-    root->setDeathTime(root->getBranchLength() - 0.0);
-    root->setIndx(numTaxa + 1);
-    nodes[numTaxa + 1] = root;
+    root->setDeathTime(root_edge - 0.0);
     root->setIsExtant(false);
+    root->setIndx(numTaxa + 1);
+    nodes[0] = root;
+    indMap[numTaxa] = 0;
+    branchLengths[0] = root_edge;
 
+    int i = 0;
     std::vector<int> nodeIndices;
-    for(int i = 1; i < numNodes + numTaxa; i++){
-        NumericMatrix::Row edgeMatRow = edge_mat(i-1,_);
-        int indx1 = edgeMatRow[0];
-        int indx2 = edgeMatRow[1];
+    while(i < numTaxa + numNodes - 1){
+        NumericMatrix::Row edgeMatRow = edge_mat(i,_);
+        int indx1 = edgeMatRow[0] - 1;
+        int indx2 = edgeMatRow[1] - 1;
         Node *p = new Node();
-        p->setBranchLength(edge_lengths[i-1]);
-        if(i < numTaxa){
-            p->setName(tip_names[i-1]);
-            p->setIsTip(true);
-            p->setBranchLength(edge_lengths[i-1]);
-            p->setAnc(nodes[indx1]);
-            nodes[i] = p;
+        p->setBranchLength(edge_lengths[i]);
+        branchLengths[i + 1] = edge_lengths[i];
+
+        p->setIndx(indx2 + 1);
+        indMap[indx2] = i + 1;
+        p->setAnc(nodes[indMap[indx1]]);
+        p->setBirthTime(nodes[indMap[indx1]]->getDeathTime());
+        p->setDeathTime(edge_lengths[i] + nodes[indMap[indx1]]->getDeathTime());
+
+        nodes[i + 1] = p;
+        if(indx2 < numTaxa){
+            nodes[indMap[indx2]]->setName(tip_names[indx2]);
+            nodes[indMap[indx2]]->setIsTip(true);
+            if(nodes[indMap[indx1]]->getLdes()){
+                nodes[indMap[indx1]]->setRdes(nodes[indMap[indx2]]);
+            }
+            else{
+                nodes[indMap[indx1]]->setLdes(nodes[indMap[indx2]]);
+            }
         }
         else{
-            p->setIndx(i);
-            p->setBranchLength(edge_lengths[i-1]);
-            nodes[i] = p;
+            if(nodes[indMap[indx1]]->getLdes()){
+                nodes[indMap[indx1]]->setRdes(nodes[indMap[indx2]]);
+            }
+            else{
+                nodes[indMap[indx1]]->setLdes(nodes[indMap[indx2]]);
+            }
         }
+        i++;
     }
-
-
+    this->setTipsFromRtree();
 }
 
 Tree::~Tree(){
@@ -136,6 +160,42 @@ Tree::~Tree(){
     //     delete (*p);
     // }
     nodes.clear();
+}
+
+
+void Tree::setTipsFromRtree(){
+    double currentTime = this->findMaxNodeHeight();
+    int extTipCount = 0;
+    numExtant = 0;
+    numExtinct = 0;
+    for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it){
+        if((*it)->getIsTip()){
+            if((*it)->getDeathTime() < currentTime){
+                (*it)->setIsExtinct(true);
+                numExtinct++;
+            }
+            else{
+                (*it)->setIsExtant(true);
+                extantNodes[extTipCount] = (*it);
+                numExtant++;
+                extTipCount++;
+            }
+        }
+        if(extTipCount == numTaxa)
+            break;
+    }
+
+}
+
+
+double Tree::findMaxNodeHeight(){
+    Node *p = root;
+    double brlen = p->getBranchLength();
+    while(p->getLdes()){
+        p = p->getLdes();
+        brlen += p->getBranchLength();
+    }
+    return brlen;
 }
 
 void Tree::clearNodes(Node *currNode){
@@ -492,12 +552,12 @@ void Tree::setNumExtinct(){
 NumericMatrix Tree::getEdges(){
     int numRows = (int) nodes.size() - 1;
     NumericMatrix edgeMat(numRows, 2);
-
     for(int i=1; i < nodes.size(); i++){
         if(!(nodes[i]->getIsRoot())){
             NumericMatrix::Row row = edgeMat(i - 1, _);
             row[0] = nodes[i]->getAnc()->getIndex();
             row[1] = nodes[i]->getIndex();
+            Rcout << row[0] << " ### " << row[1] << std::endl;
         }
     }
 
@@ -508,27 +568,8 @@ NumericMatrix Tree::getEdges(){
 
 std::vector<double> Tree::getEdgeLengths(){
     std::vector<double> edgeLengths;
-    // double brlen;
-    edgeLengths = branchLengths;
+    edgeLengths = std::move(branchLengths);
     edgeLengths.erase(edgeLengths.begin());
-    // for(std::vector<Node*>::iterator it = nodes.begin() + 1; it < nodes.end(); ++it){
-    //     if((*it)->getIsTip()){
-    //         Rcout << "%%%%% bt " << (*it)->getBirthTime() << std::endl;
-    //         Rcout << "%%%%% dt " << (*it)->getDeathTime() << std::endl;
-    //         brlen = (*it)->getDeathTime() - (*it)->getBirthTime();
-    //         Rcout << "#### brlen " << brlen << std::endl;
-    //         edgeLengths.push_back(brlen);
-    //     }
-    //     else if((*it)->getIsRoot()){
-    //     //    Rcout << "birth time of root " << nodes[i]->getBirthTime() << std::endl;
-    //        // Rcout << "death time of root " << nodes[i]->getDeathTime() << std::endl;
-    //     }
-    //     else{
-    //         brlen = (*it)->getDeathTime() - (*it)->getBirthTime();
-    //         Rcout << "#### brlen " << brlen << std::endl;
-    //         edgeLengths.push_back(brlen);
-    //     }
-    // }
     return edgeLengths;
 }
 
