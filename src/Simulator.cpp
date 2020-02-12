@@ -111,6 +111,36 @@ Simulator::Simulator(unsigned ntax,
     treeScale = ts;
 }
 
+Simulator::Simulator(double timeToSimTo,
+          double hostSpeciationRate,
+          double hostExtinctionRate,
+          double symbSpeciationRate,
+          double symbExtinctionRate,
+          double switchingRate,
+          double cospeciationRate,
+          double rho,
+          int hostLimit){
+
+    speciationRate = hostSpeciationRate;
+    extinctionRate = hostExtinctionRate;
+    samplingRate = rho;
+
+    geneBirthRate = symbSpeciationRate;
+    geneDeathRate = symbExtinctionRate;
+    transferRate = switchingRate;
+    timeToSim = timeToSimTo;
+
+    hostLimit = hostLimit;
+
+    spTree = nullptr;
+    geneTree = nullptr;
+    lociTree = nullptr;
+    symbiontTree = nullptr;
+
+}
+
+
+
 Simulator::~Simulator(){
     for(std::vector<SpeciesTree*>::iterator p=gsaTrees.begin(); p != gsaTrees.end(); ++p){
         delete (*p);
@@ -222,6 +252,113 @@ bool Simulator::simSpeciesTree(){
     if(outgroupFrac > 0.0)
         this->graftOutgroup(spTree, spTree->getTreeDepth());
     return good;
+}
+
+bool Simulator::simHostSymbSpeciesTreePair(){
+  bool good = false;
+  while(!good){
+    good = pairedBDPSim();
+  }
+  return good;
+}
+
+
+bool Simulator::pairedBDPSim(){
+  bool treePairGood = false;
+  currentSimTime = 0.0;
+
+  SpeciesTree hostTree =  SpeciesTree(1, currentSimTime, speciationRate, extinctionRate);
+  spTree = &hostTree;
+  SymbiontTree symbTree = SymbiontTree(1,
+                                       currentSimTime,
+                                       geneBirthRate,
+                                       geneDeathRate,
+                                       transferRate,
+                                       hostLimit);
+
+  symbiontTree = &symbTree;
+  double eventTime;
+  //symbiontTree->setSymbTreeInfo(spTree);
+
+  while(currentSimTime < timeToSim){
+    eventTime = symbiontTree->getTimeToNextEvent(speciationRate,
+                                                 extinctionRate,
+                                                 cospeciationRate,
+                                                 spTree->getNumExtant());
+    eventTime += currentSimTime;
+    this->cophyloEvent(eventTime);
+    if(spTree->getNumExtant() < 1){
+      treePairGood = false;
+      return treePairGood;
+    }
+  }
+
+  return treePairGood;
+}
+
+void Simulator::cophyloEvent(double eventTime){
+  double hostEvent = speciationRate + extinctionRate;
+  double symbEvent = geneBirthRate + geneDeathRate + transferRate;
+  double cospecEvent = cospeciationRate;
+  // which tree then ermEvent whichever or cospeciation event
+  double hostEventProb = hostEvent / (hostEvent + symbEvent + cospecEvent);
+  double symbEventProb = symbEvent / (hostEvent + symbEvent + cospecEvent);
+  symbEventProb += hostEventProb;
+  double whichEvent = unif_rand();
+  if(whichEvent < hostEventProb){
+    this->cophyloERMEvent(eventTime);
+  }
+  else if(whichEvent < symbEventProb){
+    symbiontTree->ermEvent(eventTime);
+  }
+  else{
+    this->cospeciationEvent(eventTime);
+  }
+}
+
+void Simulator::cophyloERMEvent(double eventTime){
+  int beforeEventNumNodes = spTree->getNumExtant();
+  spTree->ermEvent(eventTime);
+  int afterEventNumNodes = spTree->getNumExtant();
+  std::vector<Node*> extantHostNodes = spTree->getExtantNodes();
+  int indxToFind;
+  if(beforeEventNumNodes < afterEventNumNodes){
+    // is a speciation
+    Node* endNodeL = extantHostNodes.back();
+    Node* endNodeR = extantHostNodes.back() - 1;
+    indxToFind = endNodeL->getAnc()->getIndex();
+    double whichNodeGetsSymb = unif_rand();
+
+    int newIndx = 0;
+    if(whichNodeGetsSymb < 0.5){
+      newIndx = endNodeL->getIndex();
+    }
+    else{
+      newIndx = endNodeR->getIndex();
+    }
+    symbiontTree->setSymbTreeInfoSpeciation(indxToFind, newIndx);
+  }
+  else{
+    // o.w. is extinction
+    // if there are no more hosts with symbionts this triggers extinction
+    indxToFind = spTree->findLastToGoExtinct(eventTime);
+    symbiontTree->setSymbTreeInfoExtinction(indxToFind);
+  }
+}
+
+void Simulator::cospeciationEvent(double eventTime){
+  // draw index of host
+  int indxOfHost = unif_rand() * spTree->getNumExtant();
+
+  // find all symbionts in that host
+  std::vector<int> symbiontsOnHost;
+  int indxOfSymbOnHost = unif_rand() * symbiontsOnHost.size();
+  int indxOfSymb = symbiontsOnHost[indxOfSymbOnHost];
+  // at eventTime speciate host and all those parasites
+  spTree->setCurrentTime(eventTime);
+  symbiontTree->setCurrentTime(eventTime);
+  spTree->lineageBirthEvent(indxOfHost);
+  symbiontTree->lineageBirthEvent(indxOfSymb);
 }
 
 std::string Simulator::printExtSpeciesTreeNewick(){

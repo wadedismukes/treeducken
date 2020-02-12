@@ -9,6 +9,7 @@
 #ifndef Simulator_h
 #define Simulator_h
 #include "GeneTree.h"
+#include "SymbiontTree.h"
 #include <set>
 #include <map>
 
@@ -36,6 +37,11 @@ class Simulator
         std::vector<LocusTree*> locusTrees;
         GeneTree*       geneTree;
         std::vector<std::vector<GeneTree*> > geneTrees;
+        // symbiont tree stuff
+        SymbiontTree*   symbiontTree;
+        double      cospeciationRate;
+        double      timeToSim;
+        int         hostLimit;
 
     public:
         // Simulating species tree only
@@ -53,6 +59,8 @@ class Simulator
                   double geneDeathRate,
                   double transferRate);
         // Simulating species and locus tree with proportion of transfer (e.g. hybridization, linkage)
+        // // CAN THIS BE DELETED??
+        //.
         Simulator(unsigned numTaxaToSim,
                   double speciationRate,
                 double extinctionRate,
@@ -78,19 +86,29 @@ class Simulator
                 double og,
                 double ts,
                 bool sout);
+        Simulator(double timeToSimTo,
+                  double hostSpeciationRate,
+                  double hostExtinctionRate,
+                  double symbSpeciationRate,
+                  double symbExtinctionRate,
+                  double switchingRate,
+                  double cospeciationRate,
+                  double rho,
+                  int hostLimit);
         ~Simulator();
 
         void    setSpeciesTree(SpeciesTree *st) { spTree = st; }
         bool    gsaBDSim();
         bool    bdsaBDSim();
+        bool    pairedBDPSim();
         bool    coalescentSim();
         bool    simSpeciesTree();
         bool    simLocusTree();
         bool    simSpeciesLociTrees();
         bool    simThreeTree();
         bool    simLocusGeneTrees();
+        bool    simHostSymbSpeciesTreePair();
         bool    gsaCheckStop();
-
         void    initializeSim();
         void    processGSASim();
         void    prepGSATreeForReconstruction();
@@ -109,6 +127,11 @@ class Simulator
         std::set<double, std::greater<double> > getEpochs();
         SpeciesTree*    getSpeciesTree() {SpeciesTree* spec_tree = new SpeciesTree(*spTree); return spec_tree;}
         LocusTree*      getLocusTree() {return lociTree;}
+        SymbiontTree*   getSymbiontTree() {return symbiontTree;}
+
+        void    cophyloEvent(double eventTime);
+        void    cophyloERMEvent(double eventTime);
+        void    cospeciationEvent(double eventTime);
 
 };
 

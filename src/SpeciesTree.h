@@ -24,7 +24,7 @@ class SpeciesTree : public Tree
         virtual       ~SpeciesTree();
         void          setSpeciationRate(double sr) {speciationRate = sr; }
         void          setExtinctionRate(double er) {extinctionRate = er; }
-
+        void          setCurrentTime(double et) { currentTime = et; }
         // tree-building functions
         virtual double        getTimeToNextEvent();
         double                getTimeToNextEventMoran();
@@ -59,7 +59,7 @@ class SpeciesTree : public Tree
         bool                        macroEvent(int indx);
         std::pair<int, int>         preorderTraversalStep(int index);
         int                         postOrderTraversalStep(int index);
-
+        int           findLastToGoExtinct(double eventTime);
 
 
 

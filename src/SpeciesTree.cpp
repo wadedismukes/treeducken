@@ -468,3 +468,22 @@ bool SpeciesTree::macroEvent(int indx){
         isSpec = true;
     return isSpec;
 }
+
+
+int SpeciesTree::findLastToGoExtinct(double EventTime){
+  int indxExtinct;
+  double epsi = std::numeric_limits<double>::epsilon();
+  bool is_near = false;
+  for(int i=0; i < nodes.size(); i++){
+    if(nodes[i]->getIsTip() && nodes[i]->getIsExtinct()){
+      double scale = std::max(abs(EventTime), abs(nodes[i]->getDeathTime()));
+      is_near = abs(nodes[i]->getDeathTime() - EventTime) <= scale *(2*epsi);
+      if(is_near){
+        indxExtinct = i;
+        break;
+      }
+    }
+  }
+
+  return indxExtinct;
+}

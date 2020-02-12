@@ -157,4 +157,12 @@ extern Rcpp::List sim_locus_tree(SpeciesTree* species_tree,
                                 double gdr,
                                 double lgtr,
                                 int numLoci);
+
+extern Rcpp::List sim_host_symb_treepair(double hostbr,
+                                     double hostdr,
+                                     double symbbr,
+                                     double symbdr,
+                                     double switchrate,
+                                     double timeToSimTo,
+                                     int numbsim);
 #endif /* Engine_h */

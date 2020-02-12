@@ -557,7 +557,6 @@ NumericMatrix Tree::getEdges(){
             NumericMatrix::Row row = edgeMat(i - 1, _);
             row[0] = nodes[i]->getAnc()->getIndex();
             row[1] = nodes[i]->getIndex();
-            Rcout << row[0] << " ### " << row[1] << std::endl;
         }
     }
 
