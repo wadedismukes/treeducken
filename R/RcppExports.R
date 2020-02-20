@@ -9,7 +9,7 @@ sim_sptree_bdp <- function(sbr_, sdr_, numbsim_, n_tips_) {
     .Call(`_treeducken_sim_sptree_bdp`, sbr_, sdr_, numbsim_, n_tips_)
 }
 
-sim_locustree_bdp <- function(species_tree_, gbr_, gdr_, lgtr_, numLoci_) {
-    .Call(`_treeducken_sim_locustree_bdp`, species_tree_, gbr_, gdr_, lgtr_, numLoci_)
+sim_cophylo_bdp <- function(hbr_, hdr_, sbr_, sdr_, host_exp_rate_, cosp_rate_, timeToSimTo_, numbsim_) {
+    .Call(`_treeducken_sim_cophylo_bdp`, hbr_, hdr_, sbr_, sdr_, host_exp_rate_, cosp_rate_, timeToSimTo_, numbsim_)
 }
 

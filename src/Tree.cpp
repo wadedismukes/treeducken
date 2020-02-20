@@ -10,7 +10,6 @@
 #include <vector>
 #include <string>
 #include <cmath>
-#include <Rcpp.h>
 
 using namespace Rcpp;
 
@@ -57,7 +56,6 @@ Tree::Tree(unsigned numExta, double curTime){
     numTaxa = numExta;
     numExtinct = 0;
     currentTime = curTime;
-
 }
 
 Tree::Tree(unsigned numTax){
@@ -551,7 +549,10 @@ void Tree::setNumExtinct(){
 
 NumericMatrix Tree::getEdges(){
     int numRows = (int) nodes.size() - 1;
+    Rcout << "numRows = " << numRows << std::endl;
     NumericMatrix edgeMat(numRows, 2);
+    Rcout << "(@(@(#(#))))" << std::endl;
+
     for(int i=1; i < nodes.size(); i++){
         if(!(nodes[i]->getIsRoot())){
             NumericMatrix::Row row = edgeMat(i - 1, _);

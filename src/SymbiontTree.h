@@ -22,7 +22,7 @@ class SymbiontTree : public Tree {
       unsigned numExpansions;
       unsigned numPairs;
       unsigned hostLimit;
-      std::multimap<int,int> symbHostMap; // keys are symb indices
+      std::map<int,std::vector<int>> symbHostMap; // keys are symb indices
 
     public:
       SymbiontTree(int nt,
@@ -31,41 +31,53 @@ class SymbiontTree : public Tree {
                    double symber,
                    double hostExpanRate,
                    int hostLimit);
+      SymbiontTree(const SymbiontTree& symbionttree,
+                   unsigned numTaxa);
+
       virtual         ~SymbiontTree();
-      virtual double  getTimeToNextEvent(double hostSpecRate,
+      double  getTimeToNextJointEvent(double hostSpecRate,
                                          double hostExtRate,
                                          double cospeciaRate,
                                          int numHosts);
       virtual void    lineageBirthEvent(unsigned indx);
       virtual void    lineageDeathEvent(unsigned indx);
       virtual void    setNewLineageInfo(int indx, Node *r, Node *s);
-      void            hostExpansionEvent(int indx);
-      void            ermEvent(double ct);
+      void            setNewLineageInfoExpan(int indx,
+                                             Node* r,
+                                             Node* s,
+                                             int hostIndx);
+      void            hostExpansionEvent(int indx, int hostIndx);
+      void            ermJointEvent(double ct, std::vector<Node*> hostNodes);
 
       void            setSymbTreeInfoSpeciation(int ancIndx, int desIndx);
       void            setSymbTreeInfoExtinction(int deadIndx);
 
-      std::string     printNewickTree();
+      //std::string     printNewickTree();
       void            setTreeTipNames();
-      void            recTipNamer(Node *p, unsigned &copyNumber);
-      void            recGetNewickTree(Node *r, std::stringstream &ss);
+//      void            recGetNewickTree(Node *r, std::stringstream &ss);
       void            setBranchLengths();
       void            setPresentTime(double currentT);
-      void            setStopTime(double st) {stopTime = st; currentTime = 0;}
+      void            setStopTime(double st) { stopTime = st; currentTime = 0;}
       double          getCurrentTime() { return currentTime; }
-      void            setCurrentTime(double ct) {currentTime = ct; }
-      int             getNumberExpansions();
+      void            setCurrentTime(double ct) { currentTime = ct; }
+      int             getNumberExpansions() {return numExpansions; }
       int             getNumHostSymbPairs() { return symbHostMap.size(); }
-      std::map<int,double>     getBirthTimesFromNodes();
-      std::set<int>            getExtSymbIndx();
-      std::set<int>            getCoalBounds();
-      std::multimap<int,double>     getDeathTimesFromNodes();
-      std::multimap<int,double>     getDeathTimesFromExtinctNodes();
-      std::map<int,int>             getSymbToHostsMap();
-      std::vector< std::vector<int> >     getExtantLoci(std::set<double, std::greater<double> > epochSet);
-      std::vector< std::string >    printSubTrees();
-      int     postOrderTraversalStep(int indx);
-
+    //  std::map<int,double>     getBirthTimesFromNodes();
+    //  std::set<int>            getExtSymbIndx();
+    //   std::set<int>            getCoalBounds();
+    //  std::multimap<int,double>     getDeathTimesFromNodes();
+    //  std::multimap<int,double>     getDeathTimesFromExtinctNodes();
+    //  std::map<int,int>             getSymbToHostsMap();
+  //    std::vector< std::vector<int> >     getExtantLoci(std::set<double, std::greater<double> > epochSet);
+  //    std::vector< std::string >    printSubTrees();
+  //    int     postOrderTraversalStep(int indx);
+      std::vector<int>  getSymbsOnHost(int hostIndx);
+      void            updateCurrentMap(int oldHostIndx, int newHostIndx);
+      int             getExtantIndxFromNodes(int extantNodesIndx);
+      void            cospeciationMapUpdate(int oldHostIndx,
+                                            int numHosts,
+                                            int symbIndx);
+      void            updateHostsInNodes();
 
 
 

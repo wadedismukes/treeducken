@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include <Rcpp.h>
+#include <RcppArmadillo.h>
 
 using namespace Rcpp;
 
@@ -53,7 +53,7 @@ class Node
         void    setFlag(int d) { flag = d; }
         void    setIndx(int i) {indx = i; }
         void    setLindx(int li ) {Lindx = li; }
-        void    addHost(int host_indx) { hosts.push_back(host_indx); }
+        void    addHost(int hostIndx) { hosts.push_back(std::move(hostIndx)); }
         void    setIsDuplication(bool t) { isDuplication = t; }
         int     getFlag() {return flag; }
         Node*   getLdes() {return ldes; }
@@ -71,6 +71,7 @@ class Node
         int     getIndex() {return indx; }
         int     getLindx() { return Lindx; }
         std::vector<int> getHosts() { return hosts; }
+        void    setHosts(std::vector<int> hs) { hosts = hs; }
         bool    getIsDuplication() { return isDuplication; }
 };
 

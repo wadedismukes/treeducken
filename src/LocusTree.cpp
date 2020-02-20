@@ -8,7 +8,6 @@
 
 #include <iostream>
 #include "LocusTree.h"
-#include <Rcpp.h>
 
 LocusTree::LocusTree(unsigned nt, double stop, double gbr, double gdr, double lgtrate) : Tree(nt, 0.0){
     numTaxa = 1;

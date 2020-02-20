@@ -4,7 +4,7 @@
 #include "Simulator.h"
 #include "Engine.h"
 #include <sstream>
-#include <Rcpp.h>
+#include <RcppArmadillo.h>
 
 using namespace Rcpp;
 

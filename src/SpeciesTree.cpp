@@ -8,7 +8,6 @@
 
 #include "SpeciesTree.h"
 #include <iostream>
-#include <Rcpp.h>
 
 using namespace Rcpp;
 
@@ -115,9 +114,10 @@ void SpeciesTree::setNewLineageInfo(unsigned int indx, Node *r, Node *l){
     extantNodes.push_back(std::move(l));
     nodes.push_back(std::move(r));
     nodes.push_back(std::move(l));
+    numNodes = (int) nodes.size();
     numExtant = (int) extantNodes.size();
-    r->setIndx(numExtant - 2);
-    l->setIndx(numExtant - 1);
+    r->setIndx(numNodes - 2);
+    l->setIndx(numNodes - 1);
 
 }
 
@@ -471,7 +471,7 @@ bool SpeciesTree::macroEvent(int indx){
 
 
 int SpeciesTree::findLastToGoExtinct(double EventTime){
-  int indxExtinct;
+  int indxExtinct = -1;
   double epsi = std::numeric_limits<double>::epsilon();
   bool is_near = false;
   for(int i=0; i < nodes.size(); i++){

@@ -36,35 +36,50 @@ Rcpp::List sim_sptree_bdp(SEXP sbr_, SEXP sdr_, SEXP numbsim_, SEXP n_tips_){
 }
 
 // [[Rcpp::export]]
-Rcpp::List sim_locustree_bdp(SEXP species_tree_,
-                          SEXP gbr_,
-                          SEXP gdr_,
-                          SEXP lgtr_,
-                          SEXP numLoci_){
-    Rcpp::List species_tree = as<Rcpp::List>(species_tree_);
-    double gbr = as<double>(gbr_);
-    double gdr = as<double>(gdr_);
-    double lgtr = as<double>(lgtr_);
-    int numLoci = as<int>(numLoci_);
-    if(strcmp(species_tree.attr("class"), "phylo") != 0){
-         stop("species_tree must be an object of class phylo'.");
-    }
-    if(gbr < 0.0){
-         stop("'gbr' must be positive or 0.0.");
-    }
-    if(gbr < gdr){
-        stop("'gbr' must be greater than 'gdr'.");
-    }
-    if(gdr < 0.0){
-        stop("'gdr' must be a positive value or 0.0.");
-    }
-    if(lgtr < 0.0){
-        stop("'lgtr' must be a positive value or 0.0.");
-    }
-    if(numLoci < 1){
-        stop("'numLoci' must be larger than 1.");
-    }
+Rcpp::List sim_cophylo_bdp(SEXP hbr_,
+                           SEXP hdr_,
+                           SEXP sbr_,
+                           SEXP sdr_,
+                           SEXP host_exp_rate_,
+                           SEXP cosp_rate_,
+                           SEXP timeToSimTo_,
+                           SEXP numbsim_){
+    double hbr = as<double>(hbr_);
+    double hdr = as<double>(hdr_);
+    double sbr = as<double>(sbr_);
+    double sdr = as<double>(sdr_);
+    double cosp_rate = as<double>(cosp_rate_);
+    double host_exp_rate = as<double>(host_exp_rate_);
+    double timeToSimTo = as<double>(timeToSimTo_);
+    int numbsim = as<int>(numbsim_);
 
-    SpeciesTree* specTree = new SpeciesTree(species_tree);
-    return sim_locus_tree(specTree, gbr, gdr, lgtr, numLoci);
+    if(hbr < 0.0){
+         stop("'hbr' must be positive or 0.0.");
+    }
+    if(hbr < hdr){
+        stop("'hbr' must be greater than 'hdr'.");
+    }
+    if(hdr < 0.0){
+        stop("'hdr' must be a positive value or 0.0.");
+    }
+    if(host_exp_rate < 0.0){
+        stop("'host_exp_rate' must be a positive value or 0.0.");
+    }
+    if(numbsim < 1){
+        stop("'numbsim' must be larger than 1.");
+    }
+    if(cosp_rate < 0.0)
+        stop("'cosp_rate' must be a positive value or 0.0.");
+    if(timeToSimTo < 0.0)
+        stop("'timeToSimTo' must be a positive value or 0.0.");
+
+    return sim_host_symb_treepair(hbr,
+                                  hdr,
+                                  sbr,
+                                  sdr,
+                                  host_exp_rate,
+                                  cosp_rate,
+                                  timeToSimTo,
+                                  numbsim);
 }
+

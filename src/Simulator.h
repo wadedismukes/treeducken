@@ -12,6 +12,7 @@
 #include "SymbiontTree.h"
 #include <set>
 #include <map>
+#include <RcppArmadillo.h>
 
 class Simulator
 {
@@ -86,6 +87,7 @@ class Simulator
                 double og,
                 double ts,
                 bool sout);
+        //
         Simulator(double timeToSimTo,
                   double hostSpeciationRate,
                   double hostExtinctionRate,
@@ -125,13 +127,15 @@ class Simulator
         std::string    printGeneTreeNewick(int i, int j);
         std::string    printExtantGeneTreeNewick(int i, int j);
         std::set<double, std::greater<double> > getEpochs();
-        SpeciesTree*    getSpeciesTree() {SpeciesTree* spec_tree = new SpeciesTree(*spTree); return spec_tree;}
+        //SpeciesTree*    getSpeciesTree() {SpeciesTree* spec_tree = new SpeciesTree(*spTree); return spec_tree;}
+        SpeciesTree*    getSpeciesTree() { return spTree; }
         LocusTree*      getLocusTree() {return lociTree;}
         SymbiontTree*   getSymbiontTree() {return symbiontTree;}
+        double          getTimeToSim() {return timeToSim; }
 
-        void    cophyloEvent(double eventTime);
-        void    cophyloERMEvent(double eventTime);
-        void    cospeciationEvent(double eventTime);
+        arma::mat    cophyloEvent(double eventTime, arma::mat assocMat);
+        arma::mat    cophyloERMEvent(double eventTime, arma::mat assocMat);
+        arma::mat    cospeciationEvent(double eventTime, arma::mat assocMat);
 
 };
 

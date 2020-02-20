@@ -8,10 +8,11 @@
 
 #include "Simulator.h"
 #include <iostream>
-#include <Rcpp.h>
+#include <RcppArmadillo.h>
+// [[Rcpp::depends(RcppArmadillo)]]
 
 
-using namespace Rcpp;
+using namespace arma;
 
 Simulator::Simulator(unsigned nt, double lambda, double mu, double rho)
 {
@@ -111,26 +112,26 @@ Simulator::Simulator(unsigned ntax,
     treeScale = ts;
 }
 
-Simulator::Simulator(double timeToSimTo,
+Simulator::Simulator(double stopTime,
           double hostSpeciationRate,
           double hostExtinctionRate,
           double symbSpeciationRate,
           double symbExtinctionRate,
           double switchingRate,
-          double cospeciationRate,
+          double csr,
           double rho,
-          int hostLimit){
+          int hl){
 
     speciationRate = hostSpeciationRate;
     extinctionRate = hostExtinctionRate;
     samplingRate = rho;
-
+    cospeciationRate = csr;
     geneBirthRate = symbSpeciationRate;
     geneDeathRate = symbExtinctionRate;
     transferRate = switchingRate;
-    timeToSim = timeToSimTo;
+    timeToSim = stopTime;
 
-    hostLimit = hostLimit;
+    hostLimit = hl;
 
     spTree = nullptr;
     geneTree = nullptr;
@@ -266,6 +267,7 @@ bool Simulator::simHostSymbSpeciesTreePair(){
 bool Simulator::pairedBDPSim(){
   bool treePairGood = false;
   currentSimTime = 0.0;
+  double stopTime = this->getTimeToSim();
 
   SpeciesTree hostTree =  SpeciesTree(1, currentSimTime, speciationRate, extinctionRate);
   spTree = &hostTree;
@@ -278,25 +280,35 @@ bool Simulator::pairedBDPSim(){
 
   symbiontTree = &symbTree;
   double eventTime;
+  // TODO: the tree is not initialzied with links between hosts and parasites
   //symbiontTree->setSymbTreeInfo(spTree);
+  arma::mat assocMat;
+  assocMat.ones(1,1);
+  while(currentSimTime < stopTime){
 
-  while(currentSimTime < timeToSim){
-    eventTime = symbiontTree->getTimeToNextEvent(speciationRate,
+    eventTime = symbiontTree->getTimeToNextJointEvent(speciationRate,
                                                  extinctionRate,
                                                  cospeciationRate,
                                                  spTree->getNumExtant());
-    eventTime += currentSimTime;
-    this->cophyloEvent(eventTime);
+    currentSimTime += eventTime;
+    assocMat = this->cophyloEvent(currentSimTime, assocMat);
+
     if(spTree->getNumExtant() < 1){
       treePairGood = false;
       return treePairGood;
     }
   }
+  treePairGood = true;
+  spTree->setBranchLengths();
+  symbiontTree->setBranchLengths();
+  symbiontTree->setTreeTipNames();
+  spTree->setTreeTipNames();
 
+  Rcout << symbiontTree->getNodesSize() << std::endl;
   return treePairGood;
 }
 
-void Simulator::cophyloEvent(double eventTime){
+arma::mat Simulator::cophyloEvent(double eventTime, arma::mat assocMat){
   double hostEvent = speciationRate + extinctionRate;
   double symbEvent = geneBirthRate + geneDeathRate + transferRate;
   double cospecEvent = cospeciationRate;
@@ -306,17 +318,20 @@ void Simulator::cophyloEvent(double eventTime){
   symbEventProb += hostEventProb;
   double whichEvent = unif_rand();
   if(whichEvent < hostEventProb){
-    this->cophyloERMEvent(eventTime);
+    assocMat = this->cophyloERMEvent(eventTime, assocMat);
   }
   else if(whichEvent < symbEventProb){
-    symbiontTree->ermEvent(eventTime);
+    std::vector<Node*> hostExtantNodes = spTree->getExtantNodes();
+    symbiontTree->ermJointEvent(eventTime, hostExtantNodes);
   }
   else{
-    this->cospeciationEvent(eventTime);
+    assocMat = this->cospeciationEvent(eventTime, assocMat);
   }
+  return assocMat;
 }
 
-void Simulator::cophyloERMEvent(double eventTime){
+
+arma::mat Simulator::cophyloERMEvent(double eventTime, arma::mat assocMat){
   int beforeEventNumNodes = spTree->getNumExtant();
   spTree->ermEvent(eventTime);
   int afterEventNumNodes = spTree->getNumExtant();
@@ -344,21 +359,101 @@ void Simulator::cophyloERMEvent(double eventTime){
     indxToFind = spTree->findLastToGoExtinct(eventTime);
     symbiontTree->setSymbTreeInfoExtinction(indxToFind);
   }
+  return assocMat;
 }
 
-void Simulator::cospeciationEvent(double eventTime){
-  // draw index of host
-  int indxOfHost = unif_rand() * spTree->getNumExtant();
 
-  // find all symbionts in that host
-  std::vector<int> symbiontsOnHost;
-  int indxOfSymbOnHost = unif_rand() * symbiontsOnHost.size();
-  int indxOfSymb = symbiontsOnHost[indxOfSymbOnHost];
-  // at eventTime speciate host and all those parasites
+arma::mat Simulator::cospeciationEvent(double eventTime, arma::mat assocMat){
+  // draw index of host
+  //
   spTree->setCurrentTime(eventTime);
   symbiontTree->setCurrentTime(eventTime);
+  int numExtantHosts = spTree->getNumExtant();
+  int indxOfHost = unif_rand() * numExtantHosts; //col of assocMat
+ // Rcout << "hostIndx = " << indxOfHost << std::endl;
+
+  arma::colvec cvec = assocMat.col(indxOfHost);
+  arma::uvec symbIndices = find(cvec);
+  int indxOfSymb = unif_rand() * symbIndices.size();
+  arma::rowvec rvec = assocMat.row(symbIndices[indxOfSymb]);
+
+ // Rcout << "symbiontIndx = " << symbIndices[indxOfSymb] << std::endl;
   spTree->lineageBirthEvent(indxOfHost);
-  symbiontTree->lineageBirthEvent(indxOfSymb);
+  symbiontTree->lineageBirthEvent(symbIndices[indxOfSymb]);
+
+  numExtantHosts = spTree->getNumExtant();
+  int numExtantSymbs = symbiontTree->getNumExtant();
+
+  assocMat.shed_col(indxOfHost);
+  assocMat.shed_row(symbIndices[indxOfSymb]);
+
+  assocMat.resize(numExtantSymbs, numExtantHosts);
+
+  assocMat.submat(numExtantSymbs-2,
+                  numExtantHosts-2,
+                  numExtantSymbs-1,
+                  numExtantHosts-1) = eye(2,2);
+
+ //  assocMat.print();
+
+  cvec[indxOfHost] = 0;
+  rvec[symbIndices[indxOfSymb]] = 0;
+  // loop through cvec and make little vecs
+  for(int i = 0; i < numExtantSymbs - 2; i++){
+    if(cvec[i] == 1){
+      arma::mat randomRow = randi<mat>(1,2, distr_param(0,1));
+      assocMat(i, span(numExtantHosts-2,numExtantHosts-1)) = randomRow;
+    }
+
+  }
+
+  // loop through rvec
+  for(int i = 0; i < numExtantSymbs - 2; i++){
+    if(cvec[i] == 1){
+      arma::mat randomCol = randi<mat>(2,1, distr_param(0,1));
+      assocMat(span(numExtantSymbs-2,numExtantSymbs-1),i) = randomCol;
+    }
+  }
+  //std::vector<int> symbsOnHost;
+//
+//   for(int i=0; i < hostAssocs.size(); i++){
+//     if(hostAssocs[i] == 1){
+//       symbsOnHost.push_back(std::move(hostAssocs[i]));
+//     }
+//   }
+
+//  int indxOfSymbsOnHosts = unif_rand() * symbsOnHost.size();
+//  int indxOfSymbs = symbsOnHost[indxOfSymbsOnHosts];
+
+
+
+//  spTree->lineageBirthEvent(indxOfHost);
+ // symbiontTree->lineageBirthEvent(indxOfSymbs);
+
+  //assocMat.erase(assocMat.begin()+indxOfHost,assocMat.begin()+indxOfHost+numExtantSymbs);
+  // int indxOfHostInNodes = spTree->getNodesIndxFromExtantIndx(indxOfHost);
+  //
+  // spTree->setCurrentTime(eventTime);
+  // symbiontTree->setCurrentTime(eventTime);
+  // // speciate indxOfHost, new nodes are indexed numNodes - 2, numNodes - 1
+  // spTree->lineageBirthEvent(indxOfHost);
+  //
+  // // which symbionts are on host nodes[indxOfHostInNodes]?
+  //
+  //
+  // std::vector<int> symbsOnHost = symbiontTree->getSymbsOnHost(indxOfHostInNodes);
+  // int symbToPick = unif_rand() * symbsOnHost.size(); // pick a node at random
+  // int indxOfSymb = symbsOnHost[symbToPick]; // indx in symbiontTree.nodes
+  // int indxOfSymbInExtant = symbiontTree->getExtantIndxFromNodes(indxOfSymb); // indx in symbiontTree.extantNodes
+  //
+  // // need to update symbiontTree.extantNodes[indxOfSymbInExtant].hosts
+  // // need to update symbiontTree.hostSymbMap
+  // symbiontTree->cospeciationMapUpdate(indxOfHostInNodes,
+  //                                     numNodes,
+  //                                     indxOfSymb);
+  // // update map and node at extantNodes[indxOfSymb]
+  // symbiontTree->lineageBirthEvent(indxOfSymbInExtant);
+  return assocMat;
 }
 
 std::string Simulator::printExtSpeciesTreeNewick(){

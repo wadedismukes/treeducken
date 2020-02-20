@@ -5,7 +5,7 @@
 #include <sstream>
 #include <map>
 #include <set>
-#include <Rcpp.h>
+#include <RcppArmadillo.h>
 
 using namespace Rcpp;
 
@@ -60,6 +60,7 @@ class SpeciesTree : public Tree
         std::pair<int, int>         preorderTraversalStep(int index);
         int                         postOrderTraversalStep(int index);
         int           findLastToGoExtinct(double eventTime);
+        int           getNodesIndxFromExtantIndx(int extanIndx) {return extantNodes[extanIndx]->getIndex(); }
 
 
 

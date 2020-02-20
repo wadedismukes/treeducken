@@ -13,7 +13,7 @@
 #include <iostream>
 #include <fstream>
 #include <regex>
-#include <Rcpp.h>
+#include <RcppArmadillo.h>
 /*
  tree info class
                 */
@@ -163,6 +163,7 @@ extern Rcpp::List sim_host_symb_treepair(double hostbr,
                                      double symbbr,
                                      double symbdr,
                                      double switchrate,
+                                     double cosprate,
                                      double timeToSimTo,
                                      int numbsim);
 #endif /* Engine_h */
