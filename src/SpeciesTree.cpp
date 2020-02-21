@@ -176,34 +176,38 @@ void SpeciesTree::setTreeInfo(){
 }
 
 void SpeciesTree::setTreeTipNames(){
-    unsigned extinctIt = 0;
+    unsigned nodeIndx = numExtant + numExtinct;
     unsigned tipIt = 0;
-    recTipNamer(getRoot(), extinctIt, tipIt);
+    recTipNamer(this->getRoot(), nodeIndx, tipIt);
 }
 
 
-void SpeciesTree::recTipNamer(Node *p, unsigned &extinctIndx, unsigned &tipIndx){
-    if(p != NULL){
-        std::stringstream tn;
-        if(p->getIsTip()){
-            if(p->getIsExtinct()){
-                tn << p->getIndex();
-                std::string name = "X" + tn.str();
-                p->setName(name);
+void SpeciesTree::recTipNamer(Node *p, unsigned &nodeIndx, unsigned &tipIndx){
+  if(p != NULL){
+    std::stringstream tn;
+    if(p->getIsTip()){
+      tipIndx++;
+      p->setIndx(tipIndx);
+      if(p->getIsExtinct()){
+        tn << p->getIndex();
+        std::string name = "X" + tn.str();
+        p->setName(name);
 
-            }
-            else{
-                tn << p->getIndex();
-                std::string name = "T" + tn.str();
-                p->setName(name);
-            }
-        }
-        else{
-            recTipNamer(p->getLdes(), extinctIndx, tipIndx);
-            recTipNamer(p->getRdes(), extinctIndx, tipIndx);
-
-        }
+      }
+      else{
+        tn << p->getIndex();
+        std::string name = "H" + tn.str();
+        p->setName(name);
+      }
     }
+    else{
+      nodeIndx++;
+      p->setIndx(nodeIndx);
+      recTipNamer(p->getLdes(), nodeIndx, tipIndx);
+      recTipNamer(p->getRdes(), nodeIndx, tipIndx);
+
+    }
+  }
 }
 
 void SpeciesTree::recGetNewickTree(Node *p, std::stringstream &ss){

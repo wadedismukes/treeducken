@@ -146,27 +146,39 @@ void SymbiontTree::setNewLineageInfo(int indx, Node*r, Node*l){
     l->setIndx(numNodes - 1);
 }
 
-void SymbiontTree::ermJointEvent(double ct, std::vector<Node*> hostNodes){
+arma::mat SymbiontTree::ermJointEvent(double ct, arma::mat assocMat){
     currentTime = ct;
+    this->setCurrentTime(ct);
+
+    // pick a row at random
     int nodeInd = unif_rand()*(numExtant - 1);
+
+    arma::rowvec rvec = assocMat.row(nodeInd);
+    assocMat.shed_row(nodeInd);
+
+    // which event
     double relBr = symbSpecRate / (symbExtRate + symbSpecRate + hostExpanRate);
     double relDr = relBr + (symbExtRate / (symbExtRate + symbSpecRate + hostExpanRate));
     double dec = unif_rand();
-    if(dec < relBr)
+    if(dec < relBr){
+        // its a birth
         this->lineageBirthEvent(nodeInd);
+        assocMat.resize(numExtant, assocMat.n_cols);
+        assocMat(numExtant - 2, arma::span::all) = rvec;
+        assocMat(numExtant - 1, arma::span::all) = rvec;
+    }
     else if(dec < relDr)
         this->lineageDeathEvent(nodeInd);
+
     else{
-        std::vector<int> exceptions = extantNodes[nodeInd]->getHosts();
-        std::sort(exceptions.begin(), exceptions.end());
-        int hostInd = unif_rand() * (hostNodes.size() - exceptions.size());
-        for(int i = 0; i < exceptions.size(); i++){
-            if( hostInd < exceptions[i])
-                break;
-            hostInd++;
-        }
+        int hostInd = unif_rand() * assocMat.n_cols;
         this->hostExpansionEvent(nodeInd, hostInd);
+        assocMat.resize(numExtant, assocMat.n_cols);
+        assocMat(numExtant - 2, arma::span::all) = rvec;
+        rvec(hostInd) = 1;
+        assocMat(numExtant - 1, arma::span::all) = rvec;
     }
+    return assocMat;
 }
 
 void SymbiontTree::hostExpansionEvent(int indx, int hostIndx){
@@ -191,7 +203,7 @@ void SymbiontTree::setNewLineageInfoExpan(int indx, Node* r, Node* l, int hostIn
     r->setIsTip(true);
     r->setIsExtant(true);
     r->setIsExtinct(false);
-    r->setHosts(extantNodes[indx]->getHosts());
+    //r->setHosts(extantNodes[indx]->getHosts());
 
     l->setLdes(NULL);
     l->setRdes(NULL);
@@ -201,13 +213,13 @@ void SymbiontTree::setNewLineageInfoExpan(int indx, Node* r, Node* l, int hostIn
     l->setIsTip(true);
     l->setIsExtinct(false);
     l->setIsExtant(true);
-    l->setHosts(extantNodes[indx]->getHosts());
-    if(unif_rand() < 0.5){
-        l->addHost(hostIndx);
-    }
-    else{
-        r->addHost(hostIndx);
-    }
+    //l->setHosts(extantNodes[indx]->getHosts());
+    // if(unif_rand() < 0.5){
+    //     l->addHost(hostIndx);
+    // }
+    // else{
+    //     r->addHost(hostIndx);
+    // }
     extantNodes.erase(extantNodes.begin() + indx);
     extantNodes.push_back(std::move(r));
     extantNodes.push_back(std::move(l));
@@ -218,19 +230,37 @@ void SymbiontTree::setNewLineageInfoExpan(int indx, Node* r, Node* l, int hostIn
     l->setIndx(numExtant - 1);
 }
 
-
 void SymbiontTree::setTreeTipNames(){
-    int tipInd = 1;
-    std::stringstream ss;
-    for(int i = 0; i < nodes.size(); i++){
-        if(nodes[i]->getIsTip()){
-            ss << tipInd;
-            std::string name = "S" + ss.str();
-            nodes[i]->setName(name);
-            ss.clear();
-            tipInd++;
-        }
+    unsigned nodeIndx = numExtant + numExtinct;
+    unsigned tipIt = 0;
+    recTipNamer(this->getRoot(), nodeIndx, tipIt);
+}
 
+void SymbiontTree::recTipNamer(Node *p, unsigned &nodeIndx, unsigned &tipIndx){
+    if(p != NULL){
+        std::stringstream tn;
+        if(p->getIsTip()){
+            tipIndx++;
+            p->setIndx(tipIndx);
+            if(p->getIsExtinct()){
+                tn << p->getIndex();
+                std::string name = "X" + tn.str();
+                p->setName(name);
+
+            }
+            else{
+                tn << p->getIndex();
+                std::string name = "S" + tn.str();
+                p->setName(name);
+            }
+        }
+        else{
+            nodeIndx++;
+            p->setIndx(nodeIndx);
+            recTipNamer(p->getLdes(), nodeIndx, tipIndx);
+            recTipNamer(p->getRdes(), nodeIndx, tipIndx);
+
+        }
     }
 }
 

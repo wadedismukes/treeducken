@@ -545,7 +545,20 @@ void Tree::setNumExtinct(){
 
 // TODO: write a function to convert bdsa sims to format to read out into R
 
-
+void Tree::reindexForR(){
+    int intNodeCount = numTaxa + 1;
+    int tipCount = 1;
+    for(int i = 1; i < nodes.size(); i++){
+        if(nodes[i]->getIsTip()){
+            nodes[i]->setIndx(tipCount);
+            tipCount++;
+        }
+        else{
+            nodes[i]->setIndx(intNodeCount);
+            intNodeCount++;
+        }
+    }
+}
 // remember if something breaks you edited the notoriously
 //  sketchy reconstruct lineages WTD
 

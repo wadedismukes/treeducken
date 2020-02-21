@@ -280,7 +280,6 @@ bool Simulator::pairedBDPSim(){
   double eventTime;
   // TODO: the tree is not initialzied with links between hosts and parasites
   //symbiontTree->setSymbTreeInfo(spTree);
-  arma::mat assocMat;
   assocMat.ones(1,1);
   while(currentSimTime < stopTime){
 
@@ -297,12 +296,14 @@ bool Simulator::pairedBDPSim(){
     }
   }
   treePairGood = true;
-
+ // symbiontTree->reindexForR();
+ //spTree->reindexForR();
   symbiontTree->setPresentTime(currentSimTime);
   spTree->setPresentTime(currentSimTime);
-  Rcout << symbiontTree->getNodesSize() << std::endl;
+
   return treePairGood;
 }
+
 
 arma::mat Simulator::cophyloEvent(double eventTime, arma::mat assocMat){
   double hostEvent = speciationRate + extinctionRate;
@@ -317,8 +318,7 @@ arma::mat Simulator::cophyloEvent(double eventTime, arma::mat assocMat){
     assocMat = this->cophyloERMEvent(eventTime, assocMat);
   }
   else if(whichEvent < symbEventProb){
-    std::vector<Node*> hostExtantNodes = spTree->getExtantNodes();
-    symbiontTree->ermJointEvent(eventTime, hostExtantNodes);
+    assocMat = symbiontTree->ermJointEvent(eventTime, assocMat);
   }
   else{
     assocMat = this->cospeciationEvent(eventTime, assocMat);
@@ -329,8 +329,6 @@ arma::mat Simulator::cophyloEvent(double eventTime, arma::mat assocMat){
 
 arma::mat Simulator::cophyloERMEvent(double eventTime, arma::mat assocMat){
   int numExtantHosts = spTree->getNumExtant();
-  assocMat.print();
-
   int nodeInd = unif_rand()*(numExtantHosts);
   double relBr = speciationRate / (speciationRate + extinctionRate);
   bool isBirth = (unif_rand() < relBr ? true : false);
@@ -343,10 +341,8 @@ arma::mat Simulator::cophyloERMEvent(double eventTime, arma::mat assocMat){
   assocMat.shed_col(nodeInd);
 
   if(isBirth){
-    Rcout << "num hosts (i.e. columns ) " << numExtantHosts << std::endl;
     spTree->lineageBirthEvent(nodeInd);
     numExtantHosts = spTree->getNumExtant();
-    Rcout << "num hosts (i.e. columns ) " << numExtantHosts << std::endl;
 
     assocMat.resize(numExtantSymbs, numExtantHosts);
 
@@ -371,13 +367,20 @@ arma::mat Simulator::cophyloERMEvent(double eventTime, arma::mat assocMat){
     spTree->lineageDeathEvent(nodeInd);
     numExtantHosts = spTree->getNumExtant();
     // check rows for 0's
-    for(int i = 0; i < numExtantSymbs; i++){
-      if(sum(assocMat.row(i)) == 0)
-        symbiontTree->lineageDeathEvent(i);
-    }
+    //
+    arma::uvec hostless = zeros<uvec>(numExtantSymbs);
 
+
+    for(int i = 0; i < numExtantSymbs; i++){
+      if(sum(assocMat.row(i)) < 0.5){
+        symbiontTree->lineageDeathEvent(i);
+        hostless[i] = 1;
+      }
+    }
+    uvec toBeDeleted = find(hostless);
+    assocMat.shed_rows(toBeDeleted);
   }
-  Rcout << "@*@*@*@*@*@*@" << std::endl;
+
   return assocMat;
 }
 
@@ -388,21 +391,25 @@ arma::mat Simulator::cospeciationEvent(double eventTime, arma::mat assocMat){
   spTree->setCurrentTime(eventTime);
   symbiontTree->setCurrentTime(eventTime);
   // issue is that here you can choose hosts without symbionts!
-  arma::umat hostIndices = all(assocMat > 0);
-  Rcout << "hostIndx = " << hostIndices.size() << std::endl;
-
   int numExtantHosts = spTree->getNumExtant();
+  std::vector<int> hostIndices;
+  hostIndices.resize(numExtantHosts);
+
+  for(int i = 0; i < numExtantHosts; i++){
+    if(sum(assocMat.col(i)) >= 0.5)
+      hostIndices[i] = i;
+  }
+
   int indxOfHost = unif_rand() * hostIndices.size(); //col of assocMat
  // Rcout << "hostIndx = " << indxOfHost << std::endl;
 
   arma::colvec cvec = assocMat.col(hostIndices[indxOfHost]);
   arma::uvec symbIndices = find(cvec);
-  assocMat.print();
+  //assocMat.print();
   int indxOfSymb = unif_rand() * symbIndices.size();
 
   arma::rowvec rvec = assocMat.row(symbIndices[indxOfSymb]);
 
-  Rcout << "symbiontIndx = " << symbIndices[indxOfSymb] << std::endl;
   spTree->lineageBirthEvent(hostIndices[indxOfHost]);
   symbiontTree->lineageBirthEvent(symbIndices[indxOfSymb]);
 
@@ -425,17 +432,13 @@ arma::mat Simulator::cospeciationEvent(double eventTime, arma::mat assocMat){
   // loop through cvec and make little vecs
   for(int i = 0; i < cvec.size() - 1; i++){
     if(cvec[i] == 1){
-      Rcout << "rr is below " << std::endl;
       arma::mat rr = ones<mat>(1,2);
-      rr.print();
 
-      Rcout << "randomRow " << std::endl;
       int randOne = unif_rand() * 2;
       if(randOne == 0)
         rr(0,0) = 0;
       else
         rr(0, 1) = 0;
-      rr.print();
       assocMat(i, span(numExtantHosts-2,numExtantHosts-1)) = rr;
     }
 
@@ -444,16 +447,13 @@ arma::mat Simulator::cospeciationEvent(double eventTime, arma::mat assocMat){
   // loop through rvec
   for(int i = 0; i < rvec.size() - 1; i++){
     if(rvec[i] == 1){
-      Rcout << "rr is below " << std::endl;
       arma::mat rr = ones<mat>(1,2);
-      rr.print();
 
       int randOne = unif_rand() * 2;
       if(randOne == 0)
         rr(0,0) = 0;
       else
         rr(0, 1) = 0;
-      rr.print();
       assocMat(span(numExtantSymbs-2,numExtantSymbs-1),i) = rr.t();
     }
   }

@@ -47,13 +47,15 @@ class SymbiontTree : public Tree {
                                              Node* s,
                                              int hostIndx);
       void            hostExpansionEvent(int indx, int hostIndx);
-      void            ermJointEvent(double ct, std::vector<Node*> hostNodes);
+      arma::mat       ermJointEvent(double ct, arma::mat assocMat);
 
       void            setSymbTreeInfoSpeciation(int ancIndx, int desIndx);
       void            setSymbTreeInfoExtinction(int deadIndx);
 
       //std::string     printNewickTree();
       void            setTreeTipNames();
+      void            recTipNamer(Node *p, unsigned &extinctCount, unsigned &tipCount);
+
 //      void            recGetNewickTree(Node *r, std::stringstream &ss);
       void            setBranchLengths();
       void            setPresentTime(double currentT);
