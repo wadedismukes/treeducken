@@ -551,9 +551,7 @@ void Tree::setNumExtinct(){
 
 NumericMatrix Tree::getEdges(){
     int numRows = (int) nodes.size() - 1;
-    Rcout << "numRows = " << numRows << std::endl;
     NumericMatrix edgeMat(numRows, 2);
-    Rcout << "(@(@(#(#))))" << std::endl;
 
     for(int i=1; i < nodes.size(); i++){
         if(!(nodes[i]->getIsRoot())){
