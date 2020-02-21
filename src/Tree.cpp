@@ -543,6 +543,8 @@ void Tree::setNumExtinct(){
     }
 }
 
+// TODO: write a function to convert bdsa sims to format to read out into R
+
 
 // remember if something breaks you edited the notoriously
 //  sketchy reconstruct lineages WTD

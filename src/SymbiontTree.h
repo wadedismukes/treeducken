@@ -80,7 +80,6 @@ class SymbiontTree : public Tree {
       void            updateHostsInNodes();
 
 
-
 };
 
 

@@ -269,16 +269,14 @@ bool Simulator::pairedBDPSim(){
   currentSimTime = 0.0;
   double stopTime = this->getTimeToSim();
 
-  SpeciesTree hostTree =  SpeciesTree(1, currentSimTime, speciationRate, extinctionRate);
-  spTree = &hostTree;
-  SymbiontTree symbTree = SymbiontTree(1,
-                                       currentSimTime,
-                                       geneBirthRate,
-                                       geneDeathRate,
-                                       transferRate,
-                                       hostLimit);
+  spTree = new SpeciesTree(1, currentSimTime, speciationRate, extinctionRate);
+  symbiontTree = new SymbiontTree(1,
+                                  currentSimTime,
+                                  geneBirthRate,
+                                  geneDeathRate,
+                                  transferRate,
+                                  hostLimit);
 
-  symbiontTree = &symbTree;
   double eventTime;
   // TODO: the tree is not initialzied with links between hosts and parasites
   //symbiontTree->setSymbTreeInfo(spTree);
@@ -299,11 +297,9 @@ bool Simulator::pairedBDPSim(){
     }
   }
   treePairGood = true;
-  spTree->setBranchLengths();
-  symbiontTree->setBranchLengths();
-  symbiontTree->setTreeTipNames();
-  spTree->setTreeTipNames();
 
+  symbiontTree->setPresentTime(currentSimTime);
+  spTree->setPresentTime(currentSimTime);
   Rcout << symbiontTree->getNodesSize() << std::endl;
   return treePairGood;
 }
@@ -398,6 +394,7 @@ arma::mat Simulator::cospeciationEvent(double eventTime, arma::mat assocMat){
 
   cvec[indxOfHost] = 0;
   rvec[symbIndices[indxOfSymb]] = 0;
+
   // loop through cvec and make little vecs
   for(int i = 0; i < numExtantSymbs - 2; i++){
     if(cvec[i] == 1){
@@ -414,45 +411,7 @@ arma::mat Simulator::cospeciationEvent(double eventTime, arma::mat assocMat){
       assocMat(span(numExtantSymbs-2,numExtantSymbs-1),i) = randomCol;
     }
   }
-  //std::vector<int> symbsOnHost;
-//
-//   for(int i=0; i < hostAssocs.size(); i++){
-//     if(hostAssocs[i] == 1){
-//       symbsOnHost.push_back(std::move(hostAssocs[i]));
-//     }
-//   }
 
-//  int indxOfSymbsOnHosts = unif_rand() * symbsOnHost.size();
-//  int indxOfSymbs = symbsOnHost[indxOfSymbsOnHosts];
-
-
-
-//  spTree->lineageBirthEvent(indxOfHost);
- // symbiontTree->lineageBirthEvent(indxOfSymbs);
-
-  //assocMat.erase(assocMat.begin()+indxOfHost,assocMat.begin()+indxOfHost+numExtantSymbs);
-  // int indxOfHostInNodes = spTree->getNodesIndxFromExtantIndx(indxOfHost);
-  //
-  // spTree->setCurrentTime(eventTime);
-  // symbiontTree->setCurrentTime(eventTime);
-  // // speciate indxOfHost, new nodes are indexed numNodes - 2, numNodes - 1
-  // spTree->lineageBirthEvent(indxOfHost);
-  //
-  // // which symbionts are on host nodes[indxOfHostInNodes]?
-  //
-  //
-  // std::vector<int> symbsOnHost = symbiontTree->getSymbsOnHost(indxOfHostInNodes);
-  // int symbToPick = unif_rand() * symbsOnHost.size(); // pick a node at random
-  // int indxOfSymb = symbsOnHost[symbToPick]; // indx in symbiontTree.nodes
-  // int indxOfSymbInExtant = symbiontTree->getExtantIndxFromNodes(indxOfSymb); // indx in symbiontTree.extantNodes
-  //
-  // // need to update symbiontTree.extantNodes[indxOfSymbInExtant].hosts
-  // // need to update symbiontTree.hostSymbMap
-  // symbiontTree->cospeciationMapUpdate(indxOfHostInNodes,
-  //                                     numNodes,
-  //                                     indxOfSymb);
-  // // update map and node at extantNodes[indxOfSymb]
-  // symbiontTree->lineageBirthEvent(indxOfSymbInExtant);
   return assocMat;
 }
 
@@ -823,5 +782,17 @@ int Simulator::findNumberTransfers(){
 
 double Simulator::findTMRCAGeneTree(int i, int j){
     return geneTrees[i][j]->getTreeDepth();
+}
+
+double Simulator::getSpeciesTreeRootEdge(){
+  return spTree->getRoot()->getDeathTime() - spTree->getRoot()->getBirthTime();
+}
+
+double Simulator::getLocusTreeRootEdge(){
+  return lociTree->getRoot()->getDeathTime() - lociTree->getRoot()->getBirthTime();
+}
+
+double Simulator::getSymbiontTreeRootEdge(){
+  return symbiontTree->getRoot()->getDeathTime() - symbiontTree->getRoot()->getBirthTime();
 }
 

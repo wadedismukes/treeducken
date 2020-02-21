@@ -133,6 +133,26 @@ class Simulator
         SymbiontTree*   getSymbiontTree() {return symbiontTree;}
         double          getTimeToSim() {return timeToSim; }
 
+        NumericMatrix   getSymbiontEdges() { return symbiontTree->getEdges(); }
+        NumericMatrix   getSpeciesEdges() { return spTree->getEdges(); }
+        NumericMatrix   getLocusEdges() { return lociTree->getEdges(); }
+
+        std::vector<double>    getSymbiontEdgeLengths() { return symbiontTree->getEdgeLengths(); }
+        std::vector<double>    getSpeciesEdgeLengths() { return spTree->getEdgeLengths(); }
+        std::vector<double>    getLocusEdgeLengths() { return lociTree->getEdgeLengths(); }
+
+        int    getSymbiontNnodes() { return symbiontTree->getNnodes(); }
+        int    getSpeciesNnodes() { return spTree->getNnodes(); }
+        int    getLocusNnodes() { return lociTree->getNnodes(); }
+
+        std::vector<std::string> getSpeciesTipNames() { return spTree->getTipNames(); }
+        std::vector<std::string> getSymbiontTipNames() { return symbiontTree->getTipNames(); }
+        std::vector<std::string> getLocusTipNames() { return lociTree->getTipNames(); }
+
+        double    getSpeciesTreeRootEdge();
+        double    getLocusTreeRootEdge();
+        double    getSymbiontTreeRootEdge();
+
         arma::mat    cophyloEvent(double eventTime, arma::mat assocMat);
         arma::mat    cophyloERMEvent(double eventTime, arma::mat assocMat);
         arma::mat    cospeciationEvent(double eventTime, arma::mat assocMat);
