@@ -294,6 +294,10 @@ bool Simulator::pairedBDPSim(){
       treePairGood = false;
       return treePairGood;
     }
+    else if(symbiontTree->getNumExtant() < 1){
+      treePairGood = false;
+      return treePairGood;
+    }
   }
   treePairGood = true;
  // symbiontTree->reindexForR();
@@ -321,6 +325,7 @@ arma::umat Simulator::cophyloEvent(double eventTime, arma::umat assocMat){
     assocMat = symbiontTree->ermJointEvent(eventTime, assocMat);
   }
   else{
+
     assocMat = this->cospeciationEvent(eventTime, assocMat);
   }
   return assocMat;
@@ -351,34 +356,33 @@ arma::umat Simulator::cophyloERMEvent(double eventTime, arma::umat assocMat){
     assocMat(span::all, numExtantHosts-2) = cvec;
     assocMat(span::all, numExtantHosts-1) = cvec;
 
-    // sort symbs on new hosts
-   // for(int i = 0; i < numExtantSymbs; i++){
-   //  Rcout << "@*@*@*@*@*@*@" << std::endl;
-     // if(cvec[i] == 1){
-        // shuffle might be better here?
-        // randi makes this have more model space (limit for now...)
-        //arma::mat randomRow = randi<mat>(1,2, distr_param(0,1));
-       // arma::mat rr = zeros<mat>(1,2);
-        //rr(0,0) = 1;
-       // arma::mat randomRow = shuffle(rr);
-       // assocMat(i, span(numExtantHosts-2,numExtantHosts-1)) = randomRow;
-     // }
-   // }
+   // sort symbs on new hosts
+   for(int i = 0; i < numExtantSymbs; i++){
+      if(cvec[i] == 1 && i != nodeInd){
+      // shuffle might be better here?
+        arma::umat rr = zeros<umat>(1,2);
+        rr(0,0) = 1;
+        arma::umat shuffledRandomRow = shuffle(rr);
+        assocMat(i, span(numExtantHosts-2,numExtantHosts-1)) = shuffledRandomRow;
+      }
+    }
   }
   else{
+
     spTree->lineageDeathEvent(nodeInd);
+
     numExtantHosts = spTree->getNumExtant();
     // check rows for 0's
     //
     arma::uvec hostless = zeros<uvec>(numExtantSymbs);
+    for(int i = assocMat.n_rows - 1; i > -1; i--){
 
-
-    for(int i = 0; i < numExtantSymbs; i++){
-      if(sum(assocMat.row(i)) < 0.5){
+      if(sum(assocMat.row(i)) < 1){
         symbiontTree->lineageDeathEvent(i);
-        hostless[i] = 1;
+        hostless(i) = 1;
       }
     }
+
     uvec toBeDeleted = find(hostless);
     assocMat.shed_rows(toBeDeleted);
   }
