@@ -43,7 +43,7 @@ class Simulator
         double      cospeciationRate;
         double      timeToSim;
         int         hostLimit;
-        arma::mat   assocMat;
+        arma::umat   assocMat;
 
     public:
         // Simulating species tree only
@@ -153,11 +153,12 @@ class Simulator
         double    getSpeciesTreeRootEdge();
         double    getLocusTreeRootEdge();
         double    getSymbiontTreeRootEdge();
-        arma::mat    getAssociationMatrix() { return assocMat; }
-        arma::mat    cophyloEvent(double eventTime, arma::mat assocMat);
-        arma::mat    cophyloERMEvent(double eventTime, arma::mat assocMat);
-        arma::mat    cospeciationEvent(double eventTime, arma::mat assocMat);
-
+        arma::umat    getAssociationMatrix() { return assocMat; }
+        arma::umat    cophyloEvent(double eventTime, arma::umat assocMat);
+        arma::umat    cophyloERMEvent(double eventTime, arma::umat assocMat);
+        arma::umat    cospeciationEvent(double eventTime, arma::umat assocMat);
+        //List  getEventHistory() { return updateIndices(events); }
+       //List  updateIndices(List evs);
 };
 
 

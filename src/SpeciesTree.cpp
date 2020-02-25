@@ -176,9 +176,33 @@ void SpeciesTree::setTreeInfo(){
 }
 
 void SpeciesTree::setTreeTipNames(){
-    unsigned nodeIndx = numExtant + numExtinct;
-    unsigned tipIt = 0;
-    recTipNamer(this->getRoot(), nodeIndx, tipIt);
+  unsigned nodeIndx = numExtant + numExtinct;
+  unsigned tipIt = 0;
+  std::stringstream tn;
+
+  for(int i=0; i < nodes.size(); i++){
+    if(nodes[i]->getIsTip()){
+      tipIt++;
+      nodes[i]->setIndx(tipIt);
+      if(nodes[i]->getIsExtant()){
+        tn << nodes[i]->getIndex();
+        std::string name = "H" + tn.str();
+        nodes[i]->setName(name);
+
+      }
+      else{
+        tn << nodes[i]->getIndex();
+        std::string name = "X" + tn.str();
+        nodes[i]->setName(name);
+      }
+    }
+    else{
+      nodeIndx++;
+      nodes[i]->setIndx(nodeIndx);
+    }
+    tn.clear();
+    tn.str(std::string());
+  }
 }
 
 

@@ -133,6 +133,7 @@ class Tree
         int         getNnodes() { return (int) nodes.size() - (numExtant + numExtinct);}
         void        setTipsFromRtree();
         double      findMaxNodeHeight();
+        int         getIndexFromNodes(int indx) {return nodes[indx]->getIndex(); }
         virtual double  getTimeToNextEvent() { return 0.0; }
         virtual void    lineageBirthEvent(unsigned int indx) { return; }
         virtual void    lineageDeathEvent(unsigned int indx) { return; }

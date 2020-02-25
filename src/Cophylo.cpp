@@ -52,12 +52,14 @@ Rcpp::List sim_host_symb_treepair(double hostbr,
                                 Named("root.edge") = phySimulator->getSymbiontTreeRootEdge());
         phySymb.attr("class") = "phylo";
 
+       // DataFrame eventHistory = phySimulator->getEventHistory();
 
         hostSymbPair = List::create(Named("host_tree") = phyHost,
                                     Named("symb_tree") = phySymb,
-                                    Named("association_mat") = phySimulator->getAssociationMatrix());
-        Rcout << "*********" << std::endl;
+                                    Named("association_mat") = phySimulator->getAssociationMatrix()),
+                                  //  Named("event_history") = eventHistory);
 
+        Rcout << "*********" << std::endl;
         multiphy.push_back(std::move(hostSymbPair));
     }
 

@@ -20,7 +20,6 @@ class SymbiontTree : public Tree {
       double stopTime;
       unsigned numTaxa;
       unsigned numExpansions;
-      unsigned numPairs;
       unsigned hostLimit;
       std::map<int,std::vector<int>> symbHostMap; // keys are symb indices
 
@@ -38,7 +37,7 @@ class SymbiontTree : public Tree {
       double  getTimeToNextJointEvent(double hostSpecRate,
                                          double hostExtRate,
                                          double cospeciaRate,
-                                         int numHosts);
+                                         arma::umat assocMat);
       virtual void    lineageBirthEvent(unsigned indx);
       virtual void    lineageDeathEvent(unsigned indx);
       virtual void    setNewLineageInfo(int indx, Node *r, Node *s);
@@ -47,7 +46,7 @@ class SymbiontTree : public Tree {
                                              Node* s,
                                              int hostIndx);
       void            hostExpansionEvent(int indx, int hostIndx);
-      arma::mat       ermJointEvent(double ct, arma::mat assocMat);
+      arma::umat       ermJointEvent(double ct, arma::umat assocMat);
 
       void            setSymbTreeInfoSpeciation(int ancIndx, int desIndx);
       void            setSymbTreeInfoExtinction(int deadIndx);
@@ -80,7 +79,7 @@ class SymbiontTree : public Tree {
                                             int numHosts,
                                             int symbIndx);
       void            updateHostsInNodes();
-
+      int             getNodesIndxFromExtantIndx(int i) { return extantNodes[i]->getIndex(); }
 
 };
 

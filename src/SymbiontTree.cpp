@@ -45,11 +45,12 @@ SymbiontTree::~SymbiontTree(){
 double SymbiontTree::getTimeToNextJointEvent(double hostSpecRate,
                                         double hostExtRate,
                                         double cospeciaRate,
-                                        int numHosts){
+                                        arma::umat assocMat){
+    int numHosts = assocMat.n_cols;
+    arma::uvec numPairs = find(assocMat);
     double sumrt_host =  (hostSpecRate + hostExtRate) * numHosts;
     double sumrt_symb = (symbSpecRate + symbExtRate + hostExpanRate) * numExtant;
-    double sumrt_both = cospeciaRate * this->getNumHostSymbPairs();
-    // TODO: make map for host->symbionts
+    double sumrt_both = cospeciaRate * numPairs.n_rows;
     double returnTime = -log(unif_rand()) / (sumrt_host + sumrt_symb + sumrt_both);
     return returnTime;
 }
@@ -146,14 +147,14 @@ void SymbiontTree::setNewLineageInfo(int indx, Node*r, Node*l){
     l->setIndx(numNodes - 1);
 }
 
-arma::mat SymbiontTree::ermJointEvent(double ct, arma::mat assocMat){
+arma::umat SymbiontTree::ermJointEvent(double ct, arma::umat assocMat){
     currentTime = ct;
     this->setCurrentTime(ct);
 
     // pick a row at random
     int nodeInd = unif_rand()*(numExtant - 1);
 
-    arma::rowvec rvec = assocMat.row(nodeInd);
+    arma::urowvec rvec = assocMat.row(nodeInd);
     assocMat.shed_row(nodeInd);
 
     // which event
@@ -233,7 +234,31 @@ void SymbiontTree::setNewLineageInfoExpan(int indx, Node* r, Node* l, int hostIn
 void SymbiontTree::setTreeTipNames(){
     unsigned nodeIndx = numExtant + numExtinct;
     unsigned tipIt = 0;
-    recTipNamer(this->getRoot(), nodeIndx, tipIt);
+    std::stringstream tn;
+
+    for(int i=0; i < nodes.size(); i++){
+        if(nodes[i]->getIsTip()){
+            tipIt++;
+            nodes[i]->setIndx(tipIt);
+            if(nodes[i]->getIsExtant()){
+                tn << nodes[i]->getIndex();
+                std::string name = "S" + tn.str();
+                nodes[i]->setName(name);
+
+            }
+            else{
+                tn << nodes[i]->getIndex();
+                std::string name = "X" + tn.str();
+                nodes[i]->setName(name);
+            }
+        }
+        else{
+            nodeIndx++;
+            nodes[i]->setIndx(nodeIndx);
+        }
+        tn.clear();
+        tn.str(std::string());
+    }
 }
 
 void SymbiontTree::recTipNamer(Node *p, unsigned &nodeIndx, unsigned &tipIndx){
