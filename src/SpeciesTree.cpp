@@ -1,11 +1,3 @@
-//
-//  SpeciesTree.cpp
-//  multiTree
-//
-//  Created by Dismukes, Wade T [EEOBS] on 11/8/17.
-//  Copyright © 2017 Dismukes, Wade T [EEOBS]. All rights reserved.
-//
-
 #include "SpeciesTree.h"
 #include <iostream>
 

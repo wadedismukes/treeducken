@@ -43,8 +43,6 @@ Rcpp::List sim_host_symb_treepair(double hostbr,
         phyHost.attr("class") = "phylo";
 
 
-
-
         List phySymb = List::create(Named("edge") = phySimulator->getSymbiontEdges(),
                                 Named("edge.length") = phySimulator->getSymbiontEdgeLengths(),
                                 Named("Nnode") = phySimulator->getSymbiontNnodes(),
@@ -52,19 +50,16 @@ Rcpp::List sim_host_symb_treepair(double hostbr,
                                 Named("root.edge") = phySimulator->getSymbiontTreeRootEdge());
         phySymb.attr("class") = "phylo";
 
-       // DataFrame eventHistory = phySimulator->getEventHistory();
-
         hostSymbPair = List::create(Named("host_tree") = phyHost,
                                     Named("symb_tree") = phySymb,
-                                    Named("association_mat") = phySimulator->getAssociationMatrix()),
-                                  //  Named("event_history") = eventHistory);
+                                    Named("association_mat") = phySimulator->getAssociationMatrix(),
+                                    Named("event_history") = phySimulator->createEventDF());
 
-        Rcout << "*********" << std::endl;
         multiphy.push_back(std::move(hostSymbPair));
+        delete phySimulator;
     }
 
 
 
-    delete phySimulator;
     return multiphy;
 }

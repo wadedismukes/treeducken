@@ -45,6 +45,11 @@ class Simulator
         int         hostLimit;
         arma::umat   assocMat;
 
+        Rcpp::IntegerVector inOrderVecOfHostIndx;
+        Rcpp::IntegerVector inOrderVecOfSymbIndx;
+        Rcpp::CharacterVector inOrderVecOfEvent;
+        Rcpp::NumericVector inOrderVecOfEventTimes;
+
     public:
         // Simulating species tree only
         Simulator(unsigned numTaxaToSim,
@@ -157,8 +162,9 @@ class Simulator
         arma::umat    cophyloEvent(double eventTime, arma::umat assocMat);
         arma::umat    cophyloERMEvent(double eventTime, arma::umat assocMat);
         arma::umat    cospeciationEvent(double eventTime, arma::umat assocMat);
-        //List  getEventHistory() { return updateIndices(events); }
-       //List  updateIndices(List evs);
+        Rcpp::DataFrame createEventDF();
+        void      updateEventIndices();
+        void      updateEventVector(int h, int s, int e, double time);
 };
 
 

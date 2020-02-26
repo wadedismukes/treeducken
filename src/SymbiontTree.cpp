@@ -152,7 +152,7 @@ arma::umat SymbiontTree::ermJointEvent(double ct, arma::umat assocMat){
     this->setCurrentTime(ct);
 
     // pick a row at random
-    int nodeInd = unif_rand()*(numExtant - 1);
+    int nodeInd = unif_rand()*(numExtant);
 
     arma::urowvec rvec = assocMat.row(nodeInd);
     assocMat.shed_row(nodeInd);
@@ -204,7 +204,6 @@ void SymbiontTree::setNewLineageInfoExpan(int indx, Node* r, Node* l, int hostIn
     r->setIsTip(true);
     r->setIsExtant(true);
     r->setIsExtinct(false);
-    //r->setHosts(extantNodes[indx]->getHosts());
 
     l->setLdes(NULL);
     l->setRdes(NULL);
@@ -214,13 +213,7 @@ void SymbiontTree::setNewLineageInfoExpan(int indx, Node* r, Node* l, int hostIn
     l->setIsTip(true);
     l->setIsExtinct(false);
     l->setIsExtant(true);
-    //l->setHosts(extantNodes[indx]->getHosts());
-    // if(unif_rand() < 0.5){
-    //     l->addHost(hostIndx);
-    // }
-    // else{
-    //     r->addHost(hostIndx);
-    // }
+
     extantNodes.erase(extantNodes.begin() + indx);
     extantNodes.push_back(std::move(r));
     extantNodes.push_back(std::move(l));
