@@ -162,6 +162,7 @@ class Simulator
         arma::umat    cophyloEvent(double eventTime, arma::umat assocMat);
         arma::umat    cophyloERMEvent(double eventTime, arma::umat assocMat);
         arma::umat    cospeciationEvent(double eventTime, arma::umat assocMat);
+        arma::umat    symbiontTreeEvent(double eventTime, arma::umat assocMat);
         Rcpp::DataFrame createEventDF();
         void      updateEventIndices();
         void      updateEventVector(int h, int s, int e, double time);

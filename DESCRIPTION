@@ -8,5 +8,9 @@ Maintainer: Wade Dismukes <wade.dismukes@gmail.com>
 Description: Simulates nested phylogenies (gene trees in species tree, parasite trees in host trees) using birth-death processes and transfers between lineages.
 License: GPL (>= 2)
 SystemRequirements: C++11
-Imports: Rcpp (>= 1.0.2)
-LinkingTo: Rcpp, RcppArmadillo
+Imports: Rcpp (>= 1.0.2),
+            ape,
+            geiger,
+            phytools
+LinkingTo: Rcpp,
+           RcppArmadillo

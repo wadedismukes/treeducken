@@ -47,10 +47,10 @@ double SymbiontTree::getTimeToNextJointEvent(double hostSpecRate,
                                         double cospeciaRate,
                                         arma::umat assocMat){
     int numHosts = assocMat.n_cols;
-    arma::uvec numPairs = find(assocMat);
+// arma::uvec numPairs = find(assocMat);
     double sumrt_host =  (hostSpecRate + hostExtRate) * numHosts;
     double sumrt_symb = (symbSpecRate + symbExtRate + hostExpanRate) * numExtant;
-    double sumrt_both = cospeciaRate * numPairs.n_rows;
+    double sumrt_both = cospeciaRate * numHosts;
     double returnTime = -log(unif_rand()) / (sumrt_host + sumrt_symb + sumrt_both);
     return returnTime;
 }
