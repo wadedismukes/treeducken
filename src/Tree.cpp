@@ -565,9 +565,10 @@ void Tree::reindexForR(){
 NumericMatrix Tree::getEdges(){
     int numRows = (int) nodes.size() - 1;
     NumericMatrix edgeMat(numRows, 2);
-
     for(int i=1; i < nodes.size(); i++){
         if(!(nodes[i]->getIsRoot())){
+            Rcout << "????" << std::endl;
+
             NumericMatrix::Row row = edgeMat(i - 1, _);
             row[0] = nodes[i]->getAnc()->getIndex();
             row[1] = nodes[i]->getIndex();

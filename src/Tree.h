@@ -111,7 +111,8 @@ class Tree
         double      getEndTime();
         void        setNumExtant();
         void        setNumExtinct();
-        void        rescaleTreeByOutgroupFrac(double outgroupFrac, double getTreeDepth);
+        void        rescaleTreeByOutgroupFrac(double outgroupFrac,
+                                              double getTreeDepth);
         void        clearNodes(Node *cur);
         void        zeroAllFlags();
         void        setWholeTreeFlags();
@@ -119,12 +120,18 @@ class Tree
         void        setSampleFromFlags();
         void        getRootFromFlags(bool isGeneTree = false);
         void        getExtantTree();
-        void        setNewRootInfo(Node *newRoot, Node *outgroup, Node *oldRoot, double t);
+        void        setNewRootInfo(Node *newRoot,
+                                   Node *outgroup,
+                                   Node *oldRoot,
+                                   double t);
         std::vector<Node*> getNodes() { return nodes; }
         std::vector<Node*> getExtantNodes() { return extantNodes; }
         void        scaleTree( double treeScale , double currtime);
         void        reconstructTreeFromSim(Node *oRoot);
-        void        reconstructLineageFromSim(Node *currN, Node *prevN, unsigned &tipCounter, unsigned &intNodeCounter);
+        void        reconstructLineageFromSim(Node *currN,
+                                              Node *prevN,
+                                              unsigned &tipCounter,
+                                              unsigned &intNodeCounter);
         int         calculatePatristicDistance(Node *n1, Node *n2);
         void        reindexForR();
         std::vector<std::string>    getTipNames();

@@ -364,6 +364,7 @@ void LocusTree::recGetNewickTree(Node *p, std::stringstream &ss){
 }
 
 void LocusTree::setPresentTime(double currentT){
+    Rcout << "nodes size locus " << nodes.size() << std::endl;
     for(std::vector<Node*>::iterator it = nodes.begin(); it !=  nodes.end(); ++it){
         if((*it)->getIsExtant())
             (*it)->setDeathTime(currentT);

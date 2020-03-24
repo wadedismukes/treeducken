@@ -92,7 +92,8 @@ int run_treeducken(std::string params_file) {
         std::string outName;
         std::string stn;
         int nt = 100, r = 100, nloc = 0, ipp = 0, ne = 0, ngen = 0;
-        double sbr = 0.5, sdr = 0.2, gbr = 0.0, gdr = 0.0, lgtr = 0.0, ts = -1, og = 0.0;
+        double sbr = 0.5, sdr = 0.2, gbr = 0.0, gdr = 0.0, lgtr = 0.0;
+        double ts = -1, og = 0.0;
         bool sout = 1;
         bool mst = 0;
         for (int i = 0; i < params_vector.size(); i++){
@@ -328,8 +329,6 @@ Rcpp::List sim_locus_tree(SpeciesTree* species_tree,
                           double gdr,
                           double lgtr,
                           int numbsim){
-    std::vector<LocusTree*> locusTrees;
-    locusTrees.resize(numbsim);
     Simulator *phySimulator = nullptr;
     Rcpp::List multiphy;
     int ntax = species_tree->getNumExtant();
@@ -348,24 +347,20 @@ Rcpp::List sim_locus_tree(SpeciesTree* species_tree,
                                      lgtr);
         phySimulator->setSpeciesTree(species_tree);
         phySimulator->simLocusTree();
+        Rcout << "********" << std::endl;
 
-        locusTrees.push_back(phySimulator->getLocusTree());
-        //
-        NumericMatrix edges_rmat = locusTrees[i]->getEdges();
-
-        List phy = List::create(Named("edge") = edges_rmat,
-                                Named("edge.length") = locusTrees[i]->getEdgeLengths(),
-                                Named("Nnode") = locusTrees[i]->getNnodes(),
-                                Named("tip.label") = locusTrees[i]->getTipNames(),
-                                Named("root.edge") = locusTrees[i]->getRoot()->getDeathTime() -
-                                    locusTrees[i]->getRoot()->getBirthTime());
-
+        List phy = List::create(Named("edge") = phySimulator->getLocusEdges(),
+                                Named("edge.length") = phySimulator->getLocusEdgeLengths(),
+                                Named("Nnode") = phySimulator->getLocusNnodes(),
+                                Named("tip.label") = phySimulator->getLocusTipNames(),
+                                Named("root.edge") = phySimulator->getLocusTreeRootEdge());
         phy.attr("class") = "phylo";
-        multiphy.push_back(phy);
+
+        multiphy.push_back(std::move(phy));
+        delete phySimulator;
     }
 
 
 
-    delete phySimulator;
     return multiphy;
 }

@@ -426,9 +426,11 @@ arma::umat Simulator::symbiontTreeEvent(double eventTime, arma::umat assocMat){
 
   // List rowOfEvents;
   assocMat.shed_row(nodeInd);
-
+  updateEventVector(spTree->getNodesIndxFromExtantIndx(assocMat.n_cols - 1),
+                    symbiontTree->getNodesIndxFromExtantIndx(nodeInd),
+                    0,
+                    eventTime);
   if(decid < relBr){
-    Rcout << "*" << std::endl;
     symbiontTree->lineageBirthEvent(nodeInd);
     numExtantSymbs = symbiontTree->getNumExtant();
 
@@ -572,7 +574,10 @@ arma::umat Simulator::cophyloERMEvent(double eventTime, arma::umat assocMat){
   // List rowOfEvents;
 
   assocMat.shed_col(nodeInd);
-
+  updateEventVector(spTree->getNodesIndxFromExtantIndx(nodeInd),
+                    symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs - 1),
+                    0,
+                    eventTime);
   if(isBirth){
 
     spTree->lineageBirthEvent(nodeInd);
@@ -695,15 +700,20 @@ arma::umat Simulator::cospeciationEvent(double eventTime, arma::umat assocMat){
   int indxOfSymb = unif_rand() * (symbIndices.size() - 1);
 
   arma::urowvec rvec = assocMat.row(symbIndices[indxOfSymb]);
-
+  updateEventVector(spTree->getNodesIndxFromExtantIndx(hostIndices[indxOfHost]),
+                    symbiontTree->getNodesIndxFromExtantIndx(symbIndices[indxOfSymb]),
+                    0,
+                    eventTime);
   spTree->lineageBirthEvent(hostIndices[indxOfHost]);
   symbiontTree->lineageBirthEvent(symbIndices[indxOfSymb]);
+
 
   numExtantHosts = spTree->getNumExtant();
   int numExtantSymbs = symbiontTree->getNumExtant();
 
   assocMat.shed_col(hostIndices[indxOfHost]);
   assocMat.shed_row(symbIndices[indxOfSymb]);
+
   cvec.shed_row(symbIndices[indxOfSymb]);
   rvec.shed_col(hostIndices[indxOfHost]);
 
@@ -838,11 +848,10 @@ bool Simulator::bdsaBDSim(){
 
     bool treesComplete = false;
     double stopTime = spTree->getCurrentTimeFromExtant();
-
+    Rcout << stopTime << std::endl;
     double eventTime;
     bool isSpeciation;
     lociTree = new LocusTree(numTaxaToSim, currentSimTime, geneBirthRate, geneDeathRate, transferRate);
-    Rcout << "end poooo" << std::endl;
 
     std::map<int,double> speciesBirthTimes = spTree->getBirthTimesFromNodes();
     std::map<int,double> speciesDeathTimes = spTree->getDeathTimesFromNodes();
@@ -857,8 +866,10 @@ bool Simulator::bdsaBDSim(){
     contempSpecies.insert(spRoot->getIndex());
 
     while(currentSimTime < stopTime){
+        Rcout << "#######" << std::endl;
         eventTime = lociTree->getTimeToNextEvent();
         currentSimTime += eventTime;
+        Rcout << eventTime << std::endl;
         for(std::set<int>::iterator it = contempSpecies.begin(); it != contempSpecies.end();){
             if(currentSimTime > speciesDeathTimes[(*it)]){
                 isSpeciation = spTree->macroEvent((*it));
@@ -918,8 +929,6 @@ bool Simulator::simSpeciesLociTrees(){
             }
             if(outgroupFrac > 0.0)
                 this->graftOutgroup(spTree, spTree->getTreeDepth());
-            if(printSOUT)
-                std::cout << "Simulating loci #" <<  i + 1 << std::endl;
             good = bdsaBDSim();
         }
         if(outgroupFrac > 0.0)
@@ -934,7 +943,6 @@ bool Simulator::simSpeciesLociTrees(){
 
 bool Simulator::simLocusTree(){
   bool good = false;
-  Rcout << "start poooo" << std::endl;
 
   while(!good){
     good = bdsaBDSim();
@@ -1130,13 +1138,10 @@ bool Simulator::simLocusGeneTrees(){
     for(int i = 0; i < numLoci; i++){
         while(!loGood){
             if(printSOUT)
-                std::cout << "Simulating loci # " <<  i + 1 << std::endl;
             loGood = bdsaBDSim();
         }
         for(int j = 0; j < numGenes; j++){
             while(!gGood){
-                if(printSOUT)
-                    std::cout << "Simulating gene # " <<  j + 1 << " of loci # " << i + 1 << std::endl;
                 gGood = coalescentSim();
             }
             geneTrees[i].push_back(geneTree);

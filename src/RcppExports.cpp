@@ -31,6 +31,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// sim_locustree_bdp
+Rcpp::List sim_locustree_bdp(SEXP species_tree_, SEXP gbr_, SEXP gdr_, SEXP lgtr_, SEXP num_loci_);
+RcppExport SEXP _treeducken_sim_locustree_bdp(SEXP species_tree_SEXP, SEXP gbr_SEXP, SEXP gdr_SEXP, SEXP lgtr_SEXP, SEXP num_loci_SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type species_tree_(species_tree_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type gbr_(gbr_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type gdr_(gdr_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type lgtr_(lgtr_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type num_loci_(num_loci_SEXP);
+    rcpp_result_gen = Rcpp::wrap(sim_locustree_bdp(species_tree_, gbr_, gdr_, lgtr_, num_loci_));
+    return rcpp_result_gen;
+END_RCPP
+}
 // sim_cophylo_bdp
 Rcpp::List sim_cophylo_bdp(SEXP hbr_, SEXP hdr_, SEXP sbr_, SEXP sdr_, SEXP host_exp_rate_, SEXP cosp_rate_, SEXP timeToSimTo_, SEXP numbsim_);
 RcppExport SEXP _treeducken_sim_cophylo_bdp(SEXP hbr_SEXP, SEXP hdr_SEXP, SEXP sbr_SEXP, SEXP sdr_SEXP, SEXP host_exp_rate_SEXP, SEXP cosp_rate_SEXP, SEXP timeToSimTo_SEXP, SEXP numbsim_SEXP) {
@@ -53,6 +68,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_treeducken_treeducken", (DL_FUNC) &_treeducken_treeducken, 1},
     {"_treeducken_sim_sptree_bdp", (DL_FUNC) &_treeducken_sim_sptree_bdp, 4},
+    {"_treeducken_sim_locustree_bdp", (DL_FUNC) &_treeducken_sim_locustree_bdp, 5},
     {"_treeducken_sim_cophylo_bdp", (DL_FUNC) &_treeducken_sim_cophylo_bdp, 8},
     {NULL, NULL, 0}
 };
