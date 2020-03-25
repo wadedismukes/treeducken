@@ -17,8 +17,8 @@ int treeducken(std::string params_file) {
 }
 //' Simulates species tree using constant rate birth-death process
 //'
-//' @details At present only can simulate to a number of tips. This function does
-//' so using the general algorithm of Hartmann et al. 2010.
+//' @details Forward simulates to a number of tips. This function does so using
+//'     the general algorithm of Hartmann et al. 2010.
 //' @param sbr_ species birth rate (i.e. speciation rate)
 //' @param sdr_ species death rate (i.e. extinction rate)
 //' @param numbsim_ number of species trees to simulate
@@ -60,6 +60,48 @@ Rcpp::List sim_sptree_bdp(SEXP sbr_, SEXP sdr_, SEXP numbsim_, SEXP n_tips_){
     if(n_tips < 1)
         stop("'n_tips' must be greater than 1.");
     return bdsim_species_tree(sbr, sdr, numbsim, n_tips);
+}
+//' Simulates species tree using constant rate birth-death process to a time
+//'
+//' @details Forward simulates a tree until a provided time is reached.
+//' @param sbr_ species birth rate (i.e. speciation rate)
+//' @param sdr_ species death rate (i.e. extinction rate)
+//' @param numbsim_ number of species trees to simulate
+//' @param t_ time to simulate to
+//' @return List of objects of the tree class (as implemented in APE)
+//' @references
+//' K. Hartmann, D. Wong, T. Stadler. Sampling trees from evolutionary models.
+//'     Syst. Biol., 59(4): 465-476, 2010.
+//'
+//' T. Stadler. Simulating trees on a fixed number of extant species.
+//'     Syst. Biol., 60: 676-684, 2011.
+//' @examples
+//' mu <- 0.5 # death rate
+//' lambda <- 2.0 # birth rate
+//' numb_replicates <- 10
+//' time <- 4
+//'
+//' sim_sptree_bdp(sbr_ = lambda,
+//'                 sdr_ = mu,
+//'                 numbsim_ = numb_replicates,
+//'                 t_ = time)
+// [[Rcpp::export]]
+Rcpp::List sim_sptree_bdp_time(SEXP sbr_, SEXP sdr_, SEXP numbsim_, SEXP t_){
+    double sbr = as<double>(sbr_);
+    double sdr = as<double>(sdr_);
+    unsigned numbsim = as<int>(numbsim_);
+    double t = as<double>(t_);
+    if(sbr <= 0.0)
+        stop("'sbr' must be bigger than 0.0.");
+    if(sbr < sdr)
+        stop("'sbr' must be greater than 'sdr'");
+    if(numbsim < 1)
+        stop("'numbsim' must be more than 1");
+    if(sdr < 0.0)
+        stop("'sdr' must be 0.0 or greater.");
+    if(t <= 0.0)
+        stop("'t' must be greater than 0.");
+    return sim_bdsimple_species_tree(sbr, sdr, numbsim, t);
 }
 //' Simulates locus tree using constant rate birth-death-transfer process
 //'

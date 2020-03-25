@@ -258,6 +258,42 @@ bool Simulator::simSpeciesTree(){
     return good;
 }
 
+
+bool Simulator::simSpeciesTreeTime(){
+  bool good = false;
+  while(!good){
+    good = bdSimpleSim();
+  }
+  return good;
+}
+
+
+bool Simulator::bdSimpleSim(){
+  bool treeComplete = false;
+  currentSimTime = 0.0;
+  double stopTime = this->getTimeToSim();
+  double eventTime;
+
+  spTree = new SpeciesTree(1, currentSimTime, speciationRate, extinctionRate);
+  while(currentSimTime < stopTime){
+
+    eventTime = spTree->getTimeToNextEvent();
+    currentSimTime += eventTime;
+    spTree->ermEvent(currentSimTime);
+
+    if(spTree->getNumExtant() < 1){
+      treeComplete = false;
+      return treeComplete;
+    }
+  }
+  treeComplete = true;
+  eventTime = spTree->getTimeToNextEvent();
+  currentSimTime += eventTime;
+  spTree->setPresentTime(currentSimTime);
+
+  return treeComplete;
+}
+
 bool Simulator::simHostSymbSpeciesTreePair(){
   bool good = false;
   while(!good){
@@ -314,11 +350,11 @@ bool Simulator::pairedBDPSim(){
 
  // symbiontTree->reindexForR();
  //spTree->reindexForR();
- eventTime = symbiontTree->getTimeToNextJointEvent(speciationRate,
+  eventTime = symbiontTree->getTimeToNextJointEvent(speciationRate,
                                                    extinctionRate,
                                                    cospeciationRate,
                                                    assocMat);
- currentSimTime += eventTime;
+  currentSimTime += eventTime;
   symbiontTree->setPresentTime(currentSimTime);
 
   spTree->setPresentTime(currentSimTime);
@@ -866,10 +902,8 @@ bool Simulator::bdsaBDSim(){
     contempSpecies.insert(spRoot->getIndex());
 
     while(currentSimTime < stopTime){
-        Rcout << "#######" << std::endl;
         eventTime = lociTree->getTimeToNextEvent();
         currentSimTime += eventTime;
-        Rcout << eventTime << std::endl;
         for(std::set<int>::iterator it = contempSpecies.begin(); it != contempSpecies.end();){
             if(currentSimTime > speciesDeathTimes[(*it)]){
                 isSpeciation = spTree->macroEvent((*it));

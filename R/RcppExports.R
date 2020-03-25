@@ -7,8 +7,8 @@ treeducken <- function(params_file) {
 
 #' Simulates species tree using constant rate birth-death process
 #'
-#' @details At present only can simulate to a number of tips. This function does
-#' so using the general algorithm of Hartmann et al. 2010.
+#' @details Forward simulates to a number of tips. This function does so using
+#'     the general algorithm of Hartmann et al. 2010.
 #' @param sbr_ species birth rate (i.e. speciation rate)
 #' @param sdr_ species death rate (i.e. extinction rate)
 #' @param numbsim_ number of species trees to simulate
@@ -35,6 +35,34 @@ treeducken <- function(params_file) {
 #'                 n_tips_ = numb_extant_tips)
 sim_sptree_bdp <- function(sbr_, sdr_, numbsim_, n_tips_) {
     .Call(`_treeducken_sim_sptree_bdp`, sbr_, sdr_, numbsim_, n_tips_)
+}
+
+#' Simulates species tree using constant rate birth-death process to a time
+#'
+#' @details Forward simulates a tree until a provided time is reached.
+#' @param sbr_ species birth rate (i.e. speciation rate)
+#' @param sdr_ species death rate (i.e. extinction rate)
+#' @param numbsim_ number of species trees to simulate
+#' @param t_ time to simulate to
+#' @return List of objects of the tree class (as implemented in APE)
+#' @references
+#' K. Hartmann, D. Wong, T. Stadler. Sampling trees from evolutionary models.
+#'     Syst. Biol., 59(4): 465-476, 2010.
+#'
+#' T. Stadler. Simulating trees on a fixed number of extant species.
+#'     Syst. Biol., 60: 676-684, 2011.
+#' @examples
+#' mu <- 0.5 # death rate
+#' lambda <- 2.0 # birth rate
+#' numb_replicates <- 10
+#' time <- 4
+#'
+#' sim_sptree_bdp(sbr_ = lambda,
+#'                 sdr_ = mu,
+#'                 numbsim_ = numb_replicates,
+#'                 t_ = time)
+sim_sptree_bdp_time <- function(sbr_, sdr_, numbsim_, t_) {
+    .Call(`_treeducken_sim_sptree_bdp_time`, sbr_, sdr_, numbsim_, t_)
 }
 
 #' Simulates locus tree using constant rate birth-death-transfer process

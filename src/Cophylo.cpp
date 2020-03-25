@@ -14,7 +14,6 @@ Rcpp::List sim_host_symb_treepair(double hostbr,
                                   int numbsim){
 
     double rho = 1.0;
-    Simulator *phySimulator = nullptr;
     Rcpp::List multiphy;
     Rcpp::List hostSymbPair;
     Rcout << timeToSimTo << std::endl;

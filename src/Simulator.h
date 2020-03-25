@@ -108,9 +108,11 @@ class Simulator
         void    setSpeciesTree(SpeciesTree *st) { spTree = st; }
         bool    gsaBDSim();
         bool    bdsaBDSim();
+        bool    bdSimpleSim();
         bool    pairedBDPSim();
         bool    coalescentSim();
         bool    simSpeciesTree();
+        bool    simSpeciesTreeTime();
         bool    simLocusTree();
         bool    simSpeciesLociTrees();
         bool    simThreeTree();
