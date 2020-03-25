@@ -1067,8 +1067,6 @@ bool Simulator::simThreeTree(){
     }
     for(int i = 0; i < numLoci; i++){
         while(!loGood){
-            if(printSOUT)
-                Rcout << "Simulating loci # " <<  i + 1 << std::endl;
             loGood = bdsaBDSim();
         }
         if(outgroupFrac > 0.0){
@@ -1076,8 +1074,6 @@ bool Simulator::simThreeTree(){
         }
         for(int j = 0; j < numGenes; j++){
             while(!gGood){
-                if(printSOUT)
-                    Rcout << "Simulating gene # " <<  j + 1 << " of loci # " << i + 1 << std::endl;
                 gGood = coalescentSim();
             }
             geneTrees[i].push_back(geneTree);

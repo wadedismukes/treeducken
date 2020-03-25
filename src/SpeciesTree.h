@@ -57,6 +57,7 @@ class SpeciesTree : public Tree
         double                      getCurrentTimeFromExtant() {return extantNodes[0]->getDeathTime();}
         bool                        getIsExtantFromIndx(int indx) { return nodes[indx]->getIsExtant(); }
         bool                        macroEvent(int indx);
+
         std::pair<int, int>         preorderTraversalStep(int index);
         int                         postOrderTraversalStep(int index);
         int           findLastToGoExtinct(double eventTime);

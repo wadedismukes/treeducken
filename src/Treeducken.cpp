@@ -161,7 +161,6 @@ int run_treeducken(std::string params_file) {
                     if(gbr < 0.0){
                         // std::cerr << "Gene birth rate is a negative number, no loci or gene trees will be simulated.\n";
                         // std::cerr << "You have input a tree with no other parameters set to simulate within.\n";
-                        exit(1);
                     }
                     else{
                         if(ne >  0 && ipp > 0 && ipp <= ne){
@@ -170,7 +169,6 @@ int run_treeducken(std::string params_file) {
                         else{
                             //    std::cerr << "Gene tree parameters are incorrectly specified. Only simulating species and locus trees\n";
                             //    std::cerr << "Population size and individuals per population must both be positive integers and individuals per population must be less than or equal to the population size.\n";
-                            exit(1);
                         }
                     }
                     // printSettings(outName, nt, r, nloc, ts, sbr, sdr, gbr, gdr, lgtr, ipp, ne, ngen, og, stn, mst);
@@ -179,7 +177,6 @@ int run_treeducken(std::string params_file) {
                 else if (ne <= 0 || ipp <= 0 || ipp > ne){
                     //    std::cerr << "Gene tree parameters are incorrectly specified. Only simulating species and locus trees\n";
                     //    std::cerr << "Population size and individuals per population must both be positive integers and individuals per population must be less than or equal to the population size.\n";
-                    exit(1);
                 }
                 else{
                     //    Rcout << "Simulating locus and gene trees on input species tree.\n";
@@ -347,8 +344,6 @@ Rcpp::List sim_locus_tree(SpeciesTree* species_tree,
                                      lgtr);
         phySimulator->setSpeciesTree(species_tree);
         phySimulator->simLocusTree();
-        Rcout << "********" << std::endl;
-
         List phy = List::create(Named("edge") = phySimulator->getLocusEdges(),
                                 Named("edge.length") = phySimulator->getLocusEdgeLengths(),
                                 Named("Nnode") = phySimulator->getLocusNnodes(),

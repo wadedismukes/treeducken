@@ -397,62 +397,33 @@ std::string LocusTree::printNewickTree(){
 }
 
 void LocusTree::setTreeTipNames(){
-    unsigned copyNumber = 0;
-    bool recName = false;
-    if(recName)
-        recTipNamer(getRoot(), copyNumber);
-    else{
-        std::vector<int> copyNumberCounts;
-        std::stringstream tn;
-        std::string name;
-        for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); it++){
-            if((*it)->getIsTip()){
-                if((*it)->getIsExtinct()){
-                    tn << (*it)->getIndex();
-                    copyNumberCounts.push_back((*it)->getIndex());
-                    name = "X" + tn.str();
-                    tn.clear();
-                    tn.str(std::string());
-                    tn << std::count(copyNumberCounts.begin(),copyNumberCounts.end(), (*it)->getIndex());
-                    name += "_" + tn.str();
-                    (*it)->setName(name);
-                    tn.clear();
-                    tn.str(std::string());
+  unsigned nodeIndx = numExtant + numExtinct;
+  unsigned tipIt = 0;
+  std::stringstream tn;
 
+  for(int i=0; i < nodes.size(); i++){
+    if(nodes[i]->getIsTip()){
+      tipIt++;
+      nodes[i]->setIndx(tipIt);
+      if(nodes[i]->getIsExtant()){
+        tn << nodes[i]->getIndex();
+        std::string name = "G" + tn.str();
+        nodes[i]->setName(name);
 
-                }
-                else{
-                    tn << (*it)->getIndex();
-                    copyNumberCounts.push_back((*it)->getIndex());
-                    name = "T" + tn.str();
-                    tn.clear();
-                    tn.str(std::string());
-                    tn << std::count(copyNumberCounts.begin(),copyNumberCounts.end(),  (*it)->getIndex());
-                    name += "_" + tn.str();
-                    (*it)->setName(name);
-                    tn.clear();
-                    tn.str(std::string());
-
-                }
-            }
-            else{
-                if((*it)->getFlag() == 1){
-                    tn << (*it)->getRdes()->getIndex();
-                    copyNumberCounts.push_back((*it)->getIndex());
-                    name = "TR" + tn.str();
-                    tn.clear();
-                    tn.str(std::string());
-                    tn << (*it)->getLdes()->getIndex();
-                    name += "->" + tn.str();
-                    (*it)->setName(name);
-                    tn.clear();
-                    tn.str(std::string());
-
-                }
-
-            }
-        }
+      }
+      else{
+        tn << nodes[i]->getIndex();
+        std::string name = "X" + tn.str();
+        nodes[i]->setName(name);
+      }
     }
+    else{
+      nodeIndx++;
+      nodes[i]->setIndx(nodeIndx);
+    }
+    tn.clear();
+    tn.str(std::string());
+  }
 }
 
 // NOTE: this names tips but doesn't have unique tip names
@@ -489,12 +460,14 @@ void LocusTree::recTipNamer(Node *p, unsigned &copyNumber){
 
 
 void LocusTree::setBranchLengths(){
-    double brlen;
-    for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it){
-        brlen = (*it)->getDeathTime() - (*it)->getBirthTime();
-        (*it)->setBranchLength(brlen);
-    }
+  double bl;
+  for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it){
+    bl = (*it)->getDeathTime() - (*it)->getBirthTime();
+    branchLengths.push_back(std::move(bl));
+    (*it)->setBranchLength(bl);
+  }
 }
+
 
 std::multimap<int, double> LocusTree::getDeathTimesFromNodes(){
     int locusIndx;

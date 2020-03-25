@@ -327,8 +327,7 @@ void Tree::reconstructLineageFromSim(Node *currN, Node *prevN, unsigned &tipCoun
         else if(currN->getRdes() == NULL)
             currN->setRdes(p);
         else{
-            std::cerr << "ERROR: Problem adding a tip to the tree!" << std::endl;
-            exit(1);
+            stop("ERROR: Problem adding a tip to the tree!");
         }
 
     }
@@ -366,8 +365,7 @@ void Tree::reconstructLineageFromSim(Node *currN, Node *prevN, unsigned &tipCoun
                     else if(currN->getRdes() == NULL)
                         currN->setRdes(s1);
                     else{
-                        std::cerr << "ERROR: Probem adding an internal node to the tree" << std::endl;
-                        exit(1);
+                        stop("ERROR: Problem adding a tip to the tree!");
                     }
                 }
                 else{
@@ -564,13 +562,15 @@ void Tree::reindexForR(){
 
 NumericMatrix Tree::getEdges(){
     int numRows = (int) nodes.size() - 1;
+    Rcout << numRows << std::endl;
     NumericMatrix edgeMat(numRows, 2);
     for(int i=1; i < nodes.size(); i++){
         if(!(nodes[i]->getIsRoot())){
-            Rcout << "????" << std::endl;
 
             NumericMatrix::Row row = edgeMat(i - 1, _);
+
             row[0] = nodes[i]->getAnc()->getIndex();
+
             row[1] = nodes[i]->getIndex();
         }
     }

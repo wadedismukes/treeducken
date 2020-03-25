@@ -372,8 +372,7 @@ SpeciesTree* Engine::buildTreeFromNewick(const std::string spTreeStr){
 
                     // Expect node name only after a left paren (child's name), a comma (sib's name) or a right paren (parent's name)
                     if (!(previous & Name_Valid)){
-                        Rcerr << "Unexpected placement of name of tip. Exiting...\n";
-                        exit(1);
+                       stop("Unexpected placement of name of tip. Exiting...\n");
                     }
                     currNode->setIsTip(true);
                     currNode->setName(tipname);

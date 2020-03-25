@@ -370,8 +370,7 @@ void SpeciesTree::reconstructLineageFromGSASim(Node *currN, Node *prevN, unsigne
         else if(currN->getRdes() == NULL)
             currN->setRdes(p);
         else{
-            std::cerr << "ERROR: Problem adding a tip to the tree!" << std::endl;
-            exit(1);
+            stop("ERROR: Problem adding a tip to the tree!");
         }
 
     }
