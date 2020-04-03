@@ -255,9 +255,9 @@ SpeciesTree* Engine::buildTreeFromNewick(const std::string spTreeStr){
             }
             case '(': {
                 if(!(previous & LParen_Valid)){
-                    Rcerr << "Your newick tree is not formatted properly. Exiting...\n";
+                    Rcerr << "Your newick tree is not formatted properly. \n";
                     Rcerr << "A left parenthetical is not in the right place maybe...\n";
-                    exit(1);
+                    stop("Exiting...");
                 }
                 prevNode = currNode;
                 currNode =  new Node();
@@ -268,19 +268,19 @@ SpeciesTree* Engine::buildTreeFromNewick(const std::string spTreeStr){
             }
             case ':': {
                 if(!(previous & Colon_Valid)){
-                    Rcerr << "Your newick tree is not formatted properly. Exiting...\n";
+                    Rcerr << "Your newick tree is not formatted properly.\n";
                     Rcerr << "A colon appears to be in the wrong place...\n";
-                    exit(1);
+                    stop("Exiting...");
                 }
                 previous = Prev_Tok_Colon;
                 break;
             }
             case ')': {
                 if(!(previous & RParen_Valid)){
-                    Rcerr << "Your newick tree is not formatted properly. Exiting...\n";
+                    Rcerr << "Your newick tree is not formatted properly. \n";
                     Rcerr << "A right parenthetical is not in the right place maybe...\n";
-                    exit(1);
-                }
+                    stop("Exiting...");
+            }
                 //prevNode = currNode;
                 prevNode = nullptr;
                 currNode = currNode->getAnc();
@@ -289,10 +289,10 @@ SpeciesTree* Engine::buildTreeFromNewick(const std::string spTreeStr){
             }
             case ',': {
                 if(!(previous & Comma_Valid)){
-                    Rcerr << "Your newick tree is not formatted properly. Exiting...\n";
+                    Rcerr << "Your newick tree is not formatted properly. \n";
                     Rcerr << "A comma is not in the right place maybe...\n";
-                    exit(1);
-                }
+                    stop("Exiting...");
+            }
                 prevNode = currNode;
                 currNode = new Node();
                 prevNode->setSib(currNode);
@@ -343,8 +343,7 @@ SpeciesTree* Engine::buildTreeFromNewick(const std::string spTreeStr){
                         }
                         bool valid = (ch =='e' || ch == 'E' || ch =='.' || ch == '-' || ch == '+' || isdigit(ch));
                         if (!valid){
-                            Rcerr << "Invalid branch length character in tree description\n";
-                            exit(1);
+                            stop("Invalid branch length character in tree description\n");
                         }
                         std::string edge_length_str = std::string(jit,it+1);
                         currNode->setBranchLength(atof(edge_length_str.c_str()));
@@ -360,8 +359,7 @@ SpeciesTree* Engine::buildTreeFromNewick(const std::string spTreeStr){
                         ch = *it;
                         if (ch == '('){
                             Rcerr << "Didn't expect a left parenthesis here! Check your newick tree...\n";
-                            Rcerr << "Exiting... :(\n";
-                            exit(1);
+                            stop("Exiting... :(\n");
                         }
                         if (iswspace(ch) || ch == ':' || ch == ',' || ch == ')'){
                             --it;

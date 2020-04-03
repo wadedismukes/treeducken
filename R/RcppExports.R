@@ -132,18 +132,23 @@ sim_locustree_bdp <- function(species_tree_, gbr_, gdr_, lgtr_, num_loci_) {
 #'     occurred.
 #' @examples
 #' # first simulate a species tree
-#' mu <- 0.5 # death rate
-#' lambda <- 2.0 # birth rate
+#' host_mu <- 0.5 # death rate
+#' host_lambda <- 2.0 # birth rate
 #' numb_replicates <- 10
-#' numb_extant_tips <- 4
-#' # simulate trees under the GSA so first simulates a tree with
-#' # numb_extant_tips * 100 tips counting each time we have a tree with 10 tips
-#' # then randomly picks one of those trees
+#' time <- 2.9
+#' symb_mu <- 0.2
+#' symb_lambda <- 0.4
+#' host_shift_rate <- 0.1
+#' cosp_rate <- 2.0
 #'
-#' sp_tree <- sim_sptree_bdp(sbr_ = lambda,
-#'                 sdr_ = mu,
-#'                 numbsim_ = numb_replicates,
-#'                 n_tips_ = numb_extant_tips)
+#' cophylo_pair <- sim_cophylo_bdp(hbr_ = host_lambda,
+#'                            hdr_ = host_mu
+#'                            cosp_rate_ = cosp_rate,
+#'                            host_exp_rate_ = host_shift_rate,
+#'                            sdr_ = symb_mu,
+#'                            sbr_ = symb_lambda,
+#'                            numbsim_ = numb_replicates,
+#'                            timeToSimTo_ = time)
 #'
 sim_cophylo_bdp <- function(hbr_, hdr_, sbr_, sdr_, host_exp_rate_, cosp_rate_, timeToSimTo_, numbsim_) {
     .Call(`_treeducken_sim_cophylo_bdp`, hbr_, hdr_, sbr_, sdr_, host_exp_rate_, cosp_rate_, timeToSimTo_, numbsim_)

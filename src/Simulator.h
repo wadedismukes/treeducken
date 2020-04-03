@@ -44,6 +44,7 @@ class Simulator
         double      timeToSim;
         int         hostLimit;
         arma::umat   assocMat;
+        std::vector<arma::umat> assocMatHistory;
 
         Rcpp::IntegerVector inOrderVecOfHostIndx;
         Rcpp::IntegerVector inOrderVecOfSymbIndx;
@@ -161,6 +162,7 @@ class Simulator
         double    getLocusTreeRootEdge();
         double    getSymbiontTreeRootEdge();
         arma::umat    getAssociationMatrix() { return assocMat; }
+        std::vector<arma::umat> getAssociationMatrixHistory() { return assocMatHistory; }
         arma::umat    cophyloEvent(double eventTime, arma::umat assocMat);
         arma::umat    cophyloERMEvent(double eventTime, arma::umat assocMat);
         arma::umat    cospeciationEvent(double eventTime, arma::umat assocMat);

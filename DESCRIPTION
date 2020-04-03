@@ -21,3 +21,5 @@ LinkingTo:
 RoxygenNote: 7.1.0
 LazyData: true
 Encoding: UTF-8
+Suggests: knitr, rmarkdown
+VignetteBuilder: knitr

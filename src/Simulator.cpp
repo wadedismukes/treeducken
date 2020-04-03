@@ -137,6 +137,7 @@ Simulator::Simulator(double stopTime,
     geneTree = nullptr;
     lociTree = nullptr;
     symbiontTree = nullptr;
+
     inOrderVecOfHostIndx.push_back(0);
     inOrderVecOfSymbIndx.push_back(0);
     inOrderVecOfEvent.push_back("I");
@@ -322,7 +323,7 @@ bool Simulator::pairedBDPSim(){
 
   assocMat = ones<umat>(1,1);
   while(currentSimTime < stopTime){
-
+    assocMatHistory.push_back(std::move(vectorise(assocMat)));
     eventTime = symbiontTree->getTimeToNextJointEvent(speciationRate,
                                                  extinctionRate,
                                                  cospeciationRate,
@@ -349,12 +350,13 @@ bool Simulator::pairedBDPSim(){
   treePairGood = true;
 
  // symbiontTree->reindexForR();
- //spTree->reindexForR();
-  eventTime = symbiontTree->getTimeToNextJointEvent(speciationRate,
-                                                   extinctionRate,
-                                                   cospeciationRate,
-                                                   assocMat);
-  currentSimTime += eventTime;
+ // //spTree->reindexForR();
+ //  eventTime = symbiontTree->getTimeToNextJointEvent(speciationRate,
+ //                                                   extinctionRate,
+ //                                                   cospeciationRate,
+ //                                                   assocMat);
+ //  currentSimTime += eventTime;
+  currentSimTime = stopTime;
   symbiontTree->setPresentTime(currentSimTime);
 
   spTree->setPresentTime(currentSimTime);
@@ -390,8 +392,8 @@ arma::umat Simulator::cophyloEvent(double eventTime, arma::umat assocMat){
 
 Rcpp::DataFrame Simulator::createEventDF(){
   this->updateEventIndices();
-  DataFrame df = DataFrame::create(Named("Host Index") = inOrderVecOfHostIndx,
-                                   Named("Symb Index") = inOrderVecOfSymbIndx,
+  DataFrame df = DataFrame::create(Named("Number of Hosts") = inOrderVecOfHostIndx,
+                                   Named("Number of Index") = inOrderVecOfSymbIndx,
                                    Named("Event Type") = inOrderVecOfEvent,
                                    Named("Event Time") = inOrderVecOfEventTimes);
   return df;

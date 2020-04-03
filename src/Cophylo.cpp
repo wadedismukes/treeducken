@@ -52,7 +52,8 @@ Rcpp::List sim_host_symb_treepair(double hostbr,
         hostSymbPair = List::create(Named("host_tree") = phyHost,
                                     Named("symb_tree") = phySymb,
                                     Named("association_mat") = phySimulator->getAssociationMatrix(),
-                                    Named("event_history") = phySimulator->createEventDF());
+                                    Named("event_history") = phySimulator->createEventDF(),
+                                    Named("assoc_history") = phySimulator->getAssociationMatrixHistory());
 
         multiphy.push_back(std::move(hostSymbPair));
         delete phySimulator;

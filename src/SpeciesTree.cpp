@@ -408,8 +408,7 @@ void SpeciesTree::reconstructLineageFromGSASim(Node *currN, Node *prevN, unsigne
                     else if(currN->getRdes() == NULL)
                         currN->setRdes(s1);
                     else{
-                        std::cerr << "ERROR: Probem adding an internal node to the tree" << std::endl;
-                        exit(1);
+                        stop("ERROR: Probem adding an internal node to the tree");
                     }
                 }
                 else{
