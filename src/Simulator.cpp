@@ -288,8 +288,6 @@ bool Simulator::bdSimpleSim(){
     }
   }
   treeComplete = true;
-  eventTime = spTree->getTimeToNextEvent();
-  currentSimTime += eventTime;
   spTree->setPresentTime(currentSimTime);
 
   return treeComplete;
@@ -323,32 +321,39 @@ bool Simulator::pairedBDPSim(){
 
   assocMat = ones<umat>(1,1);
   while(currentSimTime < stopTime){
-    assocMatHistory.push_back(std::move(vectorise(assocMat)));
     eventTime = symbiontTree->getTimeToNextJointEvent(speciationRate,
                                                  extinctionRate,
                                                  cospeciationRate,
                                                  assocMat);
     currentSimTime += eventTime;
-    assocMat = this->cophyloEvent(currentSimTime, assocMat);
+    if(currentSimTime >= stopTime){
+      currentSimTime = stopTime;
+      spTree->setPresentTime(stopTime);
+      symbiontTree->setPresentTime(stopTime);
+    }
+    else{
+      assocMat = this->cophyloEvent(currentSimTime, assocMat);
+    }
 
     if(spTree->getNumExtant() < 1 || symbiontTree->getNumExtant() < 1 ||
        assocMat.n_rows < 1 || assocMat.n_cols < 1){
       treePairGood = false;
-      inOrderVecOfHostIndx.erase(inOrderVecOfHostIndx.begin(),
-                                 inOrderVecOfHostIndx.end());
-      inOrderVecOfSymbIndx.erase(inOrderVecOfSymbIndx.begin(),
-                                 inOrderVecOfSymbIndx.end());
-      inOrderVecOfEvent.erase(inOrderVecOfEvent.begin(),
-                              inOrderVecOfEvent.end());
-      inOrderVecOfEventTimes.erase(inOrderVecOfEventTimes.begin(),
-                                   inOrderVecOfEventTimes.end());
+      this->clearEventDFVecs();
       delete spTree;
       delete symbiontTree;
       return treePairGood;
     }
   }
+  if(spTree->getNumExtant() <= 1 || symbiontTree->getNumExtant() <= 1){
+    Rcout << "wut" << std::endl;
+    treePairGood = false;
+    this->clearEventDFVecs();
+    delete spTree;
+    delete symbiontTree;
+    return treePairGood;
+  }
   treePairGood = true;
-
+  currentSimTime = stopTime;
  // symbiontTree->reindexForR();
  // //spTree->reindexForR();
  //  eventTime = symbiontTree->getTimeToNextJointEvent(speciationRate,
@@ -356,9 +361,7 @@ bool Simulator::pairedBDPSim(){
  //                                                   cospeciationRate,
  //                                                   assocMat);
  //  currentSimTime += eventTime;
-  currentSimTime = stopTime;
   symbiontTree->setPresentTime(currentSimTime);
-
   spTree->setPresentTime(currentSimTime);
 
   return treePairGood;
@@ -392,15 +395,24 @@ arma::umat Simulator::cophyloEvent(double eventTime, arma::umat assocMat){
 
 Rcpp::DataFrame Simulator::createEventDF(){
   this->updateEventIndices();
-  DataFrame df = DataFrame::create(Named("Number of Hosts") = inOrderVecOfHostIndx,
-                                   Named("Number of Index") = inOrderVecOfSymbIndx,
+  DataFrame df = DataFrame::create(Named("Host Index") = inOrderVecOfHostIndx,
+                                   Named("Symbiont Index") = inOrderVecOfSymbIndx,
                                    Named("Event Type") = inOrderVecOfEvent,
                                    Named("Event Time") = inOrderVecOfEventTimes);
   return df;
 }
 
 
-
+void Simulator::clearEventDFVecs(){
+  inOrderVecOfHostIndx.erase(inOrderVecOfHostIndx.begin(),
+                             inOrderVecOfHostIndx.end());
+  inOrderVecOfSymbIndx.erase(inOrderVecOfSymbIndx.begin(),
+                             inOrderVecOfSymbIndx.end());
+  inOrderVecOfEvent.erase(inOrderVecOfEvent.begin(),
+                          inOrderVecOfEvent.end());
+  inOrderVecOfEventTimes.erase(inOrderVecOfEventTimes.begin(),
+                               inOrderVecOfEventTimes.end());
+}
 void Simulator::updateEventIndices(){
 
   for(int i = 0; i < inOrderVecOfHostIndx.size(); i++){
@@ -426,15 +438,24 @@ void Simulator::updateEventVector(int h, int s, int e, double time){
   inOrderVecOfSymbIndx.push_back(std::move(s));
   switch(e) {
     case 0:
-      inOrderVecOfEvent.push_back(std::move("L"));
+      inOrderVecOfEvent.push_back(std::move("SL"));
       break;
     case 1:
-      inOrderVecOfEvent.push_back(std::move("G"));
+      inOrderVecOfEvent.push_back(std::move("HL"));
       break;
     case 2:
-      inOrderVecOfEvent.push_back(std::move("X"));
+      inOrderVecOfEvent.push_back(std::move("SG"));
       break;
     case 3:
+      inOrderVecOfEvent.push_back("HG");
+      break;
+    case 4:
+      inOrderVecOfEvent.push_back("AG");
+      break;
+    case 5:
+      inOrderVecOfEvent.push_back("AL");
+      break;
+    case 6:
       inOrderVecOfEvent.push_back("C");
       break;
     default:
@@ -464,11 +485,12 @@ arma::umat Simulator::symbiontTreeEvent(double eventTime, arma::umat assocMat){
 
   // List rowOfEvents;
   assocMat.shed_row(nodeInd);
-  updateEventVector(spTree->getNodesIndxFromExtantIndx(assocMat.n_cols - 1),
-                    symbiontTree->getNodesIndxFromExtantIndx(nodeInd),
-                    0,
-                    eventTime);
+
   if(decid < relBr){
+    updateEventVector(spTree->getNodesIndxFromExtantIndx(assocMat.n_cols - 1),
+                      symbiontTree->getNodesIndxFromExtantIndx(nodeInd),
+                      2,
+                      eventTime);
     symbiontTree->lineageBirthEvent(nodeInd);
     numExtantSymbs = symbiontTree->getNumExtant();
 
@@ -484,19 +506,22 @@ arma::umat Simulator::symbiontTreeEvent(double eventTime, arma::umat assocMat){
         // shuffle might be better here?
         updateEventVector(spTree->getNodesIndxFromExtantIndx(i),
                           symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs-2),
-                          1,
+                          4,
                           eventTime);
 
         updateEventVector(spTree->getNodesIndxFromExtantIndx(i),
                           symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs-1),
-                          1,
+                          4,
                           eventTime);
       }
     }
   }
   else if(decid < relDr){
     //assocMat.print();
-
+    updateEventVector(spTree->getNodesIndxFromExtantIndx(assocMat.n_cols - 1),
+                      symbiontTree->getNodesIndxFromExtantIndx(nodeInd),
+                      0,
+                      eventTime);
     numExtantSymbs = symbiontTree->getNumExtant();
     // check rows for 0's
     // arma::uvec symbless = zeros<uvec>(numExtantHosts);
@@ -513,9 +538,10 @@ arma::umat Simulator::symbiontTreeEvent(double eventTime, arma::umat assocMat){
     // }
     for(int i = 0; i< rvec.n_cols; i++){
       if(rvec[i] == 1){
+        // this may be a waste of code
             updateEventVector(spTree->getNodesIndxFromExtantIndx(i),
                               symbiontTree->getNodesIndxFromExtantIndx(nodeInd),
-                              0,
+                              4,
                               eventTime);
       }
     }
@@ -525,7 +551,10 @@ arma::umat Simulator::symbiontTreeEvent(double eventTime, arma::umat assocMat){
 //     assocMat.shed_rows(toBeDeleted);
   }
   else{
-
+    updateEventVector(spTree->getNodesIndxFromExtantIndx(assocMat.n_cols - 1),
+                      symbiontTree->getNodesIndxFromExtantIndx(nodeInd),
+                      2,
+                      eventTime);
     if(sum(rvec) != assocMat.n_cols){
       std::vector<int> hostIndices;
       for(int i = 0; i < rvec.n_cols; i++){
@@ -548,20 +577,12 @@ arma::umat Simulator::symbiontTreeEvent(double eventTime, arma::umat assocMat){
         if(rvec(i) == 1){
           updateEventVector(spTree->getNodesIndxFromExtantIndx(i),
                             symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs-2),
-                            1,
+                            4,
                             eventTime);
-          if(i == hostIndices[hostInd]){
-            updateEventVector(spTree->getNodesIndxFromExtantIndx(i),
-                            symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs-1),
-                            2,
-                            eventTime);
-          }
-          else{
             updateEventVector(spTree->getNodesIndxFromExtantIndx(i),
                               symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs-1),
-                              1,
+                              4,
                               eventTime);
-          }
         }
       }
     }
@@ -581,12 +602,12 @@ arma::umat Simulator::symbiontTreeEvent(double eventTime, arma::umat assocMat){
           // shuffle might be better here?
           updateEventVector(spTree->getNodesIndxFromExtantIndx(i),
                             symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs-2),
-                            1,
+                            4,
                             eventTime);
 
           updateEventVector(spTree->getNodesIndxFromExtantIndx(i),
                             symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs-1),
-                            1,
+                            4,
                             eventTime);
         }
       }
@@ -612,12 +633,12 @@ arma::umat Simulator::cophyloERMEvent(double eventTime, arma::umat assocMat){
   // List rowOfEvents;
 
   assocMat.shed_col(nodeInd);
-  updateEventVector(spTree->getNodesIndxFromExtantIndx(nodeInd),
-                    symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs - 1),
-                    0,
-                    eventTime);
-  if(isBirth){
 
+  if(isBirth){
+    updateEventVector(spTree->getNodesIndxFromExtantIndx(nodeInd),
+                      symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs - 1),
+                      3,
+                      eventTime);
     spTree->lineageBirthEvent(nodeInd);
     numExtantHosts = spTree->getNumExtant();
 
@@ -635,12 +656,12 @@ arma::umat Simulator::cophyloERMEvent(double eventTime, arma::umat assocMat){
         if(rr(0,0) == 0 && rr(0,1) == 1){
           updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-2),
                             symbiontTree->getNodesIndxFromExtantIndx(i),
-                            0,
+                            5,
                             eventTime);
 
           updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-1),
                             symbiontTree->getNodesIndxFromExtantIndx(i),
-                            1,
+                            4,
                             eventTime);
 
         }
@@ -648,36 +669,36 @@ arma::umat Simulator::cophyloERMEvent(double eventTime, arma::umat assocMat){
 
           updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-2),
                             symbiontTree->getNodesIndxFromExtantIndx(i),
-                            1,
+                            4,
                             eventTime);
 
             updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-1),
                             symbiontTree->getNodesIndxFromExtantIndx(i),
-                            0,
+                            5,
                             eventTime);
 
         }
         else if(rr(0,0) == 1 && rr(0,1) == 1){
           updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-2),
                             symbiontTree->getNodesIndxFromExtantIndx(i),
-                            1,
+                            4,
                             eventTime);
 
           updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-1),
                             symbiontTree->getNodesIndxFromExtantIndx(i),
-                            1,
+                            4,
                             eventTime);
         }
         else{
           rr.replace(0,1);
           updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-2),
                             symbiontTree->getNodesIndxFromExtantIndx(i),
-                            1,
+                            4,
                             eventTime);
 
           updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-1),
                             symbiontTree->getNodesIndxFromExtantIndx(i),
-                            1,
+                            4,
                             eventTime);
 
         }
@@ -686,10 +707,18 @@ arma::umat Simulator::cophyloERMEvent(double eventTime, arma::umat assocMat){
       else{
         arma::umat rr = zeros<umat>(1,2);
         assocMat(i, span(numExtantHosts-2,numExtantHosts-1)) = rr;
+        updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-1),
+                          symbiontTree->getNodesIndxFromExtantIndx(i),
+                          5,
+                          eventTime);
       }
     }
   }
   else{
+    updateEventVector(spTree->getNodesIndxFromExtantIndx(nodeInd),
+                      symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs - 1),
+                      1,
+                      eventTime);
     //assocMat.print();
     numExtantSymbs = symbiontTree->getNumExtant();
     // check rows for 0's
@@ -740,7 +769,7 @@ arma::umat Simulator::cospeciationEvent(double eventTime, arma::umat assocMat){
   arma::urowvec rvec = assocMat.row(symbIndices[indxOfSymb]);
   updateEventVector(spTree->getNodesIndxFromExtantIndx(hostIndices[indxOfHost]),
                     symbiontTree->getNodesIndxFromExtantIndx(symbIndices[indxOfSymb]),
-                    0,
+                    6,
                     eventTime);
   spTree->lineageBirthEvent(hostIndices[indxOfHost]);
   symbiontTree->lineageBirthEvent(symbIndices[indxOfSymb]);
@@ -761,18 +790,15 @@ arma::umat Simulator::cospeciationEvent(double eventTime, arma::umat assocMat){
                   numExtantHosts-2,
                   numExtantSymbs-1,
                   numExtantHosts-1) = eye<umat>(2,2);
+  updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-2),
+                    symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs-2),
+                    4,
+                    eventTime);
 
-  inOrderVecOfHostIndx.push_back(std::move(spTree->getNodesIndxFromExtantIndx(numExtantHosts - 2)));
-  inOrderVecOfSymbIndx.push_back(std::move(symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs - 2)));
-  inOrderVecOfEvent.push_back(std::move("C"));
-  inOrderVecOfEventTimes.push_back(std::move(eventTime));
-
-  inOrderVecOfHostIndx.push_back(std::move(spTree->getNodesIndxFromExtantIndx(numExtantHosts - 1)));
-  inOrderVecOfSymbIndx.push_back(std::move(symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs - 1)));
-  inOrderVecOfEvent.push_back(std::move("C"));
-  inOrderVecOfEventTimes.push_back(std::move(eventTime));
-
-  // if only cospeciation is on don't do this
+  updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-1),
+                    symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs-1),
+                    4,
+                    eventTime);
   // loop through cvec and make little vecs
 
   for(int i = 0; i < cvec.n_rows; i++){
@@ -784,24 +810,24 @@ arma::umat Simulator::cospeciationEvent(double eventTime, arma::umat assocMat){
         rr(0, 0) = 0;
         updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-2),
                           symbiontTree->getNodesIndxFromExtantIndx(i),
-                          0,
+                          5,
                           eventTime);
 
         updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-1),
                           symbiontTree->getNodesIndxFromExtantIndx(i),
-                          1,
+                          4,
                           eventTime);
       }
       else{
         rr(0, 1) = 0;
         updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-2),
                           symbiontTree->getNodesIndxFromExtantIndx(i),
-                          1,
+                          4,
                           eventTime);
 
         updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-1),
                           symbiontTree->getNodesIndxFromExtantIndx(i),
-                          0,
+                          5,
                           eventTime);
       }
       assocMat(i, span(numExtantHosts-2,numExtantHosts-1)) = rr;
@@ -809,6 +835,14 @@ arma::umat Simulator::cospeciationEvent(double eventTime, arma::umat assocMat){
     else{
       arma::umat rr = zeros<umat>(1,2);
       assocMat(i, span(numExtantHosts-2,numExtantHosts-1)) = rr;
+      updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-2),
+                        symbiontTree->getNodesIndxFromExtantIndx(i),
+                        5,
+                        eventTime);
+      updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-1),
+                        symbiontTree->getNodesIndxFromExtantIndx(i),
+                        5,
+                        eventTime);
     }
   }
 
@@ -822,27 +856,27 @@ arma::umat Simulator::cospeciationEvent(double eventTime, arma::umat assocMat){
       int randOne = unif_rand() * 2;
       if(randOne == 0){
         rr(0,0) = 0;
-        inOrderVecOfHostIndx.push_back(std::move(spTree->getNodesIndxFromExtantIndx(i)));
-        inOrderVecOfSymbIndx.push_back(std::move(symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs - 2)));
-        inOrderVecOfEvent.push_back(std::move("L"));
-        inOrderVecOfEventTimes.push_back(std::move(eventTime));
+        updateEventVector(spTree->getNodesIndxFromExtantIndx(i),
+                          symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs-2),
+                          5,
+                          eventTime);
 
-        inOrderVecOfHostIndx.push_back(std::move(spTree->getNodesIndxFromExtantIndx(i)));
-        inOrderVecOfSymbIndx.push_back(std::move(symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs - 1)));
-        inOrderVecOfEvent.push_back(std::move("G"));
-        inOrderVecOfEventTimes.push_back(std::move(eventTime));
+        updateEventVector(spTree->getNodesIndxFromExtantIndx(i),
+                          symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs-1),
+                          4,
+                          eventTime);
       }
       else{
         rr(0, 1) = 0;
-        inOrderVecOfHostIndx.push_back(std::move(spTree->getNodesIndxFromExtantIndx(i)));
-        inOrderVecOfSymbIndx.push_back(std::move(symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs - 2)));
-        inOrderVecOfEvent.push_back(std::move("G"));
-        inOrderVecOfEventTimes.push_back(std::move(eventTime));
+        updateEventVector(spTree->getNodesIndxFromExtantIndx(i),
+                          symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs-2),
+                          4,
+                          eventTime);
 
-        inOrderVecOfHostIndx.push_back(std::move(spTree->getNodesIndxFromExtantIndx(i)));
-        inOrderVecOfSymbIndx.push_back(std::move(symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs - 1)));
-        inOrderVecOfEvent.push_back(std::move("L"));
-        inOrderVecOfEventTimes.push_back(std::move(eventTime));
+        updateEventVector(spTree->getNodesIndxFromExtantIndx(i),
+                          symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs-1),
+                          5,
+                          eventTime);
       }
 
 
@@ -886,7 +920,6 @@ bool Simulator::bdsaBDSim(){
 
     bool treesComplete = false;
     double stopTime = spTree->getCurrentTimeFromExtant();
-    Rcout << stopTime << std::endl;
     double eventTime;
     bool isSpeciation;
     lociTree = new LocusTree(numTaxaToSim, currentSimTime, geneBirthRate, geneDeathRate, transferRate);

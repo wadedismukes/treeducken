@@ -16,7 +16,6 @@ Rcpp::List sim_host_symb_treepair(double hostbr,
     double rho = 1.0;
     Rcpp::List multiphy;
     Rcpp::List hostSymbPair;
-    Rcout << timeToSimTo << std::endl;
     for(int i = 0; i < numbsim; i++){
         Simulator *phySimulator = new Simulator( timeToSimTo,
                                                  hostbr,
@@ -52,9 +51,7 @@ Rcpp::List sim_host_symb_treepair(double hostbr,
         hostSymbPair = List::create(Named("host_tree") = phyHost,
                                     Named("symb_tree") = phySymb,
                                     Named("association_mat") = phySimulator->getAssociationMatrix(),
-                                    Named("event_history") = phySimulator->createEventDF(),
-                                    Named("assoc_history") = phySimulator->getAssociationMatrixHistory());
-
+                                    Named("event_history") = phySimulator->createEventDF());
         multiphy.push_back(std::move(hostSymbPair));
         delete phySimulator;
     }
