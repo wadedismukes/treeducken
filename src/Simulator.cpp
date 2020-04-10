@@ -138,10 +138,6 @@ Simulator::Simulator(double stopTime,
     lociTree = nullptr;
     symbiontTree = nullptr;
 
-    inOrderVecOfHostIndx.push_back(0);
-    inOrderVecOfSymbIndx.push_back(0);
-    inOrderVecOfEvent.push_back("I");
-    inOrderVecOfEventTimes.push_back(0.0);
 }
 
 
@@ -170,6 +166,12 @@ void Simulator::initializeSim(){
 }
 
 
+void Simulator::initializeEventVector(){
+  inOrderVecOfHostIndx.push_back(0);
+  inOrderVecOfSymbIndx.push_back(0);
+  inOrderVecOfEvent.push_back("I");
+  inOrderVecOfEventTimes.push_back(0.0);
+}
 /*
  Below is the machinery to use GSA sampling (Hartmann 2010) to simulate a species tree.
  Much of this code is modified from FossilGen (written by Tracy Heath)
@@ -318,7 +320,7 @@ bool Simulator::pairedBDPSim(){
                                   hostLimit);
 
   double eventTime;
-
+  this->initializeEventVector();
   assocMat = ones<umat>(1,1);
   while(currentSimTime < stopTime){
     eventTime = symbiontTree->getTimeToNextJointEvent(speciationRate,
@@ -345,7 +347,6 @@ bool Simulator::pairedBDPSim(){
     }
   }
   if(spTree->getNumExtant() <= 1 || symbiontTree->getNumExtant() <= 1){
-    Rcout << "wut" << std::endl;
     treePairGood = false;
     this->clearEventDFVecs();
     delete spTree;
@@ -644,8 +645,15 @@ arma::umat Simulator::cophyloERMEvent(double eventTime, arma::umat assocMat){
 
 
     assocMat.resize(numExtantSymbs, numExtantHosts);
-
-  //  assocMat(span::all, numExtantHosts-2) = cvec;
+    updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-2),
+                      symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs - 1),
+                      4,
+                      eventTime);
+    updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-1),
+                      symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs - 1),
+                      4,
+                      eventTime);
+    //  assocMat(span::all, numExtantHosts-2) = cvec;
   //  assocMat(span::all, numExtantHosts-1) = cvec;
 
    // sort symbs on new hosts

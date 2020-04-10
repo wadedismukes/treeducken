@@ -28,37 +28,129 @@
 #' t <- 1.4
 #' assoc_mat_at_t <- build_historical_association_matrix(time = t, tr_pair_obj = cophylo_pair[[1]])
 #'
-build_historical_association_matrix <- function(time, tr_pair_obj){
+build_historical_association_matrix <- function(t, tr_pair_obj){
 
-    host_tr <- tr_pair_obj$host_tree
-    symb_tr <- tr_pair_obj$symb_tree
-    assoc_mat <- tr_pair_obj$association_mat
-    events <- tr_pair_obj$event_history
-
-    event_times <- unique(events$Event.Time)
-    i_time <- 1.0
-    prev_mat <- matrix(1, nrow = 1, ncol = 1)
-
-
-
-    time_slice_count <- 1
-    t <- 0.0
-    while(t < i_time){
-        curr_events <- subset(events, Event.Time == event_times[time_slice_count])
-        t <- event_times[time_slice_count]
-
-        hosts_in_slice <- unique(curr_events$Host.Index)
-        symbs_in_slice <- unique(curr_events$Symb.Index)
-        curr_mat <- matrix(0, nrow = length(symbs_in_slice),
-                           ncol = length(hosts_in_slice))
-        curr_mat[1:nrow(prev_mat), 1:ncol(prev_mat)]
-
-
-        curr_mat
-        time_slice_count <- time_slice_count + 1
+    times <- unique(tr_pair_obj$event_history$Event.Time)
+    if(t > max(times)){
+        stop("The association matrix you are looking for is the present day one.")
     }
-    curr_mat
+    else{
+        events <- tr_pair_obj$event_history
+        curr_indx <- min(which(t <= times)) - 1
+        init_mat <- matrix(1, nrow = 1, ncol = 1)
+        colnames(init_mat) <- as.character(length(tr_pair_obj$host_tree$tip.label) + 1)
+        rownames(init_mat) <- as.character(length(tr_pair_obj$symb_tree$tip.label) + 1)
+        prev_mat <- init_mat
+        for(i in 2:curr_indx){
+            curr_events <- subset(events, Event.Time == times[i])
+            # what is first row of curr_events
+            curr_events
+            main_event <- curr_events[1,]$Event.Type
+            print(main_event)
+            if(main_event == "HG"){
+                # make new matrix with dimensions of prev_mat same matrix
+                # remove column indicated by curr_events[1,]$Host.Index
+                # make 2 new column vectors name them correctly based on
+                # curr_events[2,]$Host.Index whichever rows correspond to 4 in matrx are 1
+                # curr_events[3,]$Host.Index
+                curr_mat <- matrix(0, nrow = nrow(prev_mat), ncol = ncol(prev_mat) + 1)
+                rownames(curr_mat) <- as.character(rownames(prev_mat))
+                prev_col_names <- colnames(prev_mat)
+                prev_mat <- as.matrix(prev_mat[,-which(colnames(prev_mat) == as.character(curr_events[1,]$Host.Index))])
+                if(length(prev_mat) > 0)
+                    curr_mat[1:nrow(prev_mat), 1:ncol(prev_mat)] <- prev_mat
 
+                prev_col_names_cut <- prev_col_names[which(prev_col_names != as.character(curr_events[1,]$Host.Index))]
+                colnames(prev_mat) <- prev_col_names_cut
+
+                col_names <- c(colnames(prev_mat), curr_events[2:3,]$Host.Index)
+                colnames(curr_mat) <- as.character(col_names)
+                for(j in 2:nrow(curr_events)){
+                    type <- curr_events[j,]$Event.Type
+                    if(type == "AG"){
+                        curr_mat[as.character(curr_events[j,]$Symbiont.Index),
+                                 as.character(curr_events[j,]$Host.Index)] <- 1
+                    }
+                }
+            }
+            else if(main_event == "HL"){
+                prev_col_names <- colnames(prev_mat)
+                prev_mat <- as.matrix(prev_mat[,-which(colnames(prev_mat) == as.character(curr_events[1,]$Host.Index))])
+                prev_col_names_cut <- prev_col_names[which(prev_col_names != as.character(curr_events[1,]$Host.Index))]
+                colnames(prev_mat) <- prev_col_names_cut
+                curr_mat <- prev_mat
+            }
+            else if(main_event == "SG"){
+                curr_mat <- matrix(0, nrow = nrow(prev_mat) + 1, ncol = ncol(prev_mat))
+                colnames(curr_mat) <- as.character(colnames(prev_mat))
+                prev_row_names <- rownames(prev_mat)
+                prev_mat <- as.matrix(prev_mat[-which(rownames(prev_mat) == as.character(curr_events[1,]$Symbiont.Index)),], )
+                if(length(prev_mat) > 0)
+                    curr_mat[1:nrow(prev_mat), 1:ncol(prev_mat)] <- prev_mat
+
+                prev_row_names_cut <- prev_row_names[which(prev_row_names != as.character(curr_events[1,]$Symbiont.Index))]
+                rownames(prev_mat) <- prev_row_names_cut
+                row_names <- c(rownames(prev_mat), curr_events[2:3,]$Symbiont.Index)
+                rownames(curr_mat) <- as.character(row_names)
+                for(j in 2:nrow(curr_events)){
+                    type <- curr_events[j,]$Event.Type
+                    if(type == "AG"){
+                        curr_mat[as.character(curr_events[j,]$Symbiont.Index),
+                                 as.character(curr_events[j,]$Host.Index)] <- 1
+                    }
+                }
+            }
+            else if(main_event == "SL"){
+                prev_row_names <- rownames(prev_mat)
+                prev_mat <- as.matrix(prev_mat[-which(rownames(prev_mat) == as.character(curr_events[1,]$Symbiont.Index)),])
+                prev_row_names_cut <- prev_row_names[which(prev_row_names != as.character(curr_events[1,]$Symbiont.Index))]
+                rownames(prev_mat) <- rownames(prev_row_names_cut)
+                curr_mat <- prev_mat
+            }
+            else{
+                curr_mat <- matrix(0, nrow = nrow(prev_mat) + 1, ncol = ncol(prev_mat) + 1)
+                curr_mat[nrow(prev_mat), ncol(prev_mat)] <- 1
+                curr_mat[nrow(prev_mat) + 1, ncol(prev_mat) + 1] <- 1
+                prev_col_names <- colnames(prev_mat)
+                prev_row_names <- rownames(prev_mat)
+
+                prev_mat <- as.matrix(prev_mat[-which(rownames(prev_mat) == as.character(curr_events[1,]$Symbiont.Index)),
+                                               -which(colnames(prev_mat) == as.character(curr_events[1,]$Host.Index))])
+
+
+                prev_col_names_cut <- prev_col_names[which(prev_col_names != as.character(curr_events[1,]$Host.Index))]
+                prev_row_names_cut <- prev_row_names[which(prev_row_names != as.character(curr_events[1,]$Symbiont.Index))]
+
+                if(length(prev_mat) > 0)
+                    curr_mat[1:nrow(prev_mat), 1:ncol(prev_mat)] <- prev_mat
+
+                if(length(prev_col_names_cut) > 0)
+                    colnames(prev_mat) <- prev_col_names_cut
+                if(length(prev_row_names_cut))
+                    rownames(prev_mat) <- prev_row_names_cut
+                col_names <- c(colnames(prev_mat), curr_events[2:3,]$Host.Index)
+                row_names <- c(rownames(prev_mat), curr_events[2:3,]$Symbiont.Index)
+                rownames(curr_mat) <- as.character(row_names)
+                colnames(curr_mat) <- as.character(col_names)
+                for(j in 2:nrow(curr_events)){
+                    type <- curr_events[j,]$Event.Type
+                    if(type == "AG"){
+                        curr_mat[as.character(curr_events[j,]$Symbiont.Index),
+                                 as.character(curr_events[j,]$Host.Index)] <- 1
+                    }
+                }
+            }
+            # if C delete both, add 2 new columns and rows
+            # else if HG delete col, add 2 new columns
+            # else if SG delete col, add 2 new columns
+            # else if SL delete col
+            # else if HL delete col
+            prev_mat <- curr_mat
+
+            print(prev_mat)
+        }
+    }
+    prev_mat
 }
 
 

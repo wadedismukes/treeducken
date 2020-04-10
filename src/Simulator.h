@@ -169,6 +169,7 @@ class Simulator
         void      updateEventIndices();
         void      updateEventVector(int h, int s, int e, double time);
         void    clearEventDFVecs();
+        void    initializeEventVector();
 };
 
 
