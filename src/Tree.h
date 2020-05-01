@@ -133,6 +133,8 @@ class Tree
                                               unsigned &tipCounter,
                                               unsigned &intNodeCounter);
         int         calculatePatristicDistance(Node *n1, Node *n2);
+
+
         void        reindexForR();
         std::vector<std::string>    getTipNames();
         NumericMatrix getEdges();

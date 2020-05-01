@@ -1,4 +1,6 @@
 library(treeducken)
+library(TreeSim)
+
 
 # test species tree output is a list of trees with correct length
 test_that("sim_sptree_bdp produces the right number of trees", {
@@ -19,11 +21,26 @@ get_number_extant_tips <- function(tr){
 # test that tree has correct extant tips (gsa)
 test_that("sim_sptree_bdp produces the right number of extant tips", {
     expect_equal(get_number_extant_tips(sim_sptree_bdp(1.0, 0.5, 10, 10)), 10)
-    expect_equal(get_number_extant_tips(sim_sptree_bdp(1.0, 0.5, 10, 5)), 5)
+      expect_equal(get_number_extant_tips(sim_sptree_bdp(1.0, 0.5, 10, 5)), 5)
     expect_equal(get_number_extant_tips(sim_sptree_bdp(1.0, 0.5, 10, 20)), 20)
 })
 
 # test that species tree produces tree within correct distribution (gsa)
+get_treesim_treedepth_dist <- function(sbr, sdr, nt, reps){
+  trees <- TreeSim::sim.bd.taxa(lambda = sbr, mu = sdr, n = nt, numbsim = reps)
+  max(phytools::nodeHeights(trees))
+}
+
+calc_difference_treedepth <- function(treesim_dist, treeducken_dist){
+  st <- t.test(x = treesim_dist, y = treeducken_dist)
+  st$p.value
+}
+
+
+test_that("sim_sptree_bdp produces trees with the correct distribution", {
+  expect
+})
+
 
 # test that tree has correct extant tips
 test_that("sim_sptree_bdp_time produces the right number of trees", {
@@ -36,7 +53,7 @@ test_that("sim_sptree_bdp_time produces the right number of trees", {
 get_length_tree <- function(tr){
     tree_depth <- vector(length = length(tr))
     for(i in 1:length(tr)){
-        tree_depth[i] <- max(phytools::nodeHeights(tr[[i]]))
+        tree_depth[i] <- max(phytools::nodeHeights(tr[[i]])) + tr[[i]]$root.edge
     }
     mean(tree_depth)
 }
@@ -48,6 +65,6 @@ test_that("sim_sptree_bdp_time produces the right length trees", {
 })
 
 # test that species tree produces tree within correct distribution (simple)
-test_that("sim_sptree_bdp_time produces trees under the right distribution"){
-
-}
+# test_that("sim_sptree_bdp_time produces trees under the right distribution"){
+#
+# }

@@ -46,7 +46,7 @@ build_historical_association_matrix <- function(t, tr_pair_obj){
             # what is first row of curr_events
             curr_events
             main_event <- curr_events[1,]$Event.Type
-            print(main_event)
+           # print(main_event)
             if(main_event == "HG"){
                 # make new matrix with dimensions of prev_mat same matrix
                 # remove column indicated by curr_events[1,]$Host.Index
@@ -61,11 +61,11 @@ build_historical_association_matrix <- function(t, tr_pair_obj){
                     curr_mat[1:nrow(prev_mat), 1:ncol(prev_mat)] <- prev_mat
 
                 prev_col_names_cut <- prev_col_names[which(prev_col_names != as.character(curr_events[1,]$Host.Index))]
-                colnames(prev_mat) <- prev_col_names_cut
-
-                col_names <- c(colnames(prev_mat), curr_events[2:3,]$Host.Index)
+                # if(length(prev_col_names_cut) > 0)
+                #     colnames(prev_mat) <- prev_col_names_cut
+                col_names <- c(prev_col_names_cut, curr_events[2:3,]$Host.Index)
                 colnames(curr_mat) <- as.character(col_names)
-                for(j in 2:nrow(curr_events)){
+                for(j in 1:nrow(curr_events)){
                     type <- curr_events[j,]$Event.Type
                     if(type == "AG"){
                         curr_mat[as.character(curr_events[j,]$Symbiont.Index),
@@ -74,11 +74,14 @@ build_historical_association_matrix <- function(t, tr_pair_obj){
                 }
             }
             else if(main_event == "HL"){
+                curr_mat <- matrix(0, nrow = nrow(prev_mat), ncol = ncol(prev_mat) - 1)
+                rownames(curr_mat) <- rownames(prev_mat)
                 prev_col_names <- colnames(prev_mat)
                 prev_mat <- as.matrix(prev_mat[,-which(colnames(prev_mat) == as.character(curr_events[1,]$Host.Index))])
                 prev_col_names_cut <- prev_col_names[which(prev_col_names != as.character(curr_events[1,]$Host.Index))]
                 colnames(prev_mat) <- prev_col_names_cut
                 curr_mat <- prev_mat
+                colnames(curr_mat) <- as.character(prev_col_names_cut)
             }
             else if(main_event == "SG"){
                 curr_mat <- matrix(0, nrow = nrow(prev_mat) + 1, ncol = ncol(prev_mat))
@@ -89,8 +92,9 @@ build_historical_association_matrix <- function(t, tr_pair_obj){
                     curr_mat[1:nrow(prev_mat), 1:ncol(prev_mat)] <- prev_mat
 
                 prev_row_names_cut <- prev_row_names[which(prev_row_names != as.character(curr_events[1,]$Symbiont.Index))]
-                rownames(prev_mat) <- prev_row_names_cut
-                row_names <- c(rownames(prev_mat), curr_events[2:3,]$Symbiont.Index)
+                # if(length(prev_row_names_cut) > 0)
+                #     rownames(prev_mat) <- prev_row_names_cut
+                row_names <- c(prev_row_names_cut, curr_events[2:3,]$Symbiont.Index)
                 rownames(curr_mat) <- as.character(row_names)
                 for(j in 2:nrow(curr_events)){
                     type <- curr_events[j,]$Event.Type
@@ -101,11 +105,14 @@ build_historical_association_matrix <- function(t, tr_pair_obj){
                 }
             }
             else if(main_event == "SL"){
+                curr_mat <- matrix(0, nrow = nrow(prev_mat) - 1, ncol = ncol(prev_mat))
+                colnames(curr_mat) <- colnames(prev_mat)
                 prev_row_names <- rownames(prev_mat)
                 prev_mat <- as.matrix(prev_mat[-which(rownames(prev_mat) == as.character(curr_events[1,]$Symbiont.Index)),])
                 prev_row_names_cut <- prev_row_names[which(prev_row_names != as.character(curr_events[1,]$Symbiont.Index))]
                 rownames(prev_mat) <- rownames(prev_row_names_cut)
                 curr_mat <- prev_mat
+                rownames(curr_mat) <- as.character(prev_row_names_cut)
             }
             else{
                 curr_mat <- matrix(0, nrow = nrow(prev_mat) + 1, ncol = ncol(prev_mat) + 1)
@@ -124,12 +131,12 @@ build_historical_association_matrix <- function(t, tr_pair_obj){
                 if(length(prev_mat) > 0)
                     curr_mat[1:nrow(prev_mat), 1:ncol(prev_mat)] <- prev_mat
 
-                if(length(prev_col_names_cut) > 0)
-                    colnames(prev_mat) <- prev_col_names_cut
-                if(length(prev_row_names_cut))
-                    rownames(prev_mat) <- prev_row_names_cut
-                col_names <- c(colnames(prev_mat), curr_events[2:3,]$Host.Index)
-                row_names <- c(rownames(prev_mat), curr_events[2:3,]$Symbiont.Index)
+                # if(length(prev_col_names_cut) > 0)
+                #     colnames(prev_mat) <- prev_col_names_cut
+                # if(length(prev_row_names_cut) > 0)
+                #     rownames(prev_mat) <- prev_row_names_cut
+                col_names <- c(prev_col_names_cut, curr_events[2:3,]$Host.Index)
+                row_names <- c(prev_row_names_cut, curr_events[2:3,]$Symbiont.Index)
                 rownames(curr_mat) <- as.character(row_names)
                 colnames(curr_mat) <- as.character(col_names)
                 for(j in 2:nrow(curr_events)){
@@ -147,7 +154,7 @@ build_historical_association_matrix <- function(t, tr_pair_obj){
             # else if HL delete col
             prev_mat <- curr_mat
 
-            print(prev_mat)
+         #   print(prev_mat)
         }
     }
     prev_mat

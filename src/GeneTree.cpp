@@ -29,6 +29,8 @@ GeneTree::~GeneTree(){
     //wclearNodes(extantRoot);
 }
 
+
+//TODO:  go back and speed this up by removing push_back calls
 void GeneTree::initializeTree(std::vector< std::vector<int> > extantLociInd, double presentTime){
     for(std::vector<Node*>::iterator p=nodes.begin(); p != nodes.end(); ++p){
         delete (*p);
@@ -47,21 +49,15 @@ void GeneTree::initializeTree(std::vector< std::vector<int> > extantLociInd, dou
             p = new Node();
             p->setDeathTime(presentTime);
             p->setLindx(extantLociInd[0][i]);
-            p->setIndx(extantLociInd[0][i]);
             p->setLdes(NULL);
             p->setRdes(NULL);
             p->setAnc(NULL);
             p->setIsExtant(true);
             p->setIsTip(true);
             p->setIsExtinct(false);
-            if(extantLociInd[0][i] == -1){
-                this->setOutgroup(p);
-                p->setName("OUT");
-            }
-            else{
-                extantNodes.push_back(p);
-            }
+            extantNodes.push_back(p);
             nodes.push_back(p);
+            p->setIndx((int) nodes.size());
         }
     }
 }
@@ -182,8 +178,8 @@ Node* GeneTree::coalescentEvent(double t, Node *p, Node *q){
     n->setIsTip(false);
     n->setIsExtinct(false);
     n->setLindx(p->getLindx());
-    n->setIndx(p->getIndex());
     nodes.push_back(n);
+    n->setIndx((int) nodes.size());
 
     p->setBirthTime(t);
     p->setAnc(n);
@@ -236,29 +232,10 @@ void GeneTree::rootCoalescentProcess(double startTime, double ogf){
         n = coalescentEvent(t, l, r);
         extantNodes.push_back(n);
     }
-    if(ogf == 0.0){
-        extantNodes[0]->setAsRoot(true);
-        this->setRoot(extantNodes[0]);
-    }
-    else{
-        Node *nRoot = new Node();
-        t -= getCoalTime(2);
-        extantNodes[0]->setBirthTime(t);
-        nRoot->setBirthTime(t);
-        nRoot->setLdes(extantNodes[0]);
-        nRoot->setRdes(this->getOutgroup());
-        nRoot->setDeathTime(extantNodes[0]->getBirthTime());
-        nRoot->setAsRoot(true);
+    extantNodes[0]->setAsRoot(true);
+    std::reverse(nodes.begin(), nodes.end());
 
-        this->setRoot(nRoot);
-        this->getOutgroup()->setBirthTime(extantNodes[0]->getBirthTime());
-        this->getOutgroup()->setAnc(nRoot);
-        extantNodes[0]->setAnc(nRoot);
-        nodes.push_back(nRoot);
-
-    }
-
-
+    this->setRoot(extantNodes[0]);
     this->setBranchLengths();
 }
 
@@ -287,7 +264,9 @@ void GeneTree::setBranchLengths(){
     for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it){
         brlen = (*it)->getDeathTime() - (*it)->getBirthTime();
         (*it)->setBranchLength(std::abs(brlen));
+        branchLengths.push_back(std::move(brlen));
     }
+    this->setTreeTipNames();
 }
 
 void GeneTree::addExtinctSpecies(double bt, int indx){
@@ -295,7 +274,6 @@ void GeneTree::addExtinctSpecies(double bt, int indx){
     for(int i = 0; i < individualsPerPop; i++){
         p = new Node();
         p->setDeathTime(bt);
-        p->setIndx(indx);
         p->setLindx(indx);
         p->setLdes(NULL);
         p->setRdes(NULL);
@@ -305,6 +283,7 @@ void GeneTree::addExtinctSpecies(double bt, int indx){
         p->setIsExtinct(true);
         extantNodes.push_back(p);
         nodes.push_back(p);
+        p->setIndx((int) nodes.size() + 1);
 
     }
     //delete p;
@@ -312,21 +291,27 @@ void GeneTree::addExtinctSpecies(double bt, int indx){
 
 
 void GeneTree::setIndicesBySpecies(std::map<int, int> spToLocusMap){
-    int indx;
-    int spIndx;
+    numExtant = 0;
+    numExtinct = 0;
     for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it){
         if((*it)->getIsTip()){
-            indx = (*it)->getIndex();
-            spIndx = spToLocusMap.find(indx)->second;
-            (*it)->setIndx(spIndx);
-        }
-        else{
-            indx = (*it)->getLindx();
-            spIndx = spToLocusMap.find(indx)->second;
-            (*it)->setIndx(spIndx);
+            // indx = (*it)->getLindx();
+            // spIndx = spToLocusMap.find(indx)->second;
+            (*it)->setIndx((*it)->getLindx());
+
+            if((*it)->getIsExtant())
+              numExtant++;
+            else
+              numExtinct++;
         }
     }
-    this->setTreeTipNames();
+    for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it){
+      int notTipCount = numExtant + numExtinct + 1;
+      if(!((*it)->getIsTip())){
+        (*it)->setIndx(notTipCount);
+        notTipCount++;
+      }
+    }
 }
 
 std::string GeneTree::printNewickTree(){
@@ -402,7 +387,7 @@ void GeneTree::setTreeTipNames(){
     int indx;
     for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); it++){
         if((*it)->getIsTip()){
-            indx  = (*it)->getIndex();
+            indx  = (*it)->getLindx();
             tn << indx;
             name = tn.str();
             tn.clear();
@@ -412,10 +397,7 @@ void GeneTree::setTreeTipNames(){
             name += "_" + tn.str();
             tn.clear();
             tn.str(std::string());
-            if((*it) == this->getOutgroup())
-                (*it)->setName("OUT");
-            else
-                (*it)->setName(name);
+            (*it)->setName(name);
             if(indNumber == individualsPerPop)
                 indNumber = 0;
         }

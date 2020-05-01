@@ -14,7 +14,8 @@ Imports:
     Rcpp (>= 1.0.2),
     ape,
     geiger,
-    phytools
+    phytools,
+    TreeSim
 LinkingTo: 
     Rcpp,
     RcppArmadillo

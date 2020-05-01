@@ -256,8 +256,6 @@ bool Simulator::simSpeciesTree(){
     while(!good){
         good = gsaBDSim();
     }
-    if(outgroupFrac > 0.0)
-        this->graftOutgroup(spTree, spTree->getTreeDepth());
     return good;
 }
 
@@ -282,8 +280,13 @@ bool Simulator::bdSimpleSim(){
 
     eventTime = spTree->getTimeToNextEvent();
     currentSimTime += eventTime;
-    spTree->ermEvent(currentSimTime);
-
+    if(currentSimTime >= stopTime){
+      currentSimTime = stopTime;
+      spTree->setPresentTime(stopTime);
+    }
+    else{
+      spTree->ermEvent(currentSimTime);
+    }
     if(spTree->getNumExtant() < 1){
       treeComplete = false;
       return treeComplete;
@@ -766,7 +769,6 @@ arma::umat Simulator::cospeciationEvent(double eventTime, arma::umat assocMat){
   }
 
   int indxOfHost = unif_rand() * (hostIndices.size() - 1); //col of assocMat
- // Rcout << "hostIndx = " << indxOfHost << std::endl;
 
   arma::ucolvec cvec = assocMat.col(hostIndices[indxOfHost]);
 
@@ -1004,12 +1006,8 @@ bool Simulator::simSpeciesLociTrees(){
             while(!spGood){
                 spGood = gsaBDSim();
             }
-            if(outgroupFrac > 0.0)
-                this->graftOutgroup(spTree, spTree->getTreeDepth());
             good = bdsaBDSim();
         }
-        if(outgroupFrac > 0.0)
-            this->graftOutgroup(lociTree, lociTree->getTreeDepth());
 
         locusTrees.push_back(lociTree);
 
@@ -1027,6 +1025,9 @@ bool Simulator::simLocusTree(){
   }
   return good;
 }
+
+
+
 
 std::string Simulator::printLocusTreeNewick(int i){
     std::string newickTree;
@@ -1073,8 +1074,6 @@ bool Simulator::coalescentSim(){
     std::vector< std::vector<int> > contempLoci = lociTree->getExtantLoci(epochs);
     std::map<int, double> stopTimes = lociTree->getBirthTimesFromNodes();
     geneTree->initializeTree(contempLoci, *(epochs.begin()));
-    if(outgroupFrac != 0.0)
-        contempLoci[0].pop_back();
     std::set<int>::iterator extFolksIt;
 
     for(std::set<double, std::greater<double> >::iterator epIter = epochs.begin(); epIter != epochs.end(); ++epIter){
@@ -1131,8 +1130,19 @@ bool Simulator::coalescentSim(){
 
     spToLo = lociTree->getLocusToSpeciesMap();
     geneTree->setIndicesBySpecies(spToLo);
+    geneTree->setBranchLengths();
     return treeGood;
 }
+
+
+bool Simulator::simGeneTree(){
+  bool gGood = false;
+  while(!gGood){
+    gGood = coalescentSim();
+  }
+  return gGood;
+}
+
 
 bool Simulator::simThreeTree(){
     bool gGood = false;
@@ -1146,9 +1156,6 @@ bool Simulator::simThreeTree(){
         while(!loGood){
             loGood = bdsaBDSim();
         }
-        if(outgroupFrac > 0.0){
-            this->graftOutgroup(lociTree, lociTree->getTreeDepth());
-        }
         for(int j = 0; j < numGenes; j++){
             while(!gGood){
                 gGood = coalescentSim();
@@ -1160,9 +1167,6 @@ bool Simulator::simThreeTree(){
         locusTrees.push_back(lociTree);
         loGood = false;
     }
-    if(outgroupFrac > 0.0)
-        this->graftOutgroup(spTree, spTree->getTreeDepth());
-
     return gGood;
 }
 
@@ -1195,34 +1199,21 @@ std::string Simulator::printExtantGeneTreeNewick(int i, int j){
 }
 
 
-void Simulator::graftOutgroup(Tree *tr, double trDepth){
-    Node *rootN = new Node();
-    Node *currRoot = tr->getRoot();
-    rootN->setBirthTime(currRoot->getBirthTime());
-    Node *outgroupN = new Node();
-    tr->rescaleTreeByOutgroupFrac(outgroupFrac, trDepth);
-    double tipTime = tr->getEndTime();
-    tr->setNewRootInfo(rootN, outgroupN, currRoot, tipTime);
-}
-
 bool Simulator::simLocusGeneTrees(){
     bool loGood = false;
     bool gGood = false;
-    for(int i = 0; i < numLoci; i++){
-        while(!loGood){
-            if(printSOUT)
-            loGood = bdsaBDSim();
-        }
-        for(int j = 0; j < numGenes; j++){
-            while(!gGood){
-                gGood = coalescentSim();
-            }
-            geneTrees[i].push_back(geneTree);
+    geneTrees[0].resize(numGenes);
+    while(!loGood){
+      loGood = bdsaBDSim();
+    }
+    for(int j = 0; j < numGenes; j++){
+      while(!gGood){
+        gGood = coalescentSim();
+      }
 
-            gGood = false;
-        }
-        locusTrees.push_back(lociTree);
-        loGood = false;
+      geneTrees[0][j] = geneTree;
+
+      gGood = false;
     }
     return gGood;
 }
@@ -1271,3 +1262,7 @@ double Simulator::getSymbiontTreeRootEdge(){
   return symbiontTree->getRoot()->getDeathTime() - symbiontTree->getRoot()->getBirthTime();
 }
 
+
+double Simulator::getGeneTreeRootEdge(){
+  return geneTree->getRoot()->getDeathTime() - geneTree->getRoot()->getBirthTime();
+}

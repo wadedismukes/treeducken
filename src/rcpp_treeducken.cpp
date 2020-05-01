@@ -107,11 +107,11 @@ Rcpp::List sim_sptree_bdp_time(SEXP sbr_, SEXP sdr_, SEXP numbsim_, SEXP t_){
 //'
 //' @details Given a species tree simulates a locus or gene family tree along
 //'     the species tree.
-//' @param species_tree_ species tree to simulate along
-//' @param gbr_ gene birth rate
-//' @param gdr_ gene death rate
-//' @param lgtr_ gene trasnfer rate
-//' @param num_loci_ number of locus trees to simulate
+//' @param species_tree species tree to simulate along
+//' @param gbr gene birth rate
+//' @param gdr gene death rate
+//' @param lgtr gene trasnfer rate
+//' @param num_loci number of locus trees to simulate
 //' @return List of objects of the tree class (as implemented in APE)
 //' @references
 //' Rasmussen MD, Kellis M. Unified modeling of gene duplication, loss, and
@@ -128,43 +128,46 @@ Rcpp::List sim_sptree_bdp_time(SEXP sbr_, SEXP sdr_, SEXP numbsim_, SEXP t_){
 //' # then randomly picks one of those trees
 //'
 //' sp_tree <- sim_sptree_bdp(sbr_ = lambda,
-//'                 sdr_ = mu,
-//'                 numbsim_ = numb_replicates,
-//'                 n_tips_ = numb_extant_tips)
+//'                 sdr = mu,
+//'                 numbsim = numb_replicates,
+//'                 n_tips = numb_extant_tips)
 //'
 //' gene_br <- 1.0
 //' gene_dr <- 0.2
 //' transfer_rate <- 0.2
-//' sim_locustree_bdp(species_tree_ = sp_tree,
-//'                   gbr_ = gene_br,
-//'                   gdr_ = gene_dr,
-//'                   lgtr_ = transfer_rate,
-//'                   num_loci_ = 10)
+//' sim_locustree_bdp(species_tree = sp_tree,
+//'                   gbr = gene_br,
+//'                   gdr = gene_dr,
+//'                   lgtr = transfer_rate,
+//'                   num_loci = 10)
 // [[Rcpp::export]]
-Rcpp::List sim_locustree_bdp(SEXP species_tree_,
-                             SEXP gbr_,
-                             SEXP gdr_,
-                             SEXP lgtr_,
-                             SEXP num_loci_){
-    Rcpp::List species_tree = as<Rcpp::List>(species_tree_);
-    double gbr = as<double>(gbr_);
-    double gdr = as<double>(gdr_);
-    double lgtr = as<double>(lgtr_);
-    unsigned numLoci = as<int>(num_loci_);
-    if(gbr < 0.0)
+Rcpp::List sim_locustree_bdp(SEXP species_tree,
+                             SEXP gbr,
+                             SEXP gdr,
+                             SEXP lgtr,
+                             SEXP num_loci){
+    Rcpp::List species_tree_ = as<Rcpp::List>(species_tree);
+    double gbr_ = as<double>(gbr);
+    double gdr_ = as<double>(gdr);
+    double lgtr_ = as<double>(lgtr);
+    unsigned numLoci = as<int>(num_loci);
+    if(gbr_ < 0.0)
         stop("'gbr' must be a positive number or 0.0");
-    if(gbr <= gdr)
+    if(gbr_ < gdr_){
+        if(gbr_ == gdr_)
+            stop("'gbr' can only be equal to 'gdr' if both are 0.0");
         stop("'gbr' must be greater than 'gdr'");
+    }
     if(numLoci < 1)
         stop("'num_loci' must be greater than 1");
-    if(lgtr < 0.0)
+    if(lgtr_ < 0.0)
         stop("'lgtr' must be a positive number or 0.0");
-    if(gdr < 0.0)
+    if(gdr_ < 0.0)
         stop("'gdr' must be greater than or equal to 0.0");
-    if(strcmp(species_tree.attr("class"), "phylo") != 0)
+    if(strcmp(species_tree_.attr("class"), "phylo") != 0)
         stop("species_tree must be an object of class phylo'.");
-    SpeciesTree* specTree = new SpeciesTree(species_tree);
-    return sim_locus_tree(specTree, gbr, gdr, lgtr, numLoci);
+    SpeciesTree* specTree = new SpeciesTree(species_tree_);
+    return sim_locus_tree(specTree, gbr_, gdr_, lgtr_, numLoci);
 }
 //' Simulates a cophylogenetic system using a paired birth-death process
 //'
@@ -256,5 +259,55 @@ Rcpp::List sim_cophylo_bdp(SEXP hbr_,
                                   cosp_rate,
                                   timeToSimTo,
                                   numbsim);
+}
+
+// [[Rcpp::export]]
+Rcpp::List sim_locustree_genetree_mlc(SEXP species_tree,
+                             SEXP gbr,
+                             SEXP gdr,
+                             SEXP lgtr,
+                             SEXP num_loci,
+                             SEXP num_sampled_individuals,
+                             SEXP popsize,
+                             SEXP num_genes_per_locus){
+    Rcpp::List species_tree_ = as<Rcpp::List>(species_tree);
+    double gbr_ = as<double>(gbr);
+    double gdr_ = as<double>(gdr);
+    double lgtr_ = as<double>(lgtr);
+    unsigned numLoci = as<int>(num_loci);
+
+    int num_sampled_individuals_ = as<int>(num_sampled_individuals);
+    int popsize_ = as<int>(popsize);
+    int num_genes_ = as<int>(num_genes_per_locus);
+
+    if(gbr_ < 0.0)
+        stop("'gbr' must be a positive number or 0.0");
+    if(gbr_ < gdr_)
+        stop("'gbr' must be greater than 'gdr'");
+    if(numLoci < 1)
+        stop("'num_loci' must be greater than or equal to 1");
+    if(lgtr_ < 0.0)
+        stop("'lgtr' must be a positive number or 0.0");
+    if(gdr_ < 0.0)
+        stop("'gdr' must be greater than or equal to 0.0");
+    if(popsize_ < 1)
+        stop("'popsize' must be greater than or equal to 1");
+    if(num_genes_ < 1)
+        stop("'num_genes_per_locus' must be greater than or equal to 1");
+    if(num_sampled_individuals_ > popsize_)
+        stop("'num_sampled_individuals' must be less than or equal to 'popsize'");
+    if(num_sampled_individuals_ < 1)
+        stop("'num_sampled_individuals' must be greater than or equal to 1");
+    if(strcmp(species_tree_.attr("class"), "phylo") != 0)
+        stop("species_tree must be an object of class phylo'.");
+    SpeciesTree* specTree = new SpeciesTree(species_tree_);
+    return sim_locus_tree_gene_tree(specTree,
+                          gbr_,
+                          gdr_,
+                          lgtr_,
+                          numLoci,
+                          popsize_,
+                          num_sampled_individuals_,
+                          num_genes_);
 }
 

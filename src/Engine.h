@@ -172,4 +172,19 @@ extern Rcpp::List sim_host_symb_treepair(double hostbr,
                                      double cosprate,
                                      double timeToSimTo,
                                      int numbsim);
+
+extern Rcpp::List sim_locus_tree_gene_tree(SpeciesTree* species_tree,
+                                           double gbr,
+                                           double gdr,
+                                           double lgtr,
+                                           int numLoci,
+                                           double popsize,
+                                           int samples_per_lineage,
+                                           int numGenesPerLocus);
+
+extern Rcpp::List sim_genetree_msc(SpeciesTree* species_tree,
+                                   double popsize,
+                                   int samples_per_lineage,
+                                   int numbsim);
+
 #endif /* Engine_h */

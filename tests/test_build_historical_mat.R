@@ -1,3 +1,4 @@
+library(treeducken)
 host_mu <- 0.5 # death rate
 host_lambda <- 1.0 # birth rate
 numb_replicates <- 10

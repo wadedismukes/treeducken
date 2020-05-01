@@ -67,7 +67,8 @@ calculate_expected_leaves_locustree <- function(t,
 #'
 #' @param lambda speciation rate
 #' @param mu extinction rate
-#' @param t time to simulate until
+#' @param n number of tips on tree
+#' @param k branching point (k = 1 is the root and is the default)
 #' @return The expected number of leaves
 #' @references
 #' Gernhard, T. (2008). The conditioned reconstructed process. Journal of
@@ -75,14 +76,14 @@ calculate_expected_leaves_locustree <- function(t,
 #' @examples
 #' spec_rate <- 1.0
 #' ext_rate <- 0.5
-#' n <- 10
-#' estimate_node_heights(spec_rate, ext_rate, n)
+#' nt <- 10
+#' estimate_node_heights(lambda = spec_rate, mu = ext_rate, n = nt)
 #'
-#' estimate_node_heigths(spec_rate, ext_rate, n, k = 5)
+#' estimate_node_heights(lambda = spec_rate, mu = ext_rate, n = nt, k = 2)
 estimate_node_heights <- function(lambda,
                                   mu,
-                                  k = 1,
-                                  n){
+                                  n,
+                                  k = 1){
     if(lambda <= 0.0)
         stop("'lambda' is lower than 0. it must be greater than 0.")
     if(mu > lambda)

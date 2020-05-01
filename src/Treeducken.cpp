@@ -341,7 +341,6 @@ Rcpp::List sim_locus_tree(SpeciesTree* species_tree,
                           double gdr,
                           double lgtr,
                           int numbsim){
-    Simulator *phySimulator = nullptr;
     Rcpp::List multiphy;
     int ntax = species_tree->getNumExtant();
     double lambda = 0.0;
@@ -373,4 +372,90 @@ Rcpp::List sim_locus_tree(SpeciesTree* species_tree,
 
 
     return multiphy;
+}
+
+Rcpp::List sim_locus_tree_gene_tree(SpeciesTree* species_tree,
+                                    double gbr,
+                                    double gdr,
+                                    double lgtr,
+                                    int numLoci,
+                                    double popsize,
+                                    int samples_per_lineage,
+                                    int numGenesPerLocus){
+    Rcpp::List multiphy;
+    int ntax = species_tree->getNumExtant();
+    double lambda = 0.0;
+    double mu = 0.0;
+    double rho = 0.0;
+    unsigned numLociToSim = numLoci;
+    double genTime = 1.0;
+    double ts = 1.0;
+    bool sout = false;
+    double og = 0.0;
+    for(int i = 0; i < numLoci; i++){
+        Simulator *phySimulator = new Simulator(ntax,
+                                                lambda,
+                                                mu,
+                                                rho,
+                                                numLociToSim,
+                                                gbr,
+                                                gdr,
+                                                lgtr,
+                                                samples_per_lineage,
+                                                popsize,
+                                                genTime,
+                                                numGenesPerLocus,
+                                                og,
+                                                ts,
+                                                sout);
+        phySimulator->setSpeciesTree(species_tree);
+        List phyGenesPerLoc(numGenesPerLocus);
+        phySimulator->simLocusTree();
+        List phyLoc = List::create(Named("edge") = phySimulator->getLocusEdges(),
+                                Named("edge.length") = phySimulator->getLocusEdgeLengths(),
+                                Named("Nnode") = phySimulator->getLocusNnodes(),
+                                Named("tip.label") = phySimulator->getLocusTipNames(),
+                                Named("root.edge") = phySimulator->getLocusTreeRootEdge());
+        phyLoc.attr("class") = "phylo";
+
+        // need 5 vectors of length numGenesPerLocus
+        for(int j=0; j<numGenesPerLocus; j++){
+            phySimulator->simGeneTree();
+
+            List phyGene = List::create(Named("edge") = phySimulator->getGeneEdges(),
+                         _("edge.length") = phySimulator->getGeneEdgeLengths(),
+                         _("Nnode") = phySimulator->getGeneNnodes(),
+                         _("tip.label") = phySimulator->getGeneTipNames(),
+                         _("root.edge") = phySimulator->getGeneTreeRootEdge());
+            phyGene.attr("class") = "phylo";
+            phyGenesPerLoc[j] = phyGene;
+        }
+
+        List locusGeneSet = List::create(Named("locus.tree") = phyLoc,
+                                         Named("gene.trees") = phyGenesPerLoc);
+
+        multiphy.push_back(std::move(locusGeneSet));
+
+        delete phySimulator;
+    }
+
+
+
+    return multiphy;
+}
+
+
+Rcpp::List sim_genetree_msc(SpeciesTree* species_tree,
+                            double popsize,
+                            int samples_per_lineage,
+                            int numbsim){
+    return sim_locus_tree_gene_tree(species_tree,
+                             0.0,
+                             0.0,
+                             0.0,
+                             1,
+                             samples_per_lineage,
+                             popsize,
+                             numbsim);
+    // this one is a wrapper for above function with locus tree parameters set to 0
 }

@@ -69,11 +69,11 @@ sim_sptree_bdp_time <- function(sbr_, sdr_, numbsim_, t_) {
 #'
 #' @details Given a species tree simulates a locus or gene family tree along
 #'     the species tree.
-#' @param species_tree_ species tree to simulate along
-#' @param gbr_ gene birth rate
-#' @param gdr_ gene death rate
-#' @param lgtr_ gene trasnfer rate
-#' @param num_loci_ number of locus trees to simulate
+#' @param species_tree species tree to simulate along
+#' @param gbr gene birth rate
+#' @param gdr gene death rate
+#' @param lgtr gene trasnfer rate
+#' @param num_loci number of locus trees to simulate
 #' @return List of objects of the tree class (as implemented in APE)
 #' @references
 #' Rasmussen MD, Kellis M. Unified modeling of gene duplication, loss, and
@@ -90,20 +90,20 @@ sim_sptree_bdp_time <- function(sbr_, sdr_, numbsim_, t_) {
 #' # then randomly picks one of those trees
 #'
 #' sp_tree <- sim_sptree_bdp(sbr_ = lambda,
-#'                 sdr_ = mu,
-#'                 numbsim_ = numb_replicates,
-#'                 n_tips_ = numb_extant_tips)
+#'                 sdr = mu,
+#'                 numbsim = numb_replicates,
+#'                 n_tips = numb_extant_tips)
 #'
 #' gene_br <- 1.0
 #' gene_dr <- 0.2
 #' transfer_rate <- 0.2
-#' sim_locustree_bdp(species_tree_ = sp_tree,
-#'                   gbr_ = gene_br,
-#'                   gdr_ = gene_dr,
-#'                   lgtr_ = transfer_rate,
-#'                   num_loci_ = 10)
-sim_locustree_bdp <- function(species_tree_, gbr_, gdr_, lgtr_, num_loci_) {
-    .Call(`_treeducken_sim_locustree_bdp`, species_tree_, gbr_, gdr_, lgtr_, num_loci_)
+#' sim_locustree_bdp(species_tree = sp_tree,
+#'                   gbr = gene_br,
+#'                   gdr = gene_dr,
+#'                   lgtr = transfer_rate,
+#'                   num_loci = 10)
+sim_locustree_bdp <- function(species_tree, gbr, gdr, lgtr, num_loci) {
+    .Call(`_treeducken_sim_locustree_bdp`, species_tree, gbr, gdr, lgtr, num_loci)
 }
 
 #' Simulates a cophylogenetic system using a paired birth-death process
@@ -152,5 +152,9 @@ sim_locustree_bdp <- function(species_tree_, gbr_, gdr_, lgtr_, num_loci_) {
 #'
 sim_cophylo_bdp <- function(hbr_, hdr_, sbr_, sdr_, host_exp_rate_, cosp_rate_, timeToSimTo_, numbsim_) {
     .Call(`_treeducken_sim_cophylo_bdp`, hbr_, hdr_, sbr_, sdr_, host_exp_rate_, cosp_rate_, timeToSimTo_, numbsim_)
+}
+
+sim_locustree_genetree_mlc <- function(species_tree, gbr, gdr, lgtr, num_loci, num_sampled_individuals, popsize, num_genes_per_locus) {
+    .Call(`_treeducken_sim_locustree_genetree_mlc`, species_tree, gbr, gdr, lgtr, num_loci, num_sampled_individuals, popsize, num_genes_per_locus)
 }
 

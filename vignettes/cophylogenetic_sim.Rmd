@@ -21,11 +21,14 @@ This vignette summarizes the workflow for simulating a host and symbiont tree us
 ## Introduction
 
 
-
-
-
 ## Figuring out parameters and what they mean
 
+This model has a number of parameters that are input into the `sim_cophylo_bdp` function. Let us assume that we just want to simulate to a time of 2.0 units. We can then use `calculate_expected_leaves_sptree` and `calculate_expected_leaves_symbtree` to figure out the average number of extant tips that will be on our host and symbiont trees respectively. 
+
+
+```{r}
+
+```
 
 
 ## Simulating a set of host and symbiont pairs
@@ -36,6 +39,10 @@ This vignette summarizes the workflow for simulating a host and symbiont tree us
 
 
 ## Examining historical associations
+
+Due to issues in the historical association function this part has yet to be 
+completed.
+
 
 Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
 

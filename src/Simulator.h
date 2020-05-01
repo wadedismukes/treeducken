@@ -115,6 +115,7 @@ class Simulator
         bool    simSpeciesTreeTime();
         bool    simLocusTree();
         bool    simSpeciesLociTrees();
+        bool    simGeneTree();
         bool    simThreeTree();
         bool    simLocusGeneTrees();
         bool    simHostSymbSpeciesTreePair();
@@ -123,7 +124,6 @@ class Simulator
         void    processGSASim();
         void    prepGSATreeForReconstruction();
         void    processSpTreeSim();
-        void    graftOutgroup(Tree *tr, double trDepth);
         double  calcSpeciesTreeDepth();
         double  calcExtantSpeciesTreeDepth();
         double  calcLocusTreeDepth(int i);
@@ -139,27 +139,34 @@ class Simulator
         SpeciesTree*    getSpeciesTree() { return spTree; }
         LocusTree*      getLocusTree() {return lociTree;}
         SymbiontTree*   getSymbiontTree() {return symbiontTree;}
+        GeneTree*       getGeneTree() {return geneTree; }
         double          getTimeToSim() {return timeToSim; }
 
         NumericMatrix   getSymbiontEdges() { return symbiontTree->getEdges(); }
         NumericMatrix   getSpeciesEdges() { return spTree->getEdges(); }
         NumericMatrix   getLocusEdges() { return lociTree->getEdges(); }
+        NumericMatrix   getGeneEdges() { return geneTree->getEdges(); }
 
         std::vector<double>    getSymbiontEdgeLengths() { return symbiontTree->getEdgeLengths(); }
         std::vector<double>    getSpeciesEdgeLengths() { return spTree->getEdgeLengths(); }
         std::vector<double>    getLocusEdgeLengths() { return lociTree->getEdgeLengths(); }
+        std::vector<double>    getGeneEdgeLengths() { return geneTree->getEdgeLengths(); }
 
         int    getSymbiontNnodes() { return symbiontTree->getNnodes(); }
         int    getSpeciesNnodes() { return spTree->getNnodes(); }
         int    getLocusNnodes() { return lociTree->getNnodes(); }
+        int    getGeneNnodes() { return geneTree->getNnodes(); }
 
         std::vector<std::string> getSpeciesTipNames() { return spTree->getTipNames(); }
         std::vector<std::string> getSymbiontTipNames() { return symbiontTree->getTipNames(); }
         std::vector<std::string> getLocusTipNames() { return lociTree->getTipNames(); }
+        std::vector<std::string> getGeneTipNames() { return geneTree->getTipNames(); }
 
         double    getSpeciesTreeRootEdge();
         double    getLocusTreeRootEdge();
         double    getSymbiontTreeRootEdge();
+        double    getGeneTreeRootEdge();
+
         arma::umat    getAssociationMatrix() { return assocMat; }
         arma::umat    cophyloEvent(double eventTime, arma::umat assocMat);
         arma::umat    cophyloERMEvent(double eventTime, arma::umat assocMat);
