@@ -37,6 +37,7 @@ SpeciesTree::SpeciesTree(const SpeciesTree& speciestree, unsigned numTaxa) : Tre
   numExtinct = speciestree.numExtinct;
 }
 
+
 SpeciesTree::~SpeciesTree(){
 
 }
@@ -438,6 +439,18 @@ void SpeciesTree::reconstructLineageFromGSASim(Node *currN, Node *prevN, unsigne
     }
 }
 
+
+std::map<int,int> SpeciesTree::makeIndxMap(){
+  std::map<int,int> indxMap;
+  for(int i=0; i < nodes.size(); i++){
+    int rIndx = nodes[i]->getIndex();
+    int tdckenIndx = i;
+    indxMap.insert(std::pair<int,int>(rIndx, tdckenIndx));
+  }
+  return indxMap;
+}
+
+
 std::map<int,double> SpeciesTree::getBirthTimesFromNodes(){
     int indx;
     double birthTime;
@@ -458,6 +471,8 @@ std::map<int,double> SpeciesTree::getDeathTimesFromNodes(){
         if(!((*it)->getIsExtant())){
             indx = (*it)->getIndex();
             deathTime = (*it)->getDeathTime();
+            Rcout << "* " << deathTime << std::endl;
+
             deathTimeMap.insert(std::pair<int,double>(indx, deathTime));
         }
     }
@@ -480,6 +495,8 @@ int SpeciesTree::postOrderTraversalStep(int index){
 bool SpeciesTree::macroEvent(int indx){
     bool isSpec;
     Node* n = nodes[indx];
+
+    Rcout << n->getIsTip() << ":SP:" << n->getIndex() << std::endl;
     if(n->getIsTip())
         isSpec = false;
     else

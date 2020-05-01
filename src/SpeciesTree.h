@@ -22,6 +22,8 @@ class SpeciesTree : public Tree
                       SpeciesTree(SEXP rtree);
                       SpeciesTree(const SpeciesTree& speciestree, unsigned numTaxa);
         virtual       ~SpeciesTree();
+
+        SpeciesTree*  clone() const { return new SpeciesTree(*this); }
         void          setSpeciationRate(double sr) {speciationRate = sr; }
         void          setExtinctionRate(double er) {extinctionRate = er; }
         void          setCurrentTime(double et) { currentTime = et; }
@@ -52,6 +54,7 @@ class SpeciesTree : public Tree
         void          recPopNodes(Node *p);
         void          reconstructLineageFromGSASim(Node *currN, Node *prevN, unsigned &tipCounter, unsigned &intNodeCounter);
       //  void          setSampleFromFlags();
+        std::map<int,int>           makeIndxMap();
         std::map<int,double>        getBirthTimesFromNodes();
         std::map<int,double>        getDeathTimesFromNodes();
         double                      getCurrentTimeFromExtant() {return extantNodes[0]->getDeathTime();}

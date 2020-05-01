@@ -210,9 +210,15 @@ void LocusTree::lineageTransferEvent(int indx, bool randTrans = 0){
 }
 
 double LocusTree::getTimeToNextEvent(){
+    const double epsilon = 0.00001;
+    Rcout << numExtant << " num Extant is this. " << std::endl;
     double sumrt = geneBirthRate + geneDeathRate + transferRate;
     double returnTime = 0.0;
-    returnTime = -log(unif_rand()) / (double(numExtant) * sumrt);
+    if(std::abs(sumrt - 0.0) <= epsilon * std::abs(sumrt))
+      returnTime = -log(unif_rand()) / (double(numExtant));
+    else{
+      returnTime = -log(unif_rand()) / (double(numExtant) * sumrt);
+    }
     currentTime += returnTime;
     return returnTime;
 }

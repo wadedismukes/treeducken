@@ -143,6 +143,8 @@ class Tree
         void        setTipsFromRtree();
         double      findMaxNodeHeight();
         int         getIndexFromNodes(int indx) {return nodes[indx]->getIndex(); }
+        void        switchIndicesFirstToSecond(std::map<int,int> mappy);
+        void        switchIndicesSecondToFirst(std::map<int,int> mappy);
         virtual double  getTimeToNextEvent() { return 0.0; }
         virtual void    lineageBirthEvent(unsigned int indx) { return; }
         virtual void    lineageDeathEvent(unsigned int indx) { return; }

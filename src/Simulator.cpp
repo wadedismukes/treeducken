@@ -927,12 +927,19 @@ std::string Simulator::printSpeciesTreeNewick(){
 }
 
 bool Simulator::bdsaBDSim(){
-
+    Rcout << "++++++++++++++++++++++++++++++++" << std::endl;
     bool treesComplete = false;
     double stopTime = spTree->getCurrentTimeFromExtant();
     double eventTime;
     bool isSpeciation;
-    lociTree = new LocusTree(numTaxaToSim, currentSimTime, geneBirthRate, geneDeathRate, transferRate);
+    lociTree = new LocusTree(numTaxaToSim,
+                             currentSimTime,
+                             geneBirthRate,
+                             geneDeathRate,
+                             transferRate);
+    std::map<int, int> rToTdckenIndxMap = spTree->makeIndxMap();
+    spTree->switchIndicesFirstToSecond(rToTdckenIndxMap);
+
 
     std::map<int,double> speciesBirthTimes = spTree->getBirthTimesFromNodes();
     std::map<int,double> speciesDeathTimes = spTree->getDeathTimesFromNodes();
@@ -941,7 +948,8 @@ bool Simulator::bdsaBDSim(){
 
     Node* spRoot = spTree->getRoot();
     lociTree->setStopTime(stopTime);
-    currentSimTime = 0;
+    Rcout << stopTime << " is the stopping time " << std::endl;
+    currentSimTime -= lociTree->getTimeToNextEvent();
     if(!(contempSpecies.empty()))
         contempSpecies.clear();
     contempSpecies.insert(spRoot->getIndex());
@@ -949,10 +957,13 @@ bool Simulator::bdsaBDSim(){
     while(currentSimTime < stopTime){
         eventTime = lociTree->getTimeToNextEvent();
         currentSimTime += eventTime;
+        Rcout << currentSimTime << " is the time that we are at." << std::endl;
         for(std::set<int>::iterator it = contempSpecies.begin(); it != contempSpecies.end();){
             if(currentSimTime > speciesDeathTimes[(*it)]){
+              Rcout << "^^^^^^^^DEAD^^^^^^^^^" << std::endl;
                 isSpeciation = spTree->macroEvent((*it));
                 if(isSpeciation){
+                    Rcout << "&&&&&&&&SSSSPPPPECCCIATION" << std::endl;
                     sibs = spTree->preorderTraversalStep(*it);
                     lociTree->speciationEvent((*it), speciesDeathTimes[(*it)], sibs);
                     it = contempSpecies.erase(it);
@@ -961,6 +972,7 @@ bool Simulator::bdsaBDSim(){
                     it = contempSpecies.insert( it, sibs.first);
                 }
                 else{
+                  Rcout << "XXXXXXXXXXXXXXX" << std::endl;
                     if(!(spTree->getIsExtantFromIndx(*it))){
                         lociTree->extinctionEvent(*it, speciesDeathTimes[(*it)]);
                         it = contempSpecies.erase(it);
@@ -985,9 +997,10 @@ bool Simulator::bdsaBDSim(){
             currentSimTime = stopTime;
             lociTree->setCurrentTime(stopTime);
         }
-        else{
+        if(geneBirthRate > 0.0 || geneDeathRate > 0.0 || transferRate > 0.0){
             lociTree->ermEvent(currentSimTime);
         }
+
 
 
 
@@ -1021,7 +1034,6 @@ bool Simulator::simLocusTree(){
 
   while(!good){
     good = bdsaBDSim();
-
   }
   return good;
 }
@@ -1071,6 +1083,8 @@ bool Simulator::coalescentSim(){
     int numEpochs = (int) epochs.size();
     std::set<int> extinctFolks = lociTree->getExtLociIndx();
     std::set<int> coalescentBounds = lociTree->getCoalBounds();
+    Rcout << "COALBOUNDS EMPTY ?? " << coalescentBounds.empty() << std::endl;
+
     std::vector< std::vector<int> > contempLoci = lociTree->getExtantLoci(epochs);
     std::map<int, double> stopTimes = lociTree->getBirthTimesFromNodes();
     geneTree->initializeTree(contempLoci, *(epochs.begin()));

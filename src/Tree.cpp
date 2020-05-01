@@ -74,7 +74,6 @@ Tree::Tree(unsigned numTax){
     //numExtant = 1;
     //currentTime = 0.0;
 }
-
 // Implicit converter from R tree object (ala APE) into C++ tree class
 Tree::Tree(SEXP rtree){
     Rcpp::List tr(rtree);
@@ -139,6 +138,9 @@ Tree::Tree(SEXP rtree){
     }
     this->setTipsFromRtree();
 }
+
+
+
 
 Tree::~Tree(){
     // if(root != nullptr){
@@ -569,7 +571,6 @@ NumericMatrix Tree::getEdges(){
             NumericMatrix::Row row = edgeMat(i - 1, _);
 
             row[0] = nodes[i]->getAnc()->getIndex();
-
             row[1] = nodes[i]->getIndex();
         }
     }
@@ -584,3 +585,15 @@ std::vector<double> Tree::getEdgeLengths(){
     edgeLengths.erase(edgeLengths.begin());
     return edgeLengths;
 }
+
+void Tree::switchIndicesFirstToSecond(std::map<int,int> mappy){
+    for(int i = 0; i < nodes.size(); i++){
+        int newIndx = mappy[nodes[i]->getIndex()];
+        nodes[i]->setIndx(newIndx);
+    }
+}
+
+void Tree::switchIndicesSecondToFirst(std::map<int,int> mappy){
+
+}
+

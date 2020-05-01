@@ -8,62 +8,6 @@
 
 using namespace Rcpp;
 
-void printHelp();
-void printSettings();
-void printVersion();
-//
-// void printHelp(){
-//     Rcout << "\tHere are the available options that you can change (default values are in []):\n";
-//     Rcout << "\t\t-i    : input settings file \n";
-//     Rcout << "\t\t-o    : output file name prefix [= ""]\n";
-//     Rcout << "\t\t-nt   : number of extant taxa [= 100]\n";
-//     Rcout << "\t\t-r    : number of replicates [= 10]\n";
-//     Rcout << "\t\t-nl : number of loci to simulate [= 0]\n";
-//     Rcout << "\t\t-sc   : tree scale [= 1.0]\n";
-//     Rcout << "\t\t-sd1  : seed 1 (use this if you only pass in one seed) \n";
-//     Rcout << "\t\t-sd2  : seed 2 \n";
-//     Rcout << "\t\t-sbr  : species birth rate [= 0.5]\n";
-//     Rcout << "\t\t-sdr  : species death rate [= 0.2]\n";
-//     Rcout << "\t\t-gbr  : gene birth rate [= 0.0]\n";
-//     Rcout << "\t\t-gdr  : gene death rate [= 0.0]\n";
-//     Rcout << "\t\t-lgtr : gene transfer rate [= 0.0]\n";
-//     Rcout << "\t\t-ipp  : individuals to sample per locus [= 0]\n";
-//     Rcout << "\t\t-ne   : effective population size per locus [= 0] \n";
-//     Rcout << "\t\t-ng   : number of genes to simulate per locus [= 0] \n";
-//     Rcout << "\t\t-og   : fraction of tree to use as length of branch between outgroup [=0.0] \n" ;
-//     Rcout << "\t\t-istnw  : input species tree (newick format) [=""] \n";
-//     Rcout << "\t\t-sc     : tree scale [=1.0] \n";
-//     Rcout << "\t\t-sout   : turn off standard output (improves runtime) \n";
-//     Rcout << "\t\t-mst    : Moran species tree ";
-// }
-//
-void printSettings(std::string of, int nt, int r, int nloc, int ts, double sbr, double sdr,
-                   double gbr, double gdr, double lgtr, int ipp, int ne, int ngen, double og,
-                   std::string stn, bool mst){
-    Rcout << "\t\toutput file name prefix         = " << of << "\n";
-    Rcout << "\t\tNumber of extant taxa           = " << nt << "\n";
-    Rcout << "\t\tNumber of replicates            = " << r << "\n";
-    Rcout << "\t\tNumber of loci to simulate      = " << nloc << "\n";
-    Rcout << "\t\tNumber of gene trees to simulate     = " << ngen << "\n";
-    Rcout << "\t\tSpecies birth rate              = " << sbr << "\n";
-    Rcout << "\t\tSpecies death rate              = " << sdr << "\n";
-    Rcout << "\t\tGene birth rate                 = " << gbr << "\n";
-    Rcout << "\t\tGene death rate                 = " << gdr << "\n";
-    Rcout << "\t\tGene transfer rate              = " << lgtr << "\n";
-    Rcout << "\t\tIndividuals to sample per locus = " << ipp << "\n";
-    Rcout << "\t\tEffective pop size per locus    = " << ne << "\n";
-    Rcout << "\t\tTree fraction to set outgroup   = " << og << "\n";
-    Rcout << "\t\tSpecies tree input as newick    = " << stn << "\n";
-    Rcout << "\t\tTree scale                      = " << ts  << "\n";
-    Rcout << "\t\tMoran process species tree      = " << mst << "\n";
-}
-//
-// void printVersion(){
-//     Rcout << "############################################################\n";
-//     Rcout << "####\ttreeducken, version 0.1 \t\t\t####\n";
-//     Rcout << "####\t" << GIT_HASH << "\t####\n";
-//     Rcout << "############################################################\n";
-// }
 std::vector<std::string> split(std::string strToSplit, char delimeter)
 {
     std::stringstream ss(strToSplit);
@@ -230,22 +174,6 @@ int run_treeducken(std::string params_file) {
                     mt = 5;
             }
         }
-        printSettings(outName,
-                      nt,
-                      r,
-                      nloc,
-                      ts,
-                      sbr,
-                      sdr,
-                      gbr,
-                      gdr,
-                      lgtr,
-                      ipp,
-                      ne,
-                      ngen,
-                      og,
-                      stn,
-                      mst);
 
         phyEngine = new Engine(outName,
                                mt,
@@ -363,6 +291,7 @@ Rcpp::List sim_locus_tree(SpeciesTree* species_tree,
                                 Named("Nnode") = phySimulator->getLocusNnodes(),
                                 Named("tip.label") = phySimulator->getLocusTipNames(),
                                 Named("root.edge") = phySimulator->getLocusTreeRootEdge());
+
         phy.attr("class") = "phylo";
 
         multiphy.push_back(std::move(phy));
@@ -384,9 +313,10 @@ Rcpp::List sim_locus_tree_gene_tree(SpeciesTree* species_tree,
                                     int numGenesPerLocus){
     Rcpp::List multiphy;
     int ntax = species_tree->getNumExtant();
+    Rcout << ntax << std::endl;
     double lambda = 0.0;
     double mu = 0.0;
-    double rho = 0.0;
+    double rho = 1.0;
     unsigned numLociToSim = numLoci;
     double genTime = 1.0;
     double ts = 1.0;
@@ -409,16 +339,10 @@ Rcpp::List sim_locus_tree_gene_tree(SpeciesTree* species_tree,
                                                 ts,
                                                 sout);
         phySimulator->setSpeciesTree(species_tree);
-        List phyGenesPerLoc(numGenesPerLocus);
-        phySimulator->simLocusTree();
-        List phyLoc = List::create(Named("edge") = phySimulator->getLocusEdges(),
-                                Named("edge.length") = phySimulator->getLocusEdgeLengths(),
-                                Named("Nnode") = phySimulator->getLocusNnodes(),
-                                Named("tip.label") = phySimulator->getLocusTipNames(),
-                                Named("root.edge") = phySimulator->getLocusTreeRootEdge());
-        phyLoc.attr("class") = "phylo";
+        bool good = phySimulator->simLocusTree();
+        Rcout << good << std::endl;
 
-        // need 5 vectors of length numGenesPerLocus
+        List phyGenesPerLoc(numGenesPerLocus);
         for(int j=0; j<numGenesPerLocus; j++){
             phySimulator->simGeneTree();
 
@@ -430,7 +354,12 @@ Rcpp::List sim_locus_tree_gene_tree(SpeciesTree* species_tree,
             phyGene.attr("class") = "phylo";
             phyGenesPerLoc[j] = phyGene;
         }
-
+        List phyLoc = List::create(Named("edge") = phySimulator->getLocusEdges(),
+                                   Named("edge.length") = phySimulator->getLocusEdgeLengths(),
+                                   Named("Nnode") = phySimulator->getLocusNnodes(),
+                                   Named("tip.label") = phySimulator->getLocusTipNames(),
+                                   Named("root.edge") = phySimulator->getLocusTreeRootEdge());
+        phyLoc.attr("class") = "phylo";
         List locusGeneSet = List::create(Named("locus.tree") = phyLoc,
                                          Named("gene.trees") = phyGenesPerLoc);
 
