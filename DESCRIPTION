@@ -13,9 +13,9 @@ SystemRequirements: C++11
 Imports: 
     Rcpp (>= 1.0.2),
     ape,
+    apTreeshape,
     geiger,
-    phytools,
-    TreeSim
+    phytools
 LinkingTo: 
     Rcpp,
     RcppArmadillo

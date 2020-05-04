@@ -145,7 +145,7 @@ class Simulator
         NumericMatrix   getSymbiontEdges() { return symbiontTree->getEdges(); }
         NumericMatrix   getSpeciesEdges() { return spTree->getEdges(); }
         NumericMatrix   getLocusEdges() { return lociTree->getEdges(); }
-        NumericMatrix   getGeneEdges() { return geneTree->getEdges(); }
+        NumericMatrix   getGeneEdges() { return geneTree->getGeneEdges(); }
 
         std::vector<double>    getSymbiontEdgeLengths() { return symbiontTree->getEdgeLengths(); }
         std::vector<double>    getSpeciesEdgeLengths() { return spTree->getEdgeLengths(); }

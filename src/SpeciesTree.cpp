@@ -471,7 +471,6 @@ std::map<int,double> SpeciesTree::getDeathTimesFromNodes(){
         if(!((*it)->getIsExtant())){
             indx = (*it)->getIndex();
             deathTime = (*it)->getDeathTime();
-            Rcout << "* " << deathTime << std::endl;
 
             deathTimeMap.insert(std::pair<int,double>(indx, deathTime));
         }
@@ -496,7 +495,6 @@ bool SpeciesTree::macroEvent(int indx){
     bool isSpec;
     Node* n = nodes[indx];
 
-    Rcout << n->getIsTip() << ":SP:" << n->getIndex() << std::endl;
     if(n->getIsTip())
         isSpec = false;
     else

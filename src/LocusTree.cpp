@@ -211,7 +211,6 @@ void LocusTree::lineageTransferEvent(int indx, bool randTrans = 0){
 
 double LocusTree::getTimeToNextEvent(){
     const double epsilon = 0.00001;
-    Rcout << numExtant << " num Extant is this. " << std::endl;
     double sumrt = geneBirthRate + geneDeathRate + transferRate;
     double returnTime = 0.0;
     if(std::abs(sumrt - 0.0) <= epsilon * std::abs(sumrt))
@@ -512,8 +511,6 @@ std::map<int, double> LocusTree::getBirthTimesFromNodes(){
         birthTime = (*it)->getBirthTime();
         birthTimeMap.insert(std::pair<int,double>(locusIndx, birthTime));
     }
-    if(this->getOutgroup() != NULL)
-        birthTimeMap.insert(std::pair<int,double> (-1, this->getOutgroup()->getBirthTime()));
     return birthTimeMap;
 }
 

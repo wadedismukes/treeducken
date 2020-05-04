@@ -546,12 +546,15 @@ void Tree::setNumExtinct(){
 // TODO: write a function to convert bdsa sims to format to read out into R
 
 void Tree::reindexForR(){
-    int intNodeCount = numTaxa + 1;
+    int intNodeCount = numExtant + numExtinct + 1;
     int tipCount = 1;
-    for(int i = 1; i < nodes.size(); i++){
+    for(int i = 0; i < nodes.size(); i++){
         if(nodes[i]->getIsTip()){
             nodes[i]->setIndx(tipCount);
             tipCount++;
+        }
+        else if(nodes[i]->getIsRoot()){
+            // do nothing
         }
         else{
             nodes[i]->setIndx(intNodeCount);

@@ -36,7 +36,8 @@ class GeneTree : public Tree {
         void        recGetExtNewickTree(Node *r, std::stringstream &ss, double brlen);
         void        setTreeTipNames();
         void        addExtinctSpecies(double bt, int indx);
-
+        NumericMatrix        getGeneEdges();
+        void        reindexForR();
 };
 
 #endif /* GeneTree_hpp */
