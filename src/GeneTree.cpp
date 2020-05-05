@@ -11,7 +11,7 @@
 #include <cmath>
 #include <Rcpp.h>
 
-GeneTree::GeneTree(unsigned nt, unsigned ipp, unsigned ne, double genTime) : Tree(nt){
+GeneTree::GeneTree(unsigned nt, unsigned ipp, double ne, double genTime) : Tree(nt){
     numTaxa = nt;
     individualsPerPop = ipp;
     popSize = ne;
@@ -57,7 +57,6 @@ void GeneTree::initializeTree(std::vector< std::vector<int> > extantLociInd, dou
             p->setIsExtinct(false);
             extantNodes.push_back(p);
             nodes.push_back(p);
-            Rcout << "^^^^^^^^^" << std::endl;
             p->setIndx((int) nodes.size());
         }
     }
@@ -65,7 +64,7 @@ void GeneTree::initializeTree(std::vector< std::vector<int> > extantLociInd, dou
 
 double GeneTree::getCoalTime(int n){
     double ct;
-    double lambda = (double)(n * (n - 1)) / (2 * popSize) ;
+    double lambda = (double)(n * (n - 1)) / (popSize) ;
     ct = -log(unif_rand()) / (lambda);
     return ct;
 }
@@ -260,12 +259,9 @@ void GeneTree::recursiveRescaleTimes(Node* r, double add){
 void GeneTree::setBranchLengths(){
     double brlen;
     numExtant = 0;
-    Rcout << "Nodes size " << nodes.size() << std::endl;
     numExtinct = 0;
     for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it){
         brlen = (*it)->getDeathTime() - (*it)->getBirthTime();
-        Rcout << "death time: " << (*it)->getDeathTime() << std::endl;
-        Rcout << "birth time: " << (*it)->getBirthTime()<< std::endl;
         (*it)->setBranchLength(brlen);
 
         if((*it)->getIsTip()){
@@ -299,7 +295,6 @@ void GeneTree::addExtinctSpecies(double bt, int indx){
         p->setIsExtinct(true);
         extantNodes.push_back(p);
         nodes.push_back(p);
-        Rcout << "?????" << std::endl;
         p->setIndx((int) nodes.size() + 1);
 
     }

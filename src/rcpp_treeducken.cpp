@@ -7,14 +7,9 @@
 //   http://adv-r.had.co.nz/Rcpp.html
 //   http://gallery.rcpp.org/
 //
-#include "Engine.h"
+#include "Simulator.h"
 #include <string.h>
 
-// [[Rcpp::export]]
-int treeducken(std::string params_file) {
-    run_treeducken(params_file);
-    return 0;
-}
 //' Simulates species tree using constant rate birth-death process
 //'
 //' @details Forward simulates to a number of tips. This function does so using
@@ -49,6 +44,7 @@ Rcpp::List sim_sptree_bdp(SEXP sbr_, SEXP sdr_, SEXP numbsim_, SEXP n_tips_){
     double sdr = as<double>(sdr_);
     unsigned numbsim = as<int>(numbsim_);
     unsigned n_tips = as<int>(n_tips_);
+    RNGScope scope;
     if(sbr <= 0.0)
         stop("'sbr' must be bigger than 0.0.");
     if(sbr < sdr)
@@ -91,6 +87,7 @@ Rcpp::List sim_sptree_bdp_time(SEXP sbr_, SEXP sdr_, SEXP numbsim_, SEXP t_){
     double sdr = as<double>(sdr_);
     unsigned numbsim = as<int>(numbsim_);
     double t = as<double>(t_);
+    RNGScope scope;
     if(sbr <= 0.0)
         stop("'sbr' must be bigger than 0.0.");
     if(sbr < sdr)
@@ -147,6 +144,7 @@ Rcpp::List sim_locustree_bdp(SEXP species_tree,
                              SEXP lgtr,
                              SEXP num_loci){
     Rcpp::List species_tree_ = as<Rcpp::List>(species_tree);
+    RNGScope scope;
     double gbr_ = as<double>(gbr);
     double gdr_ = as<double>(gdr);
     double lgtr_ = as<double>(lgtr);
@@ -230,7 +228,7 @@ Rcpp::List sim_cophylo_bdp(SEXP hbr_,
     double host_exp_rate = as<double>(host_exp_rate_);
     double timeToSimTo = as<double>(timeToSimTo_);
     int numbsim = as<int>(numbsim_);
-
+    RNGScope scope;
     if(hbr < 0.0){
          stop("'hbr' must be positive or 0.0.");
     }
@@ -268,16 +266,16 @@ Rcpp::List sim_locustree_genetree_mlc(SEXP species_tree,
                              SEXP lgtr,
                              SEXP num_loci,
                              SEXP num_sampled_individuals,
-                             SEXP popsize,
+                             SEXP theta,
                              SEXP num_genes_per_locus){
     Rcpp::List species_tree_ = as<Rcpp::List>(species_tree);
     double gbr_ = as<double>(gbr);
     double gdr_ = as<double>(gdr);
     double lgtr_ = as<double>(lgtr);
     unsigned numLoci = as<int>(num_loci);
-
+    RNGScope scope;
     int num_sampled_individuals_ = as<int>(num_sampled_individuals);
-    int popsize_ = as<int>(popsize);
+    double theta_ = as<double>(theta);
     int num_genes_ = as<int>(num_genes_per_locus);
 
     if(gbr_ < 0.0)
@@ -290,12 +288,10 @@ Rcpp::List sim_locustree_genetree_mlc(SEXP species_tree,
         stop("'lgtr' must be a positive number or 0.0");
     if(gdr_ < 0.0)
         stop("'gdr' must be greater than or equal to 0.0");
-    if(popsize_ < 1)
-        stop("'popsize' must be greater than or equal to 1");
+    if(theta_ <= 0.0)
+        stop("'theta' must be greater than 0.0.");
     if(num_genes_ < 1)
         stop("'num_genes_per_locus' must be greater than or equal to 1");
-    if(num_sampled_individuals_ > popsize_)
-        stop("'num_sampled_individuals' must be less than or equal to 'popsize'");
     if(num_sampled_individuals_ < 1)
         stop("'num_sampled_individuals' must be greater than or equal to 1");
     if(strcmp(species_tree_.attr("class"), "phylo") != 0)
@@ -306,7 +302,7 @@ Rcpp::List sim_locustree_genetree_mlc(SEXP species_tree,
                           gdr_,
                           lgtr_,
                           numLoci,
-                          popsize_,
+                          theta_,
                           num_sampled_individuals_,
                           num_genes_);
 }

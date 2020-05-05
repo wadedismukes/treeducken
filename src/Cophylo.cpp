@@ -1,6 +1,6 @@
 #include <RcppArmadillo.h>
-#include "Engine.h"
 #include "SymbiontTree.h"
+#include "Simulator.h"
 using namespace Rcpp;
 
 

@@ -15,11 +15,11 @@
 class GeneTree : public Tree {
     private:
         unsigned individualsPerPop;
-        unsigned popSize;
+        double   popSize;
         double   generationTime; // specified in generations per year
 
     public:
-                    GeneTree(unsigned nt, unsigned ipp, unsigned ne, double genTime);
+                    GeneTree(unsigned nt, unsigned ipp, double ne, double genTime);
         virtual     ~GeneTree();
         double      getCoalTime(int n); // what do you need to determine this?
         Node*       coalescentEvent(double t, Node *p, Node *q);

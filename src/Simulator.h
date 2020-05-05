@@ -87,7 +87,7 @@ class Simulator
                 double geneDeathRate,
                 double transferRate,
                 unsigned indPerPop,
-                unsigned popSize,
+                double popSize,
                 double genTime,
                 int ng,
                 double og,
@@ -179,5 +179,45 @@ class Simulator
         void    initializeEventVector();
 };
 
+extern int run_treeducken(std::string params);
+
+extern Rcpp::List bdsim_species_tree(double sbr,
+                                     double sdr,
+                                     int numbsim,
+                                     int n_tips);
+
+extern Rcpp::List sim_bdsimple_species_tree(double sbr,
+                                            double sdr,
+                                            int numbsim,
+                                            double timeToSimTo);
+
+extern Rcpp::List sim_locus_tree(SpeciesTree* species_tree,
+                                 double gbr,
+                                 double gdr,
+                                 double lgtr,
+                                 int numLoci);
+
+extern Rcpp::List sim_host_symb_treepair(double hostbr,
+                                         double hostdr,
+                                         double symbbr,
+                                         double symbdr,
+                                         double switchrate,
+                                         double cosprate,
+                                         double timeToSimTo,
+                                         int numbsim);
+
+extern Rcpp::List sim_locus_tree_gene_tree(SpeciesTree* species_tree,
+                                           double gbr,
+                                           double gdr,
+                                           double lgtr,
+                                           int numLoci,
+                                           double popsize,
+                                           int samples_per_lineage,
+                                           int numGenesPerLocus);
+
+extern Rcpp::List sim_genetree_msc(SpeciesTree* species_tree,
+                                   double popsize,
+                                   int samples_per_lineage,
+                                   int numbsim);
 
 #endif /* Simulator_h */

@@ -35,7 +35,7 @@ Simulator::Simulator(unsigned nt, double lambda, double mu, double rho)
     transferRate = 0.0;
     propTransfer = 0.0;
     indPerPop = 0;
-    popSize = 0;
+    popSize = 0.0;
 
 }
 
@@ -80,7 +80,7 @@ Simulator::Simulator(unsigned ntax,
                      double gdr,
                      double lgtr,
                      unsigned ipp,
-                     unsigned Ne,
+                     double Ne,
                      double genTime,
                      int ng,
                      double og,
@@ -1142,6 +1142,10 @@ bool Simulator::coalescentSim(){
 
 bool Simulator::simGeneTree(){
   bool gGood = false;
+  if(geneTree != nullptr)
+    delete geneTree;
+  RNGScope scope;
+
   while(!gGood){
     gGood = coalescentSim();
   }

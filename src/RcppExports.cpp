@@ -6,17 +6,6 @@
 
 using namespace Rcpp;
 
-// treeducken
-int treeducken(std::string params_file);
-RcppExport SEXP _treeducken_treeducken(SEXP params_fileSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type params_file(params_fileSEXP);
-    rcpp_result_gen = Rcpp::wrap(treeducken(params_file));
-    return rcpp_result_gen;
-END_RCPP
-}
 // sim_sptree_bdp
 Rcpp::List sim_sptree_bdp(SEXP sbr_, SEXP sdr_, SEXP numbsim_, SEXP n_tips_);
 RcppExport SEXP _treeducken_sim_sptree_bdp(SEXP sbr_SEXP, SEXP sdr_SEXP, SEXP numbsim_SEXP, SEXP n_tips_SEXP) {
@@ -79,8 +68,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // sim_locustree_genetree_mlc
-Rcpp::List sim_locustree_genetree_mlc(SEXP species_tree, SEXP gbr, SEXP gdr, SEXP lgtr, SEXP num_loci, SEXP num_sampled_individuals, SEXP popsize, SEXP num_genes_per_locus);
-RcppExport SEXP _treeducken_sim_locustree_genetree_mlc(SEXP species_treeSEXP, SEXP gbrSEXP, SEXP gdrSEXP, SEXP lgtrSEXP, SEXP num_lociSEXP, SEXP num_sampled_individualsSEXP, SEXP popsizeSEXP, SEXP num_genes_per_locusSEXP) {
+Rcpp::List sim_locustree_genetree_mlc(SEXP species_tree, SEXP gbr, SEXP gdr, SEXP lgtr, SEXP num_loci, SEXP num_sampled_individuals, SEXP theta, SEXP num_genes_per_locus);
+RcppExport SEXP _treeducken_sim_locustree_genetree_mlc(SEXP species_treeSEXP, SEXP gbrSEXP, SEXP gdrSEXP, SEXP lgtrSEXP, SEXP num_lociSEXP, SEXP num_sampled_individualsSEXP, SEXP thetaSEXP, SEXP num_genes_per_locusSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -90,15 +79,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type lgtr(lgtrSEXP);
     Rcpp::traits::input_parameter< SEXP >::type num_loci(num_lociSEXP);
     Rcpp::traits::input_parameter< SEXP >::type num_sampled_individuals(num_sampled_individualsSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type popsize(popsizeSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type theta(thetaSEXP);
     Rcpp::traits::input_parameter< SEXP >::type num_genes_per_locus(num_genes_per_locusSEXP);
-    rcpp_result_gen = Rcpp::wrap(sim_locustree_genetree_mlc(species_tree, gbr, gdr, lgtr, num_loci, num_sampled_individuals, popsize, num_genes_per_locus));
+    rcpp_result_gen = Rcpp::wrap(sim_locustree_genetree_mlc(species_tree, gbr, gdr, lgtr, num_loci, num_sampled_individuals, theta, num_genes_per_locus));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_treeducken_treeducken", (DL_FUNC) &_treeducken_treeducken, 1},
     {"_treeducken_sim_sptree_bdp", (DL_FUNC) &_treeducken_sim_sptree_bdp, 4},
     {"_treeducken_sim_sptree_bdp_time", (DL_FUNC) &_treeducken_sim_sptree_bdp_time, 4},
     {"_treeducken_sim_locustree_bdp", (DL_FUNC) &_treeducken_sim_locustree_bdp, 5},

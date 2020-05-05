@@ -45,7 +45,9 @@ SpeciesTree::~SpeciesTree(){
 double SpeciesTree::getTimeToNextEvent(){
     double sumrt = speciationRate + extinctionRate;
     double returnTime = 0.0;
-    returnTime = -log(unif_rand()) / (double(numExtant) * sumrt);
+    NumericVector randNum = Rcpp::runif(1);
+
+    returnTime = -log(randNum[0]) / (double(numExtant) * sumrt);
     return returnTime;
 }
 
@@ -68,9 +70,10 @@ void SpeciesTree::lineageDeathEvent(unsigned int indx){
 
 void SpeciesTree::ermEvent(double cTime){
     currentTime = cTime;
-    int nodeInd = unif_rand()*(numExtant - 1);
+    NumericVector randNum = Rcpp::runif(2);
+    int nodeInd = randNum[0]*(numExtant - 1);
     double relBr = speciationRate / (speciationRate + extinctionRate);
-    bool isBirth = (unif_rand() < relBr ? true : false);
+    bool isBirth = (randNum[1] < relBr ? true : false);
     if(isBirth)
         lineageBirthEvent(nodeInd);
     else
@@ -278,36 +281,12 @@ void SpeciesTree::setGSATipTreeFlags(){
 }
 
 
-//void SpeciesTree::setSampleFromFlags(){
-//    int flag;
-//    Node *q = NULL;
-//    for(std::vector<Node*>::iterator p=nodes.begin(); p!=nodes.end(); p++){
-//        if((*p)->getIsTip()){
-//            flag = (*p)->getFlag();
-//            q = (*p);
-//            if(flag == 1){
-//                while(q->getIsRoot() == false && flag < 2){
-//                    q = q->getAnc();
-//                    flag = q->getFlag();
-//                    flag++;
-//                    q->setFlag(flag);
-//
-//                }
-//            }
-//        }
-//    }
-//}
 void SpeciesTree::popNodes(){
     nodes.clear();
     extantNodes.clear();
 
     recPopNodes(this->getRoot());
 
-   // int indx;
-    // for(std::vector<Node*>::iterator p=nodes.begin(); p!=nodes.end(); p++){
-    //     indx = (int) (p - nodes.begin());
-    //     (*p)->setIndx(indx);
-    // }
 }
 
 void SpeciesTree::recPopNodes(Node *p){
