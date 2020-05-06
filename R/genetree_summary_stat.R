@@ -25,7 +25,7 @@ genetree_summary_stat <- function(locus_tree_gene_tree_obj, locus_tree_indx){
 # I wanted a return value of the statistic rather than the test itself
 # copyright Emmanuel Paradis
 # used under GNU public license
-cherry <- function(phy){
+cerries <- function(phy){
     n <- length(phy$tip.label)
     sum(tabulate(phy$edge[, 1][phy$edge[, 2] <= n]) == 2)
 }

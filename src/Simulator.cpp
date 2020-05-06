@@ -1,11 +1,3 @@
-//
-//  Simulator.cpp
-//  multiTree
-//
-//  Created by Dismukes, Wade T [EEOBS] on 11/9/17.
-//  Copyright © 2017 Dismukes, Wade T [EEOBS]. All rights reserved.
-//
-
 #include "Simulator.h"
 #include <iostream>
 #include <RcppArmadillo.h>
@@ -108,7 +100,7 @@ Simulator::Simulator(unsigned ntax,
     printSOUT = sout;
     generationTime = genTime;
     outgroupFrac = og;
-    geneTrees.resize(numLoci);
+    geneTrees.resize(ng);
     treeScale = ts;
 }
 
@@ -150,10 +142,10 @@ Simulator::~Simulator(){
     int i = 0;
     for(std::vector<LocusTree*>::iterator p=locusTrees.begin(); p != locusTrees.end(); ++p){
         delete (*p);
-        for(std::vector<GeneTree*>::iterator q=geneTrees[i].begin(); q != geneTrees[i].end(); ++q){
+        for(std::vector<GeneTree*>::iterator q=geneTrees.begin(); q != geneTrees.end(); ++q){
             delete (*q);
         }
-        geneTrees[i].clear();
+        geneTrees.clear();
         ++i;
     }
     locusTrees.clear();
@@ -280,6 +272,7 @@ bool Simulator::bdSimpleSim(){
 
     eventTime = spTree->getTimeToNextEvent();
     currentSimTime += eventTime;
+
     if(currentSimTime >= stopTime){
       currentSimTime = stopTime;
       spTree->setPresentTime(stopTime);
@@ -287,14 +280,26 @@ bool Simulator::bdSimpleSim(){
     else{
       spTree->ermEvent(currentSimTime);
     }
+
     if(spTree->getNumExtant() < 1){
+      delete spTree;
       treeComplete = false;
       return treeComplete;
     }
   }
-  treeComplete = true;
-  spTree->setPresentTime(currentSimTime);
 
+  if(spTree->getNumExtant() < 1){
+    delete spTree;
+    treeComplete = false;
+    return treeComplete;
+  }
+
+  treeComplete = true;
+  currentSimTime = stopTime;
+
+
+  spTree->setPresentTime(currentSimTime);
+  Rcout << currentSimTime << std::endl;
   return treeComplete;
 }
 
@@ -358,13 +363,7 @@ bool Simulator::pairedBDPSim(){
   }
   treePairGood = true;
   currentSimTime = stopTime;
- // symbiontTree->reindexForR();
- // //spTree->reindexForR();
- //  eventTime = symbiontTree->getTimeToNextJointEvent(speciationRate,
- //                                                   extinctionRate,
- //                                                   cospeciationRate,
- //                                                   assocMat);
- //  currentSimTime += eventTime;
+
   symbiontTree->setPresentTime(currentSimTime);
   spTree->setPresentTime(currentSimTime);
 
@@ -901,29 +900,6 @@ arma::umat Simulator::cospeciationEvent(double eventTime, arma::umat assocMat){
 
 
 
-
-std::string Simulator::printExtSpeciesTreeNewick(){
-    SpeciesTree *tt = new SpeciesTree(numTaxaToSim);
-    spTree->getRootFromFlags(false);
-    if(outgroupFrac > 0.0){
-        tt->setOutgroup(spTree->getOutgroup());
-        tt->setRoot(spTree->getOutgroup()->getAnc());
-    }
-    else{
-        tt->setRoot(spTree->getExtantRoot());
-    }
-    tt->setExtantRoot(tt->getRoot());
-    tt->reconstructTreeFromSim(spTree->getRoot());
-    std::string newickTree = tt->printExtNewickTree();
-    delete tt;
-    tt = nullptr;
-    return newickTree;
-}
-
-std::string Simulator::printSpeciesTreeNewick(){
-    return spTree->printNewickTree();
-}
-
 bool Simulator::bdsaBDSim(){
     bool treesComplete = false;
     double stopTime = spTree->getCurrentTimeFromExtant();
@@ -1003,24 +979,6 @@ bool Simulator::bdsaBDSim(){
     return treesComplete;
 }
 
-bool Simulator::simSpeciesLociTrees(){
-    bool good = false;
-    bool spGood = false;
-    for(int i = 0; i < numLoci; i++){
-        while(!good){
-            while(!spGood){
-                spGood = gsaBDSim();
-            }
-            good = bdsaBDSim();
-        }
-
-        locusTrees.push_back(lociTree);
-
-        good = false;
-    }
-    return good;
-}
-
 bool Simulator::simLocusTree(){
   bool good = false;
 
@@ -1029,18 +987,6 @@ bool Simulator::simLocusTree(){
   }
   return good;
 }
-
-
-
-
-std::string Simulator::printLocusTreeNewick(int i){
-    std::string newickTree;
-    std::vector<LocusTree*>::iterator it = locusTrees.begin();
-    std::advance(it, i);
-    newickTree = (*it)->printNewickTree();
-    return newickTree;
-}
-
 
 std::set<double, std::greater<double> > Simulator::getEpochs(){
     std::set<double, std::greater<double> > epochs;
@@ -1140,92 +1086,18 @@ bool Simulator::coalescentSim(){
 }
 
 
-bool Simulator::simGeneTree(){
+bool Simulator::simGeneTree(int j){
   bool gGood = false;
-  if(geneTree != nullptr)
-    delete geneTree;
   RNGScope scope;
 
   while(!gGood){
     gGood = coalescentSim();
   }
+  geneTrees[j] = geneTree;
   return gGood;
 }
 
 
-bool Simulator::simThreeTree(){
-    bool gGood = false;
-    bool spGood = false;
-    bool loGood = false;
-    while(!spGood){
-        spGood = gsaBDSim();
-
-    }
-    for(int i = 0; i < numLoci; i++){
-        while(!loGood){
-            loGood = bdsaBDSim();
-        }
-        for(int j = 0; j < numGenes; j++){
-            while(!gGood){
-                gGood = coalescentSim();
-            }
-            geneTrees[i].push_back(geneTree);
-
-            gGood = false;
-        }
-        locusTrees.push_back(lociTree);
-        loGood = false;
-    }
-    return gGood;
-}
-
-
-std::string Simulator::printGeneTreeNewick(int i, int j){
-    std::string newickTree;
-    newickTree = geneTrees[i][j]->printNewickTree();
-    return newickTree;
-}
-
-std::string Simulator::printExtantGeneTreeNewick(int i, int j){
-    std::string newickTree;
-    GeneTree *tt = new GeneTree(numTaxaToSim, indPerPop, popSize, generationTime);
-
-    geneTrees[i][j]->getRootFromFlags(true);
-
-
-    if(outgroupFrac > 0.0){
-        tt->setOutgroup(geneTrees[i][j]->getOutgroup());
-        tt->setRoot(geneTrees[i][j]->getOutgroup()->getAnc());
-    }
-    else
-        tt->setRoot(geneTrees[i][j]->getExtantRoot());
-    tt->setExtantRoot(geneTrees[i][j]->getExtantRoot());
-    tt->reconstructTreeFromSim(geneTrees[i][j]->getRoot());
-    newickTree = tt->printNewickTree();
-    delete tt;
-    tt = nullptr;
-    return newickTree;
-}
-
-
-bool Simulator::simLocusGeneTrees(){
-    bool loGood = false;
-    bool gGood = false;
-    geneTrees[0].resize(numGenes);
-    while(!loGood){
-      loGood = bdsaBDSim();
-    }
-    for(int j = 0; j < numGenes; j++){
-      while(!gGood){
-        gGood = coalescentSim();
-      }
-
-      geneTrees[0][j] = geneTree;
-
-      gGood = false;
-    }
-    return gGood;
-}
 
 double Simulator::calcSpeciesTreeDepth(){
     return spTree->getTreeDepth();
@@ -1255,9 +1127,6 @@ int Simulator::findNumberTransfers(){
     return numTrans;
 }
 
-double Simulator::findTMRCAGeneTree(int i, int j){
-    return geneTrees[i][j]->getTreeDepth();
-}
 
 double Simulator::getSpeciesTreeRootEdge(){
   return spTree->getRoot()->getDeathTime() - spTree->getRoot()->getBirthTime();
@@ -1272,6 +1141,6 @@ double Simulator::getSymbiontTreeRootEdge(){
 }
 
 
-double Simulator::getGeneTreeRootEdge(){
-  return geneTree->getRoot()->getBranchLength();
+double Simulator::getGeneTreeRootEdge(int j){
+  return geneTrees[j]->getRoot()->getBranchLength();
 }

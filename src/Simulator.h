@@ -1,11 +1,3 @@
-//
-//  Simulator.hpp
-//  multiTree
-//
-//  Created by Dismukes, Wade T [EEOBS] on 11/9/17.
-//  Copyright © 2017 Dismukes, Wade T [EEOBS]. All rights reserved.
-//
-
 #ifndef Simulator_h
 #define Simulator_h
 #include "GeneTree.h"
@@ -37,7 +29,7 @@ class Simulator
         LocusTree*      lociTree;
         std::vector<LocusTree*> locusTrees;
         GeneTree*       geneTree;
-        std::vector<std::vector<GeneTree*> > geneTrees;
+        std::vector<GeneTree*> geneTrees;
         // symbiont tree stuff
         SymbiontTree*   symbiontTree;
         double      cospeciationRate;
@@ -114,10 +106,7 @@ class Simulator
         bool    simSpeciesTree();
         bool    simSpeciesTreeTime();
         bool    simLocusTree();
-        bool    simSpeciesLociTrees();
-        bool    simGeneTree();
-        bool    simThreeTree();
-        bool    simLocusGeneTrees();
+        bool    simGeneTree(int j);
         bool    simHostSymbSpeciesTreePair();
         bool    gsaCheckStop();
         void    initializeSim();
@@ -128,12 +117,6 @@ class Simulator
         double  calcExtantSpeciesTreeDepth();
         double  calcLocusTreeDepth(int i);
         int     findNumberTransfers();
-        double  findTMRCAGeneTree(int i, int j);
-        std::string    printSpeciesTreeNewick();
-        std::string    printExtSpeciesTreeNewick();
-        std::string    printLocusTreeNewick(int i);
-        std::string    printGeneTreeNewick(int i, int j);
-        std::string    printExtantGeneTreeNewick(int i, int j);
         std::set<double, std::greater<double> > getEpochs();
         //SpeciesTree*    getSpeciesTree() {SpeciesTree* spec_tree = new SpeciesTree(*spTree); return spec_tree;}
         SpeciesTree*    getSpeciesTree() { return spTree; }
@@ -145,27 +128,27 @@ class Simulator
         NumericMatrix   getSymbiontEdges() { return symbiontTree->getEdges(); }
         NumericMatrix   getSpeciesEdges() { return spTree->getEdges(); }
         NumericMatrix   getLocusEdges() { return lociTree->getEdges(); }
-        NumericMatrix   getGeneEdges() { return geneTree->getGeneEdges(); }
+        NumericMatrix   getGeneEdges(int j) { return geneTrees[j]->getGeneEdges(); }
 
         std::vector<double>    getSymbiontEdgeLengths() { return symbiontTree->getEdgeLengths(); }
         std::vector<double>    getSpeciesEdgeLengths() { return spTree->getEdgeLengths(); }
         std::vector<double>    getLocusEdgeLengths() { return lociTree->getEdgeLengths(); }
-        std::vector<double>    getGeneEdgeLengths() { return geneTree->getEdgeLengths(); }
+        std::vector<double>    getGeneEdgeLengths(int j) { return geneTrees[j]->getEdgeLengths(); }
 
         int    getSymbiontNnodes() { return symbiontTree->getNnodes(); }
         int    getSpeciesNnodes() { return spTree->getNnodes(); }
         int    getLocusNnodes() { return lociTree->getNnodes(); }
-        int    getGeneNnodes() { return geneTree->getNnodes(); }
+        int    getGeneNnodes(int j) { return geneTrees[j]->getNnodes(); }
 
         std::vector<std::string> getSpeciesTipNames() { return spTree->getTipNames(); }
         std::vector<std::string> getSymbiontTipNames() { return symbiontTree->getTipNames(); }
         std::vector<std::string> getLocusTipNames() { return lociTree->getTipNames(); }
-        std::vector<std::string> getGeneTipNames() { return geneTree->getTipNames(); }
+        std::vector<std::string> getGeneTipNames(int j) { return geneTrees[j]->getTipNames(); }
 
         double    getSpeciesTreeRootEdge();
         double    getLocusTreeRootEdge();
         double    getSymbiontTreeRootEdge();
-        double    getGeneTreeRootEdge();
+        double    getGeneTreeRootEdge(int j);
 
         arma::umat    getAssociationMatrix() { return assocMat; }
         arma::umat    cophyloEvent(double eventTime, arma::umat assocMat);
@@ -178,8 +161,6 @@ class Simulator
         void    clearEventDFVecs();
         void    initializeEventVector();
 };
-
-extern int run_treeducken(std::string params);
 
 extern Rcpp::List bdsim_species_tree(double sbr,
                                      double sdr,

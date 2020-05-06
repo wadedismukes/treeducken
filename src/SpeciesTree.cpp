@@ -70,6 +70,7 @@ void SpeciesTree::lineageDeathEvent(unsigned int indx){
 
 void SpeciesTree::ermEvent(double cTime){
     currentTime = cTime;
+    RNGScope scope;
     NumericVector randNum = Rcpp::runif(2);
     int nodeInd = randNum[0]*(numExtant - 1);
     double relBr = speciationRate / (speciationRate + extinctionRate);

@@ -38,6 +38,7 @@ class GeneTree : public Tree {
         void        addExtinctSpecies(double bt, int indx);
         NumericMatrix        getGeneEdges();
         void        reindexForR();
+
 };
 
 #endif /* GeneTree_hpp */

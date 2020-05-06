@@ -138,17 +138,17 @@ Rcpp::List sim_locus_tree_gene_tree(SpeciesTree* species_tree,
                                                 ts,
                                                 sout);
         phySimulator->setSpeciesTree(species_tree);
-        bool good = phySimulator->simLocusTree();
+        phySimulator->simLocusTree();
 
         List phyGenesPerLoc(numGenesPerLocus);
         for(int j=0; j<numGenesPerLocus; j++){
-            phySimulator->simGeneTree();
+            phySimulator->simGeneTree(j);
 
-            List phyGene = List::create(Named("edge") = phySimulator->getGeneEdges(),
-                         _("edge.length") = phySimulator->getGeneEdgeLengths(),
-                         _("Nnode") = phySimulator->getGeneNnodes(),
-                         _("tip.label") = phySimulator->getGeneTipNames(),
-                         _("root.edge") = phySimulator->getGeneTreeRootEdge());
+            List phyGene = List::create(Named("edge") = phySimulator->getGeneEdges(j),
+                         _("edge.length") = phySimulator->getGeneEdgeLengths(j),
+                         _("Nnode") = phySimulator->getGeneNnodes(j),
+                         _("tip.label") = phySimulator->getGeneTipNames(j),
+                         _("root.edge") = phySimulator->getGeneTreeRootEdge(j));
             phyGene.attr("class") = "phylo";
             phyGenesPerLoc[j] = phyGene;
         }

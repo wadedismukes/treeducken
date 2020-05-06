@@ -87,7 +87,6 @@ Rcpp::List sim_sptree_bdp_time(SEXP sbr_, SEXP sdr_, SEXP numbsim_, SEXP t_){
     double sdr = as<double>(sdr_);
     unsigned numbsim = as<int>(numbsim_);
     double t = as<double>(t_);
-    RNGScope scope;
     if(sbr <= 0.0)
         stop("'sbr' must be bigger than 0.0.");
     if(sbr < sdr)
