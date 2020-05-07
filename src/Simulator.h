@@ -20,9 +20,8 @@ class Simulator
         double      geneBirthRate, geneDeathRate, transferRate;
         double      propTransfer, propDuplicate;
         unsigned    indPerPop;
-        unsigned    popSize;
+        double      popSize;
         double      generationTime;
-        double      outgroupFrac;
         bool        printSOUT;
         std::vector<SpeciesTree*>   gsaTrees;
         SpeciesTree*    spTree;
@@ -30,7 +29,7 @@ class Simulator
         std::vector<LocusTree*> locusTrees;
         GeneTree*       geneTree;
         std::vector<GeneTree*> geneTrees;
-        // symbiont tree stuff
+        // symbiont tree varibles
         SymbiontTree*   symbiontTree;
         double      cospeciationRate;
         double      timeToSim;
@@ -124,6 +123,7 @@ class Simulator
         SymbiontTree*   getSymbiontTree() {return symbiontTree;}
         GeneTree*       getGeneTree() {return geneTree; }
         double          getTimeToSim() {return timeToSim; }
+        void            setTimeToSim(double tts) {timeToSim = tts; }
 
         NumericMatrix   getSymbiontEdges() { return symbiontTree->getEdges(); }
         NumericMatrix   getSpeciesEdges() { return spTree->getEdges(); }

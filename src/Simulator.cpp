@@ -99,7 +99,6 @@ Simulator::Simulator(unsigned ntax,
     popSize = Ne;
     printSOUT = sout;
     generationTime = genTime;
-    outgroupFrac = og;
     geneTrees.resize(ng);
     treeScale = ts;
 }
@@ -265,6 +264,7 @@ bool Simulator::bdSimpleSim(){
   bool treeComplete = false;
   currentSimTime = 0.0;
   double stopTime = this->getTimeToSim();
+  Rcout << stopTime << std::endl;
   double eventTime;
 
   spTree = new SpeciesTree(1, currentSimTime, speciationRate, extinctionRate);
@@ -1073,7 +1073,7 @@ bool Simulator::coalescentSim(){
         }
         else{
             // finish coalescing
-            geneTree->rootCoalescentProcess(currentSimTime, outgroupFrac);
+            geneTree->rootCoalescentProcess(currentSimTime);
             treeGood = true;
         }
         epochCount++;

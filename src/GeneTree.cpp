@@ -205,7 +205,7 @@ std::multimap<int, double> GeneTree::rescaleTimes(std::multimap<int, double> tim
 
 
 
-void GeneTree::rootCoalescentProcess(double startTime, double ogf){
+void GeneTree::rootCoalescentProcess(double startTime){
     int leftInd, rightInd;
     Node *l, *r;
     Node *n;
@@ -231,7 +231,6 @@ void GeneTree::rootCoalescentProcess(double startTime, double ogf){
     }
     extantNodes[0]->setAsRoot(true);
     extantNodes[0]->setBirthTime(n->getDeathTime());
-    //std::reverse(nodes.begin(), nodes.end());
     this->setRoot(extantNodes[0]);
     this->setBranchLengths();
 }

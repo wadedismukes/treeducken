@@ -49,6 +49,7 @@ Rcpp::List sim_bdsimple_species_tree(double sbr,
                                      sbr,
                                      sdr,
                                      1);
+        phySimulator->setTimeToSim(timeToSimTo);
         phySimulator->simSpeciesTreeTime();
 
         List phy = List::create(Named("edge") = phySimulator->getSpeciesEdges(),
