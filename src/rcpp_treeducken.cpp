@@ -178,7 +178,6 @@ Rcpp::List sim_locustree_bdp(SEXP species_tree,
 //'     birth-death process with the addition of a host shift speciation rate
 //'     that allows for the addition of more associated hosts upon symbiont
 //'     speciation.
-//' @param species_tree_ species tree to simulate along
 //' @param hbr_ host tree birth rate
 //' @param hdr_ host tree death rate
 //' @param sbr_ symbiont tree birth rate
@@ -191,7 +190,7 @@ Rcpp::List sim_locustree_bdp(SEXP species_tree,
 //'     association matrix at present, and the history of events that have
 //'     occurred.
 //' @examples
-//' # first simulate a species tree
+//'
 //' host_mu <- 0.5 # death rate
 //' host_lambda <- 2.0 # birth rate
 //' numb_replicates <- 10
@@ -202,7 +201,7 @@ Rcpp::List sim_locustree_bdp(SEXP species_tree,
 //' cosp_rate <- 2.0
 //'
 //' cophylo_pair <- sim_cophylo_bdp(hbr_ = host_lambda,
-//'                            hdr_ = host_mu
+//'                            hdr_ = host_mu,
 //'                            cosp_rate_ = cosp_rate,
 //'                            host_exp_rate_ = host_shift_rate,
 //'                            sdr_ = symb_mu,
@@ -257,7 +256,42 @@ Rcpp::List sim_cophylo_bdp(SEXP hbr_,
                                   timeToSimTo,
                                   numbsim);
 }
-
+//' Simulate locus tree within species tree and gene trees within locus tree
+//'
+//' @description First simulates a locus tree within the confines of the input species tree using a constant-rate birth-death process
+//' based on values of `gbr`, `gdr` and `lgtr`. Then simulates gene trees within that locus tree using the multi-locus coalescent process.
+//' @param species_tree input species tree of class "phylo"
+//' @param gbr gene birth rate
+//' @param gdr gene death rate
+//' @param lgtr lateral gene transfer rate'
+//' @param theta the population genetic parameter
+//' @param num_sampled_individuals number of individuals sampled within each locus lineage
+//' @param num_loci number of loci to simulate
+//' @param num_genes_per_locus number of genes to simulate within each locus
+//'
+//' @return A list of lists of length 2. The first element of each list of length 2 is `locus.tree` the locus tree and the second element is a list of the gene trees simulated within that locus tree. All trees are of class "phylo".
+//'
+//' @seealso sim_locustree_bdp
+//'
+//' @examples
+//' # first simulate a species tree
+//' mu <- 0.5
+//' lambda <- 1.0
+//' nt <- 6
+//' tr <- sim_sptree_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
+//' # for a locus tree with 100 genes sampled per locus tree
+//' loctr_gentr <- sim_locustree_genetree_mlc(tr[[1]],
+//'                                            gbr = 0.1,
+//'                                            gdr = 0.0,
+//'                                            lgtr = 0.0,
+//'                                            theta = 1,
+//'                                            num_sampled_individuals = 1,
+//'                                            num_loci = 4,
+//'                                            num_genes_per_locus = 100)
+//'
+//' @references
+//' Mallo D, de Oliveira Martins L, Posada D (2015) SimPhy: Phylogenomic Simulation of Gene, Locus and Species Trees. Syst. Biol. doi: http://dx.doi.org/10.1093/sysbio/syv082
+//'
 // [[Rcpp::export]]
 Rcpp::List sim_locustree_genetree_mlc(SEXP species_tree,
                              SEXP gbr,

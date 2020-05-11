@@ -4,18 +4,18 @@
 \alias{sim_locustree_bdp}
 \title{Simulates locus tree using constant rate birth-death-transfer process}
 \usage{
-sim_locustree_bdp(species_tree_, gbr_, gdr_, lgtr_, num_loci_)
+sim_locustree_bdp(species_tree, gbr, gdr, lgtr, num_loci)
 }
 \arguments{
-\item{species_tree_}{species tree to simulate along}
+\item{species_tree}{species tree to simulate along}
 
-\item{gbr_}{gene birth rate}
+\item{gbr}{gene birth rate}
 
-\item{gdr_}{gene death rate}
+\item{gdr}{gene death rate}
 
-\item{lgtr_}{gene trasnfer rate}
+\item{lgtr}{gene trasnfer rate}
 
-\item{num_loci_}{number of locus trees to simulate}
+\item{num_loci}{number of locus trees to simulate}
 }
 \value{
 List of objects of the tree class (as implemented in APE)
@@ -38,18 +38,18 @@ numb_extant_tips <- 4
 # then randomly picks one of those trees
 
 sp_tree <- sim_sptree_bdp(sbr_ = lambda,
-                sdr_ = mu,
-                numbsim_ = numb_replicates,
-                n_tips_ = numb_extant_tips)
+                sdr = mu,
+                numbsim = numb_replicates,
+                n_tips = numb_extant_tips)
 
 gene_br <- 1.0
 gene_dr <- 0.2
 transfer_rate <- 0.2
-sim_locustree_bdp(species_tree_ = sp_tree,
-                  gbr_ = gene_br,
-                  gdr_ = gene_dr,
-                  lgtr_ = transfer_rate,
-                  num_loci_ = 10)
+sim_locustree_bdp(species_tree = sp_tree,
+                  gbr = gene_br,
+                  gdr = gene_dr,
+                  lgtr = transfer_rate,
+                  num_loci = 10)
 }
 \references{
 Rasmussen MD, Kellis M. Unified modeling of gene duplication, loss, and

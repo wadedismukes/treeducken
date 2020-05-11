@@ -31,8 +31,6 @@ sim_cophylo_bdp(
 \item{timeToSimTo_}{time units to simulate until}
 
 \item{numbsim_}{number of replicates}
-
-\item{species_tree_}{species tree to simulate along}
 }
 \value{
 A list containing the `host_tree`, the `symbiont_tree`, the
@@ -55,18 +53,23 @@ Simulates a cophylogenetic system using birth-death processes. The
     speciation.
 }
 \examples{
-# first simulate a species tree
-mu <- 0.5 # death rate
-lambda <- 2.0 # birth rate
-numb_replicates <- 10
-numb_extant_tips <- 4
-# simulate trees under the GSA so first simulates a tree with
-# numb_extant_tips * 100 tips counting each time we have a tree with 10 tips
-# then randomly picks one of those trees
 
-sp_tree <- sim_sptree_bdp(sbr_ = lambda,
-                sdr_ = mu,
-                numbsim_ = numb_replicates,
-                n_tips_ = numb_extant_tips)
+host_mu <- 0.5 # death rate
+host_lambda <- 2.0 # birth rate
+numb_replicates <- 10
+time <- 2.9
+symb_mu <- 0.2
+symb_lambda <- 0.4
+host_shift_rate <- 0.1
+cosp_rate <- 2.0
+
+cophylo_pair <- sim_cophylo_bdp(hbr_ = host_lambda,
+                           hdr_ = host_mu,
+                           cosp_rate_ = cosp_rate,
+                           host_exp_rate_ = host_shift_rate,
+                           sdr_ = symb_mu,
+                           sbr_ = symb_lambda,
+                           numbsim_ = numb_replicates,
+                           timeToSimTo_ = time)
 
 }

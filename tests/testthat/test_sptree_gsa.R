@@ -1,5 +1,4 @@
 library(treeducken)
-library(TreeSim)
 
 
 # test species tree output is a list of trees with correct length
@@ -30,16 +29,6 @@ get_treesim_treedepth_dist <- function(sbr, sdr, nt, reps){
   trees <- TreeSim::sim.bd.taxa(lambda = sbr, mu = sdr, n = nt, numbsim = reps)
   max(phytools::nodeHeights(trees))
 }
-
-calc_difference_treedepth <- function(treesim_dist, treeducken_dist){
-  st <- t.test(x = treesim_dist, y = treeducken_dist)
-  st$p.value
-}
-
-
-test_that("sim_sptree_bdp produces trees with the correct distribution", {
-  expect
-})
 
 
 # test that tree has correct extant tips

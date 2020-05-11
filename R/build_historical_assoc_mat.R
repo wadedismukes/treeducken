@@ -4,7 +4,7 @@
 #'     object will produce the association matrix at that time point for the
 #'     tree object
 #'
-#' @param time The time of interest
+#' @param t The time of interest
 #' @param tr_pair_obj The tree pair object from `sim_cophylo_bdp`
 #' @return Matrix of the associations at given time
 #' @examples

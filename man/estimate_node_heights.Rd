@@ -4,14 +4,16 @@
 \alias{estimate_node_heights}
 \title{Calculate expected time to branching point of a species tree}
 \usage{
-estimate_node_heights(lambda, mu, k = 1, n)
+estimate_node_heights(lambda, mu, n, k = 1)
 }
 \arguments{
 \item{lambda}{speciation rate}
 
 \item{mu}{extinction rate}
 
-\item{t}{time to simulate until}
+\item{n}{number of tips on tree}
+
+\item{k}{branching point (k = 1 is the root and is the default)}
 }
 \value{
 The expected number of leaves
@@ -29,10 +31,10 @@ Calculates the expected time to branching point of a species tree
 \examples{
 spec_rate <- 1.0
 ext_rate <- 0.5
-n <- 10
-estimate_node_heights(spec_rate, ext_rate, n)
+nt <- 10
+estimate_node_heights(lambda = spec_rate, mu = ext_rate, n = nt)
 
-estimate_node_heigths(spec_rate, ext_rate, n, k = 5)
+estimate_node_heights(lambda = spec_rate, mu = ext_rate, n = nt, k = 2)
 }
 \references{
 Gernhard, T. (2008). The conditioned reconstructed process. Journal of
