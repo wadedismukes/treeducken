@@ -114,6 +114,24 @@ build_historical_association_matrix <- function(t, tr_pair_obj){
                 curr_mat <- prev_mat
                 rownames(curr_mat) <- as.character(prev_row_names_cut)
             }
+            
+            
+            else if(main_event %in% c("AL","AG")){ ##We have a series of association losses and gains not tied to a specific event
+              curr_mat<-prev_mat ##we don't change the size of the matrix at all
+              
+              
+              for(j in 1:nrow(curr_events)){ ##Go thru all loseses and gains
+                ev<-curr_events[j,]
+                if(ev$Event.Type== "AG"){
+                  ## If the event is a gain we puta 1 at their spot in the matrix
+                  curr_mat[ev$Symbiont.Index,ev$Host.Index]<-1
+                }else if(ev$Event.Type=="AL"){ 
+                  ##If the event is a loss we put a 0 at their spot in the matrix
+                  curr_mat[ev$Symbiont.Index,ev$Host.Index]<-0
+                }
+              }
+            }
+            
             else{
                 curr_mat <- matrix(0, nrow = nrow(prev_mat) + 1, ncol = ncol(prev_mat) + 1)
                 curr_mat[nrow(prev_mat), ncol(prev_mat)] <- 1
