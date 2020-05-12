@@ -25,8 +25,8 @@
 #'                            sbr_ = symb_lambda,
 #'                            numbsim_ = numb_replicates,
 #'                            timeToSimTo_ = time)
-#' t <- 1.4
-#' assoc_mat_at_t <- build_historical_association_matrix(time = t, tr_pair_obj = cophylo_pair[[1]])
+#' time <- 1.4
+#' assoc_mat_at_t <- build_historical_association_matrix(t=time, tr_pair_obj = cophylo_pair[[1]])
 #'
 build_historical_association_matrix <- function(t, tr_pair_obj){
     
@@ -34,7 +34,6 @@ build_historical_association_matrix <- function(t, tr_pair_obj){
     times<-times[times<=t] ###only consider times that are before or at 't'
     events <- tr_pair_obj$event_history
     curr_indx<-which.max(times)
-    print(curr_indx)
     init_mat <- matrix(1, nrow = 1, ncol = 1)
     colnames(init_mat) <- as.character(length(tr_pair_obj$host_tree$tip.label) + 1)
     rownames(init_mat) <- as.character(length(tr_pair_obj$symb_tree$tip.label) + 1)
@@ -44,7 +43,6 @@ build_historical_association_matrix <- function(t, tr_pair_obj){
         # what is first row of curr_events
         curr_events
         main_event <- curr_events[1,]$Event.Type
-       # print(main_event)
         if(main_event == "HG"){
             # make new matrix with dimensions of prev_mat same matrix
             # remove column indicated by curr_events[1,]$Host.Index
@@ -140,7 +138,6 @@ build_historical_association_matrix <- function(t, tr_pair_obj){
             prev_mat <- as.matrix(prev_mat[-which(rownames(prev_mat) == as.character(curr_events[1,]$Symbiont.Index)),
                                            -which(colnames(prev_mat) == as.character(curr_events[1,]$Host.Index))])
 
-
             prev_col_names_cut <- prev_col_names[which(prev_col_names != as.character(curr_events[1,]$Host.Index))]
             prev_row_names_cut <- prev_row_names[which(prev_row_names != as.character(curr_events[1,]$Symbiont.Index))]
 
@@ -169,8 +166,6 @@ build_historical_association_matrix <- function(t, tr_pair_obj){
         # else if SL delete col
         # else if HL delete col
         prev_mat <- curr_mat
-
-     #   print(prev_mat)
     }
 
     ##if we chose a time past all our events then the built matrix should be the same as what we have stored in our $association_mat
