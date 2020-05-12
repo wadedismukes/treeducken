@@ -29,8 +29,25 @@
 #' assoc_mat_at_t <- build_historical_association_matrix(t=time, tr_pair_obj = cophylo_pair[[1]])
 #'
 build_historical_association_matrix <- function(t, tr_pair_obj){
-    
     times <- unique(tr_pair_obj$event_history$Event.Time)
+    
+    ##Error checking with regards to 't'
+    if(!is.numeric(t)){
+      stop("'t' needs to be a number")
+    }
+    if(t<=0){
+      stop("'t' needs to be positive")
+    }
+    if( t>( max(branching.times(tr_pair_obj$host_tree))+tr_pair_obj$host_tree$root.edge ) ){ 
+      stop("The chosen 't' is beyond the duration of the cophylogeny. We don't know the future.")
+    }
+    if(t<times[2]){
+      warning("you chose a 't' before the first real event")
+      stop() ##this seems like a valid choice to me and I don't think it should error out but I don't know what it should return.
+      ##it maybe should come with a wanring or message that this is a sort of dubious time that they picked
+    }
+    
+    
     times<-times[times<=t] ###only consider times that are before or at 't'
     events <- tr_pair_obj$event_history
     curr_indx<-which.max(times)
