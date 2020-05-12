@@ -12,12 +12,12 @@
 
 //' Simulates species tree using constant rate birth-death process
 //'
-//' @details Forward simulates to a number of tips. This function does so using
+//' @description Forward simulates to a number of tips. This function does so using
 //'     the general algorithm of Hartmann et al. 2010.
-//' @param sbr_ species birth rate (i.e. speciation rate)
-//' @param sdr_ species death rate (i.e. extinction rate)
-//' @param numbsim_ number of species trees to simulate
-//' @param n_tips_ number of tips to simulate to
+//' @param sbr species birth rate (i.e. speciation rate)
+//' @param sdr species death rate (i.e. extinction rate)
+//' @param numbsim number of species trees to simulate
+//' @param n_tips number of tips to simulate to
 //' @return List of objects of the tree class (as implemented in APE)
 //' @references
 //' K. Hartmann, D. Wong, T. Stadler. Sampling trees from evolutionary models.
@@ -34,32 +34,32 @@
 //' # numb_extant_tips * 100 tips counting each time we have a tree with 10 tips
 //' # then randomly picks one of those trees
 //'
-//' sim_sptree_bdp(sbr_ = lambda,
+//' tree_list <- sim_sptree_bdp(sbr_ = lambda,
 //'                 sdr_ = mu,
 //'                 numbsim_ = numb_replicates,
 //'                 n_tips_ = numb_extant_tips)
 // [[Rcpp::export]]
-Rcpp::List sim_sptree_bdp(SEXP sbr_, SEXP sdr_, SEXP numbsim_, SEXP n_tips_){
-    double sbr = as<double>(sbr_);
-    double sdr = as<double>(sdr_);
-    unsigned numbsim = as<int>(numbsim_);
-    unsigned n_tips = as<int>(n_tips_);
+Rcpp::List sim_sptree_bdp(SEXP sbr, SEXP sdr, SEXP numbsim, SEXP n_tips){
+    double sbr_ = as<double>(sbr);
+    double sdr_ = as<double>(sdr);
+    unsigned numbsim_ = as<int>(numbsim);
+    unsigned n_tips_ = as<int>(n_tips);
     RNGScope scope;
-    if(sbr <= 0.0)
+    if(sbr_ <= 0.0)
         stop("'sbr' must be bigger than 0.0.");
-    if(sbr < sdr)
+    if(sbr_ < sdr_)
         stop("'sbr' must be greater than 'sdr'");
-    if(numbsim < 1)
+    if(numbsim_ < 1)
         stop("'numbsim' must be more than 1");
-    if(sdr < 0.0)
+    if(sdr_ < 0.0)
         stop("'sdr' must be 0.0 or greater.");
-    if(n_tips < 1)
+    if(n_tips_ < 1)
         stop("'n_tips' must be greater than 1.");
-    return bdsim_species_tree(sbr, sdr, numbsim, n_tips);
+    return bdsim_species_tree(sbr_, sdr_, numbsim_, n_tips_);
 }
 //' Simulates species tree using constant rate birth-death process to a time
 //'
-//' @details Forward simulates a tree until a provided time is reached.
+//' @description Forward simulates a tree until a provided time is reached.
 //' @param sbr_ species birth rate (i.e. speciation rate)
 //' @param sdr_ species death rate (i.e. extinction rate)
 //' @param numbsim_ number of species trees to simulate
@@ -77,31 +77,31 @@ Rcpp::List sim_sptree_bdp(SEXP sbr_, SEXP sdr_, SEXP numbsim_, SEXP n_tips_){
 //' numb_replicates <- 10
 //' time <- 4
 //'
-//' sim_sptree_bdp(sbr_ = lambda,
+//' tree_list <- sim_sptree_bdp_time(sbr_ = lambda,
 //'                 sdr_ = mu,
 //'                 numbsim_ = numb_replicates,
 //'                 t_ = time)
 // [[Rcpp::export]]
-Rcpp::List sim_sptree_bdp_time(SEXP sbr_, SEXP sdr_, SEXP numbsim_, SEXP t_){
-    double sbr = as<double>(sbr_);
-    double sdr = as<double>(sdr_);
-    unsigned numbsim = as<int>(numbsim_);
-    double t = as<double>(t_);
-    if(sbr <= 0.0)
+Rcpp::List sim_sptree_bdp_time(SEXP sbr, SEXP sdr, SEXP numbsim, SEXP t){
+    double sbr_ = as<double>(sbr);
+    double sdr_ = as<double>(sdr);
+    unsigned numbsim_ = as<int>(numbsim);
+    double t_ = as<double>(t);
+    if(sbr_ <= 0.0)
         stop("'sbr' must be bigger than 0.0.");
-    if(sbr < sdr)
+    if(sbr_ < sdr_)
         stop("'sbr' must be greater than 'sdr'");
-    if(numbsim < 1)
+    if(numbsim_ < 1)
         stop("'numbsim' must be more than 1");
-    if(sdr < 0.0)
+    if(sdr_ < 0.0)
         stop("'sdr' must be 0.0 or greater.");
-    if(t <= 0.0)
+    if(t_ <= 0.0)
         stop("'t' must be greater than 0.");
-    return sim_bdsimple_species_tree(sbr, sdr, numbsim, t);
+    return sim_bdsimple_species_tree(sbr_, sdr_, numbsim_, t_);
 }
 //' Simulates locus tree using constant rate birth-death-transfer process
 //'
-//' @details Given a species tree simulates a locus or gene family tree along
+//' @description Given a species tree simulates a locus or gene family tree along
 //'     the species tree.
 //' @param species_tree species tree to simulate along
 //' @param gbr gene birth rate
@@ -163,6 +163,8 @@ Rcpp::List sim_locustree_bdp(SEXP species_tree,
         stop("'gdr' must be greater than or equal to 0.0");
     if(strcmp(species_tree_.attr("class"), "phylo") != 0)
         stop("species_tree must be an object of class phylo'.");
+    Rcout << "%%%%%%%%%" << std::endl;
+
     SpeciesTree* specTree = new SpeciesTree(species_tree_);
     return sim_locus_tree(specTree, gbr_, gdr_, lgtr_, numLoci);
 }
@@ -178,14 +180,14 @@ Rcpp::List sim_locustree_bdp(SEXP species_tree,
 //'     birth-death process with the addition of a host shift speciation rate
 //'     that allows for the addition of more associated hosts upon symbiont
 //'     speciation.
-//' @param hbr_ host tree birth rate
-//' @param hdr_ host tree death rate
-//' @param sbr_ symbiont tree birth rate
-//' @param sdr_ symbiont tree death rate
-//' @param host_exp_rate_ host shift speciation rate
-//' @param cosp_rate_ cospeciation rate
-//' @param timeToSimTo_ time units to simulate until
-//' @param numbsim_ number of replicates
+//' @param hbr host tree birth rate
+//' @param hdr host tree death rate
+//' @param sbr symbiont tree birth rate
+//' @param sdr symbiont tree death rate
+//' @param host_exp_rate host shift speciation rate
+//' @param cosp_rate cospeciation rate
+//' @param timeToSimTo time units to simulate until
+//' @param numbsim number of replicates
 //' @return A list containing the `host_tree`, the `symbiont_tree`, the
 //'     association matrix at present, and the history of events that have
 //'     occurred.
@@ -194,67 +196,67 @@ Rcpp::List sim_locustree_bdp(SEXP species_tree,
 //' host_mu <- 0.5 # death rate
 //' host_lambda <- 2.0 # birth rate
 //' numb_replicates <- 10
-//' time <- 2.9
+//' time <- 1.0
 //' symb_mu <- 0.2
 //' symb_lambda <- 0.4
 //' host_shift_rate <- 0.1
 //' cosp_rate <- 2.0
 //'
-//' cophylo_pair <- sim_cophylo_bdp(hbr_ = host_lambda,
-//'                            hdr_ = host_mu,
-//'                            cosp_rate_ = cosp_rate,
-//'                            host_exp_rate_ = host_shift_rate,
-//'                            sdr_ = symb_mu,
-//'                            sbr_ = symb_lambda,
-//'                            numbsim_ = numb_replicates,
-//'                            timeToSimTo_ = time)
+//' cophylo_pair <- sim_cophylo_bdp(hbr = host_lambda,
+//'                            hdr = host_mu,
+//'                            cosp_rate = cosp_rate,
+//'                            host_exp_rate = host_shift_rate,
+//'                            sdr = symb_mu,
+//'                            sbr = symb_lambda,
+//'                            numbsim = numb_replicates,
+//'                            timeToSimTo = time)
 //'
 // [[Rcpp::export]]
-Rcpp::List sim_cophylo_bdp(SEXP hbr_,
-                           SEXP hdr_,
-                           SEXP sbr_,
-                           SEXP sdr_,
-                           SEXP host_exp_rate_,
-                           SEXP cosp_rate_,
-                           SEXP timeToSimTo_,
-                           SEXP numbsim_){
-    double hbr = as<double>(hbr_);
-    double hdr = as<double>(hdr_);
-    double sbr = as<double>(sbr_);
-    double sdr = as<double>(sdr_);
-    double cosp_rate = as<double>(cosp_rate_);
-    double host_exp_rate = as<double>(host_exp_rate_);
-    double timeToSimTo = as<double>(timeToSimTo_);
-    int numbsim = as<int>(numbsim_);
+Rcpp::List sim_cophylo_bdp(SEXP hbr,
+                           SEXP hdr,
+                           SEXP sbr,
+                           SEXP sdr,
+                           SEXP host_exp_rate,
+                           SEXP cosp_rate,
+                           SEXP timeToSimTo,
+                           SEXP numbsim){
+    double hbr_ = as<double>(hbr);
+    double hdr_ = as<double>(hdr);
+    double sbr_ = as<double>(sbr);
+    double sdr_ = as<double>(sdr);
+    double cosp_rate_ = as<double>(cosp_rate);
+    double host_exp_rate_ = as<double>(host_exp_rate);
+    double timeToSimTo_ = as<double>(timeToSimTo);
+    int numbsim_ = as<int>(numbsim);
     RNGScope scope;
-    if(hbr < 0.0){
+    if(hbr_ < 0.0){
          stop("'hbr' must be positive or 0.0.");
     }
-    if(hbr < hdr){
-        stop("'hbr' must be greater than 'hdr'.");
+    if((hbr_ + cosp_rate_) < hdr_){
+        stop("'hbr + cosp_rate' must be greater than 'hdr'.");
     }
-    if(hdr < 0.0){
+    if(hdr_ < 0.0){
         stop("'hdr' must be a positive value or 0.0.");
     }
-    if(host_exp_rate < 0.0){
+    if(host_exp_rate_ < 0.0){
         stop("'host_exp_rate' must be a positive value or 0.0.");
     }
-    if(numbsim < 1){
+    if(numbsim_ < 1){
         stop("'numbsim' must be larger than 1.");
     }
-    if(cosp_rate < 0.0)
+    if(cosp_rate_ < 0.0)
         stop("'cosp_rate' must be a positive value or 0.0.");
-    if(timeToSimTo < 0.0)
+    if(timeToSimTo_ < 0.0)
         stop("'timeToSimTo' must be a positive value or 0.0.");
 
-    return sim_host_symb_treepair(hbr,
-                                  hdr,
-                                  sbr,
-                                  sdr,
-                                  host_exp_rate,
-                                  cosp_rate,
-                                  timeToSimTo,
-                                  numbsim);
+    return sim_host_symb_treepair(hbr_,
+                                  hdr_,
+                                  sbr_,
+                                  sdr_,
+                                  host_exp_rate_,
+                                  cosp_rate_,
+                                  timeToSimTo_,
+                                  numbsim_);
 }
 //' Simulate locus tree within species tree and gene trees within locus tree
 //'

@@ -1,7 +1,7 @@
 Package: treeducken
 Type: Package
 Title: Cophylogenetic simulator
-Version: 1.0
+Version: 1.0.0
 Date: 2019-12-10
 Authors@R: person("Wade", "Dismukes", email="wade.dismukes@gmail.com",
     role=c("aut","cre"))

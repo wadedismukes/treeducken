@@ -112,9 +112,9 @@ estimate_node_heights <- function(lambda,
                 ins1 <- exp(lchoose(k+i, j))
                 ins2 <- (-1^j)/j
                 ins3 <- 1 - (1/(1-rho))^j
-                print(ins1)
-                print(ins2)
-                print(ins3)
+                # print(ins1)
+                # print(ins2)
+                # print(ins3)
                 in_sum <- in_sum + ins1*ins2*ins3
             }
             s4 <- log(1/(1-rho)) - in_sum

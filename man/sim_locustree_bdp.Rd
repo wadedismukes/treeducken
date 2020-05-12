@@ -21,9 +21,6 @@ sim_locustree_bdp(species_tree, gbr, gdr, lgtr, num_loci)
 List of objects of the tree class (as implemented in APE)
 }
 \description{
-Simulates locus tree using constant rate birth-death-transfer process
-}
-\details{
 Given a species tree simulates a locus or gene family tree along
     the species tree.
 }

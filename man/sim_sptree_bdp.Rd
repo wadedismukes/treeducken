@@ -4,24 +4,21 @@
 \alias{sim_sptree_bdp}
 \title{Simulates species tree using constant rate birth-death process}
 \usage{
-sim_sptree_bdp(sbr_, sdr_, numbsim_, n_tips_)
+sim_sptree_bdp(sbr, sdr, numbsim, n_tips)
 }
 \arguments{
-\item{sbr_}{species birth rate (i.e. speciation rate)}
+\item{sbr}{species birth rate (i.e. speciation rate)}
 
-\item{sdr_}{species death rate (i.e. extinction rate)}
+\item{sdr}{species death rate (i.e. extinction rate)}
 
-\item{numbsim_}{number of species trees to simulate}
+\item{numbsim}{number of species trees to simulate}
 
-\item{n_tips_}{number of tips to simulate to}
+\item{n_tips}{number of tips to simulate to}
 }
 \value{
 List of objects of the tree class (as implemented in APE)
 }
 \description{
-Simulates species tree using constant rate birth-death process
-}
-\details{
 Forward simulates to a number of tips. This function does so using
     the general algorithm of Hartmann et al. 2010.
 }
@@ -34,7 +31,7 @@ numb_extant_tips <- 4
 # numb_extant_tips * 100 tips counting each time we have a tree with 10 tips
 # then randomly picks one of those trees
 
-sim_sptree_bdp(sbr_ = lambda,
+tree_list <- sim_sptree_bdp(sbr_ = lambda,
                 sdr_ = mu,
                 numbsim_ = numb_replicates,
                 n_tips_ = numb_extant_tips)

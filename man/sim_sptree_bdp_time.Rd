@@ -4,7 +4,7 @@
 \alias{sim_sptree_bdp_time}
 \title{Simulates species tree using constant rate birth-death process to a time}
 \usage{
-sim_sptree_bdp_time(sbr_, sdr_, numbsim_, t_)
+sim_sptree_bdp_time(sbr, sdr, numbsim, t)
 }
 \arguments{
 \item{sbr_}{species birth rate (i.e. speciation rate)}
@@ -19,9 +19,6 @@ sim_sptree_bdp_time(sbr_, sdr_, numbsim_, t_)
 List of objects of the tree class (as implemented in APE)
 }
 \description{
-Simulates species tree using constant rate birth-death process to a time
-}
-\details{
 Forward simulates a tree until a provided time is reached.
 }
 \examples{
@@ -30,7 +27,7 @@ lambda <- 2.0 # birth rate
 numb_replicates <- 10
 time <- 4
 
-sim_sptree_bdp(sbr_ = lambda,
+tree_list <- sim_sptree_bdp_time(sbr_ = lambda,
                 sdr_ = mu,
                 numbsim_ = numb_replicates,
                 t_ = time)

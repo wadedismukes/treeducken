@@ -5,32 +5,32 @@
 \title{Simulates a cophylogenetic system using a paired birth-death process}
 \usage{
 sim_cophylo_bdp(
-  hbr_,
-  hdr_,
-  sbr_,
-  sdr_,
-  host_exp_rate_,
-  cosp_rate_,
-  timeToSimTo_,
-  numbsim_
+  hbr,
+  hdr,
+  sbr,
+  sdr,
+  host_exp_rate,
+  cosp_rate,
+  timeToSimTo,
+  numbsim
 )
 }
 \arguments{
-\item{hbr_}{host tree birth rate}
+\item{hbr}{host tree birth rate}
 
-\item{hdr_}{host tree death rate}
+\item{hdr}{host tree death rate}
 
-\item{sbr_}{symbiont tree birth rate}
+\item{sbr}{symbiont tree birth rate}
 
-\item{sdr_}{symbiont tree death rate}
+\item{sdr}{symbiont tree death rate}
 
-\item{host_exp_rate_}{host shift speciation rate}
+\item{host_exp_rate}{host shift speciation rate}
 
-\item{cosp_rate_}{cospeciation rate}
+\item{cosp_rate}{cospeciation rate}
 
-\item{timeToSimTo_}{time units to simulate until}
+\item{timeToSimTo}{time units to simulate until}
 
-\item{numbsim_}{number of replicates}
+\item{numbsim}{number of replicates}
 }
 \value{
 A list containing the `host_tree`, the `symbiont_tree`, the
@@ -57,19 +57,19 @@ Simulates a cophylogenetic system using birth-death processes. The
 host_mu <- 0.5 # death rate
 host_lambda <- 2.0 # birth rate
 numb_replicates <- 10
-time <- 2.9
+time <- 1.0
 symb_mu <- 0.2
 symb_lambda <- 0.4
 host_shift_rate <- 0.1
 cosp_rate <- 2.0
 
-cophylo_pair <- sim_cophylo_bdp(hbr_ = host_lambda,
-                           hdr_ = host_mu,
-                           cosp_rate_ = cosp_rate,
-                           host_exp_rate_ = host_shift_rate,
-                           sdr_ = symb_mu,
-                           sbr_ = symb_lambda,
-                           numbsim_ = numb_replicates,
-                           timeToSimTo_ = time)
+cophylo_pair <- sim_cophylo_bdp(hbr = host_lambda,
+                           hdr = host_mu,
+                           cosp_rate = cosp_rate,
+                           host_exp_rate = host_shift_rate,
+                           sdr = symb_mu,
+                           sbr = symb_lambda,
+                           numbsim = numb_replicates,
+                           timeToSimTo = time)
 
 }

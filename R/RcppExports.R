@@ -3,12 +3,12 @@
 
 #' Simulates species tree using constant rate birth-death process
 #'
-#' @details Forward simulates to a number of tips. This function does so using
+#' @description Forward simulates to a number of tips. This function does so using
 #'     the general algorithm of Hartmann et al. 2010.
-#' @param sbr_ species birth rate (i.e. speciation rate)
-#' @param sdr_ species death rate (i.e. extinction rate)
-#' @param numbsim_ number of species trees to simulate
-#' @param n_tips_ number of tips to simulate to
+#' @param sbr species birth rate (i.e. speciation rate)
+#' @param sdr species death rate (i.e. extinction rate)
+#' @param numbsim number of species trees to simulate
+#' @param n_tips number of tips to simulate to
 #' @return List of objects of the tree class (as implemented in APE)
 #' @references
 #' K. Hartmann, D. Wong, T. Stadler. Sampling trees from evolutionary models.
@@ -25,17 +25,17 @@
 #' # numb_extant_tips * 100 tips counting each time we have a tree with 10 tips
 #' # then randomly picks one of those trees
 #'
-#' sim_sptree_bdp(sbr_ = lambda,
+#' tree_list <- sim_sptree_bdp(sbr_ = lambda,
 #'                 sdr_ = mu,
 #'                 numbsim_ = numb_replicates,
 #'                 n_tips_ = numb_extant_tips)
-sim_sptree_bdp <- function(sbr_, sdr_, numbsim_, n_tips_) {
-    .Call(`_treeducken_sim_sptree_bdp`, sbr_, sdr_, numbsim_, n_tips_)
+sim_sptree_bdp <- function(sbr, sdr, numbsim, n_tips) {
+    .Call('_treeducken_sim_sptree_bdp', PACKAGE = 'treeducken', sbr, sdr, numbsim, n_tips)
 }
 
 #' Simulates species tree using constant rate birth-death process to a time
 #'
-#' @details Forward simulates a tree until a provided time is reached.
+#' @description Forward simulates a tree until a provided time is reached.
 #' @param sbr_ species birth rate (i.e. speciation rate)
 #' @param sdr_ species death rate (i.e. extinction rate)
 #' @param numbsim_ number of species trees to simulate
@@ -53,17 +53,17 @@ sim_sptree_bdp <- function(sbr_, sdr_, numbsim_, n_tips_) {
 #' numb_replicates <- 10
 #' time <- 4
 #'
-#' sim_sptree_bdp(sbr_ = lambda,
+#' tree_list <- sim_sptree_bdp_time(sbr_ = lambda,
 #'                 sdr_ = mu,
 #'                 numbsim_ = numb_replicates,
 #'                 t_ = time)
-sim_sptree_bdp_time <- function(sbr_, sdr_, numbsim_, t_) {
-    .Call(`_treeducken_sim_sptree_bdp_time`, sbr_, sdr_, numbsim_, t_)
+sim_sptree_bdp_time <- function(sbr, sdr, numbsim, t) {
+    .Call('_treeducken_sim_sptree_bdp_time', PACKAGE = 'treeducken', sbr, sdr, numbsim, t)
 }
 
 #' Simulates locus tree using constant rate birth-death-transfer process
 #'
-#' @details Given a species tree simulates a locus or gene family tree along
+#' @description Given a species tree simulates a locus or gene family tree along
 #'     the species tree.
 #' @param species_tree species tree to simulate along
 #' @param gbr gene birth rate
@@ -99,7 +99,7 @@ sim_sptree_bdp_time <- function(sbr_, sdr_, numbsim_, t_) {
 #'                   lgtr = transfer_rate,
 #'                   num_loci = 10)
 sim_locustree_bdp <- function(species_tree, gbr, gdr, lgtr, num_loci) {
-    .Call(`_treeducken_sim_locustree_bdp`, species_tree, gbr, gdr, lgtr, num_loci)
+    .Call('_treeducken_sim_locustree_bdp', PACKAGE = 'treeducken', species_tree, gbr, gdr, lgtr, num_loci)
 }
 
 #' Simulates a cophylogenetic system using a paired birth-death process
@@ -114,14 +114,14 @@ sim_locustree_bdp <- function(species_tree, gbr, gdr, lgtr, num_loci) {
 #'     birth-death process with the addition of a host shift speciation rate
 #'     that allows for the addition of more associated hosts upon symbiont
 #'     speciation.
-#' @param hbr_ host tree birth rate
-#' @param hdr_ host tree death rate
-#' @param sbr_ symbiont tree birth rate
-#' @param sdr_ symbiont tree death rate
-#' @param host_exp_rate_ host shift speciation rate
-#' @param cosp_rate_ cospeciation rate
-#' @param timeToSimTo_ time units to simulate until
-#' @param numbsim_ number of replicates
+#' @param hbr host tree birth rate
+#' @param hdr host tree death rate
+#' @param sbr symbiont tree birth rate
+#' @param sdr symbiont tree death rate
+#' @param host_exp_rate host shift speciation rate
+#' @param cosp_rate cospeciation rate
+#' @param timeToSimTo time units to simulate until
+#' @param numbsim number of replicates
 #' @return A list containing the `host_tree`, the `symbiont_tree`, the
 #'     association matrix at present, and the history of events that have
 #'     occurred.
@@ -130,23 +130,23 @@ sim_locustree_bdp <- function(species_tree, gbr, gdr, lgtr, num_loci) {
 #' host_mu <- 0.5 # death rate
 #' host_lambda <- 2.0 # birth rate
 #' numb_replicates <- 10
-#' time <- 2.9
+#' time <- 1.0
 #' symb_mu <- 0.2
 #' symb_lambda <- 0.4
 #' host_shift_rate <- 0.1
 #' cosp_rate <- 2.0
 #'
-#' cophylo_pair <- sim_cophylo_bdp(hbr_ = host_lambda,
-#'                            hdr_ = host_mu,
-#'                            cosp_rate_ = cosp_rate,
-#'                            host_exp_rate_ = host_shift_rate,
-#'                            sdr_ = symb_mu,
-#'                            sbr_ = symb_lambda,
-#'                            numbsim_ = numb_replicates,
-#'                            timeToSimTo_ = time)
+#' cophylo_pair <- sim_cophylo_bdp(hbr = host_lambda,
+#'                            hdr = host_mu,
+#'                            cosp_rate = cosp_rate,
+#'                            host_exp_rate = host_shift_rate,
+#'                            sdr = symb_mu,
+#'                            sbr = symb_lambda,
+#'                            numbsim = numb_replicates,
+#'                            timeToSimTo = time)
 #'
-sim_cophylo_bdp <- function(hbr_, hdr_, sbr_, sdr_, host_exp_rate_, cosp_rate_, timeToSimTo_, numbsim_) {
-    .Call(`_treeducken_sim_cophylo_bdp`, hbr_, hdr_, sbr_, sdr_, host_exp_rate_, cosp_rate_, timeToSimTo_, numbsim_)
+sim_cophylo_bdp <- function(hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, timeToSimTo, numbsim) {
+    .Call('_treeducken_sim_cophylo_bdp', PACKAGE = 'treeducken', hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, timeToSimTo, numbsim)
 }
 
 #' Simulate locus tree within species tree and gene trees within locus tree
@@ -186,6 +186,6 @@ sim_cophylo_bdp <- function(hbr_, hdr_, sbr_, sdr_, host_exp_rate_, cosp_rate_, 
 #' Mallo D, de Oliveira Martins L, Posada D (2015) SimPhy: Phylogenomic Simulation of Gene, Locus and Species Trees. Syst. Biol. doi: http://dx.doi.org/10.1093/sysbio/syv082
 #'
 sim_locustree_genetree_mlc <- function(species_tree, gbr, gdr, lgtr, num_loci, num_sampled_individuals, theta, num_genes_per_locus) {
-    .Call(`_treeducken_sim_locustree_genetree_mlc`, species_tree, gbr, gdr, lgtr, num_loci, num_sampled_individuals, theta, num_genes_per_locus)
+    .Call('_treeducken_sim_locustree_genetree_mlc', PACKAGE = 'treeducken', species_tree, gbr, gdr, lgtr, num_loci, num_sampled_individuals, theta, num_genes_per_locus)
 }
 
