@@ -31,10 +31,10 @@
 build_historical_association_matrix <- function(t, tr_pair_obj){
     
     times <- unique(tr_pair_obj$event_history$Event.Time)
-    print(times)
+    times<-times[times<=t] ###only consider times that are before or at 't'
     events <- tr_pair_obj$event_history
-    #curr_indx <- min(which(t <= times)) - 1
-    curr_indx<-which.max(times<=t)
+    curr_indx<-which.max(times)
+    print(curr_indx)
     init_mat <- matrix(1, nrow = 1, ncol = 1)
     colnames(init_mat) <- as.character(length(tr_pair_obj$host_tree$tip.label) + 1)
     rownames(init_mat) <- as.character(length(tr_pair_obj$symb_tree$tip.label) + 1)
@@ -175,7 +175,7 @@ build_historical_association_matrix <- function(t, tr_pair_obj){
 
     ##if we chose a time past all our events then the built matrix should be the same as what we have stored in our $association_mat
     if(t > max(times)){
-      if(!all(tr_pair_obj$association_mat)==prev_mat){
+      if(!all(tr_pair_obj$association_mat==prev_mat)){
         warning(paste("with a chosen time of",t, "the built matrix should be equal to tr_pair_ob$association_mat but it is not"))
       }
     }
