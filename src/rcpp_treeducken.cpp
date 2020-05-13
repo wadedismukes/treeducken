@@ -1,12 +1,3 @@
-// This is a simple example of exporting a C++ function to R. You can
-// source this function into an R session using the Rcpp::sourceCpp
-// function (or via the Source button on the editor toolbar). Learn
-// more about Rcpp at:
-//
-//   http://www.rcpp.org/
-//   http://adv-r.had.co.nz/Rcpp.html
-//   http://gallery.rcpp.org/
-//
 #include "Simulator.h"
 #include <string.h>
 
@@ -34,10 +25,10 @@
 //' # numb_extant_tips * 100 tips counting each time we have a tree with 10 tips
 //' # then randomly picks one of those trees
 //'
-//' tree_list <- sim_sptree_bdp(sbr_ = lambda,
-//'                 sdr_ = mu,
-//'                 numbsim_ = numb_replicates,
-//'                 n_tips_ = numb_extant_tips)
+//' tree_list <- sim_sptree_bdp(sbr = lambda,
+//'                 sdr = mu,
+//'                 numbsim = numb_replicates,
+//'                 n_tips = numb_extant_tips)
 // [[Rcpp::export]]
 Rcpp::List sim_sptree_bdp(SEXP sbr, SEXP sdr, SEXP numbsim, SEXP n_tips){
     double sbr_ = as<double>(sbr);
@@ -60,10 +51,10 @@ Rcpp::List sim_sptree_bdp(SEXP sbr, SEXP sdr, SEXP numbsim, SEXP n_tips){
 //' Simulates species tree using constant rate birth-death process to a time
 //'
 //' @description Forward simulates a tree until a provided time is reached.
-//' @param sbr_ species birth rate (i.e. speciation rate)
-//' @param sdr_ species death rate (i.e. extinction rate)
-//' @param numbsim_ number of species trees to simulate
-//' @param t_ time to simulate to
+//' @param sbr species birth rate (i.e. speciation rate)
+//' @param sdr species death rate (i.e. extinction rate)
+//' @param numbsim number of species trees to simulate
+//' @param t time to simulate to
 //' @return List of objects of the tree class (as implemented in APE)
 //' @references
 //' K. Hartmann, D. Wong, T. Stadler. Sampling trees from evolutionary models.
@@ -75,12 +66,12 @@ Rcpp::List sim_sptree_bdp(SEXP sbr, SEXP sdr, SEXP numbsim, SEXP n_tips){
 //' mu <- 0.5 # death rate
 //' lambda <- 2.0 # birth rate
 //' numb_replicates <- 10
-//' time <- 4
+//' time <- 2
 //'
-//' tree_list <- sim_sptree_bdp_time(sbr_ = lambda,
-//'                 sdr_ = mu,
-//'                 numbsim_ = numb_replicates,
-//'                 t_ = time)
+//' tree_list <- sim_sptree_bdp_time(sbr = lambda,
+//'                 sdr = mu,
+//'                 numbsim = numb_replicates,
+//'                 t = time)
 // [[Rcpp::export]]
 Rcpp::List sim_sptree_bdp_time(SEXP sbr, SEXP sdr, SEXP numbsim, SEXP t){
     double sbr_ = as<double>(sbr);

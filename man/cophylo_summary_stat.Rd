@@ -28,5 +28,22 @@ For cophylogenetic objects produced in treeducken via `sim_cophylo_bdp`, calcula
 }}
 
 \examples{
+host_mu <- 0.5 # death rate
+host_lambda <- 2.0 # birth rate
+numb_replicates <- 10
+time <- 2.9
+symb_mu <- 0.2
+symb_lambda <- 0.4
+host_shift_rate <- 0.1
+cosp_rate <- 2.0
 
+cophylo_pair <- sim_cophylo_bdp(hbr = host_lambda,
+                           hdr = host_mu,
+                           cosp_rate = cosp_rate,
+                           host_exp_rate = host_shift_rate,
+                           sdr = symb_mu,
+                           sbr = symb_lambda,
+                           numbsim = numb_replicates,
+                           timeToSimTo = time)
+summary_stats <- cophylo_summary_stat(cophylo_pair)
 }

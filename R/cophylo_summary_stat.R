@@ -2,41 +2,47 @@
 #'
 #' @return A vector consisting of (in order) cospeciations, host speciations, host extinctions, symbiont speciations, symbiont extinctions, parafit statistic, and parafit p-value
 cophylo_summary_stat_by_indx <- function(cophylo_obj, cophylo_obj_indx){
-    print(cophylo_obj_indx)
-    events <- cophylo_obj[[cophylo_obj_indx]]$event_history
-    event_types <- levels(events$Event.Type)
-    num_each_event <- tabulate(events$Event.Type)
-    names(num_each_event) <- event_types
-    cospeciations <- num_each_event["C"]
-    host_speciations <- num_each_event["HG"]
-    host_extinctions <- num_each_event["HL"]
-    symbiont_speciations <- num_each_event["SG"]
-    symbiont_extinctions <- num_each_event["SL"]
-    host_expansions <- NULL # not sure why I don't have a specific tag for this...
-    if(length(cophylo_obj[[cophylo_obj_indx]]$host_tree$tip.label) < 3 ||
-       length(cophylo_obj[[cophylo_obj_indx]]$symb_tree$tip.label) < 3)
-    {
-        parafits <- NA
-        parafit_test <- NA
-    }
-    else
-    {
-        parafits <- treeducken::parafit_stat(cophylo_obj[[cophylo_obj_indx]]$host_tree,
+  if(class(cophylo_obj) != "cophylo_obj"){
+    stop("'cophylo_obj' must be a an object of class 'multiCophylo'")
+  }
+  if(cophylo_obj_indx < 1)
+    stop("'cophylo_obj_indx' must be greater than 0")
+  if(!is.numeric(cophylo_obj_indx))
+    stop("'cophylo_obj_indx' must be a number.")
+  events <- cophylo_obj[[cophylo_obj_indx]]$event_history
+  event_types <- levels(events$Event.Type)
+  num_each_event <- tabulate(events$Event.Type)
+  names(num_each_event) <- event_types
+  cospeciations <- num_each_event["C"]
+  host_speciations <- num_each_event["HG"]
+  host_extinctions <- num_each_event["HL"]
+  symbiont_speciations <- num_each_event["SG"]
+  symbiont_extinctions <- num_each_event["SL"]
+  host_expansions <- NULL # not sure why I don't have a specific tag for this...
+  if(length(cophylo_obj[[cophylo_obj_indx]]$host_tree$tip.label) < 3 ||
+     length(cophylo_obj[[cophylo_obj_indx]]$symb_tree$tip.label) < 3)
+  {
+    parafits <- NA
+    parafit_test <- NA
+  }
+  else
+  {
+    parafits <- treeducken::parafit_stat(cophylo_obj[[cophylo_obj_indx]]$host_tree,
+                                         cophylo_obj[[cophylo_obj_indx]]$symb_tree,
+                                         cophylo_obj[[cophylo_obj_indx]]$association_mat)
+    parafit_test <- treeducken::parafit_test(cophylo_obj[[cophylo_obj_indx]]$host_tree,
                                              cophylo_obj[[cophylo_obj_indx]]$symb_tree,
-                                             cophylo_obj[[cophylo_obj_indx]]$association_mat)
-        parafit_test <- treeducken::parafit_test(cophylo_obj[[cophylo_obj_indx]]$host_tree,
-                                                 cophylo_obj[[cophylo_obj_indx]]$symb_tree,
-                                                 cophylo_obj[[cophylo_obj_indx]]$association_mat,
-                                                 parafits)
-    }
-    c(cospeciations,
-      host_speciations,
-      host_extinctions,
-      symbiont_speciations,
-      symbiont_extinctions,
-     #host_expansions,
-      parafits,
-      parafit_test)
+                                             cophylo_obj[[cophylo_obj_indx]]$association_mat,
+                                             parafits)
+  }
+  c(cospeciations,
+    host_speciations,
+    host_extinctions,
+    symbiont_speciations,
+    symbiont_extinctions,
+    #host_expansions,
+    parafits,
+    parafit_test)
 }
 #' Calculates summary statistics for cophylogenetyic objects
 #'
@@ -47,12 +53,32 @@ cophylo_summary_stat_by_indx <- function(cophylo_obj, cophylo_obj_indx){
 #'
 #' @return A dataframe containing statistics relevant to cophylogenetic analysis
 #' @examples
+#' host_mu <- 0.5 # death rate
+#' host_lambda <- 2.0 # birth rate
+#' numb_replicates <- 10
+#' time <- 2.9
+#' symb_mu <- 0.2
+#' symb_lambda <- 0.4
+#' host_shift_rate <- 0.1
+#' cosp_rate <- 2.0
 #'
+#' cophylo_pair <- sim_cophylo_bdp(hbr = host_lambda,
+#'                            hdr = host_mu,
+#'                            cosp_rate = cosp_rate,
+#'                            host_exp_rate = host_shift_rate,
+#'                            sdr = symb_mu,
+#'                            sbr = symb_lambda,
+#'                            numbsim = numb_replicates,
+#'                            timeToSimTo = time)
+#' summary_stats <- cophylo_summary_stat(cophylo_pair)
 cophylo_summary_stat <- function(cophylo_obj){
+    if(class(cophylo_obj) != "multiCophylo"){
+      stop("'cophylo_obj' must be an object of class 'multiCophylo")
+    }
     num_cophylo_obj <- length(cophylo_obj)
     stat_df <- data.frame(matrix(0, nrow = num_cophylo_obj, ncol = 7))
     for(i in 1:num_cophylo_obj){
-        stat_df[i,] <- treeducken::cophylo_summary_stat_by_indx(cophylo_obj, i)
+      stat_df[i,] <- treeducken::cophylo_summary_stat_by_indx(cophylo_obj, i)
     }
     colnames(stat_df) <- c("Cospeciations",
                            "Host.Speciations",
@@ -104,8 +130,24 @@ cophylo_summary_stat <- function(cophylo_obj){
 #' @references
 #' Legendre, P., Y. Desdevises and E. Bazin. 2002. A statistical test for host-parasite coevolution. Systematic Biology, 51(2), 217–234.
 parafit_stat <- function(host_tr, symb_tr, assoc_mat){
+    if(class(host_tr) != "phylo"){
+      stop("'host_tr' must be an object of class 'phylo'")
+    }
+    if(length(host_tr$tip.label) < 3)
+      stop("'host_tr' must be a tree with more than 2 extant tips to calculate the parafit stat")
+    if(length(symb_tr$tip.label) < 3)
+      stop("'symb_tr' must be a tree with more than 2 extant tips to calculate the parafit stat")
+    if(class(symb_tr) != "phylo"){
+      stop("'symb_tr' must be an object of class 'phylo'")
+    }
+    if(class(assoc_mat) != "matrix")
+      stop("'assoc_mat' must be an object of class 'matrix'")
     host_tree <- geiger::drop.extinct(host_tr, tol= 0.001)
     symb_tree <- geiger::drop.extinct(symb_tr, tol = 0.001)
+    if(length(host_tree$tip.label) != ncol(assoc_mat))
+      stop("'assoc_mat' must have the same number of columns as extant tips in 'host_tr'. It does not.")
+    if(length(symb_tree$tip.label) != nrow(assoc_mat))
+      stop("'assoc_mat' must have the same number of rows as extant tips in 'symb_tr'. It does not.")
     H <- ape::cophenetic.phylo(host_tree)
     S <- ape::cophenetic.phylo(symb_tree)
     H_pcoas <- ape::pcoa(H)
@@ -119,6 +161,20 @@ parafit_stat <- function(host_tr, symb_tr, assoc_mat){
 #' @param reps Number of permutations to perform on the association matrix for the hypothesis test
 #' @return A p-value for the hypothesis test described above
 parafit_test <- function(host_tr, symb_tr, assoc_mat, D, reps = 999){
+    if(!is.numeric(D))
+      stop("'D' must be a number. You seem to have input nan")
+    if(!is.numeric(reps))
+      stop("'reps' must be a number. Whatever you put in is not a number.")
+    if(class(host_tr) != "phylo"){
+      stop("'host_tr' must be a binary phylogenetic tree")
+    }
+    if(class(symb_tr) != "phylo"){
+      stop("'symb_tr' must be a binary phylogenetic tree")
+    }
+    if(reps < 99)
+      stop("'reps' should be more than 9. Otherwise your false positive rate is too high, and I won't let you do that to yourself.")
+    if(class(assoc_mat) != "matrix")
+      stop("'assoc_mat' must be a matrix")
     null_dist <- vector(length = reps)
     for(i in 1:reps){
         shuffled_A <- t(apply(assoc_mat, 1, sample))
@@ -129,14 +185,14 @@ parafit_test <- function(host_tr, symb_tr, assoc_mat, D, reps = 999){
 }
 
 
-almost_parafit_stat <- function(host_tr, symb_tr, assoc_mat){
-  host_tree <- geiger::drop.extinct(host_tr, tol= 0.001)
-  symb_tree <- geiger::drop.extinct(symb_tr, tol = 0.001)
-  H <- ape::cophenetic.phylo(host_tree)
-  S <- ape::cophenetic.phylo(symb_tree)
-  H_eigen <- eigen(H)
-  S_eigen <- eigen(S)
-  # remember the weirdness with pca$values corresponding to cospeciations
-  D <- t(H_eigen$vectors) %*% t(assoc_mat) %*% S_eigen$vectors
-  sum(diag(D)^2)
-}
+# almost_parafit_stat <- function(host_tr, symb_tr, assoc_mat){
+#   host_tree <- geiger::drop.extinct(host_tr, tol= 0.001)
+#   symb_tree <- geiger::drop.extinct(symb_tr, tol = 0.001)
+#   H <- ape::cophenetic.phylo(host_tree)
+#   S <- ape::cophenetic.phylo(symb_tree)
+#   H_eigen <- eigen(H)
+#   S_eigen <- eigen(S)
+#   # remember the weirdness with pca$values corresponding to cospeciations
+#   D <- t(H_eigen$vectors) %*% t(assoc_mat) %*% S_eigen$vectors
+#   sum(diag(D)^2)
+# }

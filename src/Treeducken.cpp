@@ -32,6 +32,7 @@ Rcpp::List bdsim_species_tree(double sbr,
     }
 
 
+    multiphy.attr("class") = "multiPhylo";
 
 
     delete phySimulator;
@@ -62,6 +63,7 @@ Rcpp::List sim_bdsimple_species_tree(double sbr,
     }
 
     delete phySimulator;
+    multiphy.attr("class") = "multiPhylo";
     return multiphy;
 }
 
@@ -99,6 +101,7 @@ Rcpp::List sim_locus_tree(SpeciesTree* species_tree,
         delete phySimulator;
     }
 
+    multiphy.attr("class") = "multiPhylo";
 
 
     return multiphy;
@@ -161,12 +164,13 @@ Rcpp::List sim_locus_tree_gene_tree(SpeciesTree* species_tree,
         phyLoc.attr("class") = "phylo";
         List locusGeneSet = List::create(Named("locus.tree") = phyLoc,
                                          Named("gene.trees") = phyGenesPerLoc);
-
+        locusGeneSet.attr("class") = "locusGeneSet";
         multiphy.push_back(std::move(locusGeneSet));
 
         delete phySimulator;
     }
 
+    multiphy.attr("class") = "multiLocusGeneSet";
 
 
     return multiphy;

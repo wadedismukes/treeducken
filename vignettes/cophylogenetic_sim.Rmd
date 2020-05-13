@@ -27,6 +27,8 @@ This model has a number of parameters that are input into the `sim_cophylo_bdp` 
 
 
 ```{r}
+library(treeducken)
+set.seed(42)
 exp_tips_host <- calculate_expected_leaves_sptree(1.0,0.5,2.0)
 # on average we will get about 5 tips
 # maybe we want something more like 8, so let's decrease the extinction rate
@@ -49,31 +51,43 @@ Now we have all the necessary parameters set with some idea of what they mean.
 
 ```{r}
 # simulate 10 paired trees with our set parameters.
-host_symb_sets <- sim_cophylo_bdp(hbr_ = h_lambda,
-                hdr_ = h_mu,
-                sbr_ = s_lambda,
-                cosp_rate_ = c_lambda,
-                sdr_ = s_mu,
-                host_exp_rate_ = s_her,
-                timeToSimTo_ = 2.0,
-                numbsim_ = 10)
+host_symb_sets <- sim_cophylo_bdp(hbr = h_lambda,
+                hdr = h_mu,
+                sbr = s_lambda,
+                cosp_rate = c_lambda,
+                sdr = s_mu,
+                host_exp_rate = s_her,
+                timeToSimTo = 2.0,
+                numbsim = 10)
+host_symb_sets_2 <- sim_cophylo_bdp(hbr = h_lambda,
+                hdr = h_mu,
+                sbr = s_lambda,
+                cosp_rate = c_lambda,
+                sdr = s_mu,
+                host_exp_rate = s_her,
+                timeToSimTo = 2.0,
+                numbsim = 10)
+
+
 
 ```
 
 ## Examining the result & plotting some trees
 ```{r}
-# plot one or two of them
-plot_paired_trees_with_associations(host_symb_sets[[1]])
-
-d <- parafit_stat(host_tr = host_symb_sets[[1]]$host_tree, symb_tr = host_symb_sets[[1]]$symb_tree, assoc_mat = host_symb_sets[[1]]$association_mat)
-parafit_test(host_tr = host_symb_sets[[1]]$host_tree, symb_tr = host_symb_sets[[1]]$symb_tree, assoc_mat = host_symb_sets[[1]]$association_mat, D = d, reps = 999)
+# # plot one or two of them
+# plot_paired_trees_with_associations(host_symb_sets[[1]])
+# host_tree <- host_symb_sets[[1]]$host_tree
+# symb_tree <- host_symb_sets[[1]]$symb_tree
+# A <- host_symb_sets[[1]]$association_mat
+# d <- parafit_stat(host_tr = host_tree, symb_tr = symb_tree, assoc_mat = A)
+# parafit_test(host_tr =host_tree, symb_tr =symb_tree, assoc_mat = A, D = d, reps = 999)
 ```
 
 
 ```{r}
 # use cophylo_summary_stat
-host_symb_summary_df <- cophylo_summary_stat(host_symb_sets)
-.```
+# host_symb_summary_df <- cophylo_summary_stat(host_symb_sets)
+```
 
 
 ## Examining historical associations

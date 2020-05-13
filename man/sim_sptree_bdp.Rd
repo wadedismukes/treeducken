@@ -31,10 +31,10 @@ numb_extant_tips <- 4
 # numb_extant_tips * 100 tips counting each time we have a tree with 10 tips
 # then randomly picks one of those trees
 
-tree_list <- sim_sptree_bdp(sbr_ = lambda,
-                sdr_ = mu,
-                numbsim_ = numb_replicates,
-                n_tips_ = numb_extant_tips)
+tree_list <- sim_sptree_bdp(sbr = lambda,
+                sdr = mu,
+                numbsim = numb_replicates,
+                n_tips = numb_extant_tips)
 }
 \references{
 K. Hartmann, D. Wong, T. Stadler. Sampling trees from evolutionary models.

@@ -7,13 +7,13 @@
 sim_sptree_bdp_time(sbr, sdr, numbsim, t)
 }
 \arguments{
-\item{sbr_}{species birth rate (i.e. speciation rate)}
+\item{sbr}{species birth rate (i.e. speciation rate)}
 
-\item{sdr_}{species death rate (i.e. extinction rate)}
+\item{sdr}{species death rate (i.e. extinction rate)}
 
-\item{numbsim_}{number of species trees to simulate}
+\item{numbsim}{number of species trees to simulate}
 
-\item{t_}{time to simulate to}
+\item{t}{time to simulate to}
 }
 \value{
 List of objects of the tree class (as implemented in APE)
@@ -25,12 +25,12 @@ Forward simulates a tree until a provided time is reached.
 mu <- 0.5 # death rate
 lambda <- 2.0 # birth rate
 numb_replicates <- 10
-time <- 4
+time <- 2
 
-tree_list <- sim_sptree_bdp_time(sbr_ = lambda,
-                sdr_ = mu,
-                numbsim_ = numb_replicates,
-                t_ = time)
+tree_list <- sim_sptree_bdp_time(sbr = lambda,
+                sdr = mu,
+                numbsim = numb_replicates,
+                t = time)
 }
 \references{
 K. Hartmann, D. Wong, T. Stadler. Sampling trees from evolutionary models.

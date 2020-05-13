@@ -32,14 +32,14 @@ symb_lambda <- 0.4
 host_shift_rate <- 0.1
 cosp_rate <- 2.0
 
-cophylo_pair <- sim_cophylo_bdp(hbr_ = host_lambda,
-                           hdr_ = host_mu,
-                           cosp_rate_ = cosp_rate,
-                           host_exp_rate_ = host_shift_rate,
-                           sdr_ = symb_mu,
-                           sbr_ = symb_lambda,
-                           numbsim_ = numb_replicates,
-                           timeToSimTo_ = time)
+cophylo_pair <- sim_cophylo_bdp(hbr = host_lambda,
+                           hdr = host_mu,
+                           cosp_rate = cosp_rate,
+                           host_exp_rate = host_shift_rate,
+                           sdr = symb_mu,
+                           sbr = symb_lambda,
+                           numbsim = numb_replicates,
+                           timeToSimTo = time)
 time <- 1.4
 assoc_mat_at_t <- build_historical_association_matrix(t=time, tr_pair_obj = cophylo_pair[[1]])
 

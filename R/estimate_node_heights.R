@@ -19,6 +19,24 @@
 calculate_expected_leaves_sptree <- function(lambda,
                                       mu,
                                       t){
+    if(!is.numeric(lambda)){
+        stop("'lambda' needs to be a number")
+    }
+    if(lambda < 0){
+        stop("'lambda' needs to be positive")
+    }
+    if(!is.numeric(t)){
+        stop("'t' needs to be a number")
+    }
+    if(t<=0){
+        stop("'t' needs to be positive")
+    }
+    if(!is.numeric(mu)){
+        stop("'mu' needs to be a number")
+    }
+    if(mu < 0){
+        stop("'mu' needs to be positive or 0.0")
+    }
     2 * exp((lambda - mu)*t)
 }
 #' Calculate expected leaves of a locus tree
@@ -50,6 +68,24 @@ calculate_expected_leaves_locustree <- function(t,
                                                 dup_rate,
                                                 loss_rate,
                                                 num_species){
+    if(!is.numeric(t)){
+        stop("'t' needs to be a number")
+    }
+    if(t<=0){
+        stop("'t' needs to be positive")
+    }
+    if(!is.numeric(dup_rate)){
+        stop("'dup_rate' needs to be a number")
+    }
+    if(dup_rate<0){
+        stop("'dup_rate' needs to be positive or 0.0.")
+    }
+    if(!is.numeric(loss_rate)){
+        stop("'loss_rate' needs to be a number")
+    }
+    if(loss_rate<0){
+        stop("'loss_rate' needs to be positive or 0.0.")
+    }
     f_numer <- (loss_rate * (1 - exp(-(dup_rate - loss_rate) * t)))
     f_denom <- dup_rate - loss_rate * (exp(-(dup_rate - loss_rate) * t))
     f <- f_numer / f_denom
@@ -84,10 +120,22 @@ estimate_node_heights <- function(lambda,
                                   mu,
                                   n,
                                   k = 1){
+    if(!is.numeric(lambda))
+        stop("'lambda' needs to be a number")
+    if(!is.numeric(mu))
+        stop("'mu' needs to be a number")
+    if(!is.numeric(n))
+        stop("'n' needs to be a number")
+    if(!is.numeric(k))
+        stop("'k' needs to be a number")
+    if(n < 1)
+        stop("'n' must be greater than or equal to 1.")
     if(lambda <= 0.0)
-        stop("'lambda' is lower than 0. it must be greater than 0.")
+        stop("'lambda' is less than or equal to 0, it must be greater than 0.")
     if(mu > lambda)
-        stop("'mu' is greater than 'lambda', please correc this.")
+        stop("'mu' is greater than 'lambda', please correct this.")
+    if(mu < 0.0)
+        stop("'mu' cannot be less than 0.0.")
     if(mu == 0.0){
         s <- 0
         for(i in k+1:n){

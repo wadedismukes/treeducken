@@ -17,20 +17,20 @@
 #' host_shift_rate <- 0.1
 #' cosp_rate <- 2.0
 #'
-#' cophylo_pair <- sim_cophylo_bdp(hbr_ = host_lambda,
-#'                            hdr_ = host_mu,
-#'                            cosp_rate_ = cosp_rate,
-#'                            host_exp_rate_ = host_shift_rate,
-#'                            sdr_ = symb_mu,
-#'                            sbr_ = symb_lambda,
-#'                            numbsim_ = numb_replicates,
-#'                            timeToSimTo_ = time)
+#' cophylo_pair <- sim_cophylo_bdp(hbr = host_lambda,
+#'                            hdr = host_mu,
+#'                            cosp_rate = cosp_rate,
+#'                            host_exp_rate = host_shift_rate,
+#'                            sdr = symb_mu,
+#'                            sbr = symb_lambda,
+#'                            numbsim = numb_replicates,
+#'                            timeToSimTo = time)
 #' time <- 1.4
 #' assoc_mat_at_t <- build_historical_association_matrix(t=time, tr_pair_obj = cophylo_pair[[1]])
 #'
 build_historical_association_matrix <- function(t, tr_pair_obj){
     times <- unique(tr_pair_obj$event_history$Event.Time)
-    
+
     ##Error checking with regards to 't'
     if(!is.numeric(t)){
       stop("'t' needs to be a number")
@@ -38,7 +38,7 @@ build_historical_association_matrix <- function(t, tr_pair_obj){
     if(t<=0){
       stop("'t' needs to be positive")
     }
-    if( t>( max(branching.times(tr_pair_obj$host_tree))+tr_pair_obj$host_tree$root.edge ) ){ 
+    if( t>( max(ape::branching.times(tr_pair_obj$host_tree))+tr_pair_obj$host_tree$root.edge ) ){
       stop("The chosen 't' is beyond the duration of the cophylogeny. We don't know the future.")
     }
     if(t<times[2]){
@@ -46,8 +46,8 @@ build_historical_association_matrix <- function(t, tr_pair_obj){
       stop() ##this seems like a valid choice to me and I don't think it should error out but I don't know what it should return.
       ##it maybe should come with a wanring or message that this is a sort of dubious time that they picked
     }
-    
-    
+
+
     times<-times[times<=t] ###only consider times that are before or at 't'
     events <- tr_pair_obj$event_history
     curr_indx<-which.max(times)
@@ -127,24 +127,24 @@ build_historical_association_matrix <- function(t, tr_pair_obj){
             curr_mat <- prev_mat
             rownames(curr_mat) <- as.character(prev_row_names_cut)
         }
-        
-        
+
+
         else if(main_event %in% c("AL","AG")){ ##We have a series of association losses and gains not tied to a specific event
           curr_mat<-prev_mat ##we don't change the size of the matrix at all
-          
-          
+
+
           for(j in 1:nrow(curr_events)){ ##Go thru all loseses and gains
             ev<-curr_events[j,]
             if(ev$Event.Type== "AG"){
               ## If the event is a gain we puta 1 at their spot in the matrix
               curr_mat[ev$Symbiont.Index,ev$Host.Index]<-1
-            }else if(ev$Event.Type=="AL"){ 
+            }else if(ev$Event.Type=="AL"){
               ##If the event is a loss we put a 0 at their spot in the matrix
               curr_mat[ev$Symbiont.Index,ev$Host.Index]<-0
             }
           }
         }
-        
+
         else{
             curr_mat <- matrix(0, nrow = nrow(prev_mat) + 1, ncol = ncol(prev_mat) + 1)
             curr_mat[nrow(prev_mat), ncol(prev_mat)] <- 1
@@ -190,8 +190,9 @@ build_historical_association_matrix <- function(t, tr_pair_obj){
       if(!all(tr_pair_obj$association_mat==prev_mat)){
         warning(paste("with a chosen time of",t, "the built matrix should be equal to tr_pair_ob$association_mat but it is not"))
       }
+      return(tr_pair_obj$association_mat)
     }
-    
+
     prev_mat
 }
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/genetree_summary_stat.R
 \name{genetree_summary_stat}
 \alias{genetree_summary_stat}
-\title{Calculate summary statistics for gene trees}
+\title{Calculate summary statistics for gene trees12dfsx}
 \usage{
 genetree_summary_stat(locus_tree_gene_tree_obj, locus_tree_indx)
 }

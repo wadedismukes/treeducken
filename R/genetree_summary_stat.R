@@ -1,4 +1,4 @@
-#' Calculate summary statistics for gene trees
+#' Calculate summary statistics for gene trees12dfsx
 #'
 #' @description  Calculates summary statistics including Colless' statistic, gamma statistic of the locus tree input as an index as part of a list, gamma statistic of gene tree, sackin statistic, cherry statistic, and time to most recent common ancestor
 #'
@@ -24,23 +24,24 @@
 #' # based on the third locus tree calculate summary statistics
 #' gt_df <- genetree_summary_stat(loctr_gentr, locus_tree_indx = 3)
 genetree_summary_stat <- function(locus_tree_gene_tree_obj, locus_tree_indx){
-     genetrees <- locus_tree_gene_tree_obj[[locus_tree_indx]]$gene.trees
-     locus_tree <- locus_tree_gene_tree_obj[[locus_tree_indx]]$locus.tree
-     num_genetrees <- length(genetrees)
-     colless <- vector(length = num_genetrees)
-     gamma_locus <- rep(ape::gammaStat(locus_tree), times = length(genetrees))
-     gamma <- vector(length = num_genetrees)
-     sackin <- vector(length = num_genetrees)
-     tmrca <- vector(length = num_genetrees)
-     cherries <- vector(length = num_genetrees)
-     for(i in 1:num_genetrees){
-         colless[i] <- apTreeshape::colless(apTreeshape::as.treeshape.phylo(genetrees[[i]]))
-         gamma[i] <- ape::gammaStat(genetrees[[i]])
-         cherries[i] <- treeducken::cherries(genetrees[[i]])
+
+    genetrees <- locus_tree_gene_tree_obj[[locus_tree_indx]]$gene.trees
+    locus_tree <- locus_tree_gene_tree_obj[[locus_tree_indx]]$locus.tree
+    num_genetrees <- length(genetrees)
+    colless <- vector(length = num_genetrees)
+    gamma_locus <- rep(ape::gammaStat(locus_tree), times = length(genetrees))
+    gamma <- vector(length = num_genetrees)
+    sackin <- vector(length = num_genetrees)
+    tmrca <- vector(length = num_genetrees)
+    cherries <- vector(length = num_genetrees)
+    for(i in 1:num_genetrees){
+        colless[i] <- apTreeshape::colless(apTreeshape::as.treeshape.phylo(genetrees[[i]]))
+        gamma[i] <- ape::gammaStat(genetrees[[i]])
+        cherries[i] <- treeducken::cherries(genetrees[[i]])
          sackin[i] <- apTreeshape::sackin(apTreeshape::as.treeshape.phylo(genetrees[[i]]))
-         tmrca[i] <- max(phytools::nodeHeights(genetrees[[i]]))
-     }
-     data.frame(colless, sackin, tmrca, gamma_locus, gamma, cherries)
+        tmrca[i] <- max(phytools::nodeHeights(genetrees[[i]]))
+    }
+    data.frame(colless, sackin, tmrca, gamma_locus, gamma, cherries)
 }
 #TODO: need to make sure I am doing this in the legal way
 #' Calculate cherry statistic for gene-trees

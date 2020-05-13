@@ -14,21 +14,15 @@ get_number_extant_tips <- function(tr){
         pruned_tr <- geiger::drop.extinct(tr[[i]], tol = 0.001)
         tip_vec[i] <- length(pruned_tr$tip.label)
     }
-    mean(tip_vec)
+    unique(tip_vec)
 }
 
 # test that tree has correct extant tips (gsa)
 test_that("sim_sptree_bdp produces the right number of extant tips", {
-    expect_equal(get_number_extant_tips(sim_sptree_bdp(1.0, 0.5, 10, 10)), 10)
-      expect_equal(get_number_extant_tips(sim_sptree_bdp(1.0, 0.5, 10, 5)), 5)
-    expect_equal(get_number_extant_tips(sim_sptree_bdp(1.0, 0.5, 10, 20)), 20)
+    expect_equal(get_number_extant_tips(sim_sptree_bdp(1.0, 0.5, 10, n_tips = 10)), 10)
+    expect_equal(get_number_extant_tips(sim_sptree_bdp(1.0, 0.5, 10, n_tips = 5)), 5)
+    expect_equal(get_number_extant_tips(sim_sptree_bdp(1.0, 0.5, 10, n_tips = 20)), 20)
 })
-
-# test that species tree produces tree within correct distribution (gsa)
-get_treesim_treedepth_dist <- function(sbr, sdr, nt, reps){
-  trees <- TreeSim::sim.bd.taxa(lambda = sbr, mu = sdr, n = nt, numbsim = reps)
-  max(phytools::nodeHeights(trees))
-}
 
 
 # test that tree has correct extant tips
