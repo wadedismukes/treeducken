@@ -34,17 +34,13 @@ test_that("sim_sptree_bdp_time produces the right number of trees", {
 
 
 get_length_tree <- function(tr){
-    tree_depth <- vector(length = length(tr))
-    for(i in 1:length(tr)){
-        tree_depth[i] <- max(phytools::nodeHeights(tr[[i]])) + tr[[i]]$root.edge
-    }
-    mean(tree_depth)
+    max(ape::branching.times(tr[[1]])) + tr[[1]]$root.edge
 }
 # test that tree has correct length (simple)
 test_that("sim_sptree_bdp_time produces the right length trees", {
-    expect_equal(get_length_tree(sim_sptree_bdp_time(1.0, 0.5, 10, 1.0)), 1.0)
-    expect_equal(get_length_tree(sim_sptree_bdp_time(1.0, 0.5, 10, 2.0)), 2.0)
-    expect_equal(get_length_tree(sim_sptree_bdp_time(1.0, 0.5, 10, 5.0)), 5.0)
+    expect_equal(get_length_tree(sim_sptree_bdp_time(1.0, 0.5, 1, 1.0)), 1.0)
+    expect_equal(get_length_tree(sim_sptree_bdp_time(1.0, 0.5, 1, 2.0)), 2.0)
+    expect_equal(get_length_tree(sim_sptree_bdp_time(1.0, 0.5, 1, 3.0)), 3.0)
 })
 
 # test that species tree produces tree within correct distribution (simple)

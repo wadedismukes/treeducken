@@ -7,41 +7,87 @@
 ## Copyright 2020 Wade Dismukes
 ##
 ## Print Summary of a Cophylogeny set and "multiCophylo" operators
-host_tree <- function(phy) UseMethod("host_tree")
+#' @param cophy Object of class `cophylo`
+#' @describeIn print.cophylo Returns host tree of a cophylogenetic set
+host_tree <- function(cophy) UseMethod("host_tree")
+#' @param cophy Object of class `cophylo`
+#' @describeIn print.cophylo Returns host tree  of a cophylogenetic set
+host_tree.cophylo <- function(cophy) phy$host_tree
 
-host_tree.cophylo <- function(phy) ape::print.phylo(phy)
-
-
-host_tree.multiCophylo <- function(phy){
-    sapply(unclass(phy), host_tree.cophylo)
+#' @param cophy Object of class multiCophylo
+#' @describeIn print.multiCophylo Returns host tree of each member of a list of cophylogenetic sets
+host_tree.multiCophylo <- function(cophy){
+    sapply(unclass(cophy), host_tree.cophylo)
 }
+#' @param cophy Object of class `cophylo`
+#' @describeIn print.cophylo Returns symb tree of a cophylogenetic set
+symb_tree <- function(cophy) UseMethod("symb_tree")
+#' @param cophy Object of class `cophylo`
+#' @describeIn print.cophylo Returns symb tree of a cophylogenetic set
+symb_tree.cophylo <- function(cophy) phy$symb_tree
 
-symb_tree <- function(phy) UseMethod("symb_tree")
-
-symb_tree.cophylo <- function(phy) ape::print.phylo(phy)
-
-
-symb_tree.multiCophylo <- function(phy){
-    sapply(unclass(phy), symb_tree.cophylo)
+#' @param cophy Object of class `multiCophylo`
+#' @describeIn print.multiCophylo Returns symb tree of each member of a list of cophylogenetic sets
+symb_tree.multiCophylo <- function(cophy){
+    sapply(unclass(cophy), symb_tree.cophylo)
 }
-
+#' @param cophy Object of class `cophylo`
+#' @describeIn print.cophylo Returns association matrix of a cophylogenetic set
 association_mat <- function(cophy) UseMethod("association_mat")
+#' @param cophy Object of class `cophylo`
+#' @describeIn print.cophylo Returns association matrix of a cophylogenetic set
+association_mat.cophylo <- function(cophy) cophy$association_mat
 
-association_mat.cophylo <- function(cophy) dim(cophy$association_mat)
-
+#' @param cophy Object of class `multiCophylo`
+#' @describeIn print.multiCophylo Returns association matrix for each member of a list of cophylogenetic sets
 association_mat.multiCophylo <- function(cophy) {
     sapply(unclass(cophy), association_mat.cophylo)
 }
 
+#' @param cophy Object of class `cophylo`
+#' @describeIn summary.cophylo Returns event history of a cophylogenetic set
 event_history <- function(cophy) UseMethod("event_history")
+#' @param cophy Cophylogenetic set
+#' @describeIn summary.cophylo Returns event history of a cophylogenetic set
+event_history.cophylo <- function(cophy) cophy$event_history
 
-event_history.cophylo <- function(cophy) summary(cophy$event_history)
-
+#' @param cophy Object of class `multiCophylo`
+#' @describeIn print.multiCophylo Returns event_history for each member of a list of cophylogenetic sets
 event_history.multiCophylo <- function(cophy){
     sapply(unclass(cophy), event_history.cophylo)
 }
 
-
+#' Summarize a cophylogenetic set
+#' @description Several utility functions for cophylogenetic set summarization.
+#' Including functions for printing an entire summary, and a summary of each part:
+#' host_tree, symb_tree, association_mat, and event_history.
+#'
+#' @param object An object of class `cophylo`
+#' @param cophy An object of class `cophylo`
+#' @param ... Further arguments used in generic classes
+#'
+#' @details The summary for a cophylogenetic set outputs a summary of the host tree and the symbiont tree.
+#' The number of rows and columns of the association matrix, and a summary of the event_history.
+#'
+#' @return Summary returns NULL.
+#' @seealso `sim_cophylo_bdp`, `summary` for the generic, `multiCophylo`, `c.cophylo`
+#' @examples
+#' h_lambda <- 1.0
+#' h_mu <- 0.3
+#' c_lambda <- 0.0
+#' s_lambda <- 1.0
+#' s_mu <- 0.3
+#' s_her <- 0.0
+#' host_symb_sets <- sim_cophylo_bdp(hbr = h_lambda,
+#'                                   hdr = h_mu,
+#'                                   sbr = s_lambda,
+#'                                   cosp_rate = c_lambda,
+#'                                   sdr = s_mu,
+#'                                   host_exp_rate = s_her,
+#'                                   timeToSimTo = 2.0,
+#'                                   numbsim = 1)
+#' summary(host_symb_sets[[1]])
+#' @export
 summary.cophylo <- function(object, ...){
     cat("\nSet of host and symbiont tree:", deparse(substitute(object)), "\n\n")
     # below is a modified version of ape's summary.phylo function
@@ -131,7 +177,39 @@ summary.cophylo <- function(object, ...){
         cat("Event history summary: \n\n", summary(object$event_history))
     }
 }
-
+#' Print a cophylogenetic set
+#' @description Prints a cophylogenetic set or a list of cophylogenetic sets.
+#'
+#' @param object An object of class `cophylo` or class `multiCophylo`
+#' @param cophy An object of class `cophylo`
+#' @param ... Further arguments used in generic classes
+#'
+#'
+#' @return Print returns NULL. host_tree returns NULL, symb_tree returns NULL,
+#' association_mat returns the dimensions of the matrix, event_history returns NULL.
+#' @seealso `sim_cophylo_bdp`, `print` for the generic, `multiCophylo`, `c.cophylo`
+#' @examples
+#' h_lambda <- 1.0
+#' h_mu <- 0.3
+#' c_lambda <- 0.0
+#' s_lambda <- 1.0
+#' s_mu <- 0.3
+#' s_her <- 0.0
+#' host_symb_sets <- sim_cophylo_bdp(hbr = h_lambda,
+#'                                   hdr = h_mu,
+#'                                   sbr = s_lambda,
+#'                                   cosp_rate = c_lambda,
+#'                                   sdr = s_mu,
+#'                                   host_exp_rate = s_her,
+#'                                   timeToSimTo = 2.0,
+#'                                   numbsim = 4)
+#' print(host_symb_sets[[1]])
+#' host_tree(host_symb_sets[[1]])
+#' symb_tree(host_symb_sets[[1]])
+#' association_mat(host_symb_sets[[1]])
+#' event_history(host_symb_sets[[1]])
+#' print(host_symb_sets)
+#' @export
 print.cophylo <- function(x, printlen = 24, ...){
     cat("\n Host Tree:\n\n")
     ape::print.phylo(x$host_tree)
@@ -142,9 +220,10 @@ print.cophylo <- function(x, printlen = 24, ...){
     cat("\n There are ", nrow(x$association_mat), " rows (i.e. extant symbionts).")
     cat("\n There are ", ncol(x$association_mat), " cols (i.e. extant hosts).")
 }
-
-
-print.multiCophylo <- function(c, details = FALSE, ...){
+#' describeIn print.cophylo Prints a list of cophylogenetic sets
+#' @param details A logical value, outputs brief summary of each set in the list.
+#' @export
+print.multiCophylo <- function(x, details = FALSE, ...){
     num_cophys <- length(x)
     cat(num_cophys, "cophylogenetic", ifelse(num_cophys > 1, "sets.\n", "set.\n"))
     if(details){
@@ -156,6 +235,7 @@ print.multiCophylo <- function(c, details = FALSE, ...){
     }
 }
 
+
 `$.multiCophylo` <- function(x, name) x[[name]]
 
 "[.multiCophylo" <- function(x, i)
@@ -165,7 +245,28 @@ print.multiCophylo <- function(c, details = FALSE, ...){
     structure(x[i], host_tree = attr(x, "host_tree"),
               class = oc)
 }
-
+#' Retrieve the structure of a class multiCophylo
+#' @description Retrieves the structure of the class multiCophylo
+#' @param object An object of class multiCophylo
+#' @return NULL value
+#' @examples
+#' h_lambda <- 1.0
+#' h_mu <- 0.3
+#' c_lambda <- 0.0
+#' s_lambda <- 1.0
+#' s_mu <- 0.3
+#' s_her <- 0.0
+#' host_symb_sets <-  sim_cophylo_bdp(hbr = h_lambda,
+#'                                   hdr = h_mu,
+#'                                   sbr = s_lambda,
+#'                                   cosp_rate = c_lambda,
+#'                                   sdr = s_mu,
+#'                                   host_exp_rate = s_her,
+#'                                   timeToSimTo = 2.0,
+#'                                   numbsim = 2)
+#' str(host_symb_sets)
+#'
+#' @export
 str.multiCophylo <- function(object, ...)
 {
     class(object) <- NULL
@@ -175,7 +276,37 @@ str.multiCophylo <- function(object, ...)
 
 
 .c_cophylo_single <- function(cophy) structure(list(cophy), class = "multiCophylo")
-
+#' Combine cophylogenetic sets into a multiCophylo object
+#' @description Combines cophylogenetic sets into a multiCophylo object.
+#' @param ... Values of class `cophy`
+#' @return An object of class `multiCophy`
+#' @seealso `c` generic function
+#' @examples
+#' h_lambda <- 1.0
+#' h_mu <- 0.3
+#' c_lambda <- 0.0
+#' s_lambda <- 1.0
+#' s_mu <- 0.3
+#' s_her <- 0.0
+#' host_symb_sets <-  sim_cophylo_bdp(hbr = h_lambda,
+#'                                   hdr = h_mu,
+#'                                   sbr = s_lambda,
+#'                                   cosp_rate = c_lambda,
+#'                                   sdr = s_mu,
+#'                                   host_exp_rate = s_her,
+#'                                   timeToSimTo = 2.0,
+#'                                   numbsim = 2)
+#' host_symb_sets2 <- sim_cophylo_bdp(hbr = h_lambda,
+#'                                   hdr = h_mu,
+#'                                   sbr = s_lambda,
+#'                                   cosp_rate = c_lambda,
+#'                                   sdr = s_mu,
+#'                                   host_exp_rate = s_her,
+#'                                   timeToSimTo = 2.0,
+#'                                   numbsim = 2)
+#' multi_host_symb <- c(host_symb_sets[[1]], host_symb_sets2[[2]])
+#' multi_host_symb_alt <- c(host_symb_sets, host_symb_sets2)
+#' @export
 c.cophylo <- function(..., recursive = TRUE)
 {
     obj <- list(...)
@@ -213,7 +344,8 @@ c.cophylo <- function(..., recursive = TRUE)
     class(x) <- "multiCophylo"
     x
 }
-
+#' @describIn c.cophylo Combines two multiCophylo objects into one multiCophylo object
+#' @export
 c.multiCophylo <- function(..., recursive = TRUE)
 {
     obj <- list(...)

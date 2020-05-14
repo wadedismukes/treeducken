@@ -264,7 +264,6 @@ bool Simulator::bdSimpleSim(){
   bool treeComplete = false;
   currentSimTime = 0.0;
   double stopTime = this->getTimeToSim();
-  Rcout << stopTime << std::endl;
   double eventTime;
 
   spTree = new SpeciesTree(1, currentSimTime, speciationRate, extinctionRate);
@@ -275,7 +274,7 @@ bool Simulator::bdSimpleSim(){
 
     if(currentSimTime >= stopTime){
       currentSimTime = stopTime;
-      spTree->setPresentTime(stopTime);
+      spTree->setPresentTime(currentSimTime);
     }
     else{
       spTree->ermEvent(currentSimTime);
@@ -288,7 +287,7 @@ bool Simulator::bdSimpleSim(){
     }
   }
 
-  if(spTree->getNumExtant() < 1){
+  if(spTree->getNumExtant() <= 1){
     delete spTree;
     treeComplete = false;
     return treeComplete;
@@ -299,7 +298,6 @@ bool Simulator::bdSimpleSim(){
 
 
   spTree->setPresentTime(currentSimTime);
-  Rcout << currentSimTime << std::endl;
   return treeComplete;
 }
 
