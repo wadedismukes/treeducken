@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{object}{An object of class multiCophylo}
+
+\item{...}{Potential further arguments to generic str class}
 }
 \value{
 NULL value

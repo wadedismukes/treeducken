@@ -3,33 +3,50 @@
 \name{host_tree}
 \alias{host_tree}
 \alias{host_tree.cophylo}
+\alias{host_tree.multiCophylo}
 \alias{symb_tree}
 \alias{symb_tree.cophylo}
+\alias{symb_tree.multiCophylo}
 \alias{association_mat}
 \alias{association_mat.cophylo}
+\alias{association_mat.multiCophylo}
+\alias{event_history.multiCophylo}
 \alias{print.cophylo}
+\alias{print.multiCophylo}
 \title{Print a cophylogenetic set}
 \usage{
 host_tree(cophy)
 
 \method{host_tree}{cophylo}(cophy)
 
+\method{host_tree}{multiCophylo}(cophy)
+
 symb_tree(cophy)
 
 \method{symb_tree}{cophylo}(cophy)
+
+\method{symb_tree}{multiCophylo}(cophy)
 
 association_mat(cophy)
 
 \method{association_mat}{cophylo}(cophy)
 
-\method{print}{cophylo}(x, printlen = 24, ...)
+\method{association_mat}{multiCophylo}(cophy)
+
+\method{event_history}{multiCophylo}(cophy)
+
+\method{print}{cophylo}(x, ...)
+
+\method{print}{multiCophylo}(x, details = FALSE, ...)
 }
 \arguments{
 \item{cophy}{An object of class `cophylo`}
 
+\item{x, object}{An object of class `cophylo` or class `multiCophylo`}
+
 \item{...}{Further arguments used in generic classes}
 
-\item{object}{An object of class `cophylo` or class `multiCophylo`}
+\item{details}{A logical value, outputs brief summary of each set in the list.}
 }
 \value{
 Print returns NULL. host_tree returns NULL, symb_tree returns NULL,
@@ -44,13 +61,23 @@ Prints a cophylogenetic set or a list of cophylogenetic sets.
 
 \item \code{host_tree.cophylo}: Returns host tree  of a cophylogenetic set
 
+\item \code{host_tree.multiCophylo}: Returns host tree of each member of a list of cophylogenetic sets
+
 \item \code{symb_tree}: Returns symb tree of a cophylogenetic set
 
 \item \code{symb_tree.cophylo}: Returns symb tree of a cophylogenetic set
 
+\item \code{symb_tree.multiCophylo}: Returns symb tree of each member of a list of cophylogenetic sets
+
 \item \code{association_mat}: Returns association matrix of a cophylogenetic set
 
 \item \code{association_mat.cophylo}: Returns association matrix of a cophylogenetic set
+
+\item \code{association_mat.multiCophylo}: Returns association matrix for each member of a list of cophylogenetic sets
+
+\item \code{event_history.multiCophylo}: Returns event_history for each member of a list of cophylogenetic sets
+
+\item \code{print.multiCophylo}: Prints a list of cophylogenetic sets
 }}
 
 \examples{
@@ -76,5 +103,5 @@ event_history(host_symb_sets[[1]])
 print(host_symb_sets)
 }
 \seealso{
-`sim_cophylo_bdp`, `print` for the generic, `multiCophylo`, `c.cophylo`
+sim_cophylo_bdp, print for the generic, multiCophylo, c.cophylo
 }

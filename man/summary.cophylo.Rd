@@ -56,5 +56,5 @@ host_symb_sets <- sim_cophylo_bdp(hbr = h_lambda,
 summary(host_symb_sets[[1]])
 }
 \seealso{
-`sim_cophylo_bdp`, `summary` for the generic, `multiCophylo`, `c.cophylo`
+sim_cophylo_bdp, summary for the generic, multiCophylo, c.cophylo
 }

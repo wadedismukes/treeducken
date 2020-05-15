@@ -5,7 +5,7 @@
 #' @details Checks that an object is of class `cophylo`. For multicophy checks that
 #' the class is `multiCophylo` and that each element is of class `cophylo`.
 #' @return A logical vector
-#' @seealso `as.cophylo`
+#' @seealso as.cophylo
 #' @examples
 #' h_lambda <- 1.0
 #' h_mu <- 0.3
@@ -27,11 +27,11 @@ is.cophylo <- function(cophy){
     inherits(cophy, "cophylo")
 }
 #' @describeIn is.cophylo Tests for `multiCophylo` composed of `cophylo` objects
-#' @param multiCophylo an object to test for multiCophy
+#' @param multiCophy an object to test for multiCophy
 is.multiCophylo <- function(multiCophy){
     t <- inherits(multiCophy, "multiCophylo")
     if(t){
-        tt <- sapply(unclass(cophy), inherits, what = "cophylo")
+        tt <- sapply(unclass(multiCophy), inherits, what = "cophylo")
     }
     all(c(t, tt))
 }

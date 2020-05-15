@@ -2,9 +2,12 @@
 % Please edit documentation in R/summary_cophylo.R
 \name{c.cophylo}
 \alias{c.cophylo}
+\alias{c.multiCophylo}
 \title{Combine cophylogenetic sets into a multiCophylo object}
 \usage{
-\method{c}{cophylo}(..., recursive = TRUE)
+\method{c}{cophylo}(...)
+
+\method{c}{multiCophylo}(...)
 }
 \arguments{
 \item{...}{Values of class `cophy`}
@@ -15,6 +18,11 @@ An object of class `multiCophy`
 \description{
 Combines cophylogenetic sets into a multiCophylo object.
 }
+\section{Functions}{
+\itemize{
+\item \code{c.multiCophylo}: Combines two multiCophylo objects into one multiCophylo object
+}}
+
 \examples{
 h_lambda <- 1.0
 h_mu <- 0.3

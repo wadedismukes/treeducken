@@ -12,7 +12,7 @@ is.multiCophylo(multiCophy)
 \arguments{
 \item{cophy}{an object to test to see if it is of class `cophylo`}
 
-\item{multiCophylo}{an object to test for multiCophy}
+\item{multiCophy}{an object to test for multiCophy}
 }
 \value{
 A logical vector
@@ -48,5 +48,5 @@ is.cophylo(host_symb_sets[[1]])
 is.multiCophylo(host_symb_sets)
 }
 \seealso{
-`as.cophylo`
+as.cophylo
 }

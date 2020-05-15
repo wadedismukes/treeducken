@@ -22,7 +22,7 @@ hist_assoc_tester <- function(reps = 1, time){
 }
 
 test_that("build historical association matrix gives I if only cospeciation is on", {
-    x <- hist_assoc_tester(time = 1.5)
+    x <- hist_assoc_tester(time = 2.0)
     expect_equal(det(x), 1)
 })
 
