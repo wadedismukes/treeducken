@@ -39,7 +39,8 @@ Simulator::Simulator(unsigned ntax,
                      unsigned numLociToSim,
                      double gbr,
                      double gdr,
-                     double lgtr)
+                     double lgtr,
+                     std::string transfType)
 {
     spTree = nullptr;
     geneTree = nullptr;
@@ -59,7 +60,7 @@ Simulator::Simulator(unsigned ntax,
     propTransfer = 0.0;
     indPerPop = 0;
     popSize = 0;
-
+    transferType = transfType;
 
 }
 
@@ -265,16 +266,13 @@ bool Simulator::bdSimpleSim(){
   currentSimTime = 0.0;
   double stopTime = this->getTimeToSim();
   double eventTime;
-
   spTree = new SpeciesTree(1, currentSimTime, speciationRate, extinctionRate);
   while(currentSimTime < stopTime){
-
     eventTime = spTree->getTimeToNextEvent();
     currentSimTime += eventTime;
 
     if(currentSimTime >= stopTime){
       currentSimTime = stopTime;
-      spTree->setPresentTime(currentSimTime);
     }
     else{
       spTree->ermEvent(currentSimTime);
@@ -295,7 +293,6 @@ bool Simulator::bdSimpleSim(){
 
   treeComplete = true;
   currentSimTime = stopTime;
-
 
   spTree->setPresentTime(currentSimTime);
   return treeComplete;
@@ -336,15 +333,15 @@ bool Simulator::pairedBDPSim(){
     currentSimTime += eventTime;
     if(currentSimTime >= stopTime){
       currentSimTime = stopTime;
-      spTree->setPresentTime(stopTime);
-      symbiontTree->setPresentTime(stopTime);
     }
     else{
       assocMat = this->cophyloEvent(currentSimTime, assocMat);
     }
 
-    if(spTree->getNumExtant() < 1 || symbiontTree->getNumExtant() < 1 ||
-       assocMat.n_rows < 1 || assocMat.n_cols < 1){
+    if(spTree->getNumExtant() < 1 ||
+       symbiontTree->getNumExtant() < 1 ||
+       assocMat.n_rows < 1 ||
+       assocMat.n_cols < 1){
       treePairGood = false;
       this->clearEventDFVecs();
       delete spTree;
@@ -396,10 +393,10 @@ arma::umat Simulator::cophyloEvent(double eventTime, arma::umat assocMat){
 
 Rcpp::DataFrame Simulator::createEventDF(){
   this->updateEventIndices();
-  DataFrame df = DataFrame::create(Named("Host Index") = inOrderVecOfHostIndx,
-                                   Named("Symbiont Index") = inOrderVecOfSymbIndx,
-                                   Named("Event Type") = inOrderVecOfEvent,
-                                   Named("Event Time") = inOrderVecOfEventTimes);
+  DataFrame df = DataFrame::create(Named("Symbiont Index") = inOrderVecOfSymbIndx,
+                                   Named("Host_Index") = inOrderVecOfHostIndx,
+                                   Named("Event_Type") = inOrderVecOfEvent,
+                                   Named("Event_Time") = inOrderVecOfEventTimes);
   return df;
 }
 
@@ -895,9 +892,6 @@ arma::umat Simulator::cospeciationEvent(double eventTime, arma::umat assocMat){
   return assocMat;
 }
 
-
-
-
 bool Simulator::bdsaBDSim(){
     bool treesComplete = false;
     double stopTime = spTree->getCurrentTimeFromExtant();
@@ -910,67 +904,68 @@ bool Simulator::bdsaBDSim(){
                              transferRate);
     std::map<int, int> rToTdckenIndxMap = spTree->makeIndxMap();
     spTree->switchIndicesFirstToSecond(rToTdckenIndxMap);
+    Node* spRoot = spTree->getRoot();
 
+    lociTree->getRoot()->setLindx(spRoot->getIndex());
 
-    std::map<int,double> speciesBirthTimes = spTree->getBirthTimesFromNodes();
+    // std::map<int,double> speciesBirthTimes = spTree->getBirthTimesFromNodes();
     std::map<int,double> speciesDeathTimes = spTree->getDeathTimesFromNodes();
     std::set<int> contempSpecies;
     std::pair<int, int> sibs;
-
-    Node* spRoot = spTree->getRoot();
     lociTree->setStopTime(stopTime);
-    currentSimTime -= lociTree->getTimeToNextEvent();
+
     if(!(contempSpecies.empty()))
         contempSpecies.clear();
     contempSpecies.insert(spRoot->getIndex());
 
     while(currentSimTime < stopTime){
-        eventTime = lociTree->getTimeToNextEvent();
-        currentSimTime += eventTime;
-        for(std::set<int>::iterator it = contempSpecies.begin(); it != contempSpecies.end();){
-            if(currentSimTime > speciesDeathTimes[(*it)]){
-                isSpeciation = spTree->macroEvent((*it));
-                if(isSpeciation){
-                    sibs = spTree->preorderTraversalStep(*it);
-                    lociTree->speciationEvent((*it), speciesDeathTimes[(*it)], sibs);
-                    it = contempSpecies.erase(it);
-                    it = contempSpecies.insert( it, sibs.second);
-                    ++it;
-                    it = contempSpecies.insert( it, sibs.first);
-                }
-                else{
-                    if(!(spTree->getIsExtantFromIndx(*it))){
-                        lociTree->extinctionEvent(*it, speciesDeathTimes[(*it)]);
-                        it = contempSpecies.erase(it);
-                    }
-                    else{
-                        ++it;
-                    }
-                }
+      eventTime = lociTree->getTimeToNextEvent();
+      currentSimTime += eventTime;
+      for(std::set<int>::iterator it = contempSpecies.begin(); it != contempSpecies.end();){
+        if(currentSimTime > speciesDeathTimes[(*it)]){
+          isSpeciation = spTree->macroEvent((*it));
+          if(isSpeciation){
+            currentSimTime = speciesDeathTimes[(*it)];
+            sibs = spTree->preorderTraversalStep(*it);
+            lociTree->speciationEvent((*it), speciesDeathTimes[(*it)], sibs);
+            it = contempSpecies.erase(it);
+            it = contempSpecies.insert( it, sibs.second);
+            ++it;
+            it = contempSpecies.insert( it, sibs.first);
+
+          }
+          else{
+            if(!(spTree->getIsExtantFromIndx(*it))){
+              currentSimTime = speciesDeathTimes[(*it)];
+              lociTree->extinctionEvent(*it, speciesDeathTimes[(*it)]);
+              it = contempSpecies.erase(it);
             }
             else{
-                ++it;
+              ++it;
             }
-
-            if(lociTree->getNumExtant() < 1){
-                treesComplete = false;
-                return treesComplete;
-            }
-
+          }
         }
-
-        if(currentSimTime >= stopTime){
-            currentSimTime = stopTime;
-            lociTree->setCurrentTime(stopTime);
+        else{
+          ++it;
         }
-        if(geneBirthRate > 0.0 || geneDeathRate > 0.0 || transferRate > 0.0){
-            lociTree->ermEvent(currentSimTime);
-        }
+      }
 
+      if(currentSimTime >= stopTime){
+        currentSimTime = stopTime;
+        break;
+      }
+      if(lociTree->checkLocusTreeParams()){
+        lociTree->ermEvent(currentSimTime);
+      }
 
-
-
+      if(lociTree->getNumExtant() < 1){
+        treesComplete = false;
+        return treesComplete;
+      }
     }
+
+    currentSimTime = stopTime;
+
     lociTree->setPresentTime(currentSimTime);
     treesComplete = true;
 

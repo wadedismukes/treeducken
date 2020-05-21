@@ -1,11 +1,3 @@
-  //
-//  LocusTree.cpp
-//  multiTree
-//
-//  Created by Dismukes, Wade T [EEOBS] on 11/13/17.
-//  Copyright © 2017 Dismukes, Wade T [EEOBS]. All rights reserved.
-//
-
 #include <iostream>
 #include "LocusTree.h"
 
@@ -94,7 +86,7 @@ int LocusTree::chooseRecipientSpeciesID(Node *d) {
     sums.push_back(0);
 
     for(std::vector<Node*>::iterator r = extantNodes.begin(); r != extantNodes.end(); ++r){
-        stepCounter = calculatePatristicDistance(d, *r);
+        stepCounter = LocusTree::calculatePatristicDistance(d, *r);
         sum += (double) stepCounter;
         sums.push_back(sum);
     }
@@ -114,19 +106,30 @@ int LocusTree::chooseRecipientSpeciesID(Node *d) {
     return recipientIndx;
 }
 
-void LocusTree::lineageTransferEvent(int indx, bool randTrans = 0){
+int LocusTree::calculatePatristicDistance(Node *n1, Node *n2){
+  int count = 0;
+  if(n1 != n2){
+    while((*n1).getLindx() != (*n2).getLindx()){
+      count++;
+      n1 = (*n1).getAnc();
+      n2 = (*n2).getAnc();
+    }
+  }
+  return count;
+}
+
+
+void LocusTree::lineageTransferEvent(int indx, bool randTrans = true){
     unsigned spIndxD = extantNodes[indx]->getIndex();
     int allSameSpInExtNodes = 0;
-//    if(numTaxa < 5){
-        for(std::vector<Node*>::iterator p = extantNodes.begin(); p != extantNodes.end(); ++p){
-            unsigned checkInd = (*p)->getIndex();
-            if(checkInd != spIndxD){
-                allSameSpInExtNodes++;
-            }
-        }
-        if(allSameSpInExtNodes == 0)
-            return;
- //   }
+    for(std::vector<Node*>::iterator p = extantNodes.begin(); p != extantNodes.end(); ++p){
+      unsigned checkInd = (*p)->getIndex();
+      if(checkInd != spIndxD){
+        allSameSpInExtNodes++;
+      }
+    }
+    if(allSameSpInExtNodes == 0)
+      return;
     //first a birth event
     Node *donor, *rec;
     donor = new Node();
@@ -207,6 +210,15 @@ void LocusTree::lineageTransferEvent(int indx, bool randTrans = 0){
     nodes.push_back(donor);
 
     numExtant = (int) extantNodes.size();
+}
+
+bool LocusTree::checkLocusTreeParams(){
+  const double epsilon = 0.00001;
+  double sumrt = geneBirthRate + geneDeathRate + transferRate;
+  if(std::abs(sumrt - 0.0) <= epsilon * std::abs(sumrt))
+    return false; //  they are all set to 0.0
+  else
+    return true; // they are not all set to 0.0
 }
 
 double LocusTree::getTimeToNextEvent(){

@@ -106,11 +106,18 @@ Tree::Tree(SEXP rtree){
         p->setAnc(nodes[indMap[indx1]]);
         p->setBirthTime(nodes[indMap[indx1]]->getDeathTime());
         p->setDeathTime(edge_lengths[i] + nodes[indMap[indx1]]->getDeathTime());
-
+        p->setBranchLength(p->getDeathTime() - p->getBirthTime());
         nodes[i + 1] = p;
         if(indx2 < numTaxa){
             nodes[indMap[indx2]]->setName(tip_names[indx2]);
             nodes[indMap[indx2]]->setIsTip(true);
+            std::string tipName = nodes[indMap[indx2]]->getName();
+            if(tipName.find("X") == 0)
+            {
+                nodes[indMap[indx2]]->setIsExtinct(true);
+            }
+            else
+                nodes[indMap[indx2]]->setIsExtant(true);
             if(nodes[indMap[indx1]]->getLdes()){
                 nodes[indMap[indx1]]->setRdes(nodes[indMap[indx2]]);
             }
@@ -162,12 +169,10 @@ void Tree::setTipsFromRtree(){
     numExtinct = 0;
     for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it){
         if((*it)->getIsTip()){
-            if((*it)->getDeathTime() < currentTime){
-                (*it)->setIsExtinct(true);
+            if((*it)->getIsExtinct()){
                 numExtinct++;
             }
             else{
-                (*it)->setIsExtant(true);
                 extantNodes[extTipCount] = (*it);
                 numExtant++;
                 extTipCount++;

@@ -35,6 +35,7 @@ class Simulator
         double      timeToSim;
         int         hostLimit;
         arma::umat   assocMat;
+        std::string  transferType;
 
         Rcpp::IntegerVector inOrderVecOfHostIndx;
         Rcpp::IntegerVector inOrderVecOfSymbIndx;
@@ -55,19 +56,19 @@ class Simulator
                   unsigned numLociToSim,
                   double geneBirthRate,
                   double geneDeathRate,
-                  double transferRate);
+                  double transferRate,
+                  std::string transferRandomly);
         // Simulating species and locus tree with proportion of transfer (e.g. hybridization, linkage)
-        // // CAN THIS BE DELETED??
         //.
         Simulator(unsigned numTaxaToSim,
                   double speciationRate,
-                double extinctionRate,
-                double rho,
-                unsigned numLociToSim,
-                double geneBirthRate,
-                double geneDeathRate,
-                double transferRate,
-                double propTransfer);
+                  double extinctionRate,
+                  double rho,
+                  unsigned numLociToSim,
+                  double geneBirthRate,
+                  double geneDeathRate,
+                  double transferRate,
+                  double propTransfer);
         // Simulating species and locus trees with one gene tree per locus tree
         Simulator(unsigned numTaxaToSim,
                 double speciationRate,
@@ -176,7 +177,8 @@ extern Rcpp::List sim_locus_tree(SpeciesTree* species_tree,
                                  double gbr,
                                  double gdr,
                                  double lgtr,
-                                 int numLoci);
+                                 int numLoci,
+                                 std::string trans_type);
 
 extern Rcpp::List sim_host_symb_treepair(double hostbr,
                                          double hostdr,

@@ -128,17 +128,19 @@ Rcpp::List sim_sptree_bdp_time(SEXP sbr, SEXP sdr, SEXP numbsim, SEXP t){
 //'                   lgtr = transfer_rate,
 //'                   num_loci = 10)
 // [[Rcpp::export]]
-Rcpp::List sim_locustree_bdp(SEXP species_tree,
+Rcpp::List sim_locustree_bdp(Rcpp::List species_tree,
                              SEXP gbr,
                              SEXP gdr,
                              SEXP lgtr,
-                             SEXP num_loci){
-    Rcpp::List species_tree_ = as<Rcpp::List>(species_tree);
+                             SEXP num_loci,
+                             Rcpp::String transfer_type = "random"){
     RNGScope scope;
     double gbr_ = as<double>(gbr);
     double gdr_ = as<double>(gdr);
     double lgtr_ = as<double>(lgtr);
     unsigned numLoci = as<int>(num_loci);
+    std::string trans_type = transfer_type;
+
     if(gbr_ < 0.0)
         stop("'gbr' must be a positive number or 0.0");
     if(gbr_ < gdr_){
@@ -152,12 +154,14 @@ Rcpp::List sim_locustree_bdp(SEXP species_tree,
         stop("'lgtr' must be a positive number or 0.0");
     if(gdr_ < 0.0)
         stop("'gdr' must be greater than or equal to 0.0");
-    if(strcmp(species_tree_.attr("class"), "phylo") != 0)
+    if(strcmp(species_tree.attr("class"), "phylo") != 0)
         stop("species_tree must be an object of class phylo'.");
-    Rcout << "%%%%%%%%%" << std::endl;
 
-    SpeciesTree* specTree = new SpeciesTree(species_tree_);
-    return sim_locus_tree(specTree, gbr_, gdr_, lgtr_, numLoci);
+    if(trans_type !=  "cladewise" && trans_type != "random")
+        stop("the transfer_type must be set to 'cladewise' or 'random'");
+
+    SpeciesTree* specTree = new SpeciesTree(species_tree);
+    return sim_locus_tree(specTree, gbr_, gdr_, lgtr_, numLoci, trans_type);
 }
 //' Simulates a cophylogenetic system using a paired birth-death process
 //'

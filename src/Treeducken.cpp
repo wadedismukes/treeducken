@@ -57,7 +57,7 @@ Rcpp::List sim_bdsimple_species_tree(double sbr,
                                 Named("edge.length") = phySimulator->getSpeciesEdgeLengths(),
                                 Named("Nnode") = phySimulator->getSpeciesNnodes(),
                                 Named("tip.label") = phySimulator->getSpeciesTipNames(),
-                                Named("root.edge") = phySimulator->getSpeciesTreeRootEdge());;
+                                Named("root.edge") = phySimulator->getSpeciesTreeRootEdge());
         phy.attr("class") = "phylo";
         multiphy[i] = phy;
     }
@@ -71,7 +71,8 @@ Rcpp::List sim_locus_tree(SpeciesTree* species_tree,
                           double gbr,
                           double gdr,
                           double lgtr,
-                          int numbsim){
+                          int numbsim,
+                          std::string trans_type){
     Rcpp::List multiphy;
     int ntax = species_tree->getNumExtant();
     double lambda = 0.0;
@@ -79,6 +80,7 @@ Rcpp::List sim_locus_tree(SpeciesTree* species_tree,
     double rho = 0.0;
     unsigned numLociToSim = numbsim;
     for(int i = 0; i < numbsim; i++){
+
         Simulator *phySimulator = new Simulator( ntax,
                                      lambda,
                                      mu,
@@ -86,8 +88,10 @@ Rcpp::List sim_locus_tree(SpeciesTree* species_tree,
                                      numLociToSim,
                                      gbr,
                                      gdr,
-                                     lgtr);
+                                     lgtr,
+                                     trans_type);
         phySimulator->setSpeciesTree(species_tree);
+
         phySimulator->simLocusTree();
         List phy = List::create(Named("edge") = phySimulator->getLocusEdges(),
                                 Named("edge.length") = phySimulator->getLocusEdgeLengths(),
@@ -100,7 +104,6 @@ Rcpp::List sim_locus_tree(SpeciesTree* species_tree,
         multiphy.push_back(std::move(phy));
         delete phySimulator;
     }
-
     multiphy.attr("class") = "multiPhylo";
 
 

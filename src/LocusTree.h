@@ -13,7 +13,7 @@
 #include <algorithm>
 #include <set>
 
-class LocusTree : public Tree 
+class LocusTree : public Tree
 {
     private:
         double geneBirthRate, geneDeathRate, transferRate;
@@ -55,9 +55,10 @@ class LocusTree : public Tree
         std::vector< std::vector<int> >     getExtantLoci(std::set<double, std::greater<double> > epochSet);
         std::vector< std::string >    printSubTrees();
         int     postOrderTraversalStep(int indx);
-    
-    
-    
+
+        int    calculatePatristicDistance(Node *n1, Node *n2);
+
+        bool   checkLocusTreeParams();
 
 };
 #endif /* LocusTree_h*/

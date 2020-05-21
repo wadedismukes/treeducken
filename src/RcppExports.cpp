@@ -35,17 +35,18 @@ BEGIN_RCPP
 END_RCPP
 }
 // sim_locustree_bdp
-Rcpp::List sim_locustree_bdp(SEXP species_tree, SEXP gbr, SEXP gdr, SEXP lgtr, SEXP num_loci);
-RcppExport SEXP _treeducken_sim_locustree_bdp(SEXP species_treeSEXP, SEXP gbrSEXP, SEXP gdrSEXP, SEXP lgtrSEXP, SEXP num_lociSEXP) {
+Rcpp::List sim_locustree_bdp(Rcpp::List species_tree, SEXP gbr, SEXP gdr, SEXP lgtr, SEXP num_loci, Rcpp::String transfer_type);
+RcppExport SEXP _treeducken_sim_locustree_bdp(SEXP species_treeSEXP, SEXP gbrSEXP, SEXP gdrSEXP, SEXP lgtrSEXP, SEXP num_lociSEXP, SEXP transfer_typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type species_tree(species_treeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type species_tree(species_treeSEXP);
     Rcpp::traits::input_parameter< SEXP >::type gbr(gbrSEXP);
     Rcpp::traits::input_parameter< SEXP >::type gdr(gdrSEXP);
     Rcpp::traits::input_parameter< SEXP >::type lgtr(lgtrSEXP);
     Rcpp::traits::input_parameter< SEXP >::type num_loci(num_lociSEXP);
-    rcpp_result_gen = Rcpp::wrap(sim_locustree_bdp(species_tree, gbr, gdr, lgtr, num_loci));
+    Rcpp::traits::input_parameter< Rcpp::String >::type transfer_type(transfer_typeSEXP);
+    rcpp_result_gen = Rcpp::wrap(sim_locustree_bdp(species_tree, gbr, gdr, lgtr, num_loci, transfer_type));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -89,7 +90,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_treeducken_sim_sptree_bdp", (DL_FUNC) &_treeducken_sim_sptree_bdp, 4},
     {"_treeducken_sim_sptree_bdp_time", (DL_FUNC) &_treeducken_sim_sptree_bdp_time, 4},
-    {"_treeducken_sim_locustree_bdp", (DL_FUNC) &_treeducken_sim_locustree_bdp, 5},
+    {"_treeducken_sim_locustree_bdp", (DL_FUNC) &_treeducken_sim_locustree_bdp, 6},
     {"_treeducken_sim_cophylo_bdp", (DL_FUNC) &_treeducken_sim_cophylo_bdp, 8},
     {"_treeducken_sim_locustree_genetree_mlc", (DL_FUNC) &_treeducken_sim_locustree_genetree_mlc, 8},
     {NULL, NULL, 0}

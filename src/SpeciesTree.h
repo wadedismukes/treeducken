@@ -67,7 +67,6 @@ class SpeciesTree : public Tree
         int           getNodesIndxFromExtantIndx(int extanIndx) {return extantNodes[extanIndx]->getIndex(); }
 
 
-
 };
 
 

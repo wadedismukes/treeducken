@@ -500,3 +500,4 @@ int SpeciesTree::findLastToGoExtinct(double EventTime){
 
   return indxExtinct;
 }
+

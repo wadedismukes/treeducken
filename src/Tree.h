@@ -132,7 +132,6 @@ class Tree
                                               Node *prevN,
                                               unsigned &tipCounter,
                                               unsigned &intNodeCounter);
-        int         calculatePatristicDistance(Node *n1, Node *n2);
 
 
         void        reindexForR();
@@ -152,7 +151,7 @@ class Tree
         virtual void    ermEvent(double ct) { return; }
         virtual void    setBranchLengths() { return; }
         virtual std::string    printNewickTree() { return "t";}
-
+        virtual int         calculatePatristicDistance(Node *n1, Node *n2);
         friend class Node;
 
 };

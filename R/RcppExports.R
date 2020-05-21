@@ -98,8 +98,8 @@ sim_sptree_bdp_time <- function(sbr, sdr, numbsim, t) {
 #'                   gdr = gene_dr,
 #'                   lgtr = transfer_rate,
 #'                   num_loci = 10)
-sim_locustree_bdp <- function(species_tree, gbr, gdr, lgtr, num_loci) {
-    .Call(`_treeducken_sim_locustree_bdp`, species_tree, gbr, gdr, lgtr, num_loci)
+sim_locustree_bdp <- function(species_tree, gbr, gdr, lgtr, num_loci, transfer_type = "random") {
+    .Call(`_treeducken_sim_locustree_bdp`, species_tree, gbr, gdr, lgtr, num_loci, transfer_type)
 }
 
 #' Simulates a cophylogenetic system using a paired birth-death process
