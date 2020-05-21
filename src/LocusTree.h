@@ -21,6 +21,7 @@ class LocusTree : public Tree
         double stopTime;
         unsigned numTaxa;
         unsigned numTransfers;
+        std::vector<std::string> speciesNames;
 
     public:
         LocusTree(unsigned nt, double stop, double gbr, double gdr, double lgtr);
@@ -35,6 +36,8 @@ class LocusTree : public Tree
         int     speciationEvent(int indx, double time, std::pair<int,int> sibs);
         void    extinctionEvent(int indx, double time);
         void    setNewIndices(int indx, std::pair<int,int> sibs, int count);
+        void    setSpeciesNames(std::vector<std::string> spNames) { speciesNames = spNames; }
+        std::vector<std::string> getSpeciesNames() {return speciesNames;}
         std::string   printNewickTree();
         void    setTreeTipNames();
         void    recTipNamer(Node *p, unsigned &copyNumber);
@@ -55,6 +58,7 @@ class LocusTree : public Tree
         std::vector< std::vector<int> >     getExtantLoci(std::set<double, std::greater<double> > epochSet);
         std::vector< std::string >    printSubTrees();
         int     postOrderTraversalStep(int indx);
+        void   setNamesBySpeciesID(std::map<int,std::string> tipMap);
 
         int    calculatePatristicDistance(Node *n1, Node *n2);
 

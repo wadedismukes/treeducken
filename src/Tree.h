@@ -136,6 +136,7 @@ class Tree
 
         void        reindexForR();
         std::vector<std::string>    getTipNames();
+        std::vector<std::string>    getNodeLabels();
         NumericMatrix getEdges();
         std::vector<double> getEdgeLengths();
         int         getNnodes() { return (int) nodes.size() - (numExtant + numExtinct);}
@@ -151,7 +152,7 @@ class Tree
         virtual void    ermEvent(double ct) { return; }
         virtual void    setBranchLengths() { return; }
         virtual std::string    printNewickTree() { return "t";}
-        virtual int         calculatePatristicDistance(Node *n1, Node *n2);
+        virtual int     calculatePatristicDistance(Node *n1, Node *n2);
         friend class Node;
 
 };

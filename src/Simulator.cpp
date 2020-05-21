@@ -905,10 +905,10 @@ bool Simulator::bdsaBDSim(){
     std::map<int, int> rToTdckenIndxMap = spTree->makeIndxMap();
     spTree->switchIndicesFirstToSecond(rToTdckenIndxMap);
     Node* spRoot = spTree->getRoot();
+    std::map<int, std::string> tipMap = spTree->makeTipMap();
 
     lociTree->getRoot()->setLindx(spRoot->getIndex());
 
-    // std::map<int,double> speciesBirthTimes = spTree->getBirthTimesFromNodes();
     std::map<int,double> speciesDeathTimes = spTree->getDeathTimesFromNodes();
     std::set<int> contempSpecies;
     std::pair<int, int> sibs;
@@ -925,7 +925,7 @@ bool Simulator::bdsaBDSim(){
         if(currentSimTime > speciesDeathTimes[(*it)]){
           isSpeciation = spTree->macroEvent((*it));
           if(isSpeciation){
-            currentSimTime = speciesDeathTimes[(*it)];
+           // currentSimTime = speciesDeathTimes[(*it)];
             sibs = spTree->preorderTraversalStep(*it);
             lociTree->speciationEvent((*it), speciesDeathTimes[(*it)], sibs);
             it = contempSpecies.erase(it);
@@ -936,7 +936,7 @@ bool Simulator::bdsaBDSim(){
           }
           else{
             if(!(spTree->getIsExtantFromIndx(*it))){
-              currentSimTime = speciesDeathTimes[(*it)];
+             // currentSimTime = speciesDeathTimes[(*it)];
               lociTree->extinctionEvent(*it, speciesDeathTimes[(*it)]);
               it = contempSpecies.erase(it);
             }
@@ -965,8 +965,9 @@ bool Simulator::bdsaBDSim(){
     }
 
     currentSimTime = stopTime;
-
     lociTree->setPresentTime(currentSimTime);
+    lociTree->setNamesBySpeciesID(tipMap);
+
     treesComplete = true;
 
     return treesComplete;

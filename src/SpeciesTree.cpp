@@ -431,6 +431,20 @@ std::map<int,int> SpeciesTree::makeIndxMap(){
 }
 
 
+std::map<int, std::string> SpeciesTree::makeTipMap(){
+  std::map<int, std::string> tipMap;
+  for(int i = 0; i < nodes.size(); i++)
+  {
+    if(nodes[i]->getIsTip())
+    {
+      int j = nodes[i]->getIndex();
+      std::string tipName = nodes[i]->getName();
+      tipMap.insert(std::pair<int, std::string>(j, tipName));
+    }
+  }
+  return tipMap;
+}
+
 std::map<int,double> SpeciesTree::getBirthTimesFromNodes(){
     int indx;
     double birthTime;

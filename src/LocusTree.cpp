@@ -386,7 +386,7 @@ void LocusTree::setPresentTime(double currentT){
             (*it)->setDeathTime(currentT);
     }
     this->setBranchLengths();
-    this->setTreeTipNames();
+   // this->setTreeTipNames();
 }
 
 std::vector<std::string> LocusTree::printSubTrees(){
@@ -474,7 +474,6 @@ void LocusTree::recTipNamer(Node *p, unsigned &copyNumber){
     }
 }
 
-
 void LocusTree::setBranchLengths(){
   double bl;
   for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it){
@@ -483,7 +482,6 @@ void LocusTree::setBranchLengths(){
     (*it)->setBranchLength(bl);
   }
 }
-
 
 std::multimap<int, double> LocusTree::getDeathTimesFromNodes(){
     int locusIndx;
@@ -496,7 +494,6 @@ std::multimap<int, double> LocusTree::getDeathTimesFromNodes(){
     }
     return deathTimeMap;
 }
-
 
 std::multimap<int, double> LocusTree::getDeathTimesFromExtinctNodes(){
     int locusIndx;
@@ -614,4 +611,43 @@ std::set<int> LocusTree::getCoalBounds(){
 
 int LocusTree::getNumberTransfers(){
     return numTransfers;
+}
+
+
+void LocusTree::setNamesBySpeciesID(std::map<int,std::string> tipMap)
+{
+  std::stringstream tn;
+  unsigned nodeIndx = numExtant + numExtinct;
+  unsigned tipIt = 0;
+  Rcout << nodeIndx << std::endl;
+
+  for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it)
+  {
+    if((*it)->getIsTip())
+    {
+      tn << (*it)->getLindx();
+      int locusTreeSpecInd = (*it)->getIndex();
+      std::string tipName = tipMap[locusTreeSpecInd] + "_" + tn.str();
+      (*it)->setName(tipName);
+      tipIt++;
+      (*it)->setIndx(tipIt);
+
+
+    }
+    else
+    {
+      if((*it)->getIsDuplication())
+      {
+        tn << (*it)->getLindx();
+        std::string nodeName = "D" + tn.str();
+        (*it)->setName(nodeName);
+      }
+      nodeIndx++;
+      (*it)->setIndx(nodeIndx);
+    }
+
+    tn.clear();
+    tn.str(std::string());
+
+  }
 }

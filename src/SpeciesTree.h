@@ -55,6 +55,7 @@ class SpeciesTree : public Tree
         void          reconstructLineageFromGSASim(Node *currN, Node *prevN, unsigned &tipCounter, unsigned &intNodeCounter);
       //  void          setSampleFromFlags();
         std::map<int,int>           makeIndxMap();
+        std::map<int, std::string>  makeTipMap();
         std::map<int,double>        getBirthTimesFromNodes();
         std::map<int,double>        getDeathTimesFromNodes();
         double                      getCurrentTimeFromExtant() {return extantNodes[0]->getDeathTime();}

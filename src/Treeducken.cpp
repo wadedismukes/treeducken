@@ -97,7 +97,8 @@ Rcpp::List sim_locus_tree(SpeciesTree* species_tree,
                                 Named("edge.length") = phySimulator->getLocusEdgeLengths(),
                                 Named("Nnode") = phySimulator->getLocusNnodes(),
                                 Named("tip.label") = phySimulator->getLocusTipNames(),
-                                Named("root.edge") = phySimulator->getLocusTreeRootEdge());
+                                Named("root.edge") = phySimulator->getLocusTreeRootEdge(),
+                                Named("node.label") = phySimulator->getLocusTreeNodeLabels());
 
         phy.attr("class") = "phylo";
 

@@ -163,7 +163,6 @@ Tree::~Tree(){
 
 
 void Tree::setTipsFromRtree(){
-    double currentTime = this->findMaxNodeHeight();
     int extTipCount = 0;
     numExtant = 0;
     numExtinct = 0;
@@ -522,6 +521,19 @@ std::vector<std::string> Tree::getTipNames(){
             tipNames.push_back((*it)->getName());
     }
     return tipNames;
+}
+
+std::vector<std::string> Tree::getNodeLabels()
+{
+    std::vector<std::string> nodeLabels;
+    for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it)
+    {
+        if((*it)->getIsDuplication())
+            nodeLabels.push_back((*it)->getName());
+        else
+            nodeLabels.push_back("");
+    }
+    return nodeLabels;
 }
 
 void Tree::setNumExtant(){

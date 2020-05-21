@@ -146,6 +146,8 @@ class Simulator
         std::vector<std::string> getLocusTipNames() { return lociTree->getTipNames(); }
         std::vector<std::string> getGeneTipNames(int j) { return geneTrees[j]->getTipNames(); }
 
+        std::vector<std::string> getLocusTreeNodeLabels() { return lociTree->getNodeLabels(); }
+
         double    getSpeciesTreeRootEdge();
         double    getLocusTreeRootEdge();
         double    getSymbiontTreeRootEdge();
