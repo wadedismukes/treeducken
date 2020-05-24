@@ -7,7 +7,7 @@
 \usage{
 parafit_stat(host_tr, symb_tr, assoc_mat)
 
-parafit_test(host_tr, symb_tr, assoc_mat, D, reps = 999)
+parafit_test(host_tr, symb_tr, assoc_mat, D, reps = 99)
 }
 \arguments{
 \item{host_tr}{The host tree of class "phy"}
@@ -45,14 +45,14 @@ only reason it is implemented here in treeducken (similar to `treeducken::cherri
 }}
 
 \examples{
-tr_pair <- sim_cophylo_bdp(hbr_=0.1,
-                          hdr_=0.05,
-                          sdr_=0.1,
-                          host_exp_rate_=0.4,
-                          sbr_=0.05,
-                          cosp_rate_=1.0,
-                          numbsim_=100,
-                          timeToSimTo_=1)
+tr_pair <- sim_cophylo_bdp(hbr=0.1,
+                          hdr=0.05,
+                          sdr=0.1,
+                          host_exp_rate=0.4,
+                          sbr = 0.05,
+                          cosp_rate = 1.0,
+                          numbsim = 100,
+                          time_to_sim =1)
 # maybe we are interested in only cophylogenetic object 42
 ht <- tr_pair[[42]]$host_tree
 st <- tr_pair[[42]]$symb_tree

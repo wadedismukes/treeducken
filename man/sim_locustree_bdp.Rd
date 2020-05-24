@@ -4,7 +4,14 @@
 \alias{sim_locustree_bdp}
 \title{Simulates locus tree using constant rate birth-death-transfer process}
 \usage{
-sim_locustree_bdp(species_tree, gbr, gdr, lgtr, num_loci)
+sim_locustree_bdp(
+  species_tree,
+  gbr,
+  gdr,
+  lgtr,
+  num_loci,
+  transfer_type = "random"
+)
 }
 \arguments{
 \item{species_tree}{species tree to simulate along}
@@ -16,6 +23,8 @@ sim_locustree_bdp(species_tree, gbr, gdr, lgtr, num_loci)
 \item{lgtr}{gene trasnfer rate}
 
 \item{num_loci}{number of locus trees to simulate}
+
+\item{transfer_type}{The type of transfer input. Acceptable options: "cladewise" or "random"}
 }
 \value{
 List of objects of the tree class (as implemented in APE)
@@ -23,6 +32,17 @@ List of objects of the tree class (as implemented in APE)
 \description{
 Given a species tree simulates a locus or gene family tree along
     the species tree.
+}
+\details{
+Given a species tree will perform a birth-death process coupled with transfer.
+The simulation runs along the species tree speciating and going extinct in addition to locus tree birth and deaths.
+Thus with parameters set to 0.0 a tree identical to the species tree is returned (it is relabele however).
+
+Transfers are implemented as a birth-death process.
+One descendant lineage retains its species identity the other gains a new identity.
+At present, two types of transfers are implemented: "random" an "cladewise".
+The random transfer mode transfers one randomly chooses a contemporaneous lineage.
+Cladewise transfers choose lineages based on relatedness with more closely related lineages being more likely.
 }
 \examples{
 # first simulate a species tree
@@ -34,7 +54,7 @@ numb_extant_tips <- 4
 # numb_extant_tips * 100 tips counting each time we have a tree with 10 tips
 # then randomly picks one of those trees
 
-sp_tree <- sim_sptree_bdp(sbr_ = lambda,
+sp_tree <- sim_sptree_bdp(sbr = lambda,
                 sdr = mu,
                 numbsim = numb_replicates,
                 n_tips = numb_extant_tips)
@@ -42,7 +62,7 @@ sp_tree <- sim_sptree_bdp(sbr_ = lambda,
 gene_br <- 1.0
 gene_dr <- 0.2
 transfer_rate <- 0.2
-sim_locustree_bdp(species_tree = sp_tree,
+sim_locustree_bdp(species_tree = sp_tree[[1]],
                   gbr = gene_br,
                   gdr = gene_dr,
                   lgtr = transfer_rate,

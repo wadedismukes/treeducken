@@ -51,8 +51,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // sim_cophylo_bdp
-Rcpp::List sim_cophylo_bdp(SEXP hbr, SEXP hdr, SEXP sbr, SEXP sdr, SEXP host_exp_rate, SEXP cosp_rate, SEXP timeToSimTo, SEXP numbsim);
-RcppExport SEXP _treeducken_sim_cophylo_bdp(SEXP hbrSEXP, SEXP hdrSEXP, SEXP sbrSEXP, SEXP sdrSEXP, SEXP host_exp_rateSEXP, SEXP cosp_rateSEXP, SEXP timeToSimToSEXP, SEXP numbsimSEXP) {
+Rcpp::List sim_cophylo_bdp(SEXP hbr, SEXP hdr, SEXP sbr, SEXP sdr, SEXP host_exp_rate, SEXP cosp_rate, SEXP time_to_sim, SEXP numbsim);
+RcppExport SEXP _treeducken_sim_cophylo_bdp(SEXP hbrSEXP, SEXP hdrSEXP, SEXP sbrSEXP, SEXP sdrSEXP, SEXP host_exp_rateSEXP, SEXP cosp_rateSEXP, SEXP time_to_simSEXP, SEXP numbsimSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -62,9 +62,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type sdr(sdrSEXP);
     Rcpp::traits::input_parameter< SEXP >::type host_exp_rate(host_exp_rateSEXP);
     Rcpp::traits::input_parameter< SEXP >::type cosp_rate(cosp_rateSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type timeToSimTo(timeToSimToSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type time_to_sim(time_to_simSEXP);
     Rcpp::traits::input_parameter< SEXP >::type numbsim(numbsimSEXP);
-    rcpp_result_gen = Rcpp::wrap(sim_cophylo_bdp(hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, timeToSimTo, numbsim));
+    rcpp_result_gen = Rcpp::wrap(sim_cophylo_bdp(hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_to_sim, numbsim));
     return rcpp_result_gen;
 END_RCPP
 }

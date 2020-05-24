@@ -62,7 +62,6 @@ event_history.multiCophylo <- function(cophy){
 #' host_tree, symb_tree, association_mat, and event_history.
 #'
 #' @param object An object of class `cophylo`
-#' @param cophy An object of class `cophylo`
 #' @param ... Further arguments used in generic classes
 #'
 #' @details The summary for a cophylogenetic set outputs a summary of the host tree and the symbiont tree.
@@ -83,87 +82,98 @@ event_history.multiCophylo <- function(cophy){
 #'                                   cosp_rate = c_lambda,
 #'                                   sdr = s_mu,
 #'                                   host_exp_rate = s_her,
-#'                                   timeToSimTo = 2.0,
+#'                                   time_to_sim = 1.0,
 #'                                   numbsim = 1)
 #' summary(host_symb_sets[[1]])
 #' @export
 summary.cophylo <- function(object, ...){
+        cat("Null tree set.")
     cat("\nSet of host and symbiont tree:", deparse(substitute(object)), "\n\n")
     # below is a modified version of ape's summary.phylo function
-    ht_tips <- length(object$host_tree$tip.label)
-    ht_nodes <- object$host_tree$Nnode
-    cat("\nHost tree: ")
-    cat("  Number of tips:", ht_tips, "\n")
-    cat("  Number of nodes:", ht_nodes, "\n")
-    if (is.null(object$host_tree$edge.length))
-        cat("  No branch lengths.\n")
-    else {
-        cat("  Branch lengths:\n")
-        print(summary(object$host_tree$edge.length)[-4])
-    }
-    if (is.null(object$host_tree$root.edge))
-        cat("  No root edge.\n")
+    if(is.null(object$host_tree))
+        cat("\n Host tree is not a proper tree.\n")
     else
-        cat("  Root edge:", object$host_tree$root.edge, "\n")
-    if (ht_tips <= 10) {
-        cat("  Tip labels:", object$host_tree$tip.label[1], "\n")
-        cat(paste("             ", object$host_tree$tip.label[-1]), sep = "\n")
-    }
-    else {
-        cat("  First ten tip labels:", object$host_tree$tip.label[1], "\n")
-        cat(paste("                       ", object$host_tree$tip.label[2:10]), sep = "\n")
-    }
-    if (is.null(object$node.label))
-        cat("  No node labels.\n")
-    else {
-        if (ht_nodes <= 10) {
-            cat("  Node labels:", object$host_tree$node.label[1], "\n")
-            cat(paste("              ", object$host_tree$node.label[-1]), sep = "\n")
+    {
+        ht_tips <- length(object$host_tree$tip.label)
+        ht_nodes <- object$host_tree$Nnode
+        cat("\nHost tree: ")
+        cat("  Number of tips:", ht_tips, "\n")
+        cat("  Number of nodes:", ht_nodes, "\n")
+        if (is.null(object$host_tree$edge.length))
+            cat("  No branch lengths.\n")
+        else {
+            cat("  Branch lengths:\n")
+            print(summary(object$host_tree$edge.length)[-4])
+        }
+        if (is.null(object$host_tree$root.edge))
+            cat("  No root edge.\n")
+        else
+            cat("  Root edge:", object$host_tree$root.edge, "\n")
+        if (ht_tips <= 10) {
+            cat("  Tip labels:", object$host_tree$tip.label[1], "\n")
+            cat(paste("             ", object$host_tree$tip.label[-1]), sep = "\n")
         }
         else {
-            cat("  First ten node labels:", object$host_tree$node.label[1], "\n")
-            cat(paste("                        ", object$host_tree$node.label[2:10]), sep = "\n")
+            cat("  First ten tip labels:", object$host_tree$tip.label[1], "\n")
+            cat(paste("                       ", object$host_tree$tip.label[2:10]), sep = "\n")
+        }
+        if (is.null(object$node.label))
+            cat("  No node labels.\n")
+        else {
+            if (ht_nodes <= 10) {
+                cat("  Node labels:", object$host_tree$node.label[1], "\n")
+                cat(paste("              ", object$host_tree$node.label[-1]), sep = "\n")
+            }
+            else {
+                cat("  First ten node labels:", object$host_tree$node.label[1], "\n")
+                cat(paste("                        ", object$host_tree$node.label[2:10]), sep = "\n")
 
+            }
         }
     }
     # symbiont tree summary
-    st_tips <- length(object$symb_tree$tip.label)
-    st_nodes <- object$symb_tree$Nnode
-    cat("\n\nSymb tree: ")
-    cat("  Number of tips:", st_tips, "\n")
-    cat("  Number of nodes:", st_nodes, "\n")
-    if (is.null(object$symb_tree$edge.length))
-        cat("  No branch lengths.\n")
-    else {
-        cat("  Branch lengths:\n")
-        print(summary(object$symb_tree$edge.length)[-4])
+    if(is.null(object$symb_tree)){
+        cat("\n Host tree is not a proper tree.\n")
     }
-    if (is.null(object$symb_tree$root.edge))
-        cat("  No root edge.\n")
     else
-        cat("  Root edge:", object$symb_tree$root.edge, "\n")
-    if (st_tips <= 10) {
-        cat("  Tip labels:", object$symb_tree$tip.label[1], "\n")
-        cat(paste("             ", object$symb_tree$tip.label[-1]), sep = "\n")
-    }
-    else {
-        cat("  First ten tip labels:", object$symb_tree$tip.label[1], "\n")
-        cat(paste("                       ", object$symb_tree$tip.label[2:10]), sep = "\n")
-    }
-    if (is.null(object$node.label))
-        cat("  No node labels.\n")
-    else {
-        if (st_nodes <= 10) {
-            cat("  Node labels:", object$symb_tree$node.label[1], "\n")
-            cat(paste("              ", object$symb_tree$node.label[-1]), sep = "\n")
+    {
+        st_tips <- length(object$symb_tree$tip.label)
+        st_nodes <- object$symb_tree$Nnode
+        cat("\n\nSymb tree: ")
+        cat("  Number of tips:", st_tips, "\n")
+        cat("  Number of nodes:", st_nodes, "\n")
+        if (is.null(object$symb_tree$edge.length))
+            cat("  No branch lengths.\n")
+        else {
+            cat("  Branch lengths:\n")
+            print(summary(object$symb_tree$edge.length)[-4])
+        }
+        if (is.null(object$symb_tree$root.edge))
+            cat("  No root edge.\n")
+        else
+            cat("  Root edge:", object$symb_tree$root.edge, "\n")
+        if (st_tips <= 10) {
+            cat("  Tip labels:", object$symb_tree$tip.label[1], "\n")
+            cat(paste("             ", object$symb_tree$tip.label[-1]), sep = "\n")
         }
         else {
-            cat("  First ten node labels:", object$symb_tree$node.label[1], "\n")
-            cat(paste("                        ", object$symb_tree$node.label[2:10]), sep = "\n")
+            cat("  First ten tip labels:", object$symb_tree$tip.label[1], "\n")
+            cat(paste("                       ", object$symb_tree$tip.label[2:10]), sep = "\n")
+        }
+        if (is.null(object$node.label))
+            cat("  No node labels.\n")
+        else {
+            if (st_nodes <= 10) {
+                cat("  Node labels:", object$symb_tree$node.label[1], "\n")
+                cat(paste("              ", object$symb_tree$node.label[-1]), sep = "\n")
+            }
+            else {
+                cat("  First ten node labels:", object$symb_tree$node.label[1], "\n")
+                cat(paste("                        ", object$symb_tree$node.label[2:10]), sep = "\n")
 
+            }
         }
     }
-
 
     cat("\n\nAssociation Matrix")
     cat("\n There are ", nrow(object$association_mat), " rows (i.e. extant symbionts.")
@@ -180,7 +190,6 @@ summary.cophylo <- function(object, ...){
 #' @description Prints a cophylogenetic set or a list of cophylogenetic sets.
 #'
 #' @param x An object of class `cophylo` or class `multiCophylo`
-#' @param object An object of class `cophylo` or class `multiCophylo`
 #' @param cophy An object of class `cophylo`
 #' @param ... Further arguments used in generic classes
 #'
@@ -201,7 +210,7 @@ summary.cophylo <- function(object, ...){
 #'                                   cosp_rate = c_lambda,
 #'                                   sdr = s_mu,
 #'                                   host_exp_rate = s_her,
-#'                                   timeToSimTo = 2.0,
+#'                                   time_to_sim = 1.0,
 #'                                   numbsim = 4)
 #' print(host_symb_sets[[1]])
 #' host_tree(host_symb_sets[[1]])
@@ -263,7 +272,7 @@ print.multiCophylo <- function(x, details = FALSE, ...){
 #'                                   cosp_rate = c_lambda,
 #'                                   sdr = s_mu,
 #'                                   host_exp_rate = s_her,
-#'                                   timeToSimTo = 2.0,
+#'                                   time_to_sim = 1.0,
 #'                                   numbsim = 2)
 #' str(host_symb_sets)
 #'
@@ -295,7 +304,7 @@ str.multiCophylo <- function(object, ...)
 #'                                   cosp_rate = c_lambda,
 #'                                   sdr = s_mu,
 #'                                   host_exp_rate = s_her,
-#'                                   timeToSimTo = 2.0,
+#'                                   time_to_sim = 1.0,
 #'                                   numbsim = 2)
 #' host_symb_sets2 <- sim_cophylo_bdp(hbr = h_lambda,
 #'                                   hdr = h_mu,
@@ -303,7 +312,7 @@ str.multiCophylo <- function(object, ...)
 #'                                   cosp_rate = c_lambda,
 #'                                   sdr = s_mu,
 #'                                   host_exp_rate = s_her,
-#'                                   timeToSimTo = 2.0,
+#'                                   time_to_sim = 1.0,
 #'                                   numbsim = 2)
 #' multi_host_symb <- c(host_symb_sets[[1]], host_symb_sets2[[2]])
 #' multi_host_symb_alt <- c(host_symb_sets, host_symb_sets2)

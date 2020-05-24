@@ -26,11 +26,26 @@
 #' @seealso is.cophylo
 #'
 #' @examples
-#' # maybe have the gopher dataset here and the fig one and convert them into the
-#' # data structure. would be a nice proof of concept
-#'
-#TODO: add gopher dataset, and other classic cophylo datasets
-as.cophylo <- function(hostTree, symbTree, assocMat, eventHistory = NULL){
+#' gopher_lice_map_path <- system.file("extdata",
+#'                                   "gopher_lice_mapping.txt",
+#'                                    package = "treeducken")
+#' gopher_lice_map <- read.table(gopher_lice_map_path,
+#'                               stringsAsFactors = FALSE,
+#'                               header = TRUE)
+#' gopher_tree_path <- system.file("extdata",
+#'                                 "gophers_bd.tre",
+#'                                  package = "treeducken")
+#' gopher_lice_assoc_matrix <- convert_assoc_table_to_matrix(gopher_lice_map)
+#' gopher_tree <- ape::read.nexus(gopher_tree_path)
+#' lice_tree_path <- system.file("extdata",
+#'                               "lice_bd.tre",
+#'                                package = "treeducken")
+#' lice_tree <- ape::read.nexus(lice_tree_path)
+#' gopher_lice_cophylo <- convert_to_cophylo(hostTree = gopher_tree,
+#'                                          symbTree = lice_tree,
+#'                                          assocMat = gopher_lice_assoc_matrix)
+
+convert_to_cophylo <- function(hostTree, symbTree, assocMat, eventHistory = NULL){
     if(!(identical(class(hostTree), "phylo")))
         stop("`hostTree` input is not of class `phylo`")
     if(!(identical(class(symbTree), "phylo")))
@@ -55,10 +70,4 @@ as.cophylo <- function(hostTree, symbTree, assocMat, eventHistory = NULL){
                     "event_history" = eventHistory)
     class(cophylo) <- "cophylo"
     cophylo
-}
-
-
-as.cophylo <- function(x){
-    if (identical(class(x), "cophylo")) return(x)
-    UseMethod("as.cophylo")
 }

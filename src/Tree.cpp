@@ -528,10 +528,12 @@ std::vector<std::string> Tree::getNodeLabels()
     std::vector<std::string> nodeLabels;
     for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it)
     {
-        if((*it)->getIsDuplication())
-            nodeLabels.push_back((*it)->getName());
-        else
-            nodeLabels.push_back("");
+        if(!((*it)->getIsTip())){
+            if((*it)->getIsDuplication())
+                nodeLabels.push_back((*it)->getName());
+            else
+                nodeLabels.push_back("");
+        }
     }
     return nodeLabels;
 }

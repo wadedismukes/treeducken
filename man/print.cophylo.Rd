@@ -42,7 +42,7 @@ association_mat(cophy)
 \arguments{
 \item{cophy}{An object of class `cophylo`}
 
-\item{x, object}{An object of class `cophylo` or class `multiCophylo`}
+\item{x}{An object of class `cophylo` or class `multiCophylo`}
 
 \item{...}{Further arguments used in generic classes}
 
@@ -93,7 +93,7 @@ host_symb_sets <- sim_cophylo_bdp(hbr = h_lambda,
                                   cosp_rate = c_lambda,
                                   sdr = s_mu,
                                   host_exp_rate = s_her,
-                                  timeToSimTo = 2.0,
+                                  time_to_sim = 1.0,
                                   numbsim = 4)
 print(host_symb_sets[[1]])
 host_tree(host_symb_sets[[1]])

@@ -13,7 +13,7 @@ event_history(cophy)
 \method{summary}{cophylo}(object, ...)
 }
 \arguments{
-\item{cophy}{An object of class `cophylo`}
+\item{cophy}{Cophylogenetic set}
 
 \item{object}{An object of class `cophylo`}
 
@@ -51,7 +51,7 @@ host_symb_sets <- sim_cophylo_bdp(hbr = h_lambda,
                                   cosp_rate = c_lambda,
                                   sdr = s_mu,
                                   host_exp_rate = s_her,
-                                  timeToSimTo = 2.0,
+                                  time_to_sim = 1.0,
                                   numbsim = 1)
 summary(host_symb_sets[[1]])
 }

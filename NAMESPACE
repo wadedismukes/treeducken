@@ -1,6 +1,7 @@
 useDynLib(treeducken, .registration=TRUE)
 exportPattern("^[[:alpha:]]+")
 importFrom(Rcpp, evalCpp)
+importFrom("utils", "str")
 
 
 S3method("[", multiCophylo)
@@ -23,6 +24,6 @@ S3method(host_tree, cophylo)
 S3method(symb_tree, cophylo)
 S3method(association_mat, cophylo)
 S3method(event_history, cophylo)
-
 S3method(print, cophylo)
 S3method(summary, cophylo)
+S3method(plot, cophylo)

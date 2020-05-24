@@ -11,7 +11,7 @@ sim_cophylo_bdp(
   sdr,
   host_exp_rate,
   cosp_rate,
-  timeToSimTo,
+  time_to_sim,
   numbsim
 )
 }
@@ -28,7 +28,7 @@ sim_cophylo_bdp(
 
 \item{cosp_rate}{cospeciation rate}
 
-\item{timeToSimTo}{time units to simulate until}
+\item{time_to_sim}{time units to simulate until}
 
 \item{numbsim}{number of replicates}
 }
@@ -70,6 +70,6 @@ cophylo_pair <- sim_cophylo_bdp(hbr = host_lambda,
                            sdr = symb_mu,
                            sbr = symb_lambda,
                            numbsim = numb_replicates,
-                           timeToSimTo = time)
+                           time_to_sim = time)
 
 }

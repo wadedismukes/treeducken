@@ -18,13 +18,13 @@ This function plots a host and symbiont tree given the object returned by
 }
 \examples{
 
-tr_pair <- sim_cophylo_bdp(hbr_=0.1,
-                           hdr_=0.05,
-                           sdr_=0.1,
-                           host_exp_rate_=0.4,
-                           sbr_=0.05,
-                           cosp_rate_=1.0,
-                           numbsim_=10,
-                           timeToSimTo_=4)
-plot_paired_trees_with_associations(tr_pair[[1]])
+tr_pair <- sim_cophylo_bdp(hbr = 0.1,
+                           hdr = 0.05,
+                           sdr = 0.1,
+                           host_exp_rate = 0.4,
+                           sbr = 0.05,
+                           cosp_rate =1.0,
+                           numbsim = 10,
+                           time_to_sim = 2)
+# plot_paired_trees_with_associations(tr_pair[[1]])
 }

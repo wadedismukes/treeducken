@@ -39,7 +39,7 @@ genetree_summary_stat <- function(locus_tree_gene_tree_obj, locus_tree_indx){
         gamma[i] <- ape::gammaStat(genetrees[[i]])
         cherries[i] <- treeducken::cherries(genetrees[[i]])
         sackin[i] <- apTreeshape::sackin(apTreeshape::as.treeshape.phylo(genetrees[[i]]))
-        tmrca[i] <- max(phytools::nodeHeights(genetrees[[i]]))
+        tmrca[i] <- max(ape::node.depth.edgelength(genetrees[[i]]))
     }
     data.frame(colless, sackin, tmrca, gamma_locus, gamma, cherries)
 }

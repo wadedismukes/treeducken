@@ -99,7 +99,17 @@ Rcpp::List sim_sptree_bdp_time(SEXP sbr, SEXP sdr, SEXP numbsim, SEXP t){
 //' @param gdr gene death rate
 //' @param lgtr gene trasnfer rate
 //' @param num_loci number of locus trees to simulate
+//' @param transfer_type The type of transfer input. Acceptable options: "cladewise" or "random"
 //' @return List of objects of the tree class (as implemented in APE)
+//' @details Given a species tree will perform a birth-death process coupled with transfer.
+//' The simulation runs along the species tree speciating and going extinct in addition to locus tree birth and deaths.
+//' Thus with parameters set to 0.0 a tree identical to the species tree is returned (it is relabele however).
+//'
+//' Transfers are implemented as a birth-death process.
+//' One descendant lineage retains its species identity the other gains a new identity.
+//' At present, two types of transfers are implemented: "random" an "cladewise".
+//' The random transfer mode transfers one randomly chooses a contemporaneous lineage.
+//' Cladewise transfers choose lineages based on relatedness with more closely related lineages being more likely.
 //' @references
 //' Rasmussen MD, Kellis M. Unified modeling of gene duplication, loss, and
 //'     coalescence using a locus tree. Genome Res. 2012;22(4):755–765.
@@ -114,7 +124,7 @@ Rcpp::List sim_sptree_bdp_time(SEXP sbr, SEXP sdr, SEXP numbsim, SEXP t){
 //' # numb_extant_tips * 100 tips counting each time we have a tree with 10 tips
 //' # then randomly picks one of those trees
 //'
-//' sp_tree <- sim_sptree_bdp(sbr_ = lambda,
+//' sp_tree <- sim_sptree_bdp(sbr = lambda,
 //'                 sdr = mu,
 //'                 numbsim = numb_replicates,
 //'                 n_tips = numb_extant_tips)
@@ -122,7 +132,7 @@ Rcpp::List sim_sptree_bdp_time(SEXP sbr, SEXP sdr, SEXP numbsim, SEXP t){
 //' gene_br <- 1.0
 //' gene_dr <- 0.2
 //' transfer_rate <- 0.2
-//' sim_locustree_bdp(species_tree = sp_tree,
+//' sim_locustree_bdp(species_tree = sp_tree[[1]],
 //'                   gbr = gene_br,
 //'                   gdr = gene_dr,
 //'                   lgtr = transfer_rate,
@@ -181,7 +191,7 @@ Rcpp::List sim_locustree_bdp(Rcpp::List species_tree,
 //' @param sdr symbiont tree death rate
 //' @param host_exp_rate host shift speciation rate
 //' @param cosp_rate cospeciation rate
-//' @param timeToSimTo time units to simulate until
+//' @param time_to_sim time units to simulate until
 //' @param numbsim number of replicates
 //' @return A list containing the `host_tree`, the `symbiont_tree`, the
 //'     association matrix at present, and the history of events that have
@@ -204,7 +214,7 @@ Rcpp::List sim_locustree_bdp(Rcpp::List species_tree,
 //'                            sdr = symb_mu,
 //'                            sbr = symb_lambda,
 //'                            numbsim = numb_replicates,
-//'                            timeToSimTo = time)
+//'                            time_to_sim = time)
 //'
 // [[Rcpp::export]]
 Rcpp::List sim_cophylo_bdp(SEXP hbr,
@@ -213,7 +223,7 @@ Rcpp::List sim_cophylo_bdp(SEXP hbr,
                            SEXP sdr,
                            SEXP host_exp_rate,
                            SEXP cosp_rate,
-                           SEXP timeToSimTo,
+                           SEXP time_to_sim,
                            SEXP numbsim){
     double hbr_ = as<double>(hbr);
     double hdr_ = as<double>(hdr);
@@ -221,7 +231,7 @@ Rcpp::List sim_cophylo_bdp(SEXP hbr,
     double sdr_ = as<double>(sdr);
     double cosp_rate_ = as<double>(cosp_rate);
     double host_exp_rate_ = as<double>(host_exp_rate);
-    double timeToSimTo_ = as<double>(timeToSimTo);
+    double timeToSimTo_ = as<double>(time_to_sim);
     int numbsim_ = as<int>(numbsim);
     RNGScope scope;
     if(hbr_ < 0.0){

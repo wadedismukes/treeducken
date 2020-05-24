@@ -36,7 +36,7 @@ host_symb_sets <-  sim_cophylo_bdp(hbr = h_lambda,
                                   cosp_rate = c_lambda,
                                   sdr = s_mu,
                                   host_exp_rate = s_her,
-                                  timeToSimTo = 2.0,
+                                  time_to_sim = 1.0,
                                   numbsim = 2)
 host_symb_sets2 <- sim_cophylo_bdp(hbr = h_lambda,
                                   hdr = h_mu,
@@ -44,7 +44,7 @@ host_symb_sets2 <- sim_cophylo_bdp(hbr = h_lambda,
                                   cosp_rate = c_lambda,
                                   sdr = s_mu,
                                   host_exp_rate = s_her,
-                                  timeToSimTo = 2.0,
+                                  time_to_sim = 1.0,
                                   numbsim = 2)
 multi_host_symb <- c(host_symb_sets[[1]], host_symb_sets2[[2]])
 multi_host_symb_alt <- c(host_symb_sets, host_symb_sets2)

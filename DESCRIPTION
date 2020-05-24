@@ -15,7 +15,6 @@ Imports:
     ape,
     apTreeshape,
     geiger,
-    phytools
 LinkingTo: 
     Rcpp,
     RcppArmadillo

@@ -619,7 +619,6 @@ void LocusTree::setNamesBySpeciesID(std::map<int,std::string> tipMap)
   std::stringstream tn;
   unsigned nodeIndx = numExtant + numExtinct;
   unsigned tipIt = 0;
-  Rcout << nodeIndx << std::endl;
 
   for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it)
   {
@@ -628,6 +627,8 @@ void LocusTree::setNamesBySpeciesID(std::map<int,std::string> tipMap)
       tn << (*it)->getLindx();
       int locusTreeSpecInd = (*it)->getIndex();
       std::string tipName = tipMap[locusTreeSpecInd] + "_" + tn.str();
+      if((*it)->getIsExtinct() && tipName.front() != 'X')
+        tipName.insert(0, "X");
       (*it)->setName(tipName);
       tipIt++;
       (*it)->setIndx(tipIt);
@@ -636,14 +637,15 @@ void LocusTree::setNamesBySpeciesID(std::map<int,std::string> tipMap)
     }
     else
     {
+      nodeIndx++;
+      (*it)->setIndx(nodeIndx);
       if((*it)->getIsDuplication())
       {
         tn << (*it)->getLindx();
         std::string nodeName = "D" + tn.str();
         (*it)->setName(nodeName);
       }
-      nodeIndx++;
-      (*it)->setIndx(nodeIndx);
+
     }
 
     tn.clear();

@@ -1,1 +1,0 @@
--r 10 -sbr 0.1 -sdr 0.05 -nt 10 -nl 1 -gbr 0.0 -gdr 0.0 -lgtr 0.0 -o popsize-100 -ng 10 -ne 100 -ipp 1

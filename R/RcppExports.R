@@ -70,7 +70,17 @@ sim_sptree_bdp_time <- function(sbr, sdr, numbsim, t) {
 #' @param gdr gene death rate
 #' @param lgtr gene trasnfer rate
 #' @param num_loci number of locus trees to simulate
+#' @param transfer_type The type of transfer input. Acceptable options: "cladewise" or "random"
 #' @return List of objects of the tree class (as implemented in APE)
+#' @details Given a species tree will perform a birth-death process coupled with transfer.
+#' The simulation runs along the species tree speciating and going extinct in addition to locus tree birth and deaths.
+#' Thus with parameters set to 0.0 a tree identical to the species tree is returned (it is relabele however).
+#'
+#' Transfers are implemented as a birth-death process.
+#' One descendant lineage retains its species identity the other gains a new identity.
+#' At present, two types of transfers are implemented: "random" an "cladewise".
+#' The random transfer mode transfers one randomly chooses a contemporaneous lineage.
+#' Cladewise transfers choose lineages based on relatedness with more closely related lineages being more likely.
 #' @references
 #' Rasmussen MD, Kellis M. Unified modeling of gene duplication, loss, and
 #'     coalescence using a locus tree. Genome Res. 2012;22(4):755–765.
@@ -85,7 +95,7 @@ sim_sptree_bdp_time <- function(sbr, sdr, numbsim, t) {
 #' # numb_extant_tips * 100 tips counting each time we have a tree with 10 tips
 #' # then randomly picks one of those trees
 #'
-#' sp_tree <- sim_sptree_bdp(sbr_ = lambda,
+#' sp_tree <- sim_sptree_bdp(sbr = lambda,
 #'                 sdr = mu,
 #'                 numbsim = numb_replicates,
 #'                 n_tips = numb_extant_tips)
@@ -93,7 +103,7 @@ sim_sptree_bdp_time <- function(sbr, sdr, numbsim, t) {
 #' gene_br <- 1.0
 #' gene_dr <- 0.2
 #' transfer_rate <- 0.2
-#' sim_locustree_bdp(species_tree = sp_tree,
+#' sim_locustree_bdp(species_tree = sp_tree[[1]],
 #'                   gbr = gene_br,
 #'                   gdr = gene_dr,
 #'                   lgtr = transfer_rate,
@@ -120,7 +130,7 @@ sim_locustree_bdp <- function(species_tree, gbr, gdr, lgtr, num_loci, transfer_t
 #' @param sdr symbiont tree death rate
 #' @param host_exp_rate host shift speciation rate
 #' @param cosp_rate cospeciation rate
-#' @param timeToSimTo time units to simulate until
+#' @param time_to_sim time units to simulate until
 #' @param numbsim number of replicates
 #' @return A list containing the `host_tree`, the `symbiont_tree`, the
 #'     association matrix at present, and the history of events that have
@@ -143,10 +153,10 @@ sim_locustree_bdp <- function(species_tree, gbr, gdr, lgtr, num_loci, transfer_t
 #'                            sdr = symb_mu,
 #'                            sbr = symb_lambda,
 #'                            numbsim = numb_replicates,
-#'                            timeToSimTo = time)
+#'                            time_to_sim = time)
 #'
-sim_cophylo_bdp <- function(hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, timeToSimTo, numbsim) {
-    .Call(`_treeducken_sim_cophylo_bdp`, hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, timeToSimTo, numbsim)
+sim_cophylo_bdp <- function(hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_to_sim, numbsim) {
+    .Call(`_treeducken_sim_cophylo_bdp`, hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_to_sim, numbsim)
 }
 
 #' Simulate locus tree within species tree and gene trees within locus tree

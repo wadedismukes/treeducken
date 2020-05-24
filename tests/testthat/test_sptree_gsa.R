@@ -14,7 +14,7 @@ get_number_extant_tips <- function(tr){
         pruned_tr <- geiger::drop.extinct(tr[[i]], tol = 0.001)
         tip_vec[i] <- length(pruned_tr$tip.label)
     }
-    mean(tip_vec)
+    unique(tip_vec)
 }
 
 # test that tree has correct extant tips (gsa)
@@ -34,18 +34,18 @@ test_that("sim_sptree_bdp_time produces the right number of trees", {
 
 
 get_length_tree <- function(tr){
-    max(apTreeshape:::nodes_depths_ordonnes(tr)) + tr$root.edge
+    max(ape::node.depth.edgelength(tr)) + tr$root.edge
 }
 
 get_all_tree_lengths <- function(multiTree){
-    sapply(multiTree, get_length_tree)
+    min(sapply(multiTree, get_length_tree))
 }
 
 # test that tree has correct length (simple)
 test_that("sim_sptree_bdp_time produces the right length trees", {
-    expect_equal(unique(get_all_tree_lengths(sim_sptree_bdp_time(1.0, 0.5, 1000, 1.0))), 1.0)
-    expect_equal(unique(get_all_tree_lengths(sim_sptree_bdp_time(1.0, 0.5, 1000, 2.0))), 2.0)
-    expect_equal(unique(get_all_tree_lengths(sim_sptree_bdp_time(1.0, 0.5, 1000, 3.0))), 3.0)
+    expect_equal(get_all_tree_lengths(sim_sptree_bdp_time(1.0, 0.5, 1000, 1.0)), 1.0)
+    expect_equal(get_all_tree_lengths(sim_sptree_bdp_time(1.0, 0.5, 1000, 2.0)), 2.0)
+    expect_equal(get_all_tree_lengths(sim_sptree_bdp_time(1.0, 0.5, 1000, 3.0)), 3.0)
 })
 
 # test that species tree produces tree within correct distribution (simple)

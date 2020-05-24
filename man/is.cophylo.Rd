@@ -42,7 +42,7 @@ host_symb_sets <- sim_cophylo_bdp(hbr = h_lambda,
                                   cosp_rate = c_lambda,
                                   sdr = s_mu,
                                   host_exp_rate = s_her,
-                                  timeToSimTo = 2.0,
+                                  time_to_sim = 2.0,
                                   numbsim = 1)
 is.cophylo(host_symb_sets[[1]])
 is.multiCophylo(host_symb_sets)
