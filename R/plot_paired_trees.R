@@ -3,7 +3,8 @@
 #' This function plots a host and symbiont tree given the object returned by
 #' `sim_cophylo_bdp`.
 #'
-#' @param tr_pair_obj a tree pair object returned by `sim_cophylo_bdp`
+#' @param x a tree pair object returned by `sim_cophylo_bdp`
+#' @param ... other plotting parameters
 #' @return a plot of the host and symbiont tree with extant interactions
 #' @examples
 #'
@@ -16,9 +17,9 @@
 #'                            numbsim = 10,
 #'                            time_to_sim = 2)
 #' plot.cophylo(tr_pair[[1]])
-plot.cophylo <- function(tr_pair_obj){
-    host_tree <- geiger::drop.extinct(tr_pair_obj$host_tree, tol= 0.001)
-    symb_tree <- geiger::drop.extinct(tr_pair_obj$symb_tree, tol = 0.001)
+plot.cophylo <- function(x, ...){
+    host_tree <- geiger::drop.extinct(x$host_tree, tol= 0.001)
+    symb_tree <- geiger::drop.extinct(x$symb_tree, tol = 0.001)
     assoc_mat <- tr_pair_obj$association_mat
     rownames(assoc_mat) <- symb_tree$tip.label
     colnames(assoc_mat) <- host_tree$tip.label
