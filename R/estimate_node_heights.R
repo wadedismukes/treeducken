@@ -16,6 +16,7 @@
 #' ext_rate <- 0.5
 #' time <- 2
 #' calculate_expected_leaves_sptree(spec_rate, ext_rate, time)
+#' @export
 calculate_expected_leaves_sptree <- function(lambda,
                                       mu,
                                       t){
@@ -64,6 +65,7 @@ calculate_expected_leaves_sptree <- function(lambda,
 #'                                     gene_birth_rate,
 #'                                     gene_death_rate,
 #'                                     num_species)
+#' @export
 calculate_expected_leaves_locustree <- function(t,
                                                 dup_rate,
                                                 loss_rate,
@@ -116,6 +118,7 @@ calculate_expected_leaves_locustree <- function(t,
 #' estimate_node_heights(lambda = spec_rate, mu = ext_rate, n = nt)
 #'
 #' estimate_node_heights(lambda = spec_rate, mu = ext_rate, n = nt, k = 2)
+#' @export
 estimate_node_heights <- function(lambda,
                                   mu,
                                   n,

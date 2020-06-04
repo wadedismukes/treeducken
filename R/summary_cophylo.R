@@ -9,49 +9,61 @@
 ## Print Summary of a Cophylogeny set and "multiCophylo" operators
 #' @param cophy Object of class `cophylo`
 #' @describeIn print.cophylo Returns host tree of a cophylogenetic set
+#' @export
 host_tree <- function(cophy) UseMethod("host_tree")
 #' @param cophy Object of class `cophylo`
 #' @describeIn print.cophylo Returns host tree  of a cophylogenetic set
+#' @export
 host_tree.cophylo <- function(cophy) cophy$host_tree
 #' @param cophy Object of class multiCophylo
 #' @describeIn print.cophylo Returns host tree of each member of a list of cophylogenetic sets
+#' @export
 host_tree.multiCophylo <- function(cophy){
     sapply(unclass(cophy), host_tree.cophylo)
 }
 #' @param cophy Object of class `cophylo`
 #' @describeIn print.cophylo Returns symb tree of a cophylogenetic set
+#' @export
 symb_tree <- function(cophy) UseMethod("symb_tree")
 #' @param cophy Object of class `cophylo`
 #' @describeIn print.cophylo Returns symb tree of a cophylogenetic set
+#' @export
 symb_tree.cophylo <- function(cophy) cophy$symb_tree
 
 #' @param cophy Object of class `multiCophylo`
 #' @describeIn print.cophylo Returns symb tree of each member of a list of cophylogenetic sets
+#' @export
 symb_tree.multiCophylo <- function(cophy){
     sapply(unclass(cophy), symb_tree.cophylo)
 }
 #' @param cophy Object of class `cophylo`
 #' @describeIn print.cophylo Returns association matrix of a cophylogenetic set
+#' @export
 association_mat <- function(cophy) UseMethod("association_mat")
 #' @param cophy Object of class `cophylo`
 #' @describeIn print.cophylo Returns association matrix of a cophylogenetic set
+#' @export
 association_mat.cophylo <- function(cophy) cophy$association_mat
 
 #' @param cophy Object of class `multiCophylo`
 #' @describeIn print.cophylo Returns association matrix for each member of a list of cophylogenetic sets
+#' @export
 association_mat.multiCophylo <- function(cophy) {
     sapply(unclass(cophy), association_mat.cophylo)
 }
 
 #' @param cophy Object of class `cophylo`
 #' @describeIn summary.cophylo Returns event history of a cophylogenetic set
+#' @export
 event_history <- function(cophy) UseMethod("event_history")
 #' @param cophy Cophylogenetic set
 #' @describeIn summary.cophylo Returns event history of a cophylogenetic set
+#' @export
 event_history.cophylo <- function(cophy) cophy$event_history
 
 #' @param cophy Object of class `multiCophylo`
 #' @describeIn print.cophylo Returns event_history for each member of a list of cophylogenetic sets
+#' @export
 event_history.multiCophylo <- function(cophy){
     sapply(unclass(cophy), event_history.cophylo)
 }
@@ -90,7 +102,7 @@ summary.cophylo <- function(object, ...){
         cat("Null tree set.")
     cat("\nSet of host and symbiont tree:", deparse(substitute(object)), "\n\n")
     # below is a modified version of ape's summary.phylo function
-    if(is.null(object$host_tree))
+    if (is.null(object$host_tree))
         cat("\n Host tree is not a proper tree.\n")
     else
     {
@@ -132,7 +144,7 @@ summary.cophylo <- function(object, ...){
         }
     }
     # symbiont tree summary
-    if(is.null(object$symb_tree)){
+    if (is.null(object$symb_tree)) {
         cat("\n Host tree is not a proper tree.\n")
     }
     else
@@ -179,10 +191,10 @@ summary.cophylo <- function(object, ...){
     cat("\n There are ", nrow(object$association_mat), " rows (i.e. extant symbionts.")
     cat("\n There are ", ncol(object$association_mat), " cols (i.e. extant hosts.")
 
-    if(is.null(object$event_history)){
+    if (is.null(object$event_history)) {
         cat("\n No event history.\n")
     }
-    else{
+    else {
         cat("Event history summary: \n\n", summary(object$event_history))
     }
 }
@@ -235,8 +247,8 @@ print.cophylo <- function(x, ...){
 print.multiCophylo <- function(x, details = FALSE, ...){
     num_cophys <- length(x)
     cat(num_cophys, "cophylogenetic", ifelse(num_cophys > 1, "sets.\n", "set.\n"))
-    if(details){
-        for(i in 1:num_cophys){
+    if (details) {
+        for (i in 1:num_cophys) {
             cat("Cophylogenetic set", i, ":\n")
             cat("\tSymbiont tree has ", length(x[[i]]$symb_tree$tip.label), " tips.\n")
             cat("\tHost tree has ", length(x[[i]]$host_tree$tip.label), " tips.\n")
@@ -382,7 +394,7 @@ c.multiCophylo <- function(...)
     if (is.null(HostLab)) return(x)
     if (is.null(SymbLab)) return(x)
     class(x) <- NULL
-    for (i in 1:length(x)){
+    for (i in 1:length(x)) {
         x[[i]]$host_tree$tip.label <- HostLab
         x[[i]]$symb_tree$tip.label <- SymbLab
     }

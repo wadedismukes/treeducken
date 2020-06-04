@@ -7,16 +7,17 @@
 using namespace Rcpp;
 
 // sim_sptree_bdp
-Rcpp::List sim_sptree_bdp(SEXP sbr, SEXP sdr, SEXP numbsim, SEXP n_tips);
-RcppExport SEXP _treeducken_sim_sptree_bdp(SEXP sbrSEXP, SEXP sdrSEXP, SEXP numbsimSEXP, SEXP n_tipsSEXP) {
+Rcpp::List sim_sptree_bdp(SEXP sbr, SEXP sdr, SEXP numbsim, Rcpp::NumericVector n_tips, Rcpp::NumericVector gsa_stop_mult);
+RcppExport SEXP _treeducken_sim_sptree_bdp(SEXP sbrSEXP, SEXP sdrSEXP, SEXP numbsimSEXP, SEXP n_tipsSEXP, SEXP gsa_stop_multSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type sbr(sbrSEXP);
     Rcpp::traits::input_parameter< SEXP >::type sdr(sdrSEXP);
     Rcpp::traits::input_parameter< SEXP >::type numbsim(numbsimSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type n_tips(n_tipsSEXP);
-    rcpp_result_gen = Rcpp::wrap(sim_sptree_bdp(sbr, sdr, numbsim, n_tips));
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type n_tips(n_tipsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type gsa_stop_mult(gsa_stop_multSEXP);
+    rcpp_result_gen = Rcpp::wrap(sim_sptree_bdp(sbr, sdr, numbsim, n_tips, gsa_stop_mult));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -88,7 +89,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_treeducken_sim_sptree_bdp", (DL_FUNC) &_treeducken_sim_sptree_bdp, 4},
+    {"_treeducken_sim_sptree_bdp", (DL_FUNC) &_treeducken_sim_sptree_bdp, 5},
     {"_treeducken_sim_sptree_bdp_time", (DL_FUNC) &_treeducken_sim_sptree_bdp_time, 4},
     {"_treeducken_sim_locustree_bdp", (DL_FUNC) &_treeducken_sim_locustree_bdp, 6},
     {"_treeducken_sim_cophylo_bdp", (DL_FUNC) &_treeducken_sim_cophylo_bdp, 8},

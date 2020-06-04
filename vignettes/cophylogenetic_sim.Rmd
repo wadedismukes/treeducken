@@ -76,6 +76,10 @@ Let's check out one set.
 tree_set_of_interest <- host_symb_sets[[1]]
 print.cophylo(tree_set_of_interest)
 ```
+
+```{r}
+plot(tree_set_of_interest)
+```
 Notice that the output of `sim_cophylo_bdp` is a list of `cophylo` objects.
 Each `cophylo` object is composed of 4 elements: `host_tree`, `symb_tree`, `association_mat`, an `event_history`.
 The `host_tree` an `symb_tree` are both of the `phylo` object (from the ape package).
@@ -159,12 +163,21 @@ Currently, this only calculates the parafit statistic and conducts the permutati
 If that is set it will count the numbers of each event.
 
 ```{r}
-gopher_lice_map <- read.table(system.file("extdata", "gopher_lice_mapping.txt", package = "treeducken"), stringsAsFactors = FALSE, header = TRUE)
+gopher_lice_map <- read.table(system.file("extdata",
+                                          "gopher_lice_mapping.txt",
+                                          package = "treeducken"),
+                              stringsAsFactors = FALSE, header = TRUE)
 
 gopher_lice_assoc_matrix <- convert_assoc_table_to_matrix(gopher_lice_map)
-gopher_tree <- ape::read.nexus(system.file("extdata", "gophers_bd.tre", package = "treeducken"))
-lice_tree <- ape::read.nexus(system.file("extdata", "lice_bd.tre", package = "treeducken"))
-gopher_lice_cophylo <- convert_to_cophylo(hostTree = gopher_tree, symbTree = lice_tree, assocMat = gopher_lice_assoc_matrix)
+gopher_tree <- ape::read.nexus(system.file("extdata",
+                                           "gophers_bd.tre",
+                                           package = "treeducken"))
+lice_tree <- ape::read.nexus(system.file("extdata",
+                                         "lice_bd.tre",
+                                         package = "treeducken"))
+gopher_lice_cophylo <- convert_to_cophylo(hostTree = gopher_tree,
+                                          symbTree = lice_tree,
+                                          assocMat = gopher_lice_assoc_matrix)
 print(gopher_lice_cophylo)
 cophylo_summary_stat(gopher_lice_cophylo)
 plot.cophylo(gopher_lice_cophylo)

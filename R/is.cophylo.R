@@ -23,11 +23,13 @@
 #'                                   numbsim = 1)
 #' is.cophylo(host_symb_sets[[1]])
 #' is.multiCophylo(host_symb_sets)
+#' @export
 is.cophylo <- function(cophy){
     inherits(cophy, "cophylo")
 }
 #' @describeIn is.cophylo Tests for `multiCophylo` composed of `cophylo` objects
 #' @param multiCophy an object to test for multiCophy
+#' @export
 is.multiCophylo <- function(multiCophy){
     t <- inherits(multiCophy, "multiCophylo")
     if(t){

@@ -1,6 +1,7 @@
 #' @describeIn cophylo_summary_stat Calculates the summary statistics for one index of the list of cophylogenetic objects
 #'
 #' @return A vector consisting of (in order) cospeciations, host speciations, host extinctions, symbiont speciations, symbiont extinctions, parafit statistic, and parafit p-value
+#' @export
 cophylo_summary_stat_by_indx <- function(cophylo_obj, cophylo_obj_indx){
   if(cophylo_obj_indx < 1)
     stop("'cophylo_obj_indx' must be greater than 0")
@@ -82,6 +83,7 @@ cophylo_summary_stat_by_indx <- function(cophylo_obj, cophylo_obj_indx){
 #'                            numbsim = numb_replicates,
 #'                            time_to_sim = time)
 #' summary_stats <- cophylo_summary_stat(cophylo_pair)
+#' @export
 cophylo_summary_stat <- function(cophylo_obj){
     if(class(cophylo_obj) != "multiCophylo"){
       if(class(cophylo_obj) == "cophylo"){
@@ -151,6 +153,7 @@ cophylo_summary_stat <- function(cophylo_obj){
 #' @seealso parafit_test
 #' @references
 #' Legendre, P., Y. Desdevises and E. Bazin. 2002. A statistical test for host-parasite coevolution. Systematic Biology, 51(2), 217–234.
+#' @export
 parafit_stat <- function(host_tr, symb_tr, assoc_mat){
     if(class(host_tr) != "phylo"){
       stop("'host_tr' must be an object of class 'phylo'")
@@ -191,6 +194,7 @@ parafit_stat <- function(host_tr, symb_tr, assoc_mat){
 #' @param D the statistic calculated using `parafit_stat`
 #' @param reps Number of permutations to perform on the association matrix for the hypothesis test
 #' @return A p-value for the hypothesis test described above
+#' @export
 parafit_test <- function(host_tr, symb_tr, assoc_mat, D, reps = 99){
     if(!is.numeric(D))
     {

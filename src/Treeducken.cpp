@@ -11,7 +11,8 @@ using namespace Rcpp;
 Rcpp::List bdsim_species_tree(double sbr,
                         double sdr,
                         int numbsim,
-                        int n_tips){
+                        int n_tips,
+                        int gsa_stop){
 
     Simulator *phySimulator;
     List multiphy(numbsim);
@@ -20,6 +21,7 @@ Rcpp::List bdsim_species_tree(double sbr,
                                      sbr,
                                      sdr,
                                      1);
+        phySimulator->setGSAStop(gsa_stop);
         phySimulator->simSpeciesTree();
 
         List phy = List::create(Named("edge") = phySimulator->getSpeciesEdges(),

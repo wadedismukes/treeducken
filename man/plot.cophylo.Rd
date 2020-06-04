@@ -21,6 +21,7 @@ This function plots a host and symbiont tree given the object returned by
 \examples{
 
 tr_pair <- sim_cophylo_bdp(hbr = 0.1,
+
                            hdr = 0.05,
                            sdr = 0.1,
                            host_exp_rate = 0.4,
