@@ -44,7 +44,7 @@
 #' gopher_lice_cophylo <- convert_to_cophylo(hostTree = gopher_tree,
 #'                                          symbTree = lice_tree,
 #'                                          assocMat = gopher_lice_assoc_matrix)
-
+#' @export
 convert_to_cophylo <- function(hostTree, symbTree, assocMat, eventHistory = NULL){
     if(!(identical(class(hostTree), "phylo")))
         stop("`hostTree` input is not of class `phylo`")

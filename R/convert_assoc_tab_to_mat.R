@@ -19,7 +19,7 @@
 #'                               header = TRUE)
 #' gopher_lice_assoc_matrix <- convert_assoc_table_to_matrix(gopher_lice_map)
 #'
-
+#' @export
 convert_assoc_table_to_matrix <- function(assoc_table){
     if(dim(assoc_table)[2] != 2)
         stop("The 'assoc_table' should have two columns.")

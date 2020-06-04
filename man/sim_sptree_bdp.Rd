@@ -4,7 +4,7 @@
 \alias{sim_sptree_bdp}
 \title{Simulates species tree using constant rate birth-death process}
 \usage{
-sim_sptree_bdp(sbr, sdr, numbsim, n_tips)
+sim_sptree_bdp(sbr, sdr, numbsim, n_tips, gsa_stop_mult = 10L)
 }
 \arguments{
 \item{sbr}{species birth rate (i.e. speciation rate)}
@@ -14,6 +14,8 @@ sim_sptree_bdp(sbr, sdr, numbsim, n_tips)
 \item{numbsim}{number of species trees to simulate}
 
 \item{n_tips}{number of tips to simulate to}
+
+\item{gsa_stop_mult}{number of tips to simulate the GSA tip to}
 }
 \value{
 List of objects of the tree class (as implemented in APE)

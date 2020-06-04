@@ -4,7 +4,6 @@
 LocusTree::LocusTree(unsigned nt, double stop, double gbr, double gdr, double lgtrate) : Tree(nt, 0.0){
     numTaxa = 1;
     stopTime = stop;
-    currentTime = 0.0;
     geneBirthRate = gbr;
     geneDeathRate = gdr;
     transferRate = lgtrate;

@@ -5,7 +5,6 @@ using namespace Rcpp;
 
 
 SpeciesTree::SpeciesTree(unsigned numTaxa, double ct, double br, double dr) : Tree(numTaxa, 0.0){
-    currentTime = 0.0;
     extantStop = numTaxa;
     speciationRate = br;
     extinctionRate = dr;

@@ -2,8 +2,12 @@ useDynLib(treeducken, .registration=TRUE)
 exportPattern("^[[:alpha:]]+")
 importFrom(Rcpp, evalCpp)
 importFrom("utils", "str")
-
-
+import("ape")
+importFrom("graphics", "curve", "lines", "par", "plot.new",
+           "plot.window", "points", "rect", "segments", "strheight",
+            "strwidth", "text")
+importFrom("methods", "hasArg")
+importFrom("stats", "plogis")
 S3method("[", multiCophylo)
 S3method("[<-", multiCophylo)
 S3method("[[", multiCophylo)
@@ -17,6 +21,7 @@ S3method(association_mat, multiCophylo)
 S3method(event_history, multiCophylo)
 S3method(print, multiCophylo)
 S3method(str, multiCophylo)
+S3method(plot, multiCophylo)
 
 S3method(c, cophylo)
 

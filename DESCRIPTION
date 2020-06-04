@@ -12,9 +12,12 @@ License: GPL (>= 2)
 SystemRequirements: C++11
 Imports: 
     Rcpp (>= 1.0.2),
-    ape,
     apTreeshape,
     geiger,
+    graphics,
+    methods
+Depends:
+    ape
 LinkingTo: 
     Rcpp,
     RcppArmadillo

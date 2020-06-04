@@ -9,6 +9,7 @@
 #' @param sdr species death rate (i.e. extinction rate)
 #' @param numbsim number of species trees to simulate
 #' @param n_tips number of tips to simulate to
+#' @param gsa_stop_mult number of tips to simulate the GSA tip to
 #' @return List of objects of the tree class (as implemented in APE)
 #' @references
 #' K. Hartmann, D. Wong, T. Stadler. Sampling trees from evolutionary models.
@@ -29,8 +30,8 @@
 #'                 sdr = mu,
 #'                 numbsim = numb_replicates,
 #'                 n_tips = numb_extant_tips)
-sim_sptree_bdp <- function(sbr, sdr, numbsim, n_tips) {
-    .Call(`_treeducken_sim_sptree_bdp`, sbr, sdr, numbsim, n_tips)
+sim_sptree_bdp <- function(sbr, sdr, numbsim, n_tips, gsa_stop_mult = 10L) {
+    .Call(`_treeducken_sim_sptree_bdp`, sbr, sdr, numbsim, n_tips, gsa_stop_mult)
 }
 
 #' Simulates species tree using constant rate birth-death process to a time
@@ -194,7 +195,6 @@ sim_cophylo_bdp <- function(hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_t
 #'
 #' @references
 #' Mallo D, de Oliveira Martins L, Posada D (2015) SimPhy: Phylogenomic Simulation of Gene, Locus and Species Trees. Syst. Biol. doi: http://dx.doi.org/10.1093/sysbio/syv082
-#'
 sim_locustree_genetree_mlc <- function(species_tree, gbr, gdr, lgtr, num_loci, num_sampled_individuals, theta, num_genes_per_locus) {
     .Call(`_treeducken_sim_locustree_genetree_mlc`, species_tree, gbr, gdr, lgtr, num_loci, num_sampled_individuals, theta, num_genes_per_locus)
 }

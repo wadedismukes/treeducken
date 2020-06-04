@@ -96,7 +96,7 @@ class Simulator
                   double rho,
                   int hostLimit);
         ~Simulator();
-
+        void    setGSAStop(int g) { gsaStop = g; }
         void    setSpeciesTree(SpeciesTree *st) { spTree = st; }
         bool    gsaBDSim();
         bool    bdsaBDSim();
@@ -108,7 +108,6 @@ class Simulator
         bool    simLocusTree();
         bool    simGeneTree(int j);
         bool    simHostSymbSpeciesTreePair();
-        bool    gsaCheckStop();
         void    initializeSim();
         void    processGSASim();
         void    prepGSATreeForReconstruction();
@@ -168,7 +167,8 @@ class Simulator
 extern Rcpp::List bdsim_species_tree(double sbr,
                                      double sdr,
                                      int numbsim,
-                                     int n_tips);
+                                     int n_tips,
+                                     int gsa_stop);
 
 extern Rcpp::List sim_bdsimple_species_tree(double sbr,
                                             double sdr,

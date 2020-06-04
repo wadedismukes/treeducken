@@ -9,6 +9,7 @@
 //' @param sdr species death rate (i.e. extinction rate)
 //' @param numbsim number of species trees to simulate
 //' @param n_tips number of tips to simulate to
+//' @param gsa_stop_mult number of tips to simulate the GSA tip to
 //' @return List of objects of the tree class (as implemented in APE)
 //' @references
 //' K. Hartmann, D. Wong, T. Stadler. Sampling trees from evolutionary models.
@@ -30,11 +31,17 @@
 //'                 numbsim = numb_replicates,
 //'                 n_tips = numb_extant_tips)
 // [[Rcpp::export]]
-Rcpp::List sim_sptree_bdp(SEXP sbr, SEXP sdr, SEXP numbsim, SEXP n_tips){
+Rcpp::List sim_sptree_bdp(SEXP sbr,
+                          SEXP sdr,
+                          SEXP numbsim,
+                          Rcpp::NumericVector n_tips,
+                          Rcpp::NumericVector gsa_stop_mult = 10){
     double sbr_ = as<double>(sbr);
     double sdr_ = as<double>(sdr);
     unsigned numbsim_ = as<int>(numbsim);
     unsigned n_tips_ = as<int>(n_tips);
+    unsigned gsa_stop_ = as<int>(gsa_stop_mult);
+    unsigned gsa_stop = gsa_stop_ * n_tips_;
     RNGScope scope;
     if(sbr_ <= 0.0)
         stop("'sbr' must be bigger than 0.0.");
@@ -46,7 +53,9 @@ Rcpp::List sim_sptree_bdp(SEXP sbr, SEXP sdr, SEXP numbsim, SEXP n_tips){
         stop("'sdr' must be 0.0 or greater.");
     if(n_tips_ < 1)
         stop("'n_tips' must be greater than 1.");
-    return bdsim_species_tree(sbr_, sdr_, numbsim_, n_tips_);
+    if(gsa_stop_ < 1)
+        stop("'gsa_stop_mult' must be greater than 1.");
+    return bdsim_species_tree(sbr_, sdr_, numbsim_, n_tips_, gsa_stop);
 }
 //' Simulates species tree using constant rate birth-death process to a time
 //'
@@ -298,7 +307,6 @@ Rcpp::List sim_cophylo_bdp(SEXP hbr,
 //'
 //' @references
 //' Mallo D, de Oliveira Martins L, Posada D (2015) SimPhy: Phylogenomic Simulation of Gene, Locus and Species Trees. Syst. Biol. doi: http://dx.doi.org/10.1093/sysbio/syv082
-//'
 // [[Rcpp::export]]
 Rcpp::List sim_locustree_genetree_mlc(SEXP species_tree,
                              SEXP gbr,

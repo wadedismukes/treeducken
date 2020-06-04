@@ -14,7 +14,7 @@ Simulator::Simulator(unsigned nt, double lambda, double mu, double rho)
     simType = 1;
     currentSimTime = 0.0;
     numTaxaToSim = nt;
-    gsaStop = 100*nt;
+    gsaStop = 10*nt;
     speciationRate = lambda;
     extinctionRate = mu;
     samplingRate = rho;
@@ -86,7 +86,6 @@ Simulator::Simulator(unsigned ntax,
     simType = 3;
     currentSimTime = 0.0;
     numTaxaToSim = ntax;
-    gsaStop = 100*ntax;
     speciationRate = lambda;
     extinctionRate = mu;
     samplingRate = rho;
@@ -175,7 +174,7 @@ bool Simulator::gsaBDSim(){
     spTree = &st;
     double eventTime;
 
-    while(gsaCheckStop()){
+    while(spTree->getNumExtant() < gsaStop){
         eventTime = spTree->getTimeToNextEvent();
         currentSimTime += eventTime;
         spTree->ermEvent(currentSimTime);
@@ -206,18 +205,6 @@ bool Simulator::gsaBDSim(){
     treeComplete = true;
 
     return treeComplete;
-}
-
-
-bool Simulator::gsaCheckStop(){
-
-  bool keepSimulating = true;
-
-  if(spTree->getNumExtant() >= gsaStop){
-      keepSimulating = false;
-  }
-
-  return keepSimulating;
 }
 
 void Simulator::processGSASim(){

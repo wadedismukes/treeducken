@@ -17,7 +17,7 @@ hist_assoc_tester <- function(reps = 1, time){
                                     sdr = symb_mu,
                                     sbr = symb_lambda,
                                     numbsim = numb_replicates,
-                                    timeToSimTo = time)
+                                    time_to_sim = time)
     build_historical_association_matrix(t = time/2, cophylo_pair[[1]])
 }
 

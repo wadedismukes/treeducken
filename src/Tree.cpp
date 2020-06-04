@@ -214,11 +214,9 @@ void Tree::zeroAllFlags(){
 
 void Tree::setWholeTreeFlags(){
     this->zeroAllFlags();
-    numTotalTips = 0;
     for(std::vector<Node*>::iterator p=nodes.begin(); p != nodes.end(); ++p){
         if((*p)->getIsTip()){
             (*p)->setFlag(1);
-            numTotalTips++;
         }
     }
     setSampleFromFlags();
@@ -227,7 +225,6 @@ void Tree::setWholeTreeFlags(){
 
 void Tree::setExtantTreeFlags(){
     this->zeroAllFlags();
-    numTotalTips = 0;
     for(std::vector<Node*>::iterator p=nodes.begin(); p != nodes.end(); ++p){
         if((*p)->getIsExtant())
             (*p)->setFlag(1);

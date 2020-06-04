@@ -23,6 +23,7 @@
 #'                                            num_genes_per_locus = 100)
 #' # based on the third locus tree calculate summary statistics
 #' gt_df <- genetree_summary_stat(loctr_gentr, locus_tree_indx = 3)
+#' @export
 genetree_summary_stat <- function(locus_tree_gene_tree_obj, locus_tree_indx){
 
     genetrees <- locus_tree_gene_tree_obj[[locus_tree_indx]]$gene.trees
@@ -34,10 +35,10 @@ genetree_summary_stat <- function(locus_tree_gene_tree_obj, locus_tree_indx){
     sackin <- vector(length = num_genetrees)
     tmrca <- vector(length = num_genetrees)
     cherries <- vector(length = num_genetrees)
-    for(i in 1:num_genetrees){
+    for (i in 1:num_genetrees) {
         colless[i] <- apTreeshape::colless(apTreeshape::as.treeshape.phylo(genetrees[[i]]))
         gamma[i] <- ape::gammaStat(genetrees[[i]])
-        cherries[i] <- treeducken::cherries(genetrees[[i]])
+        cherries[i] <- treeducken::count_cherries(genetrees[[i]])
         sackin[i] <- apTreeshape::sackin(apTreeshape::as.treeshape.phylo(genetrees[[i]]))
         tmrca[i] <- max(ape::node.depth.edgelength(genetrees[[i]]))
     }
@@ -59,7 +60,7 @@ genetree_summary_stat <- function(locus_tree_gene_tree_obj, locus_tree_indx){
 #' lambda <- 1.0
 #' nt <- 6
 #' tr <- sim_sptree_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
-#' treeducken::cherries(tr[[1]])
+#' treeducken::count_cherries(tr[[1]])
 #' # to do the hypothesis test you can use the ape version of this function
 #' ape::cherry(tr[[1]])
 #' @references
@@ -68,7 +69,8 @@ genetree_summary_stat <- function(locus_tree_gene_tree_obj, locus_tree_indx){
 # I wanted a return value of the statistic rather than the test itself
 # copyright Emmanuel Paradis
 # used under GNU public license
-cherries <- function(tree){
+#' @export
+count_cherries <- function(tree){
     n <- length(tree$tip.label)
     sum(tabulate(tree$edge[, 1][tree$edge[, 2] <= n]) == 2)
 }

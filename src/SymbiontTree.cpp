@@ -9,7 +9,6 @@ SymbiontTree::SymbiontTree(int nt,
                            double dr,
                            double her,
                            int K) : Tree(nt, 0.0){
-    currentTime = 0.0;
     numTaxa = nt;
     symbSpecRate = br;
     symbExtRate = dr;
