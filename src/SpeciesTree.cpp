@@ -230,39 +230,6 @@ void SpeciesTree::recTipNamer(Node *p, unsigned &nodeIndx, unsigned &tipIndx){
   }
 }
 
-void SpeciesTree::recGetNewickTree(Node *p, std::stringstream &ss){
-    if(p != NULL){
-        if( p->getRdes() == NULL)
-            ss <<  p->getName();
-        else{
-            ss << "(";
-            recGetNewickTree(p->getLdes(), ss);
-            ss << "[&index=" << p->getLdes()->getIndex() << "]" << ":" << p->getLdes()->getBranchLength();
-            ss << ",";
-            recGetNewickTree(p->getRdes(), ss);
-            ss << "[&index=" << p->getRdes()->getIndex() << "]" << ":" << p->getRdes()->getBranchLength();
-            ss << ")";        }
-    }
-}
-
-
-
-std::string SpeciesTree::printNewickTree(){
-    std::stringstream ss;
-    recGetNewickTree(this->getRoot(), ss);
-    ss << ";";
-    std::string spTree = ss.str();
-    return spTree;
-}
-
-std::string SpeciesTree::printExtNewickTree(){
-    std::stringstream ss;
-    recGetNewickTree(this->getRoot(), ss);
-    ss << ";";
-    std::string spTree = ss.str();
-    return spTree;
-}
-
 
 void SpeciesTree::setGSATipTreeFlags(){
     zeroAllFlags();

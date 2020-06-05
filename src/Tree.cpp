@@ -604,7 +604,3 @@ void Tree::switchIndicesFirstToSecond(std::map<int,int> mappy){
     }
 }
 
-void Tree::switchIndicesSecondToFirst(std::map<int,int> mappy){
-
-}
-

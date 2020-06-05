@@ -63,15 +63,7 @@ class SymbiontTree : public Tree {
       void            setCurrentTime(double ct) { currentTime = ct; }
       int             getNumberExpansions() {return numExpansions; }
       int             getNumHostSymbPairs() { return symbHostMap.size(); }
-    //  std::map<int,double>     getBirthTimesFromNodes();
-    //  std::set<int>            getExtSymbIndx();
-    //   std::set<int>            getCoalBounds();
-    //  std::multimap<int,double>     getDeathTimesFromNodes();
-    //  std::multimap<int,double>     getDeathTimesFromExtinctNodes();
-    //  std::map<int,int>             getSymbToHostsMap();
-  //    std::vector< std::vector<int> >     getExtantLoci(std::set<double, std::greater<double> > epochSet);
-  //    std::vector< std::string >    printSubTrees();
-  //    int     postOrderTraversalStep(int indx);
+
       std::vector<int>  getSymbsOnHost(int hostIndx);
       void            updateCurrentMap(int oldHostIndx, int newHostIndx);
       int             getExtantIndxFromNodes(int extantNodesIndx);

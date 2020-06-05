@@ -144,14 +144,12 @@ class Tree
         double      findMaxNodeHeight();
         int         getIndexFromNodes(int indx) {return nodes[indx]->getIndex(); }
         void        switchIndicesFirstToSecond(std::map<int,int> mappy);
-        void        switchIndicesSecondToFirst(std::map<int,int> mappy);
         virtual double  getTimeToNextEvent() { return 0.0; }
         virtual void    lineageBirthEvent(unsigned int indx) { return; }
         virtual void    lineageDeathEvent(unsigned int indx) { return; }
         virtual void    setTreeTipNames()  { return; }
         virtual void    ermEvent(double ct) { return; }
         virtual void    setBranchLengths() { return; }
-        virtual std::string    printNewickTree() { return "t";}
         virtual int     calculatePatristicDistance(Node *n1, Node *n2);
         friend class Node;
 

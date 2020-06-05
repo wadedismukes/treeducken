@@ -198,7 +198,7 @@ phylogram <- function(tree,
     }
 
     ## plot vertical relationships
-    for (i in 1:(num_tips + tree$Nnode)) {
+    for (i in 1:(num_tips + cw_tree$Nnode)) {
         edge_id <- which(cw_tree$edge[,1] == i)
         p <- if (i %in% cw_tree$edge[,2]) which(cw_tree$edge[,2] == i) else NULL
 
@@ -220,10 +220,10 @@ phylogram <- function(tree,
                  col = edge.col[edge_id])
     }
     h <- part - 0.5 - tip.len*(max(edge_mat) - min(edge_mat)) - fsize*strwidth(tree$tip.label)
+
     ## plot links to tips
     for (i in 1:num_tips) {
-        lines(d*c(edge_mat[which(cw_tree$edge[,2] == i),2],
-                  h[i] + tip.len*(max(edge_mat) - min(edge_mat))),
+        lines(d*c(edge_mat[which(cw_tree$edge[,2] == i),2], h[i] + tip.len*(max(edge_mat) - min(edge_mat))),
               rep(y[i],2),
               lwd = tip.lwd,
               lty = tip.lty)
@@ -241,6 +241,7 @@ phylogram <- function(tree,
                          offset = 0.1,
                          cex = fsize,
                          font = font)
+            print(c(y[i], tree$tip.label[i]))
         }
     }
     phylo_plot <- list(type = "phylogram",
@@ -285,40 +286,76 @@ make_links <- function(obj,
                        link.lwd = 1,
                        link.col = "red",
                        link.lty = "dashed") {
-    host_tree <- geiger::drop.extinct(obj$host_tree)
-    symb_tree <- geiger::drop.extinct(obj$symb_tree)
-    rownames(obj$association_mat) <- symb_tree$tip.label
-    colnames(obj$association_mat) <- host_tree$tip.label
-    postorder_ht <- ape::reorder.phylo(obj$host_tree, order = "postorder")
-    postorder_st <- ape::reorder.phylo(obj$symb_tree, order = "postorder")
-    print(postorder_ht$edge)
-    print(postorder_st$edge)
 
+    ## get vertical coordinates of host tips that are not extinct
+
+    host_tree <- obj$host_tree
+    num_tips_host_tree <- length(host_tree$tip.label)
+    cw_tree <- ape::reorder.phylo(host_tree,"cladewise")
+
+    y_host <- vector(length = num_tips_host_tree + cw_tree$Nnode)
+    y_host[cw_tree$edge[cw_tree$edge[,2] <= num_tips_host_tree,2]] <- 0:(num_tips_host_tree - 1)/(num_tips_host_tree - 1)
+    ## reorder pruningwise for post-order traversal
+    po_tree <- ape::reorder.phylo(cw_tree,"postorder")
+
+    internal_edges <- unique(po_tree$edge[,1])
+    ## compute vertical position of each edge
+    for (i in 1:length(internal_edges)) {
+        y_hold <- y_host[po_tree$edge[which(po_tree$edge[,1] == internal_edges[i]),2]]
+        y_host[internal_edges[i]] <- mean(range(y_hold))
+    }
+
+    names(y_host) <- po_tree$tip.label
+    ###############
+    ## get vertical coordinates of symbiont tips that are not extinct
+    symb_tree <- obj$symb_tree
+    num_tips_symb_tree <- length(symb_tree$tip.label)
+
+    cw_tree_symb <- ape::reorder.phylo(symb_tree,"cladewise")
+
+    y_symb <- vector(length = num_tips_symb_tree + cw_tree_symb$Nnode)
+    y_symb[cw_tree_symb$edge[cw_tree_symb$edge[,2] <= num_tips_symb_tree,2]] <- 0:(num_tips_symb_tree - 1)/(num_tips_symb_tree - 1)
+    ## reorder pruningwise for post-order traversal
+    po_tree_symb <- ape::reorder.phylo(cw_tree_symb,"postorder")
+
+    internal_edges_symb <- unique(po_tree_symb$edge[,1])
+    ## compute vertical position of each edge
+    for (i in 1:length(internal_edges_symb)) {
+        y_hold <- y_symb[po_tree_symb$edge[which(po_tree_symb$edge[,1] == internal_edges[i]),2]]
+        y_symb[internal_edges_symb[i]] <- mean(range(y_hold))
+    }
+
+    names(y_symb) <- po_tree_symb$tip.label
+
+
+    host_tree_pruned <- geiger::drop.extinct(obj$host_tree)
+    symb_tree_pruned <- geiger::drop.extinct(obj$symb_tree,)
+    rownames(obj$association_mat) <- symb_tree_pruned$tip.label
+    colnames(obj$association_mat) <- host_tree_pruned$tip.label
+
+
+    ### get associations into a table
     associations <- which(obj$association_mat == 1, arr.ind = TRUE)
-    print(associations)
-    # plotting parameters for links between trees
+
     if (length(link.lwd) == 1)
         link.lwd <- rep(link.lwd, nrow(associations))
     if (length(link.col) == 1)
         link.col <- rep(link.col, nrow(associations))
     if (length(link.lty) == 1)
         link.lty <- rep(link.lty, nrow(associations))
-    # end plotting parameteres for links between trees
 
-    # loop through the rows of associations
-    # this is a matrix with col 1 giving row of obj$association_mat
-    # and col 2 giving col of obj$associatino_mat
-    # aka col1 = index of symb_tree$tip.label (so pruned of extinct tips)
-    # and col2 = index of host_tree$tip.label (so pruned of extinct tips)
+    # we have y coordinates of all our tips
+    # the indicies in association mat of the associations
+    #
     for (i in 1:nrow(associations)) {
-        symbs <- which(postorder_st$edge == associations[i,1])
+        symb_pruned_indx <- associations[i,1]
+        host_pruned_indx <- associations[i,2]
+        symb_n <- symb_tree_pruned$tip.label[symb_pruned_indx]
+        host_n <- host_tree_pruned$tip.label[host_pruned_indx]
 
-        hosts <- which(postorder_ht$edge == associations[i,2])
-        print(hosts)
-        print(symbs)
-        y <- c((i - 1)/(length(obj$host_tree$tip.label) - 1),
-               (i - 1)/(length(obj$symb_tree$tip.label) - 1))
-
+        y1 <- y_symb[symb_n]
+        y2 <- y_host[host_n]
+        y <- c(y1, y2)
         if (link.type == "straight")
             lines(x, y, lty = link.lty[i], lwd = link.lwd[i], col = link.col[i])
         else if (link.type == "curved")

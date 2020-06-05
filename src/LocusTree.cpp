@@ -388,28 +388,6 @@ void LocusTree::setPresentTime(double currentT){
    // this->setTreeTipNames();
 }
 
-std::vector<std::string> LocusTree::printSubTrees(){
-    std::vector<std::string> subTrees;
-    std::stringstream ss;
-    for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it){
-        if((*it)->getIsDuplication()){
-            recGetNewickTree((*it),ss);
-            ss << ";";
-            subTrees.push_back(ss.str());
-            ss.clear();
-            ss.str(std::string());
-        }
-    }
-    return subTrees;
-}
-
-std::string LocusTree::printNewickTree(){
-    std::stringstream ss;
-    recGetNewickTree(this->getRoot(), ss);
-    ss << ";";
-    std::string loTree = ss.str();
-    return loTree;
-}
 
 void LocusTree::setTreeTipNames(){
   unsigned nodeIndx = numExtant + numExtinct;

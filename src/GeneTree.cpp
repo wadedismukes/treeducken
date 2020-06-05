@@ -325,71 +325,7 @@ void GeneTree::setIndicesBySpecies(std::map<int, int> spToLocusMap){
     }
 }
 
-std::string GeneTree::printNewickTree(){
-    std::stringstream ss;
-    recGetNewickTree(this->getRoot(), ss);
-    ss << ";";
-    std::string geneTreeString = ss.str();
-    return geneTreeString;
-}
 
-std::string GeneTree::printExtantNewickTree(){
-    std::stringstream ss;
-    recGetNewickTree(this->getRoot(), ss);
-    ss << ";";
-    std::string geneTreeString = ss.str();
-    return geneTreeString;
-}
-
-
-void GeneTree::recGetExtNewickTree(Node *p, std::stringstream &ss, double brlen){
-    if(p->getRdes() == NULL){
-        if(p->getIsExtant())
-            ss << p->getName();
-    }
-    else{
-    // if(p != NULL){
-        int flag = p->getFlag();
-        if(flag == 2){
-            ss << "(";
-            recGetExtNewickTree(p->getRdes(), ss, brlen);
-            ss << "[&index=" << p->getRdes()->getIndex() << "]" << ":" << p->getRdes()->getBranchLength();
-            ss << ",";
-            recGetExtNewickTree(p->getLdes(), ss, brlen);
-            ss << "[&index=" << p->getLdes()->getIndex() << "]" << ":" << p->getLdes()->getBranchLength();
-            ss << ")";
-        }
-        else{
-            // if(p->getRdes() == NULL){
-            //     ss << p->getName();
-            // }
-            // else{
-            if(p->getLdes()->getIsExtinct()){
-                recGetExtNewickTree(p->getRdes(), ss, brlen);
-            }
-            if(p->getRdes()->getIsExtinct()){
-                recGetExtNewickTree(p->getLdes(), ss, brlen);
-            }
-            //}
-        }
-   }
-}
-
-void GeneTree::recGetNewickTree(Node *p, std::stringstream &ss){
-    if(p != NULL){
-        if( p->getRdes() == NULL)
-            ss << p->getName();
-        else{
-            ss << "(";
-            recGetNewickTree(p->getRdes(), ss);
-            ss << "[&index=" << p->getRdes()->getIndex() << "]" << ":" << p->getRdes()->getBranchLength();
-            ss << ",";
-            recGetNewickTree(p->getLdes(), ss);
-            ss << "[&index=" << p->getLdes()->getIndex() << "]" << ":" << p->getLdes()->getBranchLength();
-            ss << ")";
-        }
-    }
-}
 
 void GeneTree::setTreeTipNames(){
     int indNumber = 0;

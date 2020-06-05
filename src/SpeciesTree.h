@@ -41,11 +41,6 @@ class SpeciesTree : public Tree
         void          setTreeTipNames();
         void          recTipNamer(Node *p, unsigned &extinctCount, unsigned &tipCount);
 
-
-        std::string   printNewickTree();
-        std::string   printExtNewickTree();
-        void          recGetNewickTree(Node *p, std::stringstream &ss);
-
         // simulation functions
         void          setGSATipTreeFlags();
         void          reconstructTreeFromGSASim(Node *oRoot);

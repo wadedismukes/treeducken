@@ -16,17 +16,16 @@ estimate_node_heights(lambda, mu, n, k = 1)
 \item{k}{branching point (k = 1 is the root and is the default)}
 }
 \value{
-The expected number of leaves
+The expected branching time
 }
 \description{
-Calculate expected time to branching point of a species tree
-}
-\details{
 Calculates the expected time to branching point of a species tree
     for a birth-death simulation given a speciation and extinction rate and a
-     a number of leaves, and a branching point. By default this branching
-     point is 1 which corresponds to the root, and thus this function will
-     return the depth of the tree.
+     a number of leaves, and a branching point.
+}
+\details{
+By default this branching point is 1 which corresponds to the root, k = 2 corresponds to
+the first branching point after the root, k = 3 the second, and so on. For more details see Gernhard 2008.
 }
 \examples{
 spec_rate <- 1.0

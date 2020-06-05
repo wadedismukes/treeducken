@@ -14,7 +14,6 @@ Simulator::Simulator(unsigned nt, double lambda, double mu, double rho)
     simType = 1;
     currentSimTime = 0.0;
     numTaxaToSim = nt;
-    gsaStop = 10*nt;
     speciationRate = lambda;
     extinctionRate = mu;
     samplingRate = rho;

@@ -30,10 +30,6 @@ class GeneTree : public Tree {
         void        recursiveRescaleTimes(Node *r, double add);
         void        setBranchLengths();
         void        setIndicesBySpecies(std::map<int,int> spToLocusMap);
-        std::string printNewickTree();
-        std::string printExtantNewickTree();
-        void        recGetNewickTree(Node *r, std::stringstream &ss);
-        void        recGetExtNewickTree(Node *r, std::stringstream &ss, double brlen);
         void        setTreeTipNames();
         void        addExtinctSpecies(double bt, int indx);
         NumericMatrix        getGeneEdges();
