@@ -163,39 +163,61 @@ void Simulator::initializeEventVector(){
   inOrderVecOfEventTimes.push_back(0.0);
 }
 /*
+ Main general sampling algorithm (GSA) for simulating a species tree to an expected number
+ of tips under the constant-rate birth-death process.
+
  Below is the machinery to use GSA sampling (Hartmann 2010) to simulate a species tree.
  Much of this code is modified from FossilGen (written by Tracy Heath)
  */
 bool Simulator::gsaBDSim(){
     double timeIntv, sampTime;
     bool treeComplete = false;
+    // make a species tree object with the number of taxa to sim to, currsimtime (0.0)
+    // and speciation and extinction rate
     SpeciesTree st =  SpeciesTree(numTaxaToSim, currentSimTime, speciationRate, extinctionRate);
     spTree = &st;
     double eventTime;
-
+    // runs until the number of extant tips reaches gsaStop (set by users, default is 10*number to sim to)
     while(spTree->getNumExtant() < gsaStop){
+        // find the time to the next event with rate speciation rate + extinction rate * number of current tips
         eventTime = spTree->getTimeToNextEvent();
+        // add this to the sim time tracker
         currentSimTime += eventTime;
+        // speciation or extinction occurs
         spTree->ermEvent(currentSimTime);
         if(spTree->getNumExtant() < 1){
+            // if the tree goes to 0 tips prematurely end
+            // return false for a non-tree
             treeComplete = false;
             return treeComplete;
-        }
+        } // otherwise if the number of current tips is the number to sim to
         else if(spTree->getNumExtant() == numTaxaToSim){
+            // get time to another event and add this to the end
             timeIntv = spTree->getTimeToNextEvent();
+            // randomly choose some proportion of the above 'timeIntv' and add
+            // to the sim time tracker
             sampTime = (unif_rand() * timeIntv) + currentSimTime;
+            // set this as the present time for this sub-tree
             spTree->setPresentTime(sampTime);
+            // reconstruct this tree from the root of the whole tree to the
+            // number of extant tips (i.e. numTaxaToSim) and add to a vector
+            // gsaTrees
             processGSASim();
         }
 
     }
+    // randomly pick one of the gsaTrees
     unsigned gsaRandomTreeID = unif_rand() * (gsaTrees.size() - 1);
-    // delete spTree;
     spTree = gsaTrees[gsaRandomTreeID];
+    // process this one
     processSpTreeSim();
+    // set branch length variable in each Node of spTree.nodes
     spTree->setBranchLengths();
+    // set tip names
     spTree->setTreeTipNames();
+    // set currentSimTime
     currentSimTime = spTree->getCurrentTimeFromExtant();
+    // if scale is set scale the tree to the value of 'treeScale'
     if(treeScale > 0.0){
       spTree->scaleTree(treeScale, currentSimTime);
       currentSimTime = treeScale;
@@ -206,29 +228,45 @@ bool Simulator::gsaBDSim(){
     return treeComplete;
 }
 
+// prune sub trees from larger GSA tree to randomly choose from so
+// that we are correctly sampling from the birth-death distribution
 void Simulator::processGSASim(){
+  // make a new species tree with numTaxaToSim + however many extinct tips there are
     SpeciesTree *tt = new SpeciesTree(numTaxaToSim + spTree->getNumExtinct());
+  // prep this by setting flags for nodes so that we know what is extant tip, extinct tip,
+  // internode, and root
     this->prepGSATreeForReconstruction();
+  // get our root from the original tree
     Node *simRoot = spTree->getRoot();
+  // set that node to by the root of our new tree
     tt->setRoot(simRoot);
+  // reconstruct the tree recursively from the root
     tt->reconstructTreeFromGSASim(simRoot);
+  // add to vector of SpeciesTree
     gsaTrees.push_back(std::move(tt));
 }
 
+// post simulation processing function since we overwrite the tree held in
+// spTree
 void Simulator::processSpTreeSim(){
+  // set the speciation and extinction rate
     spTree->setSpeciationRate(speciationRate);
     spTree->setExtinctionRate(extinctionRate);
+  // populate nodes vector
     spTree->popNodes();
+  // set the number of extant and extinct tips respecitively
     spTree->setNumExtant();
     spTree->setNumExtinct();
 
 }
 
+// Wrapper for SpeciesTree::setGSATipTreeFlags
 void Simulator::prepGSATreeForReconstruction(){
     spTree->setGSATipTreeFlags();
 }
 
-
+// Wrapper to make sure that the tree output by gsaBDSim is a proper tree with
+// the correct number of tips and not just a tree with no tips
 bool Simulator::simSpeciesTree(){
     bool good = false;
     while(!good){
@@ -237,7 +275,8 @@ bool Simulator::simSpeciesTree(){
     return good;
 }
 
-
+// Wrapper to make sure that the tree output by bdSimpleSim is a proper tree with
+//  tips and not just a tree with no tips
 bool Simulator::simSpeciesTreeTime(){
   bool good = false;
   while(!good){
@@ -245,25 +284,32 @@ bool Simulator::simSpeciesTreeTime(){
   }
   return good;
 }
-
-
+// Simulation function for birth-death tree simulation to a set time (note that
+// this can produce trees with no tips)
 bool Simulator::bdSimpleSim(){
   bool treeComplete = false;
+  // set time to 0.0
   currentSimTime = 0.0;
+  // get the time to simulate to
   double stopTime = this->getTimeToSim();
   double eventTime;
+  // make a variable SpeciesTree to hold our tree. numTaxaToSim is set to 1 here.
+  // this is arbitrary and I should've planned out my classes and constructors better
   spTree = new SpeciesTree(1, currentSimTime, speciationRate, extinctionRate);
   while(currentSimTime < stopTime){
+    // get the time to the next event as a function of speciation and extinction rates and number of currently alive
+    // tips
     eventTime = spTree->getTimeToNextEvent();
+    // add this to the currentSimTime
     currentSimTime += eventTime;
-
+    // check if that went over stop time if it did set it to that time
     if(currentSimTime >= stopTime){
       currentSimTime = stopTime;
     }
-    else{
+    else{ // otherwise choose an event at random
       spTree->ermEvent(currentSimTime);
     }
-
+    // if tree goes to 0 living tips end prematurely
     if(spTree->getNumExtant() < 1){
       delete spTree;
       treeComplete = false;
@@ -278,12 +324,15 @@ bool Simulator::bdSimpleSim(){
   }
 
   treeComplete = true;
+  // set currentSimTime to stopTime in case it hasn't been
   currentSimTime = stopTime;
 
+  // set the tree to the end time
   spTree->setPresentTime(currentSimTime);
   return treeComplete;
 }
 
+// wrapper for the paired birth-death process
 bool Simulator::simHostSymbSpeciesTreePair(){
   bool good = false;
   while(!good){
@@ -293,14 +342,16 @@ bool Simulator::simHostSymbSpeciesTreePair(){
   return good;
 }
 
-
+// Function simulate host and symbiont tree at the same time to a set time
 bool Simulator::pairedBDPSim(){
   bool treePairGood = false;
 
   currentSimTime = 0.0;
+  // set stopTime
   double stopTime = this->getTimeToSim();
-
+  // make a SpeciesTree (this is the host tree)
   spTree = new SpeciesTree(1, currentSimTime, speciationRate, extinctionRate);
+  // and a SymbiontTree (this is the symbiont tree)
   symbiontTree = new SymbiontTree(1,
                                   currentSimTime,
                                   geneBirthRate,
@@ -309,21 +360,33 @@ bool Simulator::pairedBDPSim(){
                                   hostLimit);
 
   double eventTime;
+  // initialize the four vectors that are output in R as the event dataframe
   this->initializeEventVector();
+  // set the association matrix to start with the host and symbiont being associated
+  // a 1x1 matrix of 1
   assocMat = ones<umat>(1,1);
   while(currentSimTime < stopTime){
+    // get time to the the next joint event based on the speciation rate, extinction rate,
+    // and cospeciation rate
     eventTime = symbiontTree->getTimeToNextJointEvent(speciationRate,
                                                  extinctionRate,
                                                  cospeciationRate,
                                                  assocMat);
     currentSimTime += eventTime;
+    // if we exceed the sim time set to stopTime so as not to go over
     if(currentSimTime >= stopTime){
       currentSimTime = stopTime;
     }
     else{
+      // otherwise a cophylogenetic event occurs, this can be three things:
+      // host event (host speciation or extinction)
+      // symbiont event (symbiont speciation or extinction)
+      // or a joint event (a.k.a. a cospeciation)
+      // this returns the association matrix
       assocMat = this->cophyloEvent(currentSimTime, assocMat);
     }
-
+    // if either tree goes to 0 or the association matrix becomes malformed
+    // prematurely end the simulation, clearing the event dataframe vectors
     if(spTree->getNumExtant() < 1 ||
        symbiontTree->getNumExtant() < 1 ||
        assocMat.n_rows < 1 ||
@@ -335,6 +398,7 @@ bool Simulator::pairedBDPSim(){
       return treePairGood;
     }
   }
+  // TODO: not sure if this is needed
   if(spTree->getNumExtant() <= 1 || symbiontTree->getNumExtant() <= 1){
     treePairGood = false;
     this->clearEventDFVecs();
@@ -344,29 +408,31 @@ bool Simulator::pairedBDPSim(){
   }
   treePairGood = true;
   currentSimTime = stopTime;
-
+  // set the present time in both host and symbiont tree
   symbiontTree->setPresentTime(currentSimTime);
   spTree->setPresentTime(currentSimTime);
 
   return treePairGood;
 }
 
-
+// cophyloEvent - chooses which event occurs based on the rates of the 6 different events
+// note that this can likely be simplified mathematically
 arma::umat Simulator::cophyloEvent(double eventTime, arma::umat assocMat){
   double hostEvent = speciationRate + extinctionRate;
   double symbEvent = geneBirthRate + geneDeathRate + transferRate;
   double cospecEvent = cospeciationRate;
   // which tree then ermEvent whichever or cospeciation event
+  // probability of a host event
   double hostEventProb = hostEvent / (hostEvent + symbEvent + cospecEvent);
+  // probability of symb event
   double symbEventProb = symbEvent / (hostEvent + symbEvent + cospecEvent);
   symbEventProb += hostEventProb;
   double whichEvent = unif_rand();
+  // randomly chooose host, symb, or cospeciation event
   if(whichEvent < hostEventProb){
-
     assocMat = this->cophyloERMEvent(eventTime, assocMat);
   }
   else if(whichEvent < symbEventProb){
-    // assocMat = symbiontTree->ermJointEvent(eventTime, assocMat);
     assocMat = this->symbiontTreeEvent(eventTime, assocMat);
   }
   else{
@@ -376,7 +442,7 @@ arma::umat Simulator::cophyloEvent(double eventTime, arma::umat assocMat){
   return assocMat;
 }
 
-
+// Function that creates the dataframe out of the vectors that record events
 Rcpp::DataFrame Simulator::createEventDF(){
   this->updateEventIndices();
   DataFrame df = DataFrame::create(Named("Symbiont Index") = inOrderVecOfSymbIndx,
@@ -386,7 +452,7 @@ Rcpp::DataFrame Simulator::createEventDF(){
   return df;
 }
 
-
+// Function that clears the vectors that record events
 void Simulator::clearEventDFVecs(){
   inOrderVecOfHostIndx.erase(inOrderVecOfHostIndx.begin(),
                              inOrderVecOfHostIndx.end());
@@ -397,6 +463,10 @@ void Simulator::clearEventDFVecs(){
   inOrderVecOfEventTimes.erase(inOrderVecOfEventTimes.begin(),
                                inOrderVecOfEventTimes.end());
 }
+
+
+// update the indices of the event vector from the C++ indexing where the root is
+// index 0, to the APE package indexing where the root is numTips+1
 void Simulator::updateEventIndices(){
 
   for(int i = 0; i < inOrderVecOfHostIndx.size(); i++){
@@ -405,39 +475,42 @@ void Simulator::updateEventIndices(){
     int newHostIndx = spTree->getIndexFromNodes(oldHostIndx);
 
     int newSymbIndx = symbiontTree->getIndexFromNodes(oldSymbIndx);
-    // inOrderVecOfHostIndx.erase(i);
-    // inOrderVecOfHostIndx.insert(i,newHostIndx);
     inOrderVecOfHostIndx(i) = newHostIndx;
     inOrderVecOfSymbIndx(i) = newSymbIndx;
-    // inOrderVecOfSymbIndx.erase(i);
-    // inOrderVecOfSymbIndx.insert(i,newSymbIndx);
   }
 }
 
-
+// add an element to each event vector for an event
 void Simulator::updateEventVector(int h, int s, int e, double time){
   inOrderVecOfHostIndx.push_back(std::move(h));
   inOrderVecOfSymbIndx.push_back(std::move(s));
   switch(e) {
     case 0:
+      // symbiont loss
       inOrderVecOfEvent.push_back(std::move("SL"));
       break;
     case 1:
+      // host loss
       inOrderVecOfEvent.push_back(std::move("HL"));
       break;
     case 2:
+      // symbiont gain
       inOrderVecOfEvent.push_back(std::move("SG"));
       break;
     case 3:
+      // host gain
       inOrderVecOfEvent.push_back("HG");
       break;
     case 4:
+      // association gain
       inOrderVecOfEvent.push_back("AG");
       break;
     case 5:
+      // association loss
       inOrderVecOfEvent.push_back("AL");
       break;
     case 6:
+      // cospeciation
       inOrderVecOfEvent.push_back("C");
       break;
     default:
@@ -448,44 +521,56 @@ void Simulator::updateEventVector(int h, int s, int e, double time){
 
 
 
-
+// Event occurring on the symbiont tree at eventTiem with matrix assocMat
 arma::umat Simulator::symbiontTreeEvent(double eventTime, arma::umat assocMat){
+  // get the number of tips on the symbiont tree
   int numExtantSymbs = symbiontTree->getNumTips();
+  // randomly choose one of these to have an event on
   int nodeInd = unif_rand()*(numExtantSymbs - 1);
+  // relative birth rate, uses geneBirthRate, geneDeathRate and transferRate
+  // for the only purpose so that I did not need to add more members to the class
+  // geneBirthRate = symbiont speciation rate
+  // geneDeathRate = symbiont extinction rate
+  // transferRate = symbiont host expansion rate
   double relBr = geneBirthRate / (geneBirthRate
                                     + geneDeathRate
                                     + transferRate);
+  // relative death rate
   double relDr = relBr + (geneDeathRate / (geneBirthRate
                                             + geneDeathRate
                                             + transferRate));
   double decid = unif_rand();
+  // make sure our times are correctly set
   spTree->setCurrentTime(eventTime);
   symbiontTree->setCurrentTime(eventTime);
+
   int numExtantHosts = spTree->getNumExtant();
 
   arma::urowvec rvec = assocMat.row(nodeInd);
 
-  // List rowOfEvents;
+  // delete the appropriate row of the association matrix
   assocMat.shed_row(nodeInd);
-
+  // randomly decide between birth, death, and transfer
   if(decid < relBr){
+    // update the event vectors
     updateEventVector(spTree->getNodesIndxFromExtantIndx(assocMat.n_cols - 1),
                       symbiontTree->getNodesIndxFromExtantIndx(nodeInd),
                       2,
                       eventTime);
+    // birth event on the symbiont tree
     symbiontTree->lineageBirthEvent(nodeInd);
     numExtantSymbs = symbiontTree->getNumExtant();
 
 
     assocMat.resize(numExtantSymbs, numExtantHosts);
-
+    // add two new rows to the association matrix that are identical to the deleted row
     assocMat(numExtantSymbs-2, span::all) = rvec;
     assocMat(numExtantSymbs-1, span::all) = rvec;
 
     // sort symbs on new hosts
     for(int i = 0; i < rvec.n_cols; i++){
       if(rvec(i) == 1){
-        // shuffle might be better here?
+        // update the event vectors for the sorting events
         updateEventVector(spTree->getNodesIndxFromExtantIndx(i),
                           symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs-2),
                           4,
@@ -499,59 +584,53 @@ arma::umat Simulator::symbiontTreeEvent(double eventTime, arma::umat assocMat){
     }
   }
   else if(decid < relDr){
-    //assocMat.print();
+    // update the event vectors for the main event
     updateEventVector(spTree->getNodesIndxFromExtantIndx(assocMat.n_cols - 1),
                       symbiontTree->getNodesIndxFromExtantIndx(nodeInd),
                       0,
                       eventTime);
     numExtantSymbs = symbiontTree->getNumExtant();
-    // check rows for 0's
-    // arma::uvec symbless = zeros<uvec>(numExtantHosts);
-    // for(int i = assocMat.n_cols - 1; i != -1; i--){
-    //   if(!(any(assocMat.col(i)))){
-    //     updateEventVector(spTree->getNodesIndxFromExtantIndx(i),
-    //                       symbiontTree->getNodesIndxFromExtantIndx(nodeInd),
-    //                       0,
-    //                       eventTime);
-    //     spTree->lineageDeathEvent(i);
-    //
-    //     symbless(i) = 1;
-    //   }
-    // }
     for(int i = 0; i< rvec.n_cols; i++){
       if(rvec[i] == 1){
-        // this may be a waste of code
-            updateEventVector(spTree->getNodesIndxFromExtantIndx(i),
+        // update the event vectors for the sorting events
+        updateEventVector(spTree->getNodesIndxFromExtantIndx(i),
                               symbiontTree->getNodesIndxFromExtantIndx(nodeInd),
                               4,
                               eventTime);
       }
     }
+
+    // death event
     symbiontTree->lineageDeathEvent(nodeInd);
-//
-//     uvec toBeDeleted = find(symbless);
-//     assocMat.shed_rows(toBeDeleted);
   }
   else{
+    // expansion event (a.k.a. birth event with the addition of one host in a descendent symbiont lineage)
     updateEventVector(spTree->getNodesIndxFromExtantIndx(assocMat.n_cols - 1),
                       symbiontTree->getNodesIndxFromExtantIndx(nodeInd),
                       2,
                       eventTime);
+    // check if the sum of the row equals the number of columns
+    // in other words is the symbiont at rvec occupying all the hosts already?
+    // if no, if yes go to else
     if(sum(rvec) != assocMat.n_cols){
       std::vector<int> hostIndices;
+      // make a list of unoccupied hosts
       for(int i = 0; i < rvec.n_cols; i++){
         if(rvec(i) < 1)
           hostIndices.push_back(std::move(i));
       }
-      //uvec hostIndices = find(rvec < 1);
+      // randomly choose from one of those unoccupied hosts
       int hostInd = unif_rand() * (hostIndices.size());
+      // birth event
       symbiontTree->lineageBirthEvent(nodeInd);
       numExtantSymbs = symbiontTree->getNumTips();
-
+      // add two rows
       assocMat.resize(numExtantSymbs, numExtantHosts);
-
+      // make one of these rows the same as the deleted row
       assocMat(numExtantSymbs-2, span::all) = rvec;
+      // change that row to have an extra one where the randomly picked unoccupied host was
       rvec(hostIndices[hostInd]) = 1;
+      // make that a new row
       assocMat(numExtantSymbs-1, span::all) = rvec;
 
       // sort symbs on new hosts
@@ -568,7 +647,7 @@ arma::umat Simulator::symbiontTreeEvent(double eventTime, arma::umat assocMat){
         }
       }
     }
-    else{
+    else{ // if all hosts are occupied this is just a regular birth event
       symbiontTree->lineageBirthEvent(nodeInd);
       numExtantSymbs = symbiontTree->getNumExtant();
 
@@ -600,32 +679,38 @@ arma::umat Simulator::symbiontTreeEvent(double eventTime, arma::umat assocMat){
 }
 
 
-
-
+// cophylogenetic erm event is actually the function for the host event
+// apologies for the misleading name
 arma::umat Simulator::cophyloERMEvent(double eventTime, arma::umat assocMat){
   int numExtantHosts = spTree->getNumExtant();
+  // randomly pick a host
   int nodeInd = unif_rand()*(numExtantHosts - 1);
+  // choose event based on the relative birth rate
   double relBr = speciationRate / (speciationRate + extinctionRate);
   bool isBirth = (unif_rand() < relBr ? true : false);
+  // set the times to keep up
   spTree->setCurrentTime(eventTime);
   symbiontTree->setCurrentTime(eventTime);
   int numExtantSymbs = symbiontTree->getNumExtant();
-
+  // delete a column
   arma::ucolvec cvec = assocMat.col(nodeInd);
-  // List rowOfEvents;
 
   assocMat.shed_col(nodeInd);
 
   if(isBirth){
+    // add the birth event to event vectors
     updateEventVector(spTree->getNodesIndxFromExtantIndx(nodeInd),
                       symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs - 1),
                       3,
                       eventTime);
+    // birth event occur
     spTree->lineageBirthEvent(nodeInd);
+    // recalculate num extant hosts
     numExtantHosts = spTree->getNumExtant();
 
-
+    // add two rows
     assocMat.resize(numExtantSymbs, numExtantHosts);
+    // make two new rows of data frame to be clear about which host speciated into what
     updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-2),
                       symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs - 1),
                       4,
@@ -634,13 +719,10 @@ arma::umat Simulator::cophyloERMEvent(double eventTime, arma::umat assocMat){
                       symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs - 1),
                       4,
                       eventTime);
-    //  assocMat(span::all, numExtantHosts-2) = cvec;
-  //  assocMat(span::all, numExtantHosts-1) = cvec;
 
    // sort symbs on new hosts
    for(int i = 0; i < cvec.n_elem; i++){
       if(cvec[i] == 1){
-      // shuffle might be better here?
         arma::umat rr = randi<umat>(1,2, distr_param(0,1));
         if(rr(0,0) == 0 && rr(0,1) == 1){
           updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-2),
@@ -703,14 +785,14 @@ arma::umat Simulator::cophyloERMEvent(double eventTime, arma::umat assocMat){
       }
     }
   }
-  else{
+  else{ // otherwise death occurs
+    // update event vectors
     updateEventVector(spTree->getNodesIndxFromExtantIndx(nodeInd),
                       symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs - 1),
                       1,
                       eventTime);
-    //assocMat.print();
     numExtantSymbs = symbiontTree->getNumExtant();
-    // check rows for 0's
+    // check rows for 0's, rows with 0s get deleted in symbiont tree
     arma::uvec hostless = zeros<uvec>(numExtantSymbs);
     for(int i = assocMat.n_rows - 1; i != -1; i--){
       if(!(any(assocMat.row(i)))){
@@ -723,8 +805,9 @@ arma::umat Simulator::cophyloERMEvent(double eventTime, arma::umat assocMat){
         hostless(i) = 1;
       }
     }
+    // host tree death event
     spTree->lineageDeathEvent(nodeInd);
-
+    // delete the rows from the association matrix
     uvec toBeDeleted = find(hostless);
     assocMat.shed_rows(toBeDeleted);
   }
@@ -732,15 +815,14 @@ arma::umat Simulator::cophyloERMEvent(double eventTime, arma::umat assocMat){
   return assocMat;
 }
 
-
+// Cospeciation event occur
 arma::umat Simulator::cospeciationEvent(double eventTime, arma::umat assocMat){
   // draw index of host
   spTree->setCurrentTime(eventTime);
   symbiontTree->setCurrentTime(eventTime);
-  // issue is that here you can choose hosts without symbionts!
   int numExtantHosts = spTree->getNumExtant();
   std::vector<int> hostIndices;
-
+  // pick a host with symbionts at random
   for(int i = 0; i < numExtantHosts; i++){
     if(sum(assocMat.col(i)) >= 0.5)
       hostIndices.push_back(std::move(i));
@@ -755,29 +837,33 @@ arma::umat Simulator::cospeciationEvent(double eventTime, arma::umat assocMat){
   int indxOfSymb = unif_rand() * (symbIndices.size() - 1);
 
   arma::urowvec rvec = assocMat.row(symbIndices[indxOfSymb]);
+  // add a C to the event vectors
   updateEventVector(spTree->getNodesIndxFromExtantIndx(hostIndices[indxOfHost]),
                     symbiontTree->getNodesIndxFromExtantIndx(symbIndices[indxOfSymb]),
                     6,
                     eventTime);
+  // birth in both trees at the same time
   spTree->lineageBirthEvent(hostIndices[indxOfHost]);
   symbiontTree->lineageBirthEvent(symbIndices[indxOfSymb]);
 
 
   numExtantHosts = spTree->getNumExtant();
   int numExtantSymbs = symbiontTree->getNumExtant();
-
+  // delete a row and column of assocaition matrix
   assocMat.shed_col(hostIndices[indxOfHost]);
   assocMat.shed_row(symbIndices[indxOfSymb]);
 
   cvec.shed_row(symbIndices[indxOfSymb]);
   rvec.shed_col(hostIndices[indxOfHost]);
-
+  // add 2 new rows and 2 new cols
   assocMat.resize(numExtantSymbs, numExtantHosts);
-
+  // throw the identity matrix into the bottom right corner representing
+  // that each new host is associated with one new symbiont
   assocMat.submat(numExtantSymbs-2,
                   numExtantHosts-2,
                   numExtantSymbs-1,
                   numExtantHosts-1) = eye<umat>(2,2);
+  // record in event vector
   updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-2),
                     symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs-2),
                     4,
@@ -787,8 +873,8 @@ arma::umat Simulator::cospeciationEvent(double eventTime, arma::umat assocMat){
                     symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs-1),
                     4,
                     eventTime);
-  // loop through cvec and make little vecs
 
+  // loop through cvec to sort the old hosts of the ancestor symbiont on new symbionts
   for(int i = 0; i < cvec.n_rows; i++){
     if(cvec[i] == 1){
 
@@ -836,7 +922,7 @@ arma::umat Simulator::cospeciationEvent(double eventTime, arma::umat assocMat){
 
 
 
-  // loop through rvec
+  // loop through rvec to sort the old symbs of the ancestor host on new hosts
   for(int i = 0; i < rvec.n_elem; i++){
     if(rvec[i] == 1){
       arma::umat rr = ones<umat>(1,2);
@@ -878,42 +964,61 @@ arma::umat Simulator::cospeciationEvent(double eventTime, arma::umat assocMat){
   return assocMat;
 }
 
+// locus tree simulation function, probably should be renamed
 bool Simulator::bdsaBDSim(){
     bool treesComplete = false;
+    // get the stop time from the spTree
     double stopTime = spTree->getCurrentTimeFromExtant();
     double eventTime;
     bool isSpeciation;
+    // start a new locus tree
     lociTree = new LocusTree(numTaxaToSim,
                              currentSimTime,
                              geneBirthRate,
                              geneDeathRate,
                              transferRate);
+    // species tree is read in from r so convert index from R to C++ indexing
     std::map<int, int> rToTdckenIndxMap = spTree->makeIndxMap();
     spTree->switchIndicesFirstToSecond(rToTdckenIndxMap);
+    // get the root
     Node* spRoot = spTree->getRoot();
     std::map<int, std::string> tipMap = spTree->makeTipMap();
-
+    // set the locus tree index to line up with the species tree
     lociTree->getRoot()->setLindx(spRoot->getIndex());
-
+    // get a map of <index of node in species tree, death time of that node>
     std::map<int,double> speciesDeathTimes = spTree->getDeathTimesFromNodes();
+    // make a set of species that are currently alive to keep track of which lineages
+    // in speciesDeathTimes are around
     std::set<int> contempSpecies;
+    // placeholder for descendents of a member of contempSpecies
     std::pair<int, int> sibs;
+    // set the stop time
     lociTree->setStopTime(stopTime);
-
+    // if contempSpecies is not empty for some reason clear it
     if(!(contempSpecies.empty()))
         contempSpecies.clear();
+    // insert the root of spTree index as the first species index to simulate within
     contempSpecies.insert(spRoot->getIndex());
 
     while(currentSimTime < stopTime){
+      // get time to next event based on rate parameters and number extant tips
       eventTime = lociTree->getTimeToNextEvent();
       currentSimTime += eventTime;
+      // loop through currently living species to see if a species death time has been reached
+      // if so speciation occurs and all locus tree lineages associated with that species index
+      // speciate also
+      // if extinction occurs those lineages go extinct
       for(std::set<int>::iterator it = contempSpecies.begin(); it != contempSpecies.end();){
         if(currentSimTime > speciesDeathTimes[(*it)]){
           isSpeciation = spTree->macroEvent((*it));
           if(isSpeciation){
-           // currentSimTime = speciesDeathTimes[(*it)];
+            // tipward traverse to get the descendants of (*it) put these in sibs
             sibs = spTree->preorderTraversalStep(*it);
+            // speciate the members of lociTree with indx of (*it) give those descendants
+            // either sibs[0] or sib[1] as index
             lociTree->speciationEvent((*it), speciesDeathTimes[(*it)], sibs);
+            //erase (*it) from contempSpecies and insert the descendant 2 where it was
+            //and descendant 1 to one space after
             it = contempSpecies.erase(it);
             it = contempSpecies.insert( it, sibs.second);
             ++it;
@@ -921,29 +1026,37 @@ bool Simulator::bdsaBDSim(){
 
           }
           else{
+            // species extinction or no event
+            // check if the member of spTree is extinct or extant in final tree
             if(!(spTree->getIsExtantFromIndx(*it))){
              // currentSimTime = speciesDeathTimes[(*it)];
               lociTree->extinctionEvent(*it, speciesDeathTimes[(*it)]);
               it = contempSpecies.erase(it);
             }
             else{
+              // otherwise move along
               ++it;
             }
           }
         }
         else{
+          // otherwise move along
           ++it;
         }
       }
 
+      // if we pass stopTime change to be at stopTime and break
       if(currentSimTime >= stopTime){
         currentSimTime = stopTime;
         break;
       }
+      // locus tree event (assuming parameters are NON-ZERO)
+      // if parameters are all 0 no locus tree events occur and we get
+      // the species tree back (relabeled)
       if(lociTree->checkLocusTreeParams()){
         lociTree->ermEvent(currentSimTime);
       }
-
+      // we get to 0 living nodes end sm
       if(lociTree->getNumExtant() < 1){
         treesComplete = false;
         return treesComplete;
@@ -951,14 +1064,17 @@ bool Simulator::bdsaBDSim(){
     }
 
     currentSimTime = stopTime;
+    // set the present time
     lociTree->setPresentTime(currentSimTime);
+    // set the names based on their species ID, so tips are named
+    // "T<SPECIES_INDX>_<LOCUSTREE_INDX>"
     lociTree->setNamesBySpeciesID(tipMap);
 
     treesComplete = true;
 
     return treesComplete;
 }
-
+// wrapper around locus tree sim to make sure we get a proper tree
 bool Simulator::simLocusTree(){
   bool good = false;
 
@@ -968,6 +1084,7 @@ bool Simulator::simLocusTree(){
   return good;
 }
 
+// function to get the epochs of the locus tree (i.e. our coalescent breakpoints)
 std::set<double, std::greater<double> > Simulator::getEpochs(){
     std::set<double, std::greater<double> > epochs;
     std::vector<Node*> lociTreeNodes = lociTree->getNodes();
@@ -983,7 +1100,7 @@ std::set<double, std::greater<double> > Simulator::getEpochs(){
     return epochs;
 }
 
-
+// multispecies coalescent simulator
 bool Simulator::coalescentSim(){
     bool treeGood = false;
     geneTree = new GeneTree(numTaxaToSim, indPerPop, popSize, generationTime);
@@ -996,31 +1113,47 @@ bool Simulator::coalescentSim(){
     double stopTime, stopTimeEpoch, stopTimeLoci;
     bool allCoalesced = false, deathCheck = false;
     bool is_ext;
-
+  // get the coalescent breakpoints from lociTree
     std::set<double, std::greater<double> > epochs = getEpochs();
+    // how many epochs
     int numEpochs = (int) epochs.size();
+  // get the indices of extinct loci
     std::set<int> extinctFolks = lociTree->getExtLociIndx();
+    // this function is for adding in multilocus coalescent later
     std::set<int> coalescentBounds = lociTree->getCoalBounds();
-
+  // get ContempLoci - the ones alive at the end of the locus tree sim (tips at present)
     std::vector< std::vector<int> > contempLoci = lociTree->getExtantLoci(epochs);
+    // get the stop times of loci as a map with indices as keys
     std::map<int, double> stopTimes = lociTree->getBirthTimesFromNodes();
+    // intialize the tree with individuals sampled from contempLoci and starting with the first coalescent bound
     geneTree->initializeTree(contempLoci, *(epochs.begin()));
     std::set<int>::iterator extFolksIt;
-
+    //loop through the epochs in order
     for(std::set<double, std::greater<double> >::iterator epIter = epochs.begin(); epIter != epochs.end(); ++epIter){
+        // set the time as the current epoch
         currentSimTime = *epIter;
+      // if we aren't in the last epoch
         if(epochCount != numEpochs - 1){
+          // iterate
             epIter = std::next(epIter, 1);
             stopTimeEpoch = *epIter;
+            // loop through the contempLoci that are around during this epoch
             for(int j = 0; j < contempLoci[epochCount].size(); ++j){
+                // find the extinct folks in this epoch
                 extFolksIt = extinctFolks.find(contempLoci[epochCount][j]);
+                // check if there were any found extinct
                 is_ext = (extFolksIt != extinctFolks.end());
+                // if so
                 if(is_ext){
+                  // add tips for the extinct species
                     geneTree->addExtinctSpecies(currentSimTime, contempLoci[epochCount][j]);
+                  // erase from the extinct folks to mark that it was added
                     extinctFolks.erase(extFolksIt);
                 }
+                // get the stopTime
                 stopTimeLoci = stopTimes[contempLoci[epochCount][j]];
-
+                // if the current stop time is greater than the stop time of the epoch
+                // it will not go extinct during this epoch so deathCheck keeps track of that
                 if(stopTimeLoci > stopTimeEpoch){
                     stopTime = stopTimeLoci;
                     deathCheck = true;
@@ -1029,9 +1162,14 @@ bool Simulator::coalescentSim(){
                     stopTime = stopTimeEpoch;
                     deathCheck = false;
                 }
-
+                // get the index of the ancestor of contempLoci[epochCount][j]
                 ancIndx = lociTree->postOrderTraversalStep(contempLoci[epochCount][j]);
-                allCoalesced = geneTree->censorCoalescentProcess(currentSimTime, stopTime, contempLoci[epochCount][j], ancIndx, deathCheck);
+                // run the censored coalescent on memebers of geneTree with Lindx of contempLoci[epochCount][j]
+                allCoalesced = geneTree->censorCoalescentProcess(currentSimTime,
+                                                                 stopTime,
+                                                                 contempLoci[epochCount][j],
+                                                                 ancIndx,
+                                                                 deathCheck);
 
 
                 // if all coalesced remove that loci from the matrix of loci
@@ -1046,26 +1184,29 @@ bool Simulator::coalescentSim(){
                         }
                     }
                 }
+                // reset these
                 allCoalesced = false;
                 is_ext = false;
             }
+            // go back one in epIter
             epIter = std::prev(epIter, 1);
         }
         else{
+          // if we are in the last epoch do a coalescent until we have one lineage
             // finish coalescing
             geneTree->rootCoalescentProcess(currentSimTime);
             treeGood = true;
         }
+        // iterate
         epochCount++;
     }
 
-    //spToLo = lociTree->getLocusToSpeciesMap();
-    //geneTree->setIndicesBySpecies(spToLo);
-    //geneTree->setBranchLengths();
     return treeGood;
 }
 
-
+// wrapper around simGeneTree takes the index of geneTrees as an argument and
+// places the result of Simulator::coalescentSim into geneTrees[j]
+// this assumes that most are simulating >1 geneTrees
 bool Simulator::simGeneTree(int j){
   bool gGood = false;
   RNGScope scope;
@@ -1078,7 +1219,9 @@ bool Simulator::simGeneTree(int j){
 }
 
 
-
+// ##################################
+//
+// below here is I think dead code?
 double Simulator::calcSpeciesTreeDepth(){
     return spTree->getTreeDepth();
 }
@@ -1107,7 +1250,7 @@ int Simulator::findNumberTransfers(){
     return numTrans;
 }
 
-
+// wrappers for SpeciesTree, symbionTree, lociTree, geneTree root edge calculation
 double Simulator::getSpeciesTreeRootEdge(){
   return spTree->getRoot()->getDeathTime() - spTree->getRoot()->getBirthTime();
 }
