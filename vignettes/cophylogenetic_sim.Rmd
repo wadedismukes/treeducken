@@ -123,8 +123,13 @@ We can use either symbiont or host trees to simulate locus trees. First we will 
 
 
 ```{r}
-host_tree_locus_trees <- sim_locustree_bdp(host_tree, gbr = 0.2, gdr = 0.1, lgtr = 0.1, num_loci = 10)
-str(host_tree_locus_trees[[1]])
+host_tree_locus_trees <- sim_locustree_bdp(host_tree, gbr = 0.4, gdr = 0.2, lgtr = 0.0, num_loci = 100)
+plot(host_tree)
+# str(host_tree_locus_trees)
+# plot(host_tree_locus_trees)
+```
+```{r}
+plot(host_tree_locus_trees)
 ```
 Now we will use the symbiont tree:
 
@@ -180,7 +185,7 @@ gopher_lice_cophylo <- convert_to_cophylo(hostTree = gopher_tree,
                                           assocMat = gopher_lice_assoc_matrix)
 print(gopher_lice_cophylo)
 cophylo_summary_stat(gopher_lice_cophylo)
-plot.cophylo(gopher_lice_cophylo)
+treeducken::plot.cophylo(gopher_lice_cophylo)
 ```
 
 

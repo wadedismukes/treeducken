@@ -221,7 +221,7 @@ phylogram <- function(tree,
     }
     h <- part - 0.5 - tip.len*(max(edge_mat) - min(edge_mat)) - fsize*strwidth(tree$tip.label)
 
-    ## plot links to tips
+    ## plot links to tipss
     for (i in 1:num_tips) {
         lines(d*c(edge_mat[which(cw_tree$edge[,2] == i),2], h[i] + tip.len*(max(edge_mat) - min(edge_mat))),
               rep(y[i],2),
@@ -241,7 +241,7 @@ phylogram <- function(tree,
                          offset = 0.1,
                          cex = fsize,
                          font = font)
-            print(c(y[i], tree$tip.label[i]))
+           # print(c(y[i], tree$tip.label[i]))
         }
     }
     phylo_plot <- list(type = "phylogram",

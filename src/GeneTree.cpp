@@ -85,11 +85,11 @@ bool GeneTree::censorCoalescentProcess(double startTime, double stopTime, int co
             indInExtNodes.push_back(extIndx);
         }
     }
-  //  std::cout << contempSpeciesIndx << "   ($)$)%    " << indInExtNodes.size() << std::endl;
+  // the coalescent part
     if(indInExtNodes.size() > 1){
         while(t > stopTime){
-            t -= getCoalTime(indInExtNodes.size());
-            // std::cout << t << std::endl;
+            t -= getCoalTime(indInExtNodes.size()); // dra a time
+            // is the time older than the end point?
             if(t < stopTime){
                 if(chck){
                     t = stopTime;
@@ -102,6 +102,7 @@ bool GeneTree::censorCoalescentProcess(double startTime, double stopTime, int co
                     break;
                 }
             }
+            // randomly choose two nodes to coalesce in this locus
             rightInd = unif_rand() * (indInExtNodes.size() - 1);
             iter_swap(indInExtNodes.begin() + rightInd, indInExtNodes.begin());
             rightIndExtN = indInExtNodes[0];
@@ -113,10 +114,10 @@ bool GeneTree::censorCoalescentProcess(double startTime, double stopTime, int co
             leftIndExtN = indInExtNodes[0];
             l = extantNodes[leftIndExtN];
             std::reverse(indInExtNodes.begin(), indInExtNodes.end());
-
+            // do the coalescing
             n = coalescentEvent(t, l, r);
-            //iter_swap(extantNodes.begin() + rightIndExtN, extantNodes.end() - 1);
-            //iter_swap(extantNodes.begin() + leftIndExtN, extantNodes.end() - 2);
+            // book-keeping that almost certainly could be done better:
+            // delete two nodes from erase
             if(leftIndExtN > rightIndExtN){
                 extantNodes.erase(extantNodes.begin() + leftIndExtN);
                 extantNodes.erase(extantNodes.begin() + rightIndExtN);
@@ -125,44 +126,43 @@ bool GeneTree::censorCoalescentProcess(double startTime, double stopTime, int co
                 extantNodes.erase(extantNodes.begin() + rightIndExtN);
                 extantNodes.erase(extantNodes.begin() + leftIndExtN);
             }
+            // clear the indices in extant nodes vector
             indInExtNodes.clear();
-            //indInExtNodes.erase(indInExtNodes.begin(), indInExtNodes.begin() + 2);
+            // put in the new node
             extantNodes.insert(extantNodes.begin(), n);
 
-            // if(!(indInExtNodes.empty())){
-            //     for(std::vector<int>::iterator it = indInExtNodes.begin(); it != indInExtNodes.end(); ++it){
-            //         (*it) += 1;
-            //     }
-            // }
+            // populate the indices in extant nodes vector again, this time to see if it is empty
             for(std::vector<Node*>::iterator it = extantNodes.begin(); it != extantNodes.end(); ++it){
                 if((*it)->getLindx() == contempSpeciesIndx){
                     extIndx = std::distance(extantNodes.begin(), it);
                     indInExtNodes.push_back(extIndx);
                 }
             }
-//            extantNodes.erase(extantNodes.end() - 2, extantNodes.end());
-         //  std::cout << "size of extantNodes " << extantNodes.size() << std::endl;
+            // if only one is left get out of the loop
             if(indInExtNodes.size() == 1){
                 allCoalesced = true;
                 break;
             }
         }
     }
+    // only one member so nothing to do besides progress time
     else if (indInExtNodes.size() == 1){
         t = stopTime;
         allCoalesced = true;
         extantNodes[indInExtNodes[0]]->setLindx(ancSpIndx);
     }
     else{
+        // this is 0 to catch any stragglers and in Simulator::simulateCoalescentProcess those will be deleted from the contempSpecies listing
         allCoalesced = true;
     }
-
+    // if everything coalesced loop through and change the locus indices in geneTree.nodes
+    // TODO: refactor this to make clear when species indices are being used (they aren't) and locus indices are (they are)
     if(allCoalesced == true){
         for(int i = 0; i < indInExtNodes.size(); ++i){
             extantNodes[indInExtNodes[i]]->setLindx(ancSpIndx);
         }
     }
-
+    // clear this again
     indInExtNodes.clear();
     return allCoalesced;
 }
@@ -203,7 +203,21 @@ std::multimap<int, double> GeneTree::rescaleTimes(std::multimap<int, double> tim
 
 }
 
-
+// void GeneTree::forceCoalescenceAtDuplication(double startTime, double stopTime, int contempSpeciesIndx, int ancSpInx){
+//   int leftIndxOfContempLocus, rightIndxOfContempLocus;
+//   Node *l, *r
+//   Node *anc;
+//   double deathTime = startTime;
+//   double birthTime = stopTime; // coalescent makes this look confusing (i.e. we're going backwards)
+//   std::vector<int> indexInExtantNodesL;
+//   // first set the indices of left and right descendant (chosen arbitrarily)
+//   leftIndxOfContempLocus = contempSpeciesIndx;
+//
+//   for()
+//
+//
+//
+// }
 
 void GeneTree::rootCoalescentProcess(double startTime){
     int leftInd, rightInd;

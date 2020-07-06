@@ -169,8 +169,7 @@ parafit_stat <- function(host_tr, symb_tr, assoc_mat){
 
     if(length(host_tree$tip.label) < 3)
     {
-      warning("'host_tr' must be a tree with more than 2 extant tips to calculate the parafit stat\n
-              returning NA.")
+      warning("'host_tr' must be a tree with more than 2 extant tips to calculate the parafit stat returning NA.\n")
       return(NA)
     }
     if(length(symb_tree$tip.label) < 3)

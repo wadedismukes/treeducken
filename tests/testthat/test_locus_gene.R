@@ -9,6 +9,16 @@ sim_test_spt_loct <- function(gbr, gdr, lgtr, numLoci, species_tree_len = 5.0){
 
 }
 
+sim_test_spt_loct <- function(gbr, gdr, lgtr, numLoci, species_tree_len = 5.0){
+    tr <- sim_sptree_bdp_time(0.1, 0.05, 1, species_tree_len)
+    sim_locustree_bdp(tr[[1]],
+                      gbr = gbr,
+                      gdr = gdr,
+                      lgtr = lgtr,
+                      num_loci = numLoci)
+
+}
+
 sim_test_spt_loct_equality <- function(gene_birth = 0.0, gene_death = 0.0, transfers = 0.0, numLoci){
     tr <- sim_sptree_bdp_time(0.1, 0.05, 1, 5.0)
     loctr <- sim_locustree_bdp(tr[[1]],
@@ -32,3 +42,18 @@ test_that("sim_locustree_bdp returns tree concordant with species tree when locu
     expect_true(sim_test_spt_loct_equality(numLoci = 20))
 })
 
+
+get_length_tree <- function(tr){
+    max(ape::node.depth.edgelength(tr)) + tr$root.edge
+}
+
+get_all_tree_lengths <- function(multiTree){
+    min(sapply(multiTree, get_length_tree))
+}
+
+# test that tree has correct length (simple)
+test_that("sim_locustree_bdp produces the right length trees", {
+    expect_equal(get_all_tree_lengths(sim_test_spt_loct(1.0, 0.5, 0.0, 100, species_tree_len = 1.0)), 1.0)
+    expect_equal(get_all_tree_lengths(sim_test_spt_loct(1.0, 0.5, 0.0, 100, species_tree_len = 2.0)), 2.0)
+    expect_equal(get_all_tree_lengths(sim_test_spt_loct(1.0, 0.5, 0.0, 100, species_tree_len = 3.0)), 3.0)
+})

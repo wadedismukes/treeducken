@@ -989,7 +989,7 @@ bool Simulator::bdsaBDSim(){
     std::map<int,double> speciesDeathTimes = spTree->getDeathTimesFromNodes();
     // make a set of species that are currently alive to keep track of which lineages
     // in speciesDeathTimes are around
-    std::set<int> contempSpecies;
+    std::vector<int> contempSpecies;
     // placeholder for descendents of a member of contempSpecies
     std::pair<int, int> sibs;
     // set the stop time
@@ -998,8 +998,8 @@ bool Simulator::bdsaBDSim(){
     if(!(contempSpecies.empty()))
         contempSpecies.clear();
     // insert the root of spTree index as the first species index to simulate within
-    contempSpecies.insert(spRoot->getIndex());
-
+    contempSpecies.push_back(spRoot->getIndex());
+    Rcout << contempSpecies.size() << std::endl;
     while(currentSimTime < stopTime){
       // get time to next event based on rate parameters and number extant tips
       eventTime = lociTree->getTimeToNextEvent();
@@ -1008,10 +1008,12 @@ bool Simulator::bdsaBDSim(){
       // if so speciation occurs and all locus tree lineages associated with that species index
       // speciate also
       // if extinction occurs those lineages go extinct
-      for(std::set<int>::iterator it = contempSpecies.begin(); it != contempSpecies.end();){
-        if(currentSimTime > speciesDeathTimes[(*it)]){
+      double placeholder = currentSimTime;
+      for(std::vector<int>::iterator it = contempSpecies.begin(); it != contempSpecies.end();){
+        if(currentSimTime >= speciesDeathTimes[(*it)]){
           isSpeciation = spTree->macroEvent((*it));
           if(isSpeciation){
+          //  currentSimTime = speciesDeathTimes[(*it)];
             // tipward traverse to get the descendants of (*it) put these in sibs
             sibs = spTree->preorderTraversalStep(*it);
             // speciate the members of lociTree with indx of (*it) give those descendants
@@ -1020,12 +1022,14 @@ bool Simulator::bdsaBDSim(){
             //erase (*it) from contempSpecies and insert the descendant 2 where it was
             //and descendant 1 to one space after
             it = contempSpecies.erase(it);
-            it = contempSpecies.insert( it, sibs.second);
-            ++it;
-            it = contempSpecies.insert( it, sibs.first);
+            it = contempSpecies.insert(it, sibs.second);
+            it =  contempSpecies.insert(it, sibs.first);
+
+
 
           }
           else{
+
             // species extinction or no event
             // check if the member of spTree is extinct or extant in final tree
             if(!(spTree->getIsExtantFromIndx(*it))){
@@ -1035,7 +1039,7 @@ bool Simulator::bdsaBDSim(){
             }
             else{
               // otherwise move along
-              ++it;
+              it = contempSpecies.erase(it);
             }
           }
         }
@@ -1044,7 +1048,7 @@ bool Simulator::bdsaBDSim(){
           ++it;
         }
       }
-
+      // currentSimTime = placeholder;
       // if we pass stopTime change to be at stopTime and break
       if(currentSimTime >= stopTime){
         currentSimTime = stopTime;
