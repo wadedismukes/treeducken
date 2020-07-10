@@ -24,6 +24,7 @@ void LocusTree::setNewLineageInfo(int indx, Node *r, Node *l){
     extantNodes[indx]->setIsTip(false);
     extantNodes[indx]->setIsExtant(false);
     extantNodes[indx]->setIsDuplication(true);
+    numDuplications++;
 
     r->setLdes(NULL);
     r->setRdes(NULL);
@@ -586,47 +587,76 @@ std::set<int> LocusTree::getCoalBounds(){
     return coalBoundLoci;
 }
 
+
 int LocusTree::getNumberTransfers(){
     return numTransfers;
 }
 
 
+
+void LocusTree::recursiveSetNamesBySpeciesID(Node *n,
+                                            int duplicationCount,
+                                            std::map<int, std::string> tipMap){
+  std::stringstream tn;
+
+  if(n != nullptr){
+    // internal node
+    if(!(n->getIsTip())){
+      if(n->getIsDuplication()){
+        tn << static_cast<char>(duplicationCount);
+        std::string nodeName = "D" + tn.str();
+        n->setName(nodeName);
+        recursiveSetNamesBySpeciesID(n->getLdes(), duplicationCount, tipMap);
+        duplicationCount++;
+        recursiveSetNamesBySpeciesID(n->getRdes(), duplicationCount, tipMap);
+      }
+      else{
+
+        recursiveSetNamesBySpeciesID(n->getLdes(), duplicationCount, tipMap);
+        recursiveSetNamesBySpeciesID(n->getRdes(), duplicationCount, tipMap);
+      }
+    }
+    // else tip (two types)
+    else{
+      tn << static_cast<char>(duplicationCount);
+      int locusTreeSpecInd = n->getIndex();
+      std::string tipName = tipMap[locusTreeSpecInd] + "_" + tn.str();
+      if(n->getIsExtinct() && tipName.front() != 'X')
+        tipName.insert(0, "X");
+      n->setName(tipName);
+    }
+  }
+}
+
 void LocusTree::setNamesBySpeciesID(std::map<int,std::string> tipMap)
 {
   std::stringstream tn;
   unsigned nodeIndx = numExtant + numExtinct;
-  unsigned tipIt = 0;
+  unsigned tipIndx = 0;
+  int numDuplications = this->getNumberDuplications();
+  int duplicationCount = 65;
+  // std::vector<int> duplicationCodes(26); // ASCII A is 65
+  // for(auto it = duplicationCodes.begin(); it != duplicationCodes.end(); ++it){
+  //   *it = 65;
+  //   asciiCounter++;
+  // }
+  //
 
+  Node* r = this->getRoot();
+  this->recursiveSetNamesBySpeciesID(r, duplicationCount, tipMap);
   for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it)
   {
     if((*it)->getIsTip())
     {
-      tn << (*it)->getLindx();
-      int locusTreeSpecInd = (*it)->getIndex();
-      std::string tipName = tipMap[locusTreeSpecInd] + "_" + tn.str();
-      if((*it)->getIsExtinct() && tipName.front() != 'X')
-        tipName.insert(0, "X");
-      (*it)->setName(tipName);
-      tipIt++;
-      (*it)->setIndx(tipIt);
-
-
+      tipIndx++;
+      (*it)->setIndx(tipIndx);
     }
     else
     {
       nodeIndx++;
       (*it)->setIndx(nodeIndx);
-      if((*it)->getIsDuplication())
-      {
-        tn << (*it)->getLindx();
-        std::string nodeName = "D" + tn.str();
-        (*it)->setName(nodeName);
-      }
-
     }
-
-    tn.clear();
-    tn.str(std::string());
 
   }
 }
+

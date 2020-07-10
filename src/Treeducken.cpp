@@ -118,7 +118,7 @@ Rcpp::List sim_locus_tree_gene_tree(SpeciesTree* species_tree,
                                     double gdr,
                                     double lgtr,
                                     int numLoci,
-                                    double theta,
+                                    double popsize,
                                     int samples_per_lineage,
                                     int numGenesPerLocus){
     Rcpp::List multiphy;
@@ -141,7 +141,7 @@ Rcpp::List sim_locus_tree_gene_tree(SpeciesTree* species_tree,
                                                 gdr,
                                                 lgtr,
                                                 samples_per_lineage,
-                                                theta,
+                                                popsize,
                                                 genTime,
                                                 numGenesPerLocus,
                                                 og,
@@ -168,15 +168,13 @@ Rcpp::List sim_locus_tree_gene_tree(SpeciesTree* species_tree,
                                    Named("tip.label") = phySimulator->getLocusTipNames(),
                                    Named("root.edge") = phySimulator->getLocusTreeRootEdge());
         phyLoc.attr("class") = "phylo";
-        List locusGeneSet = List::create(Named("locus.tree") = phyLoc,
+        List locusGeneSet = List::create(Named("container.tree") = phyLoc,
                                          Named("gene.trees") = phyGenesPerLoc);
-        locusGeneSet.attr("class") = "locusGeneSet";
         multiphy.push_back(std::move(locusGeneSet));
 
         delete phySimulator;
     }
 
-    multiphy.attr("class") = "multiLocusGeneSet";
 
 
     return multiphy;

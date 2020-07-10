@@ -63,7 +63,7 @@ host_symb_sets <- sim_cophylo_bdp(hbr = h_lambda,
                 host_exp_rate = s_her,
                 time_to_sim = 2.0,
                 numbsim = 10)
-print.multiCophylo(host_symb_sets, details = TRUE)
+print(host_symb_sets, details = TRUE)
 ```
 Notice that some of these are not particularly interesting with only 2 host or symbiont tips. 
 This is expected behavior, and occurs since there is a nonzero probability that no events occur in the time we simulated.
@@ -74,14 +74,14 @@ Let's check out one set.
 ```{r}
 # # plot one or two of them
 tree_set_of_interest <- host_symb_sets[[1]]
-print.cophylo(tree_set_of_interest)
+print(tree_set_of_interest)
 ```
 
 ```{r}
 plot(tree_set_of_interest)
 ```
-Notice that the output of `sim_cophylo_bdp` is a list of `cophylo` objects.
-Each `cophylo` object is composed of 4 elements: `host_tree`, `symb_tree`, `association_mat`, an `event_history`.
+Notice that the output of `sim_cophylo_bdp` is a list of `cophy` objects.
+Each `cophy` object is composed of 4 elements: `host_tree`, `symb_tree`, `association_mat`, an `event_history`.
 The `host_tree` an `symb_tree` are both of the `phylo` object (from the ape package).
 The `association_mat` which is a matrix with number of rows equal to the number of extant tips in the symbiont tree, and number of columns equal to the number of extant tips in the host tree.
 The `event_history` is a data frame which shows the full history of the simulation. 
@@ -105,7 +105,7 @@ This tabulates the number of each event in the `event_history` data frame, and t
 ```{r}
 # of course that bit is a little too verbose, and we may be interested in a lot of trees
 # we can instead use cophylo_summary_stat
-host_symb_summary_df <- cophylo_summary_stat(host_symb_sets)
+host_symb_summary_df <- cophy_summary_stat(host_symb_sets)
 host_symb_summary_df
 ```
 
@@ -123,7 +123,7 @@ We can use either symbiont or host trees to simulate locus trees. First we will 
 
 
 ```{r}
-host_tree_locus_trees <- sim_locustree_bdp(host_tree, gbr = 0.4, gdr = 0.2, lgtr = 0.0, num_loci = 100)
+host_tree_locus_trees <- sim_locustree_bdp(host_tree, gbr = 0.4, gdr = 0.2, lgtr = 0.0, num_loci = 10)
 plot(host_tree)
 # str(host_tree_locus_trees)
 # plot(host_tree_locus_trees)
@@ -142,7 +142,7 @@ Another option is simulating the locus tree and gene tree simultaneously.
 This is output as a list with two elements: the locus tree and the set of gene trees.
 
 ```{r}
-loctr_genetr_set <- sim_locustree_genetree_mlc(symb_tree,
+loctr_genetr_set <- sim_locustree_genetree_msc(symb_tree,
                                                gbr = 0.2,
                                                gdr = 0.1,
                                                lgtr = 0.1,
@@ -150,6 +150,7 @@ loctr_genetr_set <- sim_locustree_genetree_mlc(symb_tree,
                                                num_sampled_individuals = 1,
                                                num_genes_per_locus = 10,
                                                theta = 1)
+loctr_genetr_set
 ```
 
 And we can calculate some tree summary statistics on all of genes that were simulated on one of the locus trees (in this case the first one). 
@@ -160,11 +161,11 @@ genetree_summary_stat(loctr_genetr_set, 1)
 
 ## Load in other datasets
 
-You can also combine a host tree, symbiont tree, and association matrix into a `cophylo` object that can be input into functions in `treeducken`. The example below reads in the classic gopher and lice dataset from Hafner et al. 1994.
+You can also combine a host tree, symbiont tree, and association matrix into a `cophy` object that can be input into functions in `treeducken`. The example below reads in the classic gopher and lice dataset from Hafner et al. 1994.
 The more common association table format with two columns with hosts in the first and symbionts (or parasites) in the second column is converted into an association matrix. 
-These are all then converted into `treeducken`'s `cophylo` class. 
+These are all then converted into `treeducken`'s `cophy` class. 
 You can then print out a summary of these and then calculate summary statistics on these. 
-Currently, this only calculates the parafit statistic and conducts the permutation test for that statistic if the `event_history` element of `cophylo` is not set. 
+Currently, this only calculates the parafit statistic and conducts the permutation test for that statistic if the `event_history` element of `cophy` is not set. 
 If that is set it will count the numbers of each event.
 
 ```{r}
@@ -180,12 +181,12 @@ gopher_tree <- ape::read.nexus(system.file("extdata",
 lice_tree <- ape::read.nexus(system.file("extdata",
                                          "lice_bd.tre",
                                          package = "treeducken"))
-gopher_lice_cophylo <- convert_to_cophylo(hostTree = gopher_tree,
+gopher_lice_cophylo <- convert_to_cophy(hostTree = gopher_tree,
                                           symbTree = lice_tree,
                                           assocMat = gopher_lice_assoc_matrix)
 print(gopher_lice_cophylo)
-cophylo_summary_stat(gopher_lice_cophylo)
-treeducken::plot.cophylo(gopher_lice_cophylo)
+cophy_summary_stat(gopher_lice_cophylo)
+treeducken::plot.cophy(gopher_lice_cophylo)
 ```
 
 

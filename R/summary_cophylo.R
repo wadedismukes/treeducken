@@ -7,65 +7,65 @@
 ## Copyright 2020 Wade Dismukes
 ##
 ## Print Summary of a Cophylogeny set and "multiCophylo" operators
-#' @param cophy Object of class `cophylo`
-#' @describeIn print.cophylo Returns host tree of a cophylogenetic set
+#' @param cophy Object of class `cophy`
+#' @describeIn print.cophy Returns host tree of a cophylogenetic set
 #' @export
 host_tree <- function(cophy) UseMethod("host_tree")
-#' @param cophy Object of class `cophylo`
-#' @describeIn print.cophylo Returns host tree  of a cophylogenetic set
+#' @param cophy Object of class `cophy`
+#' @describeIn print.cophy Returns host tree  of a cophylogenetic set
 #' @export
-host_tree.cophylo <- function(cophy) cophy$host_tree
-#' @param cophy Object of class multiCophylo
-#' @describeIn print.cophylo Returns host tree of each member of a list of cophylogenetic sets
+host_tree.cophy <- function(cophy) cophy$host_tree
+#' @param cophy Object of class multiCophy
+#' @describeIn print.cophy Returns host tree of each member of a list of cophylogenetic sets
 #' @export
-host_tree.multiCophylo <- function(cophy){
-    sapply(unclass(cophy), host_tree.cophylo)
+host_tree.multiCophy <- function(cophy){
+    sapply(unclass(cophy), host_tree.cophy)
 }
-#' @param cophy Object of class `cophylo`
-#' @describeIn print.cophylo Returns symb tree of a cophylogenetic set
+#' @param cophy Object of class `cophy`
+#' @describeIn print.cophy Returns symb tree of a cophylogenetic set
 #' @export
 symb_tree <- function(cophy) UseMethod("symb_tree")
-#' @param cophy Object of class `cophylo`
-#' @describeIn print.cophylo Returns symb tree of a cophylogenetic set
+#' @param cophy Object of class `cophy`
+#' @describeIn print.cophy Returns symb tree of a cophylogenetic set
 #' @export
-symb_tree.cophylo <- function(cophy) cophy$symb_tree
+symb_tree.cophy <- function(cophy) cophy$symb_tree
 
-#' @param cophy Object of class `multiCophylo`
-#' @describeIn print.cophylo Returns symb tree of each member of a list of cophylogenetic sets
+#' @param cophy Object of class `multiCophy`
+#' @describeIn print.cophy Returns symb tree of each member of a list of cophylogenetic sets
 #' @export
-symb_tree.multiCophylo <- function(cophy){
-    sapply(unclass(cophy), symb_tree.cophylo)
+symb_tree.multiCophy <- function(cophy){
+    sapply(unclass(cophy), symb_tree.cophy)
 }
-#' @param cophy Object of class `cophylo`
-#' @describeIn print.cophylo Returns association matrix of a cophylogenetic set
+#' @param cophy Object of class `cophy`
+#' @describeIn print.cophy Returns association matrix of a cophylogenetic set
 #' @export
 association_mat <- function(cophy) UseMethod("association_mat")
-#' @param cophy Object of class `cophylo`
-#' @describeIn print.cophylo Returns association matrix of a cophylogenetic set
+#' @param cophy Object of class `cophy`
+#' @describeIn print.cophy Returns association matrix of a cophylogenetic set
 #' @export
-association_mat.cophylo <- function(cophy) cophy$association_mat
+association_mat.cophy <- function(cophy) cophy$association_mat
 
-#' @param cophy Object of class `multiCophylo`
-#' @describeIn print.cophylo Returns association matrix for each member of a list of cophylogenetic sets
+#' @param cophy Object of class `multiCophy`
+#' @describeIn print.cophy Returns association matrix for each member of a list of cophylogenetic sets
 #' @export
-association_mat.multiCophylo <- function(cophy) {
-    sapply(unclass(cophy), association_mat.cophylo)
+association_mat.multiCophy <- function(cophy) {
+    sapply(unclass(cophy), association_mat.cophy)
 }
 
-#' @param cophy Object of class `cophylo`
-#' @describeIn summary.cophylo Returns event history of a cophylogenetic set
+#' @param cophy Object of class `cophy`
+#' @describeIn summary.cophy Returns event history of a cophylogenetic set
 #' @export
 event_history <- function(cophy) UseMethod("event_history")
 #' @param cophy Cophylogenetic set
-#' @describeIn summary.cophylo Returns event history of a cophylogenetic set
+#' @describeIn summary.cophy Returns event history of a cophylogenetic set
 #' @export
-event_history.cophylo <- function(cophy) cophy$event_history
+event_history.cophy <- function(cophy) cophy$event_history
 
-#' @param cophy Object of class `multiCophylo`
-#' @describeIn print.cophylo Returns event_history for each member of a list of cophylogenetic sets
+#' @param cophy Object of class `multiCophy`
+#' @describeIn print.cophy Returns event_history for each member of a list of cophylogenetic sets
 #' @export
-event_history.multiCophylo <- function(cophy){
-    sapply(unclass(cophy), event_history.cophylo)
+event_history.multiCophy <- function(cophy){
+    sapply(unclass(cophy), event_history.cophy)
 }
 
 #' Summarize a cophylogenetic set
@@ -73,14 +73,14 @@ event_history.multiCophylo <- function(cophy){
 #' Including functions for printing an entire summary, and a summary of each part:
 #' host_tree, symb_tree, association_mat, and event_history.
 #'
-#' @param object An object of class `cophylo`
+#' @param object An object of class `cophy`
 #' @param ... Further arguments used in generic classes
 #'
 #' @details The summary for a cophylogenetic set outputs a summary of the host tree and the symbiont tree.
 #' The number of rows and columns of the association matrix, and a summary of the event_history.
 #'
 #' @return Summary returns NULL.
-#' @seealso sim_cophylo_bdp, summary for the generic, multiCophylo, c.cophylo
+#' @seealso sim_cophylo_bdp, summary for the generic, multiCophy, c.cophy
 #' @examples
 #' h_lambda <- 1.0
 #' h_mu <- 0.3
@@ -98,7 +98,7 @@ event_history.multiCophylo <- function(cophy){
 #'                                   numbsim = 1)
 #' summary(host_symb_sets[[1]])
 #' @export
-summary.cophylo <- function(object, ...){
+summary.cophy <- function(object, ...){
         cat("Null tree set.")
     cat("\nSet of host and symbiont tree:", deparse(substitute(object)), "\n\n")
     # below is a modified version of ape's summary.phylo function
@@ -201,14 +201,14 @@ summary.cophylo <- function(object, ...){
 #' Print a cophylogenetic set
 #' @description Prints a cophylogenetic set or a list of cophylogenetic sets.
 #'
-#' @param x An object of class `cophylo` or class `multiCophylo`
-#' @param cophy An object of class `cophylo`
+#' @param x An object of class `cophy` or class `multiCophy`
+#' @param cophy An object of class `cophy`
 #' @param ... Further arguments used in generic classes
 #'
 #'
 #' @return Print returns NULL. host_tree returns NULL, symb_tree returns NULL,
 #' association_mat returns the dimensions of the matrix, event_history returns NULL.
-#' @seealso sim_cophylo_bdp, print for the generic, multiCophylo, c.cophylo
+#' @seealso sim_cophylo_bdp, print for the generic, multiCophy, c.cophy
 #' @examples
 #' h_lambda <- 1.0
 #' h_mu <- 0.3
@@ -231,7 +231,7 @@ summary.cophylo <- function(object, ...){
 #' event_history(host_symb_sets[[1]])
 #' print(host_symb_sets)
 #' @export
-print.cophylo <- function(x, ...){
+print.cophy <- function(x, ...){
     cat("\n Host Tree:\n\n")
     ape::print.phylo(x$host_tree)
     cat("\n")
@@ -241,10 +241,10 @@ print.cophylo <- function(x, ...){
     cat("\n There are ", nrow(x$association_mat), " rows (i.e. extant symbionts).")
     cat("\n There are ", ncol(x$association_mat), " cols (i.e. extant hosts).")
 }
-#' @describeIn print.cophylo Prints a list of cophylogenetic sets
+#' @describeIn print.cophy Prints a list of cophylogenetic sets
 #' @param details A logical value, outputs brief summary of each set in the list.
 #' @export
-print.multiCophylo <- function(x, details = FALSE, ...){
+print.multiCophy <- function(x, details = FALSE, ...){
     num_cophys <- length(x)
     cat(num_cophys, "cophylogenetic", ifelse(num_cophys > 1, "sets.\n", "set.\n"))
     if (details) {
@@ -257,18 +257,18 @@ print.multiCophylo <- function(x, details = FALSE, ...){
 }
 
 
-`$.multiCophylo` <- function(x, name) x[[name]]
+`$.multiCophy` <- function(x, name) x[[name]]
 
-"[.multiCophylo" <- function(x, i)
+"[.multiCophy" <- function(x, i)
 {
     oc <- oldClass(x)
     class(x) <- NULL
     structure(x[i], host_tree = attr(x, "host_tree"),
               class = oc)
 }
-#' Retrieve the structure of a class multiCophylo
-#' @description Retrieves the structure of the class multiCophylo
-#' @param object An object of class multiCophylo
+#' Retrieve the structure of a class multiCophy
+#' @description Retrieves the structure of the class multiCophy
+#' @param object An object of class multiCophy
 #' @param ... Potential further arguments to generic str class
 #' @return NULL value
 #' @examples
@@ -289,17 +289,17 @@ print.multiCophylo <- function(x, details = FALSE, ...){
 #' str(host_symb_sets)
 #'
 #' @export
-str.multiCophylo <- function(object, ...)
+str.multiCophy <- function(object, ...)
 {
     class(object) <- NULL
-    cat('Class "multiCophylo"\n')
+    cat('Class "multiCophy"\n')
     str(object, ...)
 }
 
 
-.c_cophylo_single <- function(cophy) structure(list(cophy), class = "multiCophylo")
-#' Combine cophylogenetic sets into a multiCophylo object
-#' @description Combines cophylogenetic sets into a multiCophylo object.
+.c_cophy_single <- function(cophy) structure(list(cophy), class = "multiCophy")
+#' Combine cophylogenetic sets into a multiCophy object
+#' @description Combines cophylogenetic sets into a multiCophy object.
 #' @param ... Values of class `cophy`
 #' @return An object of class `multiCophy`
 #' @seealso `c` generic function
@@ -329,31 +329,31 @@ str.multiCophylo <- function(object, ...)
 #' multi_host_symb <- c(host_symb_sets[[1]], host_symb_sets2[[2]])
 #' multi_host_symb_alt <- c(host_symb_sets, host_symb_sets2)
 #' @export
-c.cophylo <- function(...)
+c.cophy <- function(...)
 {
     recursive <- TRUE
     obj <- list(...)
     classes <- lapply(obj, class)
-    iscophylo <- sapply(classes, function(x) "cophylo" %in% x)
+    iscophylo <- sapply(classes, function(x) "cophy" %in% x)
     if (all(iscophylo)) {
-        class(obj) <- "multiCophylo"
+        class(obj) <- "multiCophy"
         return(obj)
     }
     if (!recursive) return(obj)
-    ismulti <- sapply(classes, function(x) "multiCophylo" %in% x)
+    ismulti <- sapply(classes, function(x) "multiCophy" %in% x)
     if (all(iscophylo | ismulti)) {
-        for (i in which(iscophylo)) obj[[i]] <- .c_cophylo_single(obj[[i]])
+        for (i in which(iscophylo)) obj[[i]] <- .c_cophy_single(obj[[i]])
         ## added by Klaus:
         for (i in which(ismulti)) obj[[i]] <- .uncompressSetTipLabel(obj[[i]])
-        obj <- .makeMultiCophyloFromObj(obj)
+        obj <- .makeMultiCophyFromObj(obj)
     } else {
-        warning('some objects not of class "cophylo" or "multiCophylo": argument recursive=TRUE ignored')
+        warning('some objects not of class "cophy" or "multiCophy": argument recursive=TRUE ignored')
     }
     obj
 }
 
 # modified from function by Klaus Schliep
-.makeMultiCophyloFromObj <- function(obj)
+.makeMultiCophyFromObj <- function(obj)
 {
     n <- length(obj)
     N <- lengths(obj, FALSE)
@@ -364,27 +364,27 @@ c.cophylo <- function(...)
         b <- cs[i + 1L]
         x[a:b] <- obj[[i]]
     }
-    class(x) <- "multiCophylo"
+    class(x) <- "multiCophy"
     x
 }
-#' @describeIn c.cophylo Combines two multiCophylo objects into one multiCophylo object
+#' @describeIn c.cophy Combines two multiCophy objects into one multiCophy object
 #' @export
-c.multiCophylo <- function(...)
+c.multiCophy <- function(...)
 {
     recursive <- TRUE
     obj <- list(...)
     if (!recursive) return(obj)
     classes <- lapply(obj, class)
-    iscophylo <- sapply(classes, function(x) "cophylo" %in% x)
-    ismulti <- sapply(classes, function(x) "multiCophylo" %in% x)
-    if (!all(iscophylo | ismulti)) {
-        warning('some objects not of class "cophylo" or "multiPhylo": argument recursive=TRUE ignored')
+    iscophy <- sapply(classes, function(x) "cophy" %in% x)
+    ismulti <- sapply(classes, function(x) "multiCophy" %in% x)
+    if (!all(iscophy | ismulti)) {
+        warning('some objects not of class "cophy" or "multiPhylo": argument recursive=TRUE ignored')
         return(obj)
     }
-    for (i in which(iscophylo)) obj[[i]] <- .c_cophylo_single(obj[[i]])
+    for (i in which(iscophy)) obj[[i]] <- .c_cophy_single(obj[[i]])
     ## added by Klaus
     for (i in which(ismulti)) obj[[i]] <- .uncompressSetTipLabel(obj[[i]])
-    .makeMultiCophyloFromObj(obj)
+    .makeMultiCophyFromObj(obj)
 }
 
 .uncompressSetTipLabel <- function(x)
@@ -398,20 +398,20 @@ c.multiCophylo <- function(...)
         x[[i]]$host_tree$tip.label <- HostLab
         x[[i]]$symb_tree$tip.label <- SymbLab
     }
-    class(x) <- "multiCophylo"
+    class(x) <- "multiCophy"
     attr(x$host_Tree, "TipLabel") <- NULL
     attr(x$symb_tree, "TipLabel") <- NULL
     x
 }
 
-`[<-.multiCophylo` <- function(x, ..., value)
+`[<-.multiCophy` <- function(x, ..., value)
 {
     ## recycling is allowed so no need to check: length(value) != length(..1)
 
     ## check that all elements in 'value' inherit class "phylo"
-    test <- unlist(lapply(value, function(xx) !inherits(xx, "cophylo")))
+    test <- unlist(lapply(value, function(xx) !inherits(xx, "cophy")))
     if (any(test))
-        stop("at least one element in 'value' is not of class 'cophylo'.")
+        stop("at least one element in 'value' is not of class 'cophy'.")
 
     oc <- oldClass(x)
     class(x) <- NULL
@@ -439,7 +439,7 @@ c.multiCophylo <- function(...)
     x
 }
 
-"[[.multiCophylo" <- function(x, i)
+"[[.multiCophy" <- function(x, i)
 {
     class(x) <- NULL
     cophy <- x[[i]]
@@ -452,10 +452,10 @@ c.multiCophylo <- function(...)
     cophy
 }
 
-`[[<-.multiCophylo` <- function(x, ..., value)
+`[[<-.multiCophy` <- function(x, ..., value)
 {
-    if (!inherits(value, "cophylo"))
-        stop('trying to assign an object not of class "cophylo" into an object of class "multiCophylo".')
+    if (!inherits(value, "cophy"))
+        stop('trying to assign an object not of class "cophy" into an object of class "multiCophy".')
 
     oc <- oldClass(x)
     class(x) <- NULL
@@ -494,7 +494,7 @@ c.multiCophylo <- function(...)
     x
 }
 
-`$<-.multiCophylo` <- function(x, ..., value)
+`$<-.multiCophy` <- function(x, ..., value)
 {
     x[[..1]] <- value
     x

@@ -999,7 +999,6 @@ bool Simulator::bdsaBDSim(){
         contempSpecies.clear();
     // insert the root of spTree index as the first species index to simulate within
     contempSpecies.push_back(spRoot->getIndex());
-    Rcout << contempSpecies.size() << std::endl;
     while(currentSimTime < stopTime){
       // get time to next event based on rate parameters and number extant tips
       eventTime = lociTree->getTimeToNextEvent();
@@ -1008,7 +1007,6 @@ bool Simulator::bdsaBDSim(){
       // if so speciation occurs and all locus tree lineages associated with that species index
       // speciate also
       // if extinction occurs those lineages go extinct
-      double placeholder = currentSimTime;
       for(std::vector<int>::iterator it = contempSpecies.begin(); it != contempSpecies.end();){
         if(currentSimTime >= speciesDeathTimes[(*it)]){
           isSpeciation = spTree->macroEvent((*it));
@@ -1071,7 +1069,7 @@ bool Simulator::bdsaBDSim(){
     // set the present time
     lociTree->setPresentTime(currentSimTime);
     // set the names based on their species ID, so tips are named
-    // "T<SPECIES_INDX>_<LOCUSTREE_INDX>"
+    // "T<SPECIES_INDX>_<LOCUS {A,B,C,...}>"
     lociTree->setNamesBySpeciesID(tipMap);
 
     treesComplete = true;
@@ -1201,7 +1199,7 @@ bool Simulator::coalescentSim(){
             geneTree->rootCoalescentProcess(currentSimTime);
             treeGood = true;
         }
-        // iterate
+        // post incremenet
         epochCount++;
     }
 

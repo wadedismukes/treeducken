@@ -20,7 +20,7 @@ Reconstruct historical association matrix
 \details{
 Given a time and a tree pair object produced by the `sim_cophylo_bdp`
     object will produce the association matrix at that time point for the
-    tree object
+    tree object. USER WARNING: this is still in development, and likely will not work all the time.
 }
 \examples{
 host_mu <- 1.0 # death rate

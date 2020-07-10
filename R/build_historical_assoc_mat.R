@@ -2,7 +2,7 @@
 #'
 #' @details Given a time and a tree pair object produced by the `sim_cophylo_bdp`
 #'     object will produce the association matrix at that time point for the
-#'     tree object
+#'     tree object. USER WARNING: this is still in development, and likely will not work all the time.
 #'
 #' @param t The time of interest
 #' @param tr_pair_obj The tree pair object from `sim_cophylo_bdp`
@@ -56,7 +56,7 @@ build_historical_association_matrix <- function(t, tr_pair_obj){
     rownames(init_mat) <- as.character(length(tr_pair_obj$symb_tree$tip.label) + 1)
     prev_mat <- init_mat
     for(i in 2:curr_indx){
-        curr_events <- subset(events, Event_Time == times[i])
+        curr_events <- subset(events, events[,4] == times[i])
         # what is first row of curr_events
         curr_events
         main_event <- curr_events[1,]$Event_Type

@@ -17,10 +17,10 @@
 #'                            cosp_rate =1.0,
 #'                            numbsim = 10,
 #'                            time_to_sim = 2)
-#' plot.cophylo(tr_pair[[1]])
-plot.cophylo <- function(x, ...){
-    if (!inherits(x,"cophylo"))
-        stop("x should be an object of class 'cophylo'.")
+#' plot.cophy(tr_pair[[1]])
+plot.cophy <- function(x, ...){
+    if (!inherits(x,"cophy"))
+        stop("x should be an object of class 'cophy'.")
     # plotting parameters
     plot.new()
     if (hasArg(mar))
@@ -100,10 +100,18 @@ plot.cophylo <- function(x, ...){
         cat("No associations provided.\n")
     if (any(scale.bar > 0))
         add_scalebar(x, scale.bar, sb.fsize)
-    assign("last_plot.cophylo", list(left = left,right = right), envir = ape::.PlotPhyloEnv)
+    assign("last_plot.cophy", list(left = left,right = right), envir = ape::.PlotPhyloEnv)
 
 }
-
+#' Add scale bar to cophylo plot
+#'
+#' This function plots a host and symbiont tree given the object returned by
+#' `sim_cophylo_bdp`.
+#'
+#' @param obj An object of class `cophy`
+#' @param scale.bar A list of 2 numeric values to indicate position of scale bars on plot
+#' @param fsize Font size of scale bar
+#' @keywords Internal
 add_scalebar <- function(obj, scale.bar, fsize) {
     # host scale
     if (scale.bar[1] > 0) {
@@ -123,9 +131,21 @@ add_scalebar <- function(obj, scale.bar, fsize) {
     }
 }
 
-# internal function to plot
-#  modified from Liam Revell phytools package
-#  under GPL v. 2
+#' Internal tree plot function
+#' @description internal function to plot modified from Liam Revell phytools package under GPL v. 2
+#'
+#' @param tree an object of class `phylo`
+#' @param part Part of page to plot on
+#' @param direction Leftwards or rightwards facing phylogeny on plot
+#' @param fsize Font size of labels on plot
+#' @param ftype What type of font to use
+#' @param lwd Plot line width
+#' @param ... Other plotting parameters
+#'
+#'
+#' @references
+#' Revell, L.J. (2012), phytools: an R package for phylogenetic comparative biology (and other things). Methods in Ecology and Evolution, 3: 217-223. doi:10.1111/j.2041-210X.2011.00169.x
+#' @keywords Internal
 phylogram <- function(tree,
                       part = 1,
                       direction = "rightwards",
@@ -270,6 +290,22 @@ phylogram <- function(tree,
     invisible(d*max(h + fsize*strwidth(tree$tip.label) + tip.len*(max(X) - min(X))))
 }
 
+
+#' Internal tree plot function
+#' @description internal function to make textbox for tip labels modified from Liam Revell phytools package under GPL v. 2
+#'
+#' @param x x coordinates
+#' @param y y coordinates
+#' @param label Labels as vector of strings
+#' @param pos Position in plot environment
+#' @param offset How offset from tips
+#' @param cex a numerical vector giving the amount by which plotting characters and symbols should be scaled relative to the default
+#' @param font font choice
+#'
+#'
+#' @references
+#' Revell, L.J. (2012), phytools: an R package for phylogenetic comparative biology (and other things). Methods in Ecology and Evolution, 3: 217-223. doi:10.1111/j.2041-210X.2011.00169.x
+#' @keywords Internal
 make_textbox <- function(x, y, label, pos, offset, cex, font){
     rect(x,y - 0.5*strheight(label,cex = cex,font = font),
          x + if (pos == 4) strwidth(label,cex = cex,font = font) else -strwidth(label,cex = cex,font = font),
@@ -279,7 +315,21 @@ make_textbox <- function(x, y, label, pos, offset, cex, font){
 }
 ## plot links between tip taxa according to assoc
 ## written by Liam J. Revell 2015, 2016, 2019
-
+#' Internal tree plot function
+#' @description internal function to make links between tips modified from Liam Revell phytools package under GPL v. 2
+#'
+#' @param obj Object of class `cophy`
+#' @param x x positions of beginning and end of links
+#' @param link.type Type of link "curved" or "straight"
+#' @param link.lwd Link line width
+#' @param link.col link color
+#' @param link.lty Link style "dashed" being default
+#'
+#' @details This is the most different from phytools implementation in order to allow for extinct tips in the the cophy plot. In addition to involve less wrangling for the cophy object.
+#'
+#' @references
+#' Revell, L.J. (2012), phytools: an R package for phylogenetic comparative biology (and other things). Methods in Ecology and Evolution, 3: 217-223. doi:10.1111/j.2041-210X.2011.00169.x
+#' @keywords Internal
 make_links <- function(obj,
                        x,
                        link.type = "curved",
@@ -365,7 +415,19 @@ make_links <- function(obj,
 ## function to draw sigmoidal links
 ## modified from phytools which is
 ## modified from https://stackoverflow.com/questions/32046889/connecting-two-points-with-curved-lines-s-ish-curve-in-r
-
+## plot links between tip taxa according to assoc
+## written by Liam J. Revell 2015, 2016, 2019
+#' Curve draw function
+#' @description internal function to draw curved links between tips modified from Liam Revell phytools package under GPL v. 2
+#'
+#' @param x x positions on graph
+#' @param y y positions on graph
+#' @param scale Scale of the logistic (which is where the curve comes from)
+#' @param ... Other plotting parameters
+#'
+#' @references
+#' Revell, L.J. (2012), phytools: an R package for phylogenetic comparative biology (and other things). Methods in Ecology and Evolution, 3: 217-223. doi:10.1111/j.2041-210X.2011.00169.x
+#' @keywords Internal
 drawCurve <- function(x, y, scale=0.01, ...){
     x1 <- x[1]
     x2 <- x[2]
@@ -382,12 +444,12 @@ drawCurve <- function(x, y, scale=0.01, ...){
 
 # this function was taken from Liam Revell's phytools
 # package copied under GNU public license 2
-#' @describeIn plot.cophylo
-#' @param x object of class multiCophylo
+#' @describeIn plot.cophy Plots multiple cophy plots
+#' @param x object of class multiCophy
 #' @export
-plot.multiCophylo <- function(x,...){
+plot.multiCophy <- function(x,...){
     par(ask = TRUE)
     for (i in 1:length(x)) {
-        plot.cophylo(x[[i]],...)
+        plot.cophy(x[[i]],...)
     }
 }

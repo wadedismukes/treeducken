@@ -52,13 +52,13 @@ Rcpp::List sim_host_symb_treepair(double hostbr,
                                     Named("symb_tree") = phySymb,
                                     Named("association_mat") = phySimulator->getAssociationMatrix(),
                                     Named("event_history") = phySimulator->createEventDF());
-        hostSymbPair.attr("class") = "cophylo";
+        hostSymbPair.attr("class") = "cophy";
         multiphy.push_back(std::move(hostSymbPair));
         delete phySimulator;
     }
 
 
-    multiphy.attr("class") = "multiCophylo";
+    multiphy.attr("class") = "multiCophy";
 
     return multiphy;
 }

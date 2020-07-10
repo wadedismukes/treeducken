@@ -1,15 +1,15 @@
-#' @describeIn cophylo_summary_stat Calculates the summary statistics for one index of the list of cophylogenetic objects
+#' @describeIn cophy_summary_stat Calculates the summary statistics for one index of the list of cophylogenetic objects
 #'
 #' @return A vector consisting of (in order) cospeciations, host speciations, host extinctions, symbiont speciations, symbiont extinctions, parafit statistic, and parafit p-value
 #' @export
-cophylo_summary_stat_by_indx <- function(cophylo_obj, cophylo_obj_indx){
-  if(cophylo_obj_indx < 1)
-    stop("'cophylo_obj_indx' must be greater than 0")
-  if(!is.numeric(cophylo_obj_indx))
-    stop("'cophylo_obj_indx' must be a number.")
-  if(!is.null(cophylo_obj[[cophylo_obj_indx]]$event_history)){
-    cat("Calculating for replicate ", cophylo_obj_indx, "\n")
-    events <- cophylo_obj[[cophylo_obj_indx]]$event_history
+cophy_summary_stat_by_indx <- function(cophy_obj, cophy_obj_indx){
+  if(cophy_obj_indx < 1)
+    stop("'cophy_obj_indx' must be greater than 0")
+  if(!is.numeric(cophy_obj_indx))
+    stop("'cophy_obj_indx' must be a number.")
+  if(!is.null(cophy_obj[[cophy_obj_indx]]$event_history)){
+    cat("Calculating for replicate ", cophy_obj_indx, "\n")
+    events <- cophy_obj[[cophy_obj_indx]]$event_history
     event_types <- levels(events$Event_Type)
     num_each_event <- tabulate(events$Event_Type)
     names(num_each_event) <- event_types
@@ -27,24 +27,24 @@ cophylo_summary_stat_by_indx <- function(cophylo_obj, cophylo_obj_indx){
     symbiont_extinctions <- 0
   }
   host_expansions <- NULL # not sure why I don't have a specific tag for this...
-  # if(length(cophylo_obj[[cophylo_obj_indx]]$host_tree$tip.label) < 3 ||
-  #    length(cophylo_obj[[cophylo_obj_indx]]$symb_tree$tip.label) < 3)
+  # if(length(cophy_obj[[cophy_obj_indx]]$host_tree$tip.label) < 3 ||
+  #    length(cophy_obj[[cophy_obj_indx]]$symb_tree$tip.label) < 3)
   # {
   #   parafits <- NA
   #   parafit_test <- NA
   # }
   # else
   # {
-    parafits <- treeducken::parafit_stat(cophylo_obj[[cophylo_obj_indx]]$host_tree,
-                                         cophylo_obj[[cophylo_obj_indx]]$symb_tree,
-                                         cophylo_obj[[cophylo_obj_indx]]$association_mat)
-    parafit_test <- treeducken::parafit_test(cophylo_obj[[cophylo_obj_indx]]$host_tree,
-                                             cophylo_obj[[cophylo_obj_indx]]$symb_tree,
-                                             cophylo_obj[[cophylo_obj_indx]]$association_mat,
+    parafits <- treeducken::parafit_stat(cophy_obj[[cophy_obj_indx]]$host_tree,
+                                         cophy_obj[[cophy_obj_indx]]$symb_tree,
+                                         cophy_obj[[cophy_obj_indx]]$association_mat)
+    parafit_test <- treeducken::parafit_test(cophy_obj[[cophy_obj_indx]]$host_tree,
+                                             cophy_obj[[cophy_obj_indx]]$symb_tree,
+                                             cophy_obj[[cophy_obj_indx]]$association_mat,
                                              parafits)
-    # cophylo_eigen <- treeducken::almost_parafit_stat(cophylo_obj[[cophylo_obj_indx]]$host_tree,
-    #                                   cophylo_obj[[cophylo_obj_indx]]$symb_tree,
-    #                                   cophylo_obj[[cophylo_obj_indx]]$association_mat)
+    # cophy_eigen <- treeducken::almost_parafit_stat(cophy_obj[[cophy_obj_indx]]$host_tree,
+    #                                   cophy_obj[[cophy_obj_indx]]$symb_tree,
+    #                                   cophy_obj[[cophy_obj_indx]]$association_mat)
  # }
   c(cospeciations,
     host_speciations,
@@ -54,14 +54,14 @@ cophylo_summary_stat_by_indx <- function(cophylo_obj, cophylo_obj_indx){
     #host_expansions,
     parafits,
     parafit_test)
-   # cophylo_eigen)
+   # cophy_eigen)
 }
 #' Calculates summary statistics for cophylogenetyic objects
 #'
 #' @description For cophylogenetic objects produced in treeducken via `sim_cophylo_bdp`, calculates the numbers of different events of interest. In addition, calculates and tests the ParaFit test.
 #'
-#' @param cophylo_obj The cophylogenetic object produced via `sim_cophylo_bdp`
-#' @param cophylo_obj_indx The index with `cophylo_obj` for `cophylo_summary_stat_by_indx`
+#' @param cophy_obj The cophylogenetic object produced via `sim_cophylo_bdp`
+#' @param cophy_obj_indx The index with `cophy_obj` for `cophylo_summary_stat_by_indx`
 #'
 #' @return A dataframe containing statistics relevant to cophylogenetic analysis
 #' @examples
@@ -74,7 +74,7 @@ cophylo_summary_stat_by_indx <- function(cophylo_obj, cophylo_obj_indx){
 #' host_shift_rate <- 0.1
 #' cosp_rate <- 2.0
 #'
-#' cophylo_pair <- sim_cophylo_bdp(hbr = host_lambda,
+#' cophy_pair <- sim_cophylo_bdp(hbr = host_lambda,
 #'                            hdr = host_mu,
 #'                            cosp_rate = cosp_rate,
 #'                            host_exp_rate = host_shift_rate,
@@ -82,24 +82,24 @@ cophylo_summary_stat_by_indx <- function(cophylo_obj, cophylo_obj_indx){
 #'                            sbr = symb_lambda,
 #'                            numbsim = numb_replicates,
 #'                            time_to_sim = time)
-#' summary_stats <- cophylo_summary_stat(cophylo_pair)
+#' summary_stats <- cophy_summary_stat(cophy_pair)
 #' @export
-cophylo_summary_stat <- function(cophylo_obj){
-    if(class(cophylo_obj) != "multiCophylo"){
-      if(class(cophylo_obj) == "cophylo"){
-        mult_cophylo_obj <- list(cophylo_obj)
-        class(mult_cophylo_obj) <- "multiCophylo"
+cophy_summary_stat <- function(cophy_obj){
+    if(class(cophy_obj) != "multiCophy"){
+      if(class(cophy_obj) == "cophy"){
+        mult_cophy_obj <- list(cophy_obj)
+        class(mult_cophy_obj) <- "multiCophylo"
         stat_df <- data.frame(matrix(0, nrow = 1, ncol = 7))
-        stat_df[1,] <- treeducken::cophylo_summary_stat_by_indx(mult_cophylo_obj, 1)
+        stat_df[1,] <- treeducken::cophy_summary_stat_by_indx(mult_cophy_obj, 1)
       }
       else
-        stop("'cophylo_obj' must be an object of class 'multiCophylo")
+        stop("'cophy_obj' must be an object of class 'multiCophylo")
     }
     else{
-      num_cophylo_obj <- length(cophylo_obj)
-      stat_df <- data.frame(matrix(0, nrow = num_cophylo_obj, ncol = 7))
-      for(i in 1:num_cophylo_obj){
-        stat_df[i,] <- treeducken::cophylo_summary_stat_by_indx(cophylo_obj, i)
+      num_cophy_obj <- length(cophy_obj)
+      stat_df <- data.frame(matrix(0, nrow = num_cophy_obj, ncol = 7))
+      for(i in 1:num_cophy_obj){
+        stat_df[i,] <- treeducken::cophy_summary_stat_by_indx(cophy_obj, i)
       }
     }
     colnames(stat_df) <- c("Cospeciations",
@@ -111,7 +111,7 @@ cophylo_summary_stat <- function(cophylo_obj){
                             "Parafit_Stat",
                             "Parafit_P-value")
  ##                           "Cophylo_Eigen")
-    if(!is.null(cophylo_obj$event_history)){
+    if(!is.null(cophy_obj$event_history)){
       stat_df[which(is.na.data.frame(stat_df[,1:5]), arr.ind = TRUE)] <- 0
     }
     stat_df

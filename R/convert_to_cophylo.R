@@ -1,13 +1,13 @@
-#' Converts an object into an object of type cophylo
+#' Converts an object into an object of type cophy
 #'
-#' @description Functions for converting either a list of three components (host_tree, symb_tree, and association_mat) into an object of class cophylo
-#' Otherwise turns arguments into the cophylo object if inputting a hostTree of type `phylo`, a symbiont tree of type `phylo`, and a matrix of type eventHistory.
+#' @description Functions for converting either a list of three components (host_tree, symb_tree, and association_mat) into an object of class cophy
+#' Otherwise turns arguments into the cophy object if inputting a hostTree of type `phylo`, a symbiont tree of type `phylo`, and a matrix of type eventHistory.
 #'
 #' @param hostTree An object of type `phylo`
 #' @param symbTree An object of type `phylo`
 #' @param assocMat A matrix with rows being extant symbionts and columns being extant hosts
 #' @param eventHistory An optional data frame of four columns: Symbiont Index, Host Index, Event Type (see details), and Event Time
-#' @return An object of type cophylo
+#' @return An object of type cophy
 #'
 #' @details The association matrix must be with rows equal to the number of extant symbionts and columns equal to the number of extant hosts.
 #' Non-zero values in this matrix indicate associations (typically this will be a matrix of just zeros and ones).
@@ -23,7 +23,7 @@
 #' * AG - an association gain between symbiont x and host y
 #' * AL - an association loss between symbiont x and host y
 #'
-#' @seealso is.cophylo
+#' @seealso is.cophy
 #'
 #' @examples
 #' gopher_lice_map_path <- system.file("extdata",
@@ -41,11 +41,11 @@
 #'                               "lice_bd.tre",
 #'                                package = "treeducken")
 #' lice_tree <- ape::read.nexus(lice_tree_path)
-#' gopher_lice_cophylo <- convert_to_cophylo(hostTree = gopher_tree,
+#' gopher_lice_cophy <- convert_to_cophy(hostTree = gopher_tree,
 #'                                          symbTree = lice_tree,
 #'                                          assocMat = gopher_lice_assoc_matrix)
 #' @export
-convert_to_cophylo <- function(hostTree, symbTree, assocMat, eventHistory = NULL){
+convert_to_cophy <- function(hostTree, symbTree, assocMat, eventHistory = NULL){
     if(!(identical(class(hostTree), "phylo")))
         stop("`hostTree` input is not of class `phylo`")
     if(!(identical(class(symbTree), "phylo")))
@@ -64,10 +64,10 @@ convert_to_cophylo <- function(hostTree, symbTree, assocMat, eventHistory = NULL
         stop("number of extant tips in 'hostTree' does not match number cols in 'assocMat'")
     if(nExtSymbTips != nrow(assocMat))
         stop("number of extant tips in 'symbTree' does not match number rows in 'assocMat'")
-    cophylo <- list("host_tree" = hostTree,
+    cophy <- list("host_tree" = hostTree,
                     "symb_tree" = symbTree,
                     "association_mat" = assocMat,
                     "event_history" = eventHistory)
-    class(cophylo) <- "cophylo"
-    cophylo
+    class(cophy) <- "cophy"
+    cophy
 }

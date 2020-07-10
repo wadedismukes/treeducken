@@ -2,20 +2,20 @@
 % Please edit documentation in R/summary_cophylo.R
 \name{event_history}
 \alias{event_history}
-\alias{event_history.cophylo}
-\alias{summary.cophylo}
+\alias{event_history.cophy}
+\alias{summary.cophy}
 \title{Summarize a cophylogenetic set}
 \usage{
 event_history(cophy)
 
-\method{event_history}{cophylo}(cophy)
+\method{event_history}{cophy}(cophy)
 
-\method{summary}{cophylo}(object, ...)
+\method{summary}{cophy}(object, ...)
 }
 \arguments{
 \item{cophy}{Cophylogenetic set}
 
-\item{object}{An object of class `cophylo`}
+\item{object}{An object of class `cophy`}
 
 \item{...}{Further arguments used in generic classes}
 }
@@ -35,7 +35,7 @@ The number of rows and columns of the association matrix, and a summary of the e
 \itemize{
 \item \code{event_history}: Returns event history of a cophylogenetic set
 
-\item \code{event_history.cophylo}: Returns event history of a cophylogenetic set
+\item \code{event_history.cophy}: Returns event history of a cophylogenetic set
 }}
 
 \examples{
@@ -56,5 +56,5 @@ host_symb_sets <- sim_cophylo_bdp(hbr = h_lambda,
 summary(host_symb_sets[[1]])
 }
 \seealso{
-sim_cophylo_bdp, summary for the generic, multiCophylo, c.cophylo
+sim_cophylo_bdp, summary for the generic, multiCophy, c.cophy
 }

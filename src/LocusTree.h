@@ -21,6 +21,7 @@ class LocusTree : public Tree
         double stopTime;
         unsigned numTaxa;
         unsigned numTransfers;
+        unsigned numDuplications;
         std::vector<std::string> speciesNames;
 
     public:
@@ -48,6 +49,7 @@ class LocusTree : public Tree
         double  getCurrentTime() { return currentTime; }
         void    setCurrentTime(double ct) {currentTime = ct; }
         int     getNumberTransfers();
+        int     getNumberDuplications() {return numDuplications;}
         int     chooseRecipientSpeciesID(Node *d);
         std::map<int,double>     getBirthTimesFromNodes();
         std::set<int>            getExtLociIndx();
@@ -59,7 +61,9 @@ class LocusTree : public Tree
         std::vector< std::string >    printSubTrees();
         int     postOrderTraversalStep(int indx);
         void   setNamesBySpeciesID(std::map<int,std::string> tipMap);
-
+        void   recursiveSetNamesBySpeciesID(Node *n,
+                                            int duplicationCount,
+                                            std::map<int, std::string> tipMap);
         int    calculatePatristicDistance(Node *n1, Node *n2);
 
         bool   checkLocusTreeParams();

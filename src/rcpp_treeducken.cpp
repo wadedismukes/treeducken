@@ -275,7 +275,8 @@ Rcpp::List sim_cophylo_bdp(SEXP hbr,
 //' Simulate locus tree within species tree and gene trees within locus tree
 //'
 //' @description First simulates a locus tree within the confines of the input species tree using a constant-rate birth-death process
-//' based on values of `gbr`, `gdr` and `lgtr`. Then simulates gene trees within that locus tree using the multi-locus coalescent process.
+//' based on values of `gbr`, `gdr` and `lgtr`. Then simulates gene trees within that locus tree using the multispecies coalescent process.
+//' This is not sensible in most cases as there should be coalescent bounds at duplications and this function may be removed in the future
 //' @param species_tree input species tree of class "phylo"
 //' @param gbr gene birth rate
 //' @param gdr gene death rate
@@ -296,7 +297,7 @@ Rcpp::List sim_cophylo_bdp(SEXP hbr,
 //' nt <- 6
 //' tr <- sim_sptree_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
 //' # for a locus tree with 100 genes sampled per locus tree
-//' loctr_gentr <- sim_locustree_genetree_mlc(tr[[1]],
+//' loctr_gentr <- sim_locustree_genetree_msc(tr[[1]],
 //'                                            gbr = 0.1,
 //'                                            gdr = 0.0,
 //'                                            lgtr = 0.0,
@@ -308,14 +309,14 @@ Rcpp::List sim_cophylo_bdp(SEXP hbr,
 //' @references
 //' Mallo D, de Oliveira Martins L, Posada D (2015) SimPhy: Phylogenomic Simulation of Gene, Locus and Species Trees. Syst. Biol. doi: http://dx.doi.org/10.1093/sysbio/syv082
 // [[Rcpp::export]]
-Rcpp::List sim_locustree_genetree_mlc(SEXP species_tree,
-                             SEXP gbr,
-                             SEXP gdr,
-                             SEXP lgtr,
-                             SEXP num_loci,
-                             SEXP num_sampled_individuals,
-                             SEXP theta,
-                             SEXP num_genes_per_locus){
+Rcpp::List sim_locustree_genetree_msc(SEXP species_tree,
+                                      SEXP gbr,
+                                      SEXP gdr,
+                                      SEXP lgtr,
+                                      SEXP num_loci,
+                                      SEXP num_sampled_individuals,
+                                      SEXP theta,
+                                      SEXP num_genes_per_locus){
     Rcpp::List species_tree_ = as<Rcpp::List>(species_tree);
     double gbr_ = as<double>(gbr);
     double gdr_ = as<double>(gdr);
@@ -353,5 +354,68 @@ Rcpp::List sim_locustree_genetree_mlc(SEXP species_tree,
                           theta_,
                           num_sampled_individuals_,
                           num_genes_);
+}
+
+//' Simulate multispecies coalescent on a species tree
+//'
+//' @description Simulates the multispecies coalescent on a species tree.
+//' @param species_tree input species tree of class "phylo"
+//' @param ne Effective population size
+//' @param mutation_rate The rate of mutations per generation
+//' @param generation_time Number of generations per species tree length
+//' @param num_sampled_individuals number of individuals sampled within each lineage
+//' @param num_genes number of genes to simulate within each locus
+//' @param mutation_rate The rate of mutation per generation
+//'
+//'
+//' @return A list of coalescent trees
+//' @seealso sim_locustree_bdp, sim_sptree_bdp, sim_sptree_bdp_time
+//'
+//' @examples
+//' # first simulate a species tree
+//' mu <- 0.5
+//' lambda <- 1.0
+//' nt <- 6
+//' tr <- sim_sptree_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
+//' # for a locus tree with 100 genes sampled per locus tree
+//' loctr_gentr <- sim_multispecies_coal(tr[[1]],
+//'                                     ne = 1,
+//'                                     num_sampled_individuals = 1,
+//'                                     num_genes = 100)
+//'
+//' @references
+//' Mallo D, de Oliveira Martins L, Posada D (2015) SimPhy: Phylogenomic Simulation of Gene, Locus and Species Trees. Syst. Biol. doi: http://dx.doi.org/10.1093/sysbio/syv082
+// [[Rcpp::export]]
+Rcpp::List sim_multispecies_coal(SEXP species_tree,
+                                 SEXP ne,
+                                 SEXP num_sampled_individuals,
+                                 SEXP num_genes,
+                                 Rcpp::NumericVector mutation_rate = 1.0,
+                                 Rcpp::NumericVector generation_time = 1.0){
+    Rcpp::List species_tree_ = as<Rcpp::List>(species_tree);
+    RNGScope scope;
+    int num_sampled_individuals_ = as<int>(num_sampled_individuals);
+    double ne_ = as<double>(ne);
+    int num_genes_ = as<int>(num_genes);
+    double mutation_rate_ = as<double>(mutation_rate);
+    double generation_time_ = as<double>(generation_time);
+
+    if(mutation_rate_ <= 0.0)
+        stop("'mutation_rate' must be greater than 0.0.");
+    if(generation_time_ <= 0.0)
+        stop("'generation_time' must be greater than 0.0.");
+    if(ne_ <= 0.0)
+        stop("'ne' must be greater than 0.0.");
+    if(num_genes_ < 1)
+        stop("'num_genes' must be greater than or equal to 1");
+    if(num_sampled_individuals_ < 1)
+        stop("'num_sampled_individuals' must be greater than or equal to 1");
+    if(strcmp(species_tree_.attr("class"), "phylo") != 0)
+        stop("species_tree must be an object of class phylo'.");
+    SpeciesTree* specTree = new SpeciesTree(species_tree_);
+    return sim_genetree_msc(specTree,
+                            ne_,
+                            num_sampled_individuals_,
+                            num_genes_);
 }
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/calculate_genetree_summary_stat.R
 \name{genetree_summary_stat}
 \alias{genetree_summary_stat}
-\title{Calculate summary statistics for gene trees12dfsx}
+\title{Calculate summary statistics for gene trees}
 \usage{
 genetree_summary_stat(locus_tree_gene_tree_obj, locus_tree_indx)
 }
@@ -24,14 +24,14 @@ lambda <- 1.0
 nt <- 6
 tr <- sim_sptree_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
 # for a locus tree with 100 genes sampled per locus tree
-loctr_gentr <- sim_locustree_genetree_mlc(tr[[1]],
-                                           gbr = 0.1,
-                                           gdr = 0.0,
-                                           lgtr = 0.0,
-                                           theta = 1,
-                                           num_sampled_individuals = 1,
-                                           num_loci = 4,
-                                           num_genes_per_locus = 100)
+loctr_gentr <- sim_locustree_genetree_msc(tr[[1]],
+                                          gbr = 0.1,
+                                          gdr = 0.0,
+                                          lgtr = 0.0,
+                                          theta = 1,
+                                          num_sampled_individuals = 1,
+                                          num_loci = 4,
+                                          num_genes_per_locus = 100)
 # based on the third locus tree calculate summary statistics
 gt_df <- genetree_summary_stat(loctr_gentr, locus_tree_indx = 3)
 }

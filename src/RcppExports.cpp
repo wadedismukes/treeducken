@@ -69,9 +69,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// sim_locustree_genetree_mlc
-Rcpp::List sim_locustree_genetree_mlc(SEXP species_tree, SEXP gbr, SEXP gdr, SEXP lgtr, SEXP num_loci, SEXP num_sampled_individuals, SEXP theta, SEXP num_genes_per_locus);
-RcppExport SEXP _treeducken_sim_locustree_genetree_mlc(SEXP species_treeSEXP, SEXP gbrSEXP, SEXP gdrSEXP, SEXP lgtrSEXP, SEXP num_lociSEXP, SEXP num_sampled_individualsSEXP, SEXP thetaSEXP, SEXP num_genes_per_locusSEXP) {
+// sim_locustree_genetree_msc
+Rcpp::List sim_locustree_genetree_msc(SEXP species_tree, SEXP gbr, SEXP gdr, SEXP lgtr, SEXP num_loci, SEXP num_sampled_individuals, SEXP theta, SEXP num_genes_per_locus);
+RcppExport SEXP _treeducken_sim_locustree_genetree_msc(SEXP species_treeSEXP, SEXP gbrSEXP, SEXP gdrSEXP, SEXP lgtrSEXP, SEXP num_lociSEXP, SEXP num_sampled_individualsSEXP, SEXP thetaSEXP, SEXP num_genes_per_locusSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -83,7 +83,23 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type num_sampled_individuals(num_sampled_individualsSEXP);
     Rcpp::traits::input_parameter< SEXP >::type theta(thetaSEXP);
     Rcpp::traits::input_parameter< SEXP >::type num_genes_per_locus(num_genes_per_locusSEXP);
-    rcpp_result_gen = Rcpp::wrap(sim_locustree_genetree_mlc(species_tree, gbr, gdr, lgtr, num_loci, num_sampled_individuals, theta, num_genes_per_locus));
+    rcpp_result_gen = Rcpp::wrap(sim_locustree_genetree_msc(species_tree, gbr, gdr, lgtr, num_loci, num_sampled_individuals, theta, num_genes_per_locus));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sim_multispecies_coal
+Rcpp::List sim_multispecies_coal(SEXP species_tree, SEXP ne, SEXP num_sampled_individuals, SEXP num_genes, Rcpp::NumericVector mutation_rate, Rcpp::NumericVector generation_time);
+RcppExport SEXP _treeducken_sim_multispecies_coal(SEXP species_treeSEXP, SEXP neSEXP, SEXP num_sampled_individualsSEXP, SEXP num_genesSEXP, SEXP mutation_rateSEXP, SEXP generation_timeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type species_tree(species_treeSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ne(neSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type num_sampled_individuals(num_sampled_individualsSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type num_genes(num_genesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type mutation_rate(mutation_rateSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type generation_time(generation_timeSEXP);
+    rcpp_result_gen = Rcpp::wrap(sim_multispecies_coal(species_tree, ne, num_sampled_individuals, num_genes, mutation_rate, generation_time));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -93,7 +109,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_treeducken_sim_sptree_bdp_time", (DL_FUNC) &_treeducken_sim_sptree_bdp_time, 4},
     {"_treeducken_sim_locustree_bdp", (DL_FUNC) &_treeducken_sim_locustree_bdp, 6},
     {"_treeducken_sim_cophylo_bdp", (DL_FUNC) &_treeducken_sim_cophylo_bdp, 8},
-    {"_treeducken_sim_locustree_genetree_mlc", (DL_FUNC) &_treeducken_sim_locustree_genetree_mlc, 8},
+    {"_treeducken_sim_locustree_genetree_msc", (DL_FUNC) &_treeducken_sim_locustree_genetree_msc, 8},
+    {"_treeducken_sim_multispecies_coal", (DL_FUNC) &_treeducken_sim_multispecies_coal, 6},
     {NULL, NULL, 0}
 };
 
