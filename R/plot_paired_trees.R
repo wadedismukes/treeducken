@@ -82,9 +82,9 @@ plot.cophy <- function(x, ...){
     # end of plotting parameters setup
     # now want to plot the trees
     #host_tr_plot <- treeducken::phylogram(x$host_tree)
-    host_tr_plot <- do.call("phylogram", c(list(tree = x$host_tree), leftArgs))
+    host_tr_plot <- do.call("ape::phylogram.plot", c(list(tree = x$host_tree), leftArgs))
     left <- get("last_plot.phylo", envir = ape::.PlotPhyloEnv)
-    symb_tr_plot <- do.call("phylogram", c(list(tree = x$symb_tree, direction = "leftwards"), leftArgs))
+    symb_tr_plot <- do.call("ape::phylogram.plot", c(list(tree = x$symb_tree, direction = "leftwards"), leftArgs))
     #symb_tr_plot <- treeducken::phylogram(x$symb_tree, direction = "leftwards")
     right <- get("last_plot.phylo",envir = ape::.PlotPhyloEnv)
     # trees plotted
@@ -231,8 +231,8 @@ phylogram <- function(tree,
             y_coords <- sort(c(y[cw_tree$edge[edge_id,2]],
                                mean(y[cw_tree$edge[edge_id,2]])))
         }
-        segments(x0 = d*x_coords[1:(length(x_coords) - 1)],
-                 y0 = y_coords[1:(length(y_coords) - 1)],
+        segments(x0 = d*x_coords[1:(length(x_coords))],
+                 y0 = y_coords[1:(length(y_coords))],
                  x1 = d*x_coords[2:length(x_coords)],
                  y1 = y_coords[2:length(y_coords)],
                  lwd = lwd,
@@ -258,7 +258,6 @@ phylogram <- function(tree,
                          y[i],
                          tree$tip.label[i],
                          pos = ifelse(d < 0, 4, 2),
-                         offset = 0.1,
                          cex = fsize,
                          font = font)
            # print(c(y[i], tree$tip.label[i]))
@@ -334,14 +333,14 @@ make_links <- function(obj,
                        x,
                        link.type = "curved",
                        link.lwd = 1,
-                       link.col = "red",
+                       link.col = "goldenrod",
                        link.lty = "dashed") {
 
     ## get vertical coordinates of host tips that are not extinct
 
     host_tree <- obj$host_tree
     num_tips_host_tree <- length(host_tree$tip.label)
-    cw_tree <- ape::reorder.phylo(host_tree,"cladewise")
+    cw_tree <- ape::reorder.phylo(host_tree, "cladewise")
 
     y_host <- vector(length = num_tips_host_tree + cw_tree$Nnode)
     y_host[cw_tree$edge[cw_tree$edge[,2] <= num_tips_host_tree,2]] <- 0:(num_tips_host_tree - 1)/(num_tips_host_tree - 1)
