@@ -1,42 +1,71 @@
-## cophy_plot.R (2014-04-07)
-
-##   Plots two phylogenetic trees face to
-##   face with the links between the tips
-
-## Copyright 2008-2010 Damien de Vienne
-
-## This file is part of the R-package `ape'.
-## See the file ../COPYING for licensing issues.
-
+#' Plot host and symbiont pair with current associations
+#'
+#' This function plots a host and symbiont tree given the object returned by
+#' `sim_cophylo_bdp`.
+#'
+#'
+#'
+#' This function is mostly an altered version of the cophyloplot function
+#' written by Damien de Vienne Copyright 2008 - 2010 under GPL.
+#' @param x a tree pair object returned by `sim_cophylo_bdp`
+#' @param use_edge_length Boolean to draw trees with edge length or not
+#' @param type string "phylogram" or "cladogram"
+#' @param col What color to draw links between trees
+#' @param lwd Width of links between trees
+#' @param lty Type of line to draw between trees
+#' @param show_tip_label Boolean for showing labels
+#' @param font What font to use (bold, italic (default), etc.)
+#' @param fsize What size font as a character expansion factor (same as cex)
+#' @param scalebar_size Size of scalebars (default is 0 -> no scalebar)
+#' @param scalebar_fsize Font size of scalebars (default is 0 -> no scalebar)
+#' @param ... other plotting parameters
+#' @return a plot of the host and symbiont tree with extant interactions
+#' @examples
+#'
+#' tr_pair <- sim_cophylo_bdp(hbr = 0.1,
+#'                            hdr = 0.05,
+#'                            sdr = 0.1,
+#'                            host_exp_rate = 0.4,
+#'                            sbr = 0.05,
+#'                            cosp_rate =1.0,
+#'                            numbsim = 10,
+#'                            time_to_sim = 2)
+#' plot.cophy(tr_pair[[1]])
 plot.cophy <-
-    function(cophy_obj,
-             use_edge_length = TRUE, space = 1,
-             length_line = 1, gap = 0, type = "phylogram",
-             col = par("fg"), lwd = par("lwd"), lty = par("lty"),
-             show_tip_label = TRUE, font = 3, fsize = 1.0,
+    function(x,
+             use_edge_length = TRUE,
+             type = "phylogram",
+             col = par("fg"),
+             lwd = par("lwd"),
+             lty = par("lty"),
+             show_tip_label = TRUE,
+             gap = 1,
+             font = 3,
+             fsize = 1.0,
+             scalebar_size = 0,
+             scalebar_fsize = 0,
             ...) {
 
-    if (!inherits(cophy_obj, "cophy"))
+    if (!inherits(x, "cophy"))
         stop("cophy_obj should be an object of class 'cophy'.")
 
 
-    host <- cophy_obj$host_tree
-    symb <- cophy_obj$symb_tree
+    host <- x$host_tree
+    symb <- x$symb_tree
     host_tree_pruned <- geiger::drop.extinct(host)
     symb_tree_pruned <- geiger::drop.extinct(symb)
-    rownames(cophy_obj$association_mat) <- symb_tree_pruned$tip.label
-    colnames(cophy_obj$association_mat) <- host_tree_pruned$tip.label
-    assoc <- which(cophy_obj$association_mat == 1, arr.ind = TRUE)
+    rownames(x$association_mat) <- symb_tree_pruned$tip.label
+    colnames(x$association_mat) <- host_tree_pruned$tip.label
+    assoc <- which(x$association_mat == 1, arr.ind = TRUE)
     assoc <- cbind(host_tree_pruned$tip.label[assoc[, 2]],
                    symb_tree_pruned$tip.label[assoc[, 1]])
+    length_line <- 1
 
-    draw_cophy(host,
+    treeducken::draw_cophy(host,
                symb,
                assoc = assoc,
                use_edge_length = use_edge_length,
-               space = space,
                length_line = length_line,
-               gap = gap,
                type = type,
                return = FALSE,
                col = col,
@@ -44,9 +73,38 @@ plot.cophy <-
                lty = lty,
                show_tip_label = show_tip_label,
                font = font,
-               fsize = fsize)
-}
+               fsize = fsize,
+               gap = gap,
+               ...)
 
+    if (any(scalebar_size > 0)) {
+        if (scalebar_fsize == 0)
+            scalebar_fsize <- 1.0
+        treeducken::add_scalebar(x, c(scalebar_size, scalebar_size), scalebar_fsize)
+    }
+}
+#' Internal tree plot function
+#' @description internal plot function from ape::plotCophylo2 under GPL v. 2
+#'
+#' @param x Host tree as phylo object
+#' @param y Symb tree as phylo object
+#' @param assoc Association matrix as a two column list of strings
+#' @param use_edge_length Boolean to draw trees with edge length or not
+#' @param length_line Length of interactions lines
+#' @param return Return an object or no (default = FALSE)
+#' @param type string "phylogram" or "cladogram"
+#' @param col What color to draw links between trees
+#' @param lwd Width of links between trees
+#' @param lty Type of line to draw between trees
+#' @param show_tip_label Boolean for showing labels
+#' @param font What font to use (bold, italic (default), etc.)
+#' @param fsize What size font as a character expansion factor (same as cex)
+#' @param ... Other plotting parameters
+#'
+#'
+#' @references
+#' TODO: add in the ref
+#' @keywords Internal
 
 # x is the host
 # y is the symb
@@ -55,9 +113,7 @@ draw_cophy <-
              y,
              assoc = assoc,
              use_edge_length = use_edge_length,
-             space = space, 
              length_line = length_line,
-             gap = gap,
              type = type,
              return = return,
              col = col,
@@ -66,16 +122,26 @@ draw_cophy <-
              show_tip_label = show_tip_label,
              font = font,
              fsize = fsize,
+             gap = gap,
              ...) {
     res <- list()
 
 ###choice of the minimum space between the trees
-    left <- min(nchar(x$tip.label, type = "width")) * fsize
-    right <- min(nchar(y$tip.label, type = "width")) * fsize
-    space_min <- left + right + gap * 2
-    if ((space <= 0) || (space < space_min)) space <- space_min
+    if (show_tip_label) {
+        left <- max(nchar(x$tip.label, type = "width")) * fsize
+        right <- max(nchar(y$tip.label, type = "width")) * fsize
+    }
+    else {
+        gap <- -gap
+        left <- 0.0
+        right <- 0.0
+    }
+
+
     n_tip_x <- ape::Ntip(x)
     n_tip_y <- ape::Ntip(y)
+    
+    space <- left + right + gap * 2
     res$n_tip_x <- n_tip_x
     res$n_tip_y <- n_tip_y
     # a is coordinates of host
@@ -93,6 +159,7 @@ draw_cophy <-
     b[, 2] <- b[, 2] - min(b[, 2])
     res$b <- b
     b2 <- b
+
     b2[, 1] <- b[seq_len(nrow(b)), 1] * (max(a[, 1]) / max(b[, 1])) +
         space + max(a[, 1])
     b2[, 2] <- b[seq_len(nrow(b)), 2] * (max(a[, 2]) / max(b[, 2]))
@@ -102,7 +169,8 @@ draw_cophy <-
     c[nrow(a) + seq_len(nrow(b)), 1] <- b2[, 1]
     c[nrow(a) + seq_len(nrow(b)), 2] <- b2[, 2]
     res$c <- c
-    plot(c, xlim = NULL, ylim = NULL, log = "", main = NULL,
+    plot(c, type = "n", xlim = NULL, ylim = NULL, log = "", main = NULL,
+        mar = c(0, 0, 0, 0),
         sub = NULL, xlab = NULL, ylab = NULL, ann = FALSE, axes = FALSE,
         frame.plot = FALSE)
  ###segments for cladograms
@@ -190,10 +258,10 @@ draw_cophy <-
 
     for (i in seq_len(nrow(assoc))) {
         if (show_tip_label) {
-            decx[i] <- strwidth(x$tip.label[lsa[x$tip.label == assoc[i, 1]]]) * fsize + 1 * fsize
-            decy[i] <- strwidth(y$tip.label[lsb[y$tip.label == assoc[i, 2]]]) * fsize + 1 * fsize
+            decx[i] <- strwidth(x$tip.label[lsa[x$tip.label == assoc[i, 1]]]) * fsize + 0.2
+            decy[i] <- strwidth(y$tip.label[lsb[y$tip.label == assoc[i, 2]]]) * fsize + 0.2
         } else {
-            decx[i] <- decy[i] <- 0
+            decx[i] <- decy[i] <- 0.2
         }
         segments(a[lsa[x$tip.label == assoc[i, 1]], 1] + decx[i],
                  a[lsa[x$tip.label == assoc[i, 1]], 2],
@@ -207,23 +275,27 @@ draw_cophy <-
 
 
 #' Internal tree plot function
-#' @description internal function to make textbox for tip labels modified from Liam Revell phytools package under GPL v. 2
+#' @description internal function to make textbox for tip labels
+#' modified from phytools::TEXTBOX package under GPL v. 2
 #'
 #' @param x x coordinates
 #' @param y y coordinates
 #' @param label Labels as vector of strings
 #' @param pos Position in plot environment
 #' @param offset How offset from tips
-#' @param cex a numerical vector giving the amount by which plotting characters and symbols should be scaled relative to the default
+#' @param cex a numerical vector giving the amount by which characters
+#' should be scaled relative to the default
 #' @param font font choice
 #'
 #'
 #' @references
-#' Revell, L.J. (2012), phytools: an R package for phylogenetic comparative biology (and other things). Methods in Ecology and Evolution, 3: 217-223. doi:10.1111/j.2041-210X.2011.00169.x
+#' Revell, L.J. (2012), phytools: an R package for phylogenetic comparative
+#' biology (and other things). Methods in Ecology and Evolution, 3: 217-223.
+#' doi:10.1111/j.2041-210X.2011.00169.x
 #' @keywords Internal
 make_textbox <- function(x, y, label, pos, offset, cex, font) {
     rect(x, y - 0.5 * strheight(label, cex = cex, font = font),
-         x + if (pos == 4) strwidth(label, cex = cex, font = font) 
+         x + if (pos == 4) strwidth(label, cex = cex, font = font)
              else -strwidth(label, cex = cex, font = font),
          y + 0.5 * strheight(label, cex = cex, font = font), border = FALSE,
          col = if (par()$bg %in% c("white", "transparent")) "white"
@@ -261,24 +333,54 @@ draw_curve <- function(x, y, scale=0.01, ...){
     y2 <- y[2]
     curve(plogis(x,
                  scale = scale,
-                 location = (x1 + x2)/2)*(y2 - y1) + y1,
-          x1,
-          x2,
-          add = TRUE,
-          ...)
+                 location = (x1 + x2) / 2) * (y2 - y1) + y1,
+                 x1,
+                 x2,
+                 add = TRUE,
+                 ...)
 }
 
 
-
+#' Add scale bar to cophylo plot
+#'
+#' This function plots a host and symbiont tree given the object returned by
+#' `sim_cophylo_bdp`.
+#'
+#' @param obj An object of class `cophy`
+#' @param scale.bar A list of 2 numeric values to indicate position of scale bars on plot
+#' @param fsize Font size of scale bar
+#' @keywords Internal
+add_scalebar <- function(obj, scale.bar, fsize) {
+    # host scale
+    if (scale.bar[1] > 0) {
+        s1 <- (max(fsize * strwidth(obj$host_tree$tip.label))) /
+            max(ape::node.depth.edgelength(obj$host_tree))
+        lines(c(-0.5,scale.bar[1] * s1), rep(-0.3, 2))
+        lines(rep(-0.5, 2), c(-0.1, -0.06))
+        lines(rep(-0.5 + scale.bar[1] * s1, 2), c(-0.3, -0.06))
+        text(mean(c(-0.5, -0.5 + scale.bar[1] * s1)),
+           rep(-0.1, 2), scale.bar[1], pos = 1)
+    }
+    # symbiont scale
+    if (scale.bar[2] > 0) {
+        s2 <- (max(fsize * strwidth(obj$symb_tree$tip.label))) /
+             max(ape::node.depth.edgelength(obj$symb_tree))
+        lines(c(0.5 - scale.bar[2] * s2, 0.5), rep(-0.3, 2))
+        lines(rep(0.5 - scale.bar[2] * s2, 2), c(-0.3, -0.06))
+        lines(rep(0.5, 2), c(-0.3, -0.06))
+        text(mean(c(0.5 - scale.bar[2] * s2, 0.5)),
+            rep(-0.1, 2), scale.bar[2], pos = 1)
+    }
+}
 
 # this function was taken from Liam Revell's phytools
 # package copied under GNU public license 2
 #' @describeIn plot.cophy Plots multiple cophy plots
 #' @param x object of class multiCophy
 #' @export
-plot.multiCophy <- function(x,...){
+plot.multiCophy <- function(x, ...) {
     par(ask = TRUE)
-    for (i in 1:length(x)) {
-        plot.cophy(x[[i]],...)
+    for (i in seq_len(length(x))) {
+        plot.cophy(x[[i]], ...)
     }
 }
