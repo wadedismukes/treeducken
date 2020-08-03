@@ -188,6 +188,7 @@ If that is set it will count the numbers of each event.
 
 ```{r}
 
+
 library(treeducken)
 gopher_lice_map <- read.table(system.file("extdata",
                                           "gopher_lice_mapping.txt",
@@ -207,7 +208,8 @@ gopher_lice_cophylo <- convert_to_cophy(hostTree = gopher_tree,
 print(gopher_lice_cophylo)
 cophy_summary_stat(gopher_lice_cophylo)
 
-plot.cophy(gopher_lice_cophylo, fsize = 0.5, scalebar_size = 1)
+plot(gopher_lice_cophylo, fsize = 0.5, show_scalebar = TRUE, show_tip_label = FALSE,
+ gap = 1, col = "purple", lty = "dashed", main = "gophers") 
 ```
 
 

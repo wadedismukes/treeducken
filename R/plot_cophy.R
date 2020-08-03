@@ -16,7 +16,8 @@
 #' @param show_tip_label Boolean for showing labels
 #' @param font What font to use (bold, italic (default), etc.)
 #' @param fsize What size font as a character expansion factor (same as cex)
-#' @param scalebar_size Size of scalebars (default is 0 -> no scalebar)
+#' @param gap Size of the gap between the tips and tip names
+#' @param show_scalebar Show a scalebar
 #' @param scalebar_fsize Font size of scalebars (default is 0 -> no scalebar)
 #' @param ... other plotting parameters
 #' @return a plot of the host and symbiont tree with extant interactions
@@ -42,9 +43,9 @@ plot.cophy <-
              gap = 1,
              font = 3,
              fsize = 1.0,
-             scalebar_size = 0,
+             show_scalebar = FALSE,
              scalebar_fsize = 0,
-            ...) {
+             ...) {
 
     if (!inherits(x, "cophy"))
         stop("cophy_obj should be an object of class 'cophy'.")
@@ -75,13 +76,10 @@ plot.cophy <-
                font = font,
                fsize = fsize,
                gap = gap,
+               show_scalebar = show_scalebar,
+               scalebar_fsize = scalebar_fsize,
                ...)
 
-    if (any(scalebar_size > 0)) {
-        if (scalebar_fsize == 0)
-            scalebar_fsize <- 1.0
-        treeducken::add_scalebar(x, c(scalebar_size, scalebar_size), scalebar_fsize)
-    }
 }
 #' Internal tree plot function
 #' @description internal plot function from ape::plotCophylo2 under GPL v. 2
@@ -99,6 +97,9 @@ plot.cophy <-
 #' @param show_tip_label Boolean for showing labels
 #' @param font What font to use (bold, italic (default), etc.)
 #' @param fsize What size font as a character expansion factor (same as cex)
+#' @param gap Gap between tips and tip names 
+#' @param show_scalebar Boolean for turning on and off the scalebar
+#' @param scalebar_fsize Font size of scalebar
 #' @param ... Other plotting parameters
 #'
 #'
@@ -123,6 +124,8 @@ draw_cophy <-
              font = font,
              fsize = fsize,
              gap = gap,
+             show_scalebar = show_scalebar,
+             scalebar_fsize = scalebar_fsize,
              ...) {
     res <- list()
 
@@ -130,9 +133,10 @@ draw_cophy <-
     if (show_tip_label) {
         left <- max(nchar(x$tip.label, type = "width")) * fsize
         right <- max(nchar(y$tip.label, type = "width")) * fsize
+        if (gap <= (left + right))
+            gap <- -gap
     }
     else {
-        gap <- -gap
         left <- 0.0
         right <- 0.0
     }
@@ -258,8 +262,8 @@ draw_cophy <-
 
     for (i in seq_len(nrow(assoc))) {
         if (show_tip_label) {
-            decx[i] <- strwidth(x$tip.label[lsa[x$tip.label == assoc[i, 1]]]) * fsize + 0.2
-            decy[i] <- strwidth(y$tip.label[lsb[y$tip.label == assoc[i, 2]]]) * fsize + 0.2
+            decx[i] <- strwidth(x$tip.label[lsa[x$tip.label == assoc[i, 1]]]) * fsize + 0.35
+            decy[i] <- strwidth(y$tip.label[lsb[y$tip.label == assoc[i, 2]]]) * fsize + 0.35
         } else {
             decx[i] <- decy[i] <- 0.2
         }
@@ -269,6 +273,15 @@ draw_cophy <-
                  b2[lsb[y$tip.label == assoc[i, 2]], 2],
                  col = colors[i], lwd = lwidths[i], lty = ltype[i])
     }
+
+
+    if (show_scalebar) {
+        if (scalebar_fsize == 0)
+            scalebar_fsize <- 1.0
+        treeducken::add_scalebar(a, b2, scalebar_fsize)
+    }
+
+
     if (return == TRUE)  res
 }
 
@@ -326,7 +339,7 @@ make_textbox <- function(x, y, label, pos, offset, cex, font) {
 #' @references
 #' Revell, L.J. (2012), phytools: an R package for phylogenetic comparative biology (and other things). Methods in Ecology and Evolution, 3: 217-223. doi:10.1111/j.2041-210X.2011.00169.x
 #' @keywords Internal
-draw_curve <- function(x, y, scale=0.01, ...){
+draw_curve <- function(x, y, scale=0.01, ...) {
     x1 <- x[1]
     x2 <- x[2]
     y1 <- y[1]
@@ -346,30 +359,37 @@ draw_curve <- function(x, y, scale=0.01, ...){
 #' This function plots a host and symbiont tree given the object returned by
 #' `sim_cophylo_bdp`.
 #'
-#' @param obj An object of class `cophy`
+#' @param host_coords Host x,y coordinates
+#' @param symb_coords Symb x,y coordinates
 #' @param scale.bar A list of 2 numeric values to indicate position of scale bars on plot
 #' @param fsize Font size of scale bar
 #' @keywords Internal
-add_scalebar <- function(obj, scale.bar, fsize) {
+add_scalebar <- function(host_coords, symb_coords, fsize) {
     # host scale
-    if (scale.bar[1] > 0) {
-        s1 <- (max(fsize * strwidth(obj$host_tree$tip.label))) /
-            max(ape::node.depth.edgelength(obj$host_tree))
-        lines(c(-0.5,scale.bar[1] * s1), rep(-0.3, 2))
-        lines(rep(-0.5, 2), c(-0.1, -0.06))
-        lines(rep(-0.5 + scale.bar[1] * s1, 2), c(-0.3, -0.06))
-        text(mean(c(-0.5, -0.5 + scale.bar[1] * s1)),
-           rep(-0.1, 2), scale.bar[1], pos = 1)
+
+    # the long line
+    segments(min(host_coords[, 1]),
+            -0.3,
+            max(host_coords[, 1]))
+    # print ticks at branching events
+    for(i in seq_len(nrow(host_coords))) {
+        segments(x0 = host_coords[i, 1],
+                  y0 = -0.3,
+                  y1 = -0.4)
     }
-    # symbiont scale
-    if (scale.bar[2] > 0) {
-        s2 <- (max(fsize * strwidth(obj$symb_tree$tip.label))) /
-             max(ape::node.depth.edgelength(obj$symb_tree))
-        lines(c(0.5 - scale.bar[2] * s2, 0.5), rep(-0.3, 2))
-        lines(rep(0.5 - scale.bar[2] * s2, 2), c(-0.3, -0.06))
-        lines(rep(0.5, 2), c(-0.3, -0.06))
-        text(mean(c(0.5 - scale.bar[2] * s2, 0.5)),
-            rep(-0.1, 2), scale.bar[2], pos = 1)
+
+
+    # symb sclae
+
+    # the long line
+    segments(min(symb_coords[, 1]),
+            -0.3,
+            max(symb_coords[, 1]))
+    # print ticks at branching events
+    for(i in seq_len(nrow(symb_coords))) {
+        segments(x0 = symb_coords[i, 1],
+                  y0 = -0.3,
+                  y1 = -0.4)
     }
 }
 
