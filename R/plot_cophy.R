@@ -97,7 +97,7 @@ plot.cophy <-
 #' @param show_tip_label Boolean for showing labels
 #' @param font What font to use (bold, italic (default), etc.)
 #' @param fsize What size font as a character expansion factor (same as cex)
-#' @param gap Gap between tips and tip names 
+#' @param gap Gap between tips and tip names
 #' @param show_scalebar Boolean for turning on and off the scalebar
 #' @param scalebar_fsize Font size of scalebar
 #' @param ... Other plotting parameters
@@ -144,7 +144,7 @@ draw_cophy <-
 
     n_tip_x <- ape::Ntip(x)
     n_tip_y <- ape::Ntip(y)
-    
+
     space <- left + right + gap * 2
     res$n_tip_x <- n_tip_x
     res$n_tip_y <- n_tip_y
@@ -173,7 +173,7 @@ draw_cophy <-
     c[nrow(a) + seq_len(nrow(b)), 1] <- b2[, 1]
     c[nrow(a) + seq_len(nrow(b)), 2] <- b2[, 2]
     res$c <- c
-    plot(c, type = "n", xlim = NULL, ylim = NULL, log = "", main = NULL,
+    graphics::plot(c, type = "n", xlim = NULL, ylim = NULL, log = "", main = NULL,
         mar = c(0, 0, 0, 0),
         sub = NULL, xlab = NULL, ylab = NULL, ann = FALSE, axes = FALSE,
         frame.plot = FALSE)
@@ -361,7 +361,6 @@ draw_curve <- function(x, y, scale=0.01, ...) {
 #'
 #' @param host_coords Host x,y coordinates
 #' @param symb_coords Symb x,y coordinates
-#' @param scale.bar A list of 2 numeric values to indicate position of scale bars on plot
 #' @param fsize Font size of scale bar
 #' @keywords Internal
 add_scalebar <- function(host_coords, symb_coords, fsize) {
