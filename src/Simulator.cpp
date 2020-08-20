@@ -968,20 +968,26 @@ arma::umat Simulator::cospeciationEvent(double eventTime, arma::umat assocMat){
 bool Simulator::bdsaBDSim(){
     bool treesComplete = false;
     // get the stop time from the spTree
-    double stopTime = spTree->getCurrentTimeFromExtant();
+    double stopTime = spTree->getCurrentTime();
     double eventTime;
     bool isSpeciation;
     // start a new locus tree
+
     lociTree = new LocusTree(numTaxaToSim,
                              currentSimTime,
                              geneBirthRate,
                              geneDeathRate,
                              transferRate);
+
+
     // species tree is read in from r so convert index from R to C++ indexing
     std::map<int, int> rToTdckenIndxMap = spTree->makeIndxMap();
+
     spTree->switchIndicesFirstToSecond(rToTdckenIndxMap);
+    
     // get the root
     Node* spRoot = spTree->getRoot();
+
     std::map<int, std::string> tipMap = spTree->makeTipMap();
     // set the locus tree index to line up with the species tree
     lociTree->getRoot()->setLindx(spRoot->getIndex());
@@ -999,6 +1005,7 @@ bool Simulator::bdsaBDSim(){
         contempSpecies.clear();
     // insert the root of spTree index as the first species index to simulate within
     contempSpecies.push_back(spRoot->getIndex());
+
     while(currentSimTime < stopTime){
       // get time to next event based on rate parameters and number extant tips
       eventTime = lociTree->getTimeToNextEvent();
@@ -1068,6 +1075,7 @@ bool Simulator::bdsaBDSim(){
     currentSimTime = stopTime;
     // set the present time
     lociTree->setPresentTime(currentSimTime);
+
     // set the names based on their species ID, so tips are named
     // "T<SPECIES_INDX>_<LOCUS {A,B,C,...}>"
     lociTree->setNamesBySpeciesID(tipMap);
@@ -1084,6 +1092,7 @@ bool Simulator::simLocusTree(){
     good = bdsaBDSim();
   }
   return good;
+
 }
 
 // function to get the epochs of the locus tree (i.e. our coalescent breakpoints)

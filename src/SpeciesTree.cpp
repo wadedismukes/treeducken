@@ -481,3 +481,12 @@ int SpeciesTree::findLastToGoExtinct(double EventTime){
   return indxExtinct;
 }
 
+double SpeciesTree::getCurrentTime() {
+    std::vector<double> tempDeathTimes;
+    tempDeathTimes.resize(nodes.size());
+    for(int i = 0; i < nodes.size(); i++) {
+        tempDeathTimes[i] = nodes[i]->getDeathTime();
+    }
+    sort(tempDeathTimes.begin(), tempDeathTimes.end(), std::greater<double>());
+    return(tempDeathTimes[0]);
+}

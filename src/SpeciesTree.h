@@ -54,6 +54,7 @@ class SpeciesTree : public Tree
         std::map<int,double>        getBirthTimesFromNodes();
         std::map<int,double>        getDeathTimesFromNodes();
         double                      getCurrentTimeFromExtant() {return extantNodes[0]->getDeathTime();}
+        double                      getCurrentTime();
         bool                        getIsExtantFromIndx(int indx) { return nodes[indx]->getIsExtant(); }
         bool                        macroEvent(int indx);
 

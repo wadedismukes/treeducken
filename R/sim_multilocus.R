@@ -10,7 +10,9 @@ sim_multilocus_coal <- function(locus_tree,
 
     locus_tree_time_length <- max(ape::node.depth.edgelength(locus_tree))
     v <- effective_pop_size * generation_time
-    locus_tree <- geiger::rescale(locus_tree, model = "depth", locus_tree_time_length * v)
+    locus_tree <- geiger::rescale(locus_tree,
+                                model = "depth",
+                                locus_tree_time_length * v)
 
     if(!(any(grep("D[A-Z]", locus_tree$node.label)))) {
         return(treeducken::sim_multispecies_coal(

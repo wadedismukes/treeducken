@@ -42,13 +42,25 @@ void GeneTree::initializeTree(std::vector< std::vector<int> > extantLociInd, dou
         (*p) = nullptr;
     }
     extantNodes.clear();
+    int numLociInPrsent;
+    int k = 0;\
+    
+
+    if(extantLociInd[0].empty()){
+        while(extantLociInd[k].empty()) {
+            k++;
+        }
+        numLociInPrsent = extantLociInd[k].size();
+    }
+    else{
+        numLociInPrsent = extantLociInd[0].size();
+    }
     Node *p;
-    int numLociInPresnt = extantLociInd[0].size();
-    for(int i = 0; i < numLociInPresnt; i++){
+    for(int i = 0; i < numLociInPrsent; i++){
         for(int j = 0; j < individualsPerPop; j++){
             p = new Node();
             p->setDeathTime(presentTime);
-            p->setLindx(extantLociInd[0][i]);
+            p->setLindx(extantLociInd[k][i]);
             p->setLdes(NULL);
             p->setRdes(NULL);
             p->setAnc(NULL);

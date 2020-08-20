@@ -73,6 +73,7 @@ Tree::Tree(SEXP rtree){
     std::vector<std::string> tip_names = tr["tip.label"];
     double root_edge = tr["root.edge"];
     numNodes = tr["Nnode"];
+    
     std::map<int,int> indMap;
     numTaxa = (int) tip_names.size();
     nodes.resize(numNodes + numTaxa);
