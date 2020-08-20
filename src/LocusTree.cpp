@@ -1,6 +1,7 @@
 #include <iostream>
 #include "LocusTree.h"
 
+
 LocusTree::LocusTree(unsigned nt, double stop, double gbr, double gdr, double lgtrate) : Tree(nt, 0.0){
     numTaxa = 1;
     stopTime = stop;
@@ -8,7 +9,9 @@ LocusTree::LocusTree(unsigned nt, double stop, double gbr, double gdr, double lg
     geneDeathRate = gdr;
     transferRate = lgtrate;
     numTransfers = 0;
+    numDuplications = 0;
     getRoot()->setLindx(0);
+    getRoot()->setLocusID(0);
 }
 
 LocusTree::~LocusTree(){
@@ -17,7 +20,7 @@ LocusTree::~LocusTree(){
 
 
 
-void LocusTree::setNewLineageInfo(int indx, Node *r, Node *l){
+void LocusTree::setNewLineageInfo(int indx, Node *r, Node *l) {
     extantNodes[indx]->setLdes(l);
     extantNodes[indx]->setRdes(r);
     extantNodes[indx]->setDeathTime(currentTime);
@@ -35,6 +38,7 @@ void LocusTree::setNewLineageInfo(int indx, Node *r, Node *l){
     r->setIsExtant(true);
     r->setIsExtinct(false);
     r->setIndx(extantNodes[indx]->getIndex());
+    r->setLocusID(extantNodes[indx]->getLocusID() + numDuplications);
 
     l->setLdes(NULL);
     l->setRdes(NULL);
@@ -45,7 +49,7 @@ void LocusTree::setNewLineageInfo(int indx, Node *r, Node *l){
     l->setIsExtinct(false);
     l->setIsExtant(true);
     l->setIndx(extantNodes[indx]->getIndex());
-
+    l->setLocusID(extantNodes[indx]->getLocusID());
 
     extantNodes.push_back(r);
     extantNodes.push_back(l);
@@ -145,7 +149,7 @@ void LocusTree::lineageTransferEvent(int indx, bool randTrans = true){
     donor->setSib(extantNodes[indx]->getSib());
     donor->setLdes(NULL);
     donor->setRdes(NULL);
-
+    donor->setLocusID(extantNodes[indx]->getLocusID());
 
     //extantNodes[indx] `
     extantNodes[indx]->setLdes(rec);
@@ -185,6 +189,8 @@ void LocusTree::lineageTransferEvent(int indx, bool randTrans = true){
     rec->setLdes(NULL);
     rec->setRdes(NULL);
     rec->setAnc(extantNodes[indx]);
+    rec->setLocusID(extantNodes[indx]->getLocusID());
+
     // rec->setAnc(extantNodes[recIndx.first]->getAnc());
     rec->setSib(NULL);
 
@@ -275,6 +281,7 @@ int LocusTree::speciationEvent(int indx, double time, std::pair<int,int> sibs){
             r->setIsExtant(true);
             r->setIsExtinct(false);
             r->setIndx(sibs.second);
+            r->setLocusID((*it)->getLocusID());
 
             l->setLdes(NULL);
             l->setRdes(NULL);
@@ -285,6 +292,7 @@ int LocusTree::speciationEvent(int indx, double time, std::pair<int,int> sibs){
             l->setIsExtinct(false);
             l->setIsExtant(true);
             l->setIndx(sibs.first);
+            l->setLocusID((*it)->getLocusID());
 
             (*it)->setLdes(l);
             (*it)->setRdes(r);
@@ -606,8 +614,9 @@ void LocusTree::recursiveSetNamesBySpeciesID(Node *n,
         tn << static_cast<char>(duplicationCount);
         std::string nodeName = "D" + tn.str();
         n->setName(nodeName);
-        recursiveSetNamesBySpeciesID(n->getLdes(), duplicationCount, tipMap);
         duplicationCount++;
+
+        recursiveSetNamesBySpeciesID(n->getLdes(), duplicationCount, tipMap);
         recursiveSetNamesBySpeciesID(n->getRdes(), duplicationCount, tipMap);
       }
       else{
@@ -618,7 +627,9 @@ void LocusTree::recursiveSetNamesBySpeciesID(Node *n,
     }
     // else tip (two types)
     else{
-      tn << static_cast<char>(duplicationCount);
+      int locusID = n->getLocusID() + 1;
+      tn << locusID;
+      //tn << static_cast<char>(locusID);
       int locusTreeSpecInd = n->getIndex();
       std::string tipName = tipMap[locusTreeSpecInd] + "_" + tn.str();
       if(n->getIsExtinct() && tipName.front() != 'X')
@@ -633,7 +644,7 @@ void LocusTree::setNamesBySpeciesID(std::map<int,std::string> tipMap)
   std::stringstream tn;
   unsigned nodeIndx = numExtant + numExtinct;
   unsigned tipIndx = 0;
-  int numDuplications = this->getNumberDuplications();
+  //int numDuplications = this->getNumberDuplications();
   int duplicationCount = 65;
   // std::vector<int> duplicationCodes(26); // ASCII A is 65
   // for(auto it = duplicationCodes.begin(); it != duplicationCodes.end(); ++it){

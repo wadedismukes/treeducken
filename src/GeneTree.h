@@ -16,7 +16,7 @@ class GeneTree : public Tree {
     private:
         unsigned individualsPerPop;
         double   popSize;
-        double   generationTime; // specified in generations per year
+        double   generationTime; // specified in generations per unit time
 
     public:
                     GeneTree(unsigned nt, unsigned ipp, double ne, double genTime);

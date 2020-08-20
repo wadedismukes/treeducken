@@ -23,7 +23,6 @@ Node::Node()
     birthTime = 0.0;
     deathTime = 0.0;
 
-
 }
 
 Node::~Node(){

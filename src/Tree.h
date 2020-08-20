@@ -33,6 +33,7 @@ class Node
         bool    isDuplication;
         double  birthTime, deathTime;
         double  branchLength;
+        int     locusID;
 
     public:
                 Node();
@@ -55,6 +56,7 @@ class Node
         void    setLindx(int li ) {Lindx = li; }
         void    addHost(int hostIndx) { hosts.push_back(std::move(hostIndx)); }
         void    setIsDuplication(bool t) { isDuplication = t; }
+        void    setLocusID(int a) { locusID = a; }
         int     getFlag() {return flag; }
         Node*   getLdes() {return ldes; }
         Node*   getRdes() {return rdes; }
@@ -73,6 +75,7 @@ class Node
         std::vector<int> getHosts() { return hosts; }
         void    setHosts(std::vector<int> hs) { hosts = hs; }
         bool    getIsDuplication() { return isDuplication; }
+        int     getLocusID() { return locusID; }
 };
 
 

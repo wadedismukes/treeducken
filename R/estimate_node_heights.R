@@ -19,7 +19,7 @@
 #' @export
 calculate_expected_leaves_sptree <- function(lambda,
                                       mu,
-                                      t){
+                                      t) {
     if (!is.numeric(lambda)) {
         stop("'lambda' needs to be a number")
     }
@@ -38,7 +38,7 @@ calculate_expected_leaves_sptree <- function(lambda,
     if (mu < 0) {
         stop("'mu' needs to be positive or 0.0")
     }
-    2 * exp((lambda - mu)*t)
+    2 * exp((lambda - mu) * t)
 }
 #' Calculate expected leaves of a locus tree
 #'
@@ -69,7 +69,7 @@ calculate_expected_leaves_sptree <- function(lambda,
 calculate_expected_leaves_locustree <- function(t,
                                                 dup_rate,
                                                 loss_rate,
-                                                num_species){
+                                                num_species) {
     if (!is.numeric(t)) {
         stop("'t' needs to be a number")
     }
@@ -88,20 +88,22 @@ calculate_expected_leaves_locustree <- function(t,
     if (loss_rate < 0) {
         stop("'loss_rate' needs to be positive or 0.0.")
     }
-    f_numer <- (loss_rate * (1 - exp(-(dup_rate - loss_rate) * t)))
-    f_denom <- dup_rate - loss_rate * (exp(-(dup_rate - loss_rate) * t))
+    f_numer <- (loss_rate * (1 - exp(- (dup_rate - loss_rate) * t)))
+    f_denom <- dup_rate - loss_rate * (exp(- (dup_rate - loss_rate) * t))
     f <- f_numer / f_denom
-    (num_species * exp(t * (dup_rate - loss_rate))) / (1 - f^(num_species - 2))
+    (num_species * exp(t * (dup_rate - loss_rate))) /
+        (1 - (f ^ (num_species - 2)))
 }
 #' Calculate expected time to branching point of a species tree
 #'
-#' @description Calculates the expected time to branching point of a species tree
-#'     for a birth-death simulation given a speciation and extinction rate and a
-#'      a number of leaves, and a branching point.
+#' @description Calculates the expected time to branching point of a
+#'    species tree for a birth-death simulation given a speciation
+#'    and extinction rate and a number of leaves, and a branching point.
 #'
 #'
-#' @details By default this branching point is 1 which corresponds to the root, k = 2 corresponds to
-#' the first branching point after the root, k = 3 the second, and so on. For more details see Gernhard 2008.
+#' @details By default this branching point is 1 which corresponds
+#' to the root, k = 2 corresponds to the first branching point after
+#' the root, k = 3 the second, and so on. For more details see Gernhard 2008.
 #'
 #'
 #'
@@ -124,7 +126,7 @@ calculate_expected_leaves_locustree <- function(t,
 estimate_node_heights <- function(lambda,
                                   mu,
                                   n,
-                                  k = 1){
+                                  k = 1) {
     if (!is.numeric(lambda))
         stop("'lambda' needs to be a number")
     if (!is.numeric(mu))
@@ -144,12 +146,12 @@ estimate_node_heights <- function(lambda,
     if (mu == 0.0) {
         s <- 0
         for (i in k + 1:n) {
-            s <- s + 1/(lambda*i)
+            s <- s + 1 / (lambda * i)
         }
         speciation_event_time <- s
     }
     else if (mu == lambda) {
-        speciation_event_time <- (n - k)/(lambda*k)
+        speciation_event_time <- (n - k) / (lambda * k)
     }
     else{
         rho <- mu / lambda
@@ -158,24 +160,18 @@ estimate_node_heights <- function(lambda,
         for (i in 0:(n - k - 1)) {
             s1 <- exp(lchoose(n - k - 1, i))
             s2 <- 1 / ((k + i + 1) * rho)
-            s3 <- exp((k + i) * log(1/rho - 1))    # (1/rho - 1)^(k+i)
-
+            s3 <- exp((k + i) * log(1 / rho - 1))
             in_sum <- 0
             for (j in 1:k + i) {
                 ins1 <- exp(lchoose(k + i, j))
-                ins2 <- (-1^j)/j
-                ins3 <- 1 - (1/(1 - rho))^j
-                # print(ins1)
-                # print(ins2)
-                # print(ins3)
-                in_sum <- in_sum + ins1*ins2*ins3
+                ins2 <- (-1^j) / j
+                ins3 <- 1 - (1 / (1 - rho))^j
+                in_sum <- in_sum + ins1 * ins2 * ins3
             }
-            s4 <- log(1/(1 - rho)) - in_sum
-            out_sum <- out_sum + s1*s2*s3*s4
+            s4 <- log(1 / (1 - rho)) - in_sum
+            out_sum <- out_sum + s1 * s2 * s3 * s4
         }
         speciation_event_time <- first_part * out_sum
     }
     speciation_event_time
 }
-
-

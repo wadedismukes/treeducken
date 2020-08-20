@@ -26,6 +26,7 @@ This vignette summarizes the workflow for simulating a host and symbiont tree us
 This model has a number of parameters that are input into the `sim_cophylo_bdp` function. Let us assume that we just want to simulate to a time of 2.0 units. We can then use `calculate_expected_leaves_sptree` and `calculate_expected_leaves_locustree` to figure out the average number of extant tips that will be on our host and symbiont trees respectively.
 
 ```{r}
+
 library(treeducken)
 set.seed(42)
 
@@ -57,7 +58,7 @@ Now we have all the necessary parameters set with some idea of what they mean.
 
 We will now use the main function, `sim_cophylo_bdp` with the parameters we set in the previous section.
 Let's simulate ten sets and then we can print out a summary for each set.
-```{r}
+```{r} 
 # simulate 10 paired trees with our set parameters.
 host_symb_sets <- sim_cophylo_bdp(hbr = h_lambda,
                 hdr = h_mu,
@@ -82,7 +83,7 @@ print(tree_set_of_interest)
 ```
 
 ```{r}
-plot(tree_set_of_interest)
+plot(tree_set_of_interest, col = "red", lty = "dotted")
 ```
 Notice that the output of `sim_cophylo_bdp` is a list of `cophy` objects.
 Each `cophy` object is composed of 4 elements: `host_tree`, `symb_tree`, `association_mat`, an `event_history`.
@@ -137,7 +138,7 @@ host_tree_locus_trees <- sim_locustree_bdp(host_tree,
                                            gdr = 0.2,
                                            lgtr = 0.0,
                                            num_loci = 10)
-plot(host_tree)
+host_tree_locus_trees
 ```
 
 
@@ -145,6 +146,7 @@ plot(host_tree)
 ```{r}
 plot(host_tree_locus_trees)
 ```
+
 Now we will use the symbiont tree:
 
 ```{r}
@@ -156,26 +158,24 @@ symb_tree_locus_trees <- sim_locustree_bdp(symb_tree,
 str(symb_tree_locus_trees[[1]])
 ```
 
-Another option is simulating the locus tree and gene tree simultaneously.
-This is output as a list with two elements: the locus tree and the set of gene trees.
+Using these locus trees we can simulate under the multi-locus coalescent process (see Rasmussen and Kellis 2012). We can speficy
+an effective population size and a generation time measured in generations per unit time. For now we will assume that the time of 
+our trees is in units of millions of years. The default for generation time is then 1 time per year (1e-6). And we will randomly
+draw an effective population size from a Lognormal with mean 14 and standard deviation 0.4. Note that the only reason these values
+chosen is to mirror the validation test of Mallo et al. (2015) for the SimPhy program.
 
 ```{r}
-loctr_genetr_set <- sim_locustree_genetree_msc(symb_tree,
-                                               gbr = 0.2,
-                                               gdr = 0.1,
-                                               lgtr = 0.1,
-                                               num_loci = 10,
-                                               num_sampled_individuals = 1,
-                                               num_genes_per_locus = 10,
-                                               theta = 1)
-loctr_genetr_set
+host_locus_tree <- host_tree_locus_trees[[3]]
+# randomly choose an effective popsize 
+popsize <- 1e6
+host_loci_gene_trees <- sim_multilocus_coal(host_locus_tree,
+                                            effective_pop_size = popsize,
+                                            num_genes = 100)
 ```
+
 
 And we can calculate some tree summary statistics on all of genes that were simulated on one of the locus trees (in this case the first one). 
 
-```{r}
-genetree_summary_stat(loctr_genetr_set, 1)
-```
 
 ## Load in other datasets
 
@@ -208,8 +208,13 @@ gopher_lice_cophylo <- convert_to_cophy(hostTree = gopher_tree,
 print(gopher_lice_cophylo)
 cophy_summary_stat(gopher_lice_cophylo)
 
-plot(gopher_lice_cophylo, fsize = 0.5, show_scalebar = TRUE, show_tip_label = FALSE,
- gap = 1, col = "purple", lty = "dashed", main = "gophers") 
+plot(gopher_lice_cophylo,
+     fsize = 0.5,
+     show_scalebar = TRUE,
+     show_tip_label = FALSE,
+     gap = 1,
+     col = "purple",
+     lty = "dashed")
 ```
 
 
