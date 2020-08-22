@@ -38,12 +38,12 @@ class SymbiontTree : public Tree {
                                          double hostExtRate,
                                          double cospeciaRate,
                                          arma::umat assocMat);
-      virtual void    lineageBirthEvent(unsigned indx);
-      virtual void    lineageDeathEvent(unsigned indx);
-      virtual void    setNewLineageInfo(int indx, Node *r, Node *s);
+      void    lineageBirthEvent(unsigned indx) override;
+      void    lineageDeathEvent(unsigned indx) override;
+      virtual void    setNewLineageInfo(int indx, std::shared_ptr<Node> r, std::shared_ptr<Node> s);
       void            setNewLineageInfoExpan(int indx,
-                                             Node* r,
-                                             Node* s,
+                                             std::shared_ptr<Node> r,
+                                             std::shared_ptr<Node> s,
                                              int hostIndx);
       void            hostExpansionEvent(int indx, int hostIndx);
       arma::umat       ermJointEvent(double ct, arma::umat assocMat);
@@ -52,11 +52,11 @@ class SymbiontTree : public Tree {
       void            setSymbTreeInfoExtinction(int deadIndx);
 
       //std::string     printNewickTree();
-      void            setTreeTipNames();
-      void            recTipNamer(Node *p, unsigned &extinctCount, unsigned &tipCount);
+      void            setTreeTipNames() override;
+      void            recTipNamer(std::shared_ptr<Node> p, unsigned &extinctCount, unsigned &tipCount);
 
 //      void            recGetNewickTree(Node *r, std::stringstream &ss);
-      void            setBranchLengths();
+      void            setBranchLengths() override;
       void            setPresentTime(double currentT);
       void            setStopTime(double st) { stopTime = st; currentTime = 0;}
       double          getCurrentTime() { return currentTime; }

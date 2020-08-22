@@ -19,10 +19,10 @@ using namespace Rcpp;
 class Node
 {
     private:
-        Node    *ldes;
-        Node    *rdes;
-        Node    *anc;
-        Node    *sib;
+        std::shared_ptr<Node>    ldes;
+        std::shared_ptr<Node>    rdes;
+        std::shared_ptr<Node>    anc;
+        std::shared_ptr<Node>    sib;
         int     indx, Lindx;
         std::vector<int> hosts;
         int     flag;
@@ -45,23 +45,23 @@ class Node
         void    setDeathTime(double dt) {deathTime = dt; }
         void    setIsExtant(bool t) {isExtant = t; }
         void    setIsExtinct(bool t) {isExtinct = t; }
-        void    setLdes(Node *l) {ldes = l; }
-        void    setRdes(Node *r) {rdes = r; }
-        void    setAnc(Node *a) {anc = a; }
-        void    setSib(Node *s) {sib = s; }
+        void    setLdes(std::shared_ptr<Node> l) {ldes = l; }
+        void    setRdes(std::shared_ptr<Node> r) {rdes = r; }
+        void    setAnc(std::shared_ptr<Node> a) {anc = a; }
+        void    setSib(std::shared_ptr<Node> s) {sib = s; }
         void    setName(std::string f) { name = f; }
         void    setBranchLength(double bl) {branchLength = bl; }
         void    setFlag(int d) { flag = d; }
         void    setIndx(int i) {indx = i; }
         void    setLindx(int li ) {Lindx = li; }
-        void    addHost(int hostIndx) { hosts.push_back(std::move(hostIndx)); }
+        void    addHost(int hostIndx) { hosts.push_back(hostIndx); }
         void    setIsDuplication(bool t) { isDuplication = t; }
         void    setLocusID(int a) { locusID = a; }
         int     getFlag() {return flag; }
-        Node*   getLdes() {return ldes; }
-        Node*   getRdes() {return rdes; }
-        Node*   getAnc() {return anc; }
-        Node*   getSib() {return sib; }
+        std::shared_ptr<Node>   getLdes() {return ldes; }
+        std::shared_ptr<Node>   getRdes() {return rdes; }
+        std::shared_ptr<Node>   getAnc() {return anc; }
+        std::shared_ptr<Node>   getSib() {return sib; }
         bool    getIsRoot() {return isRoot; }
         bool    getIsTip() {return isTip; }
         bool    getIsExtinct() {return isExtinct; }
@@ -83,11 +83,10 @@ class Node
 class Tree
 {
     protected:
-        Node    *root;
-        Node    *extantRoot;
-        Node    *outgrp;
-        std::vector<Node*> nodes;
-        std::vector<Node*> extantNodes;
+        std::shared_ptr<Node> root;
+        std::shared_ptr<Node> extantRoot;
+        std::vector<std::shared_ptr<Node>> nodes;
+        std::vector<std::shared_ptr<Node>> extantNodes;
         unsigned numTaxa, numNodes, numTotalTips;
         unsigned numExtant, numExtinct;
         double  currentTime;
@@ -98,12 +97,10 @@ class Tree
                     Tree(unsigned numTaxa);
                     Tree(SEXP rtree);
         virtual      ~Tree();
-        void        setOutgroup(Node *og) { outgrp = og; }
-        Node*       getOutgroup() { return outgrp; }
-        Node*       getRoot() {return root; }
-        Node*       getExtantRoot() { return extantRoot; }
-        void        setExtantRoot(Node *r) { extantRoot = r; }
-        void        setRoot(Node *r) { root = r; }
+        std::shared_ptr<Node>    getRoot() {return root; }
+        std::shared_ptr<Node>    getExtantRoot() { return extantRoot; }
+        void        setExtantRoot(std::shared_ptr<Node> r) { extantRoot = r; }
+        void        setRoot(std::shared_ptr<Node> r) { root = r; }
         double      getNumExtant() {return numExtant; }
         int         getNumTips() { return extantNodes.size(); }
         double      getNumExtinct() {return numExtinct; }
@@ -116,23 +113,20 @@ class Tree
         void        setNumExtinct();
         void        rescaleTreeByOutgroupFrac(double outgroupFrac,
                                               double getTreeDepth);
-        void        clearNodes(Node *cur);
+        void        clearNodes(std::shared_ptr<Node> r);
         void        zeroAllFlags();
         void        setWholeTreeFlags();
         void        setExtantTreeFlags();
         void        setSampleFromFlags();
         void        getRootFromFlags(bool isGeneTree = false);
         void        getExtantTree();
-        void        setNewRootInfo(Node *newRoot,
-                                   Node *outgroup,
-                                   Node *oldRoot,
-                                   double t);
-        std::vector<Node*> getNodes() { return nodes; }
-        std::vector<Node*> getExtantNodes() { return extantNodes; }
+
+        std::vector<std::shared_ptr<Node>> getNodes() { return nodes; }
+        std::vector<std::shared_ptr<Node>> getExtantNodes() { return extantNodes; }
         void        scaleTree( double treeScale , double currtime);
-        void        reconstructTreeFromSim(Node *oRoot);
-        void        reconstructLineageFromSim(Node *currN,
-                                              Node *prevN,
+        void        reconstructTreeFromSim(std::shared_ptr<Node> oRoot);
+        void        reconstructLineageFromSim(std::shared_ptr<Node> currN,
+                                              std::shared_ptr<Node> prevN,
                                               unsigned &tipCounter,
                                               unsigned &intNodeCounter);
 
@@ -142,7 +136,7 @@ class Tree
         std::vector<std::string>    getNodeLabels();
         NumericMatrix getEdges();
         std::vector<double> getEdgeLengths();
-        int         getNnodes() { return (int) nodes.size() - (numExtant + numExtinct);}
+        int         getNnodes() { return nodes.size() - (numExtant + numExtinct);}
         void        setTipsFromRtree();
         double      findMaxNodeHeight();
         int         getIndexFromNodes(int indx) {return nodes[indx]->getIndex(); }
@@ -153,7 +147,7 @@ class Tree
         virtual void    setTreeTipNames()  { return; }
         virtual void    ermEvent(double ct) { return; }
         virtual void    setBranchLengths() { return; }
-        virtual int     calculatePatristicDistance(Node *n1, Node *n2);
+        virtual int     calculatePatristicDistance(std::shared_ptr<Node>, std::shared_ptr<Node>);
         friend class Node;
 
 };

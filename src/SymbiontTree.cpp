@@ -3,6 +3,8 @@
 //
 
 #include "SymbiontTree.h"
+
+#include "math.h"
 SymbiontTree::SymbiontTree(int nt,
                            double ct,
                            double br,
@@ -15,6 +17,7 @@ SymbiontTree::SymbiontTree(int nt,
     hostExpanRate = her;
     numExpansions = 0;
     hostLimit = K;
+    Rcout << root << std::endl;
     root->addHost(0);
     std::vector<int> initialHosts;
     initialHosts.resize(1);
@@ -55,7 +58,7 @@ double SymbiontTree::getTimeToNextJointEvent(double hostSpecRate,
 }
 
 void SymbiontTree::setSymbTreeInfoSpeciation(int indxToFind, int indxToReplace){
-    for(std::vector<Node*>::iterator s = extantNodes.begin(); s != extantNodes.end(); ++s){
+    for(auto s = extantNodes.begin(); s != extantNodes.end(); ++s){
         std::vector<int> hostsOfS = (*s)->getHosts();
         for(std::vector<int>::iterator it=hostsOfS.begin(); it != hostsOfS.end(); ++it){
             if((*it) == indxToFind)
@@ -73,9 +76,10 @@ void SymbiontTree::setSymbTreeInfoExtinction(int deadIndx){
                 std::swap(hostsOf.back(),j);
                 hostsOf.pop_back();
             }
+             
         }
         if(hostsOf.empty())
-            toBeExtincted.push_back(std::move(i));
+            toBeExtincted.push_back(i);
     }
     if(!(toBeExtincted.empty())){
         for(int i = 0; i < toBeExtincted.size(); i++){
@@ -86,14 +90,12 @@ void SymbiontTree::setSymbTreeInfoExtinction(int deadIndx){
 
 std::vector<int> SymbiontTree::getSymbsOnHost(int hostIndx){
     std::vector<int> symbs = symbHostMap[hostIndx];
-
     return symbs;
 }
 
 void SymbiontTree::lineageBirthEvent(unsigned indx){
-    Node *sis, *right;
-    right = new Node();
-    sis = new Node();
+    std::shared_ptr<Node> right = std::shared_ptr<Node>(new Node());
+    std::shared_ptr<Node> sis = std::shared_ptr<Node>(new Node());
     setNewLineageInfo(indx, right, sis);
 }
 
@@ -107,7 +109,7 @@ void SymbiontTree::lineageDeathEvent(unsigned indx){
     numExtant = (int) extantNodes.size();
 }
 
-void SymbiontTree::setNewLineageInfo(int indx, Node*r, Node*l){
+void SymbiontTree::setNewLineageInfo(int indx, std::shared_ptr<Node> r, std::shared_ptr<Node> l){
     extantNodes[indx]->setLdes(l);
     extantNodes[indx]->setRdes(r);
     extantNodes[indx]->setDeathTime(currentTime);
@@ -136,10 +138,10 @@ void SymbiontTree::setNewLineageInfo(int indx, Node*r, Node*l){
     //l->setHosts(extantNodes[indx]->getHosts());
 
     extantNodes.erase(extantNodes.begin() + indx);
-    extantNodes.push_back(std::move(r));
-    extantNodes.push_back(std::move(l));
-    nodes.push_back(std::move(r));
-    nodes.push_back(std::move(l));
+    extantNodes.push_back(r);
+    extantNodes.push_back(l);
+    nodes.push_back(r);
+    nodes.push_back(l);
     numNodes = (int) nodes.size();
     numExtant = (int) extantNodes.size();
     r->setIndx(numNodes - 2);
@@ -182,13 +184,12 @@ arma::umat SymbiontTree::ermJointEvent(double ct, arma::umat assocMat){
 }
 
 void SymbiontTree::hostExpansionEvent(int indx, int hostIndx){
-    Node *sis, *right;
-    right = new Node();
-    sis = new Node();
+    std::shared_ptr<Node> right = std::shared_ptr<Node>(new Node());
+    std::shared_ptr<Node> sis = std::shared_ptr<Node>(new Node());
     this->setNewLineageInfoExpan(indx, right, sis, hostIndx);
 }
 
-void SymbiontTree::setNewLineageInfoExpan(int indx, Node* r, Node* l, int hostIndx){
+void SymbiontTree::setNewLineageInfoExpan(int indx, std::shared_ptr<Node> r, std::shared_ptr<Node> l, int hostIndx){
     extantNodes[indx]->setLdes(l);
     extantNodes[indx]->setRdes(r);
     extantNodes[indx]->setDeathTime(currentTime);
@@ -214,10 +215,10 @@ void SymbiontTree::setNewLineageInfoExpan(int indx, Node* r, Node* l, int hostIn
     l->setIsExtant(true);
 
     extantNodes.erase(extantNodes.begin() + indx);
-    extantNodes.push_back(std::move(r));
-    extantNodes.push_back(std::move(l));
-    nodes.push_back(std::move(r));
-    nodes.push_back(std::move(l));
+    extantNodes.push_back(r);
+    extantNodes.push_back(l);
+    nodes.push_back(r);
+    nodes.push_back(l);
     numExtant = (int) extantNodes.size();
     r->setIndx(numExtant - 2);
     l->setIndx(numExtant - 1);
@@ -253,7 +254,7 @@ void SymbiontTree::setTreeTipNames(){
     }
 }
 
-void SymbiontTree::recTipNamer(Node *p, unsigned &nodeIndx, unsigned &tipIndx){
+void SymbiontTree::recTipNamer(std::shared_ptr<Node> p, unsigned &nodeIndx, unsigned &tipIndx){
     if(p != NULL){
         std::stringstream tn;
         if(p->getIsTip()){
@@ -282,18 +283,18 @@ void SymbiontTree::recTipNamer(Node *p, unsigned &nodeIndx, unsigned &tipIndx){
 }
 
 void SymbiontTree::setBranchLengths(){
-    double bl;
-    for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it){
-        bl = (*it)->getDeathTime() - (*it)->getBirthTime();
-        branchLengths.push_back(std::move(bl));
-        (*it)->setBranchLength(bl);
+    double bl = NAN;
+    for(auto node : nodes){
+        bl = node->getDeathTime() - node->getBirthTime();
+        branchLengths.push_back(bl);
+        node->setBranchLength(bl);
     }
 }
 
 void SymbiontTree::setPresentTime(double currentT){
-    for(std::vector<Node*>::iterator it = extantNodes.begin(); it != extantNodes.end(); ++it){
-        (*it)->setDeathTime(currentT);
-        (*it)->setIsExtant(true);
+    for(auto extantNode : extantNodes){
+        extantNode->setDeathTime(currentT);
+        extantNode->setIsExtant(true);
     }
     this->setBranchLengths();
     this->setTreeTipNames();
@@ -322,7 +323,7 @@ void SymbiontTree::cospeciationMapUpdate(int oldHostIndx,
     std::vector<int> symbsOnHost = symbHostMap[oldHostIndx];
     std::vector<int> leftHostSymbiontsValues;
     std::vector<int> rightHostSymbiontsValues;
-    std::vector<Node*> nodesForUpdating = this->getNodes();
+    std::vector<std::shared_ptr<Node>> nodesForUpdating = this->getNodes();
     for(int i = 0; i < symbsOnHost.size(); i++){
         std::vector<int> hostsInSymb = nodesForUpdating[symbsOnHost[i]]->getHosts();
         if(oldSymbIndx == symbsOnHost[i]){
@@ -366,8 +367,8 @@ void SymbiontTree::updateHostsInNodes(){
 
 int SymbiontTree::getExtantIndxFromNodes(int nodesIndx){
     int count = 0;
-    for(std::vector<Node*>::iterator it = extantNodes.begin(); it != extantNodes.end(); ++it ){
-        if((*it)->getIndex() == nodesIndx)
+    for(auto extantNode : extantNodes){
+        if(extantNode->getIndex() == nodesIndx)
             break;
         count++;
     }

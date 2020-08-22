@@ -28,26 +28,31 @@ class SpeciesTree : public Tree
         void          setExtinctionRate(double er) {extinctionRate = er; }
         void          setCurrentTime(double et) { currentTime = et; }
         // tree-building functions
-        virtual double        getTimeToNextEvent();
+        double        getTimeToNextEvent() override;
         double                getTimeToNextEventMoran();
-        virtual void          lineageBirthEvent(unsigned indx);
-        virtual void          lineageDeathEvent(unsigned indx);
-        void          ermEvent(double curTime);
-        void          setNewLineageInfo(unsigned indx, Node *r, Node *l);
+        void          lineageBirthEvent(unsigned indx) override;
+        void          lineageDeathEvent(unsigned indx) override;
+        void          ermEvent(double curTime) override;
+        void          setNewLineageInfo(unsigned indx,
+                                        std::shared_ptr<Node> r,
+                                        std::shared_ptr<Node> l);
 
         // set node parameters across tree
-        void          setBranchLengths();
+        void          setBranchLengths() override;
         void          setPresentTime(double currentT);
-        void          setTreeTipNames();
-        void          recTipNamer(Node *p, unsigned &extinctCount, unsigned &tipCount);
+        void          setTreeTipNames() override;
+        void          recTipNamer(std::shared_ptr<Node> p, unsigned &extinctCount, unsigned &tipCount);
 
         // simulation functions
         void          setGSATipTreeFlags();
-        void          reconstructTreeFromGSASim(Node *oRoot);
+        void          reconstructTreeFromGSASim(std::shared_ptr<Node> oRoot);
         void          setTreeInfo();
         void          popNodes();
-        void          recPopNodes(Node *p);
-        void          reconstructLineageFromGSASim(Node *currN, Node *prevN, unsigned &tipCounter, unsigned &intNodeCounter);
+        void          recPopNodes(std::shared_ptr<Node> p);
+        void          reconstructLineageFromGSASim(std::shared_ptr<Node> currN,
+                                                   std::shared_ptr<Node> prevN,
+                                                   unsigned &tipCounter,
+                                                   unsigned &intNodeCounter);
       //  void          setSampleFromFlags();
         std::map<int,int>           makeIndxMap();
         std::map<int, std::string>  makeTipMap();

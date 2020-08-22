@@ -413,7 +413,6 @@ Rcpp::List sim_multispecies_coal(SEXP species_tree,
     if(strcmp(species_tree_.attr("class"), "phylo") != 0)
         stop("species_tree must be an object of class phylo'.");
     SpeciesTree* specTree = new SpeciesTree(species_tree_);
-    Rcout << "*****" << std::endl;
     return sim_genetree_msc(specTree,
                             ne_,
                             num_sampled_individuals_,

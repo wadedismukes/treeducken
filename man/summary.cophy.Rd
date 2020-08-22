@@ -24,12 +24,14 @@ Summary returns NULL.
 }
 \description{
 Several utility functions for cophylogenetic set summarization.
-Including functions for printing an entire summary, and a summary of each part:
-host_tree, symb_tree, association_mat, and event_history.
+Including functions for printing an entire summary, and a summary of each
+part: host_tree, symb_tree, association_mat, and event_history.
 }
 \details{
-The summary for a cophylogenetic set outputs a summary of the host tree and the symbiont tree.
-The number of rows and columns of the association matrix, and a summary of the event_history.
+The summary for a cophylogenetic set outputs a summary of the host
+ tree and the symbiont tree.
+The number of rows and columns of the association matrix, and a summary of
+ the event_history.
 }
 \section{Functions}{
 \itemize{

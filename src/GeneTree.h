@@ -22,15 +22,15 @@ class GeneTree : public Tree {
                     GeneTree(unsigned nt, unsigned ipp, double ne, double genTime);
         virtual     ~GeneTree();
         double      getCoalTime(int n); // what do you need to determine this?
-        Node*       coalescentEvent(double t, Node *p, Node *q);
+        std::shared_ptr<Node>      coalescentEvent(double t, std::shared_ptr<Node> p, std::shared_ptr<Node> q);
         bool        censorCoalescentProcess(double startTime, double stopTime, int contempSpIndx, int newSpIndx, bool chck);
         void        initializeTree(std::vector< std::vector<int> > extantLociIndx, double presentTime);
         std::multimap<int,double> rescaleTimes(std::multimap<int, double> timeMap);
         void        rootCoalescentProcess(double startTime);
-        void        recursiveRescaleTimes(Node *r, double add);
-        void        setBranchLengths();
+        void        recursiveRescaleTimes(std::shared_ptr<Node> r, double add);
+        void        setBranchLengths() override;
         void        setIndicesBySpecies(std::map<int,int> spToLocusMap);
-        void        setTreeTipNames();
+        void        setTreeTipNames() override;
         void        addExtinctSpecies(double bt, int indx);
         NumericMatrix        getGeneEdges();
         void        reindexForR();

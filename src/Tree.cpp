@@ -34,25 +34,25 @@ Node::~Node(){
 
 Tree::Tree(unsigned numExta, double curTime){
     numNodes = 0;
-    outgrp = nullptr;
     // intialize tree with root
-    root = new Node();
+    root = std::shared_ptr<Node>(new Node());
     root->setAsRoot(true);
     root->setBirthTime(0.0);
     root->setIndx(0);
     root->setIsExtant(true);
-    nodes.push_back(std::move(root));
-    extantNodes.push_back(std::move(root));
+    
+    nodes.push_back(root);
+    extantNodes.push_back(root);
     numExtant = 1;
     numTaxa = numExta;
     numExtinct = 0;
     currentTime = curTime;
+    numTotalTips = 0;
 }
 
 Tree::Tree(unsigned numTax){
-    numTaxa = numTax;
+    numTaxa = numTax; 
     numNodes = 2 * numTax - 1;
-    outgrp = nullptr;
     // intialize tree with root
     // root = new Node();
     // root->setAsRoot(true);
@@ -73,14 +73,14 @@ Tree::Tree(SEXP rtree){
     std::vector<std::string> tip_names = tr["tip.label"];
     double root_edge = tr["root.edge"];
     numNodes = tr["Nnode"];
-    
+
     std::map<int,int> indMap;
     numTaxa = (int) tip_names.size();
     nodes.resize(numNodes + numTaxa);
     extantNodes.resize(numTaxa);
     branchLengths.resize(numNodes + numTaxa);
 
-    root = new Node();
+    root = std::shared_ptr<Node>(new Node());
     root->setAsRoot(true);
     root->setBirthTime(0.0);
     root->setBranchLength(root_edge);
@@ -97,7 +97,7 @@ Tree::Tree(SEXP rtree){
         NumericMatrix::Row edgeMatRow = edge_mat(i,_);
         int indx1 = edgeMatRow[0] - 1;
         int indx2 = edgeMatRow[1] - 1;
-        Node *p = new Node();
+        std::shared_ptr<Node> p = std::shared_ptr<Node>(new Node());
         p->setBranchLength(edge_lengths[i]);
         branchLengths[i + 1] = edge_lengths[i];
 
@@ -166,13 +166,13 @@ void Tree::setTipsFromRtree(){
     int extTipCount = 0;
     numExtant = 0;
     numExtinct = 0;
-    for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it){
-        if((*it)->getIsTip()){
-            if((*it)->getIsExtinct()){
+    for(auto node : nodes){
+        if(node->getIsTip()){
+            if(node->getIsExtinct()){
                 numExtinct++;
             }
             else{
-                extantNodes[extTipCount] = (*it);
+                extantNodes[extTipCount] = node;
                 numExtant++;
                 extTipCount++;
             }
@@ -185,7 +185,7 @@ void Tree::setTipsFromRtree(){
 
 
 double Tree::findMaxNodeHeight(){
-    Node *p = root;
+    std::shared_ptr<Node> p = root;
     double brlen = p->getBranchLength();
     while(p->getLdes()){
         p = p->getLdes();
@@ -194,29 +194,28 @@ double Tree::findMaxNodeHeight(){
     return brlen;
 }
 
-void Tree::clearNodes(Node *currNode){
+void Tree::clearNodes(std::shared_ptr<Node> currNode){
     if(currNode == nullptr){
         return;
     }
 
     clearNodes(currNode->getRdes());
     clearNodes(currNode->getLdes());
-    delete currNode;
     currNode = nullptr;
 
 }
 
 void Tree::zeroAllFlags(){
-    for(std::vector<Node*>::iterator it=nodes.begin(); it!=nodes.end(); it++){
-        (*it)->setFlag(0);
+    for(auto node : nodes) {
+        node->setFlag(0);
     }
 }
 
 void Tree::setWholeTreeFlags(){
     this->zeroAllFlags();
-    for(std::vector<Node*>::iterator p=nodes.begin(); p != nodes.end(); ++p){
-        if((*p)->getIsTip()){
-            (*p)->setFlag(1);
+    for(auto node : nodes){
+        if(node->getIsTip()){
+            node->setFlag(1);
         }
     }
     setSampleFromFlags();
@@ -225,9 +224,9 @@ void Tree::setWholeTreeFlags(){
 
 void Tree::setExtantTreeFlags(){
     this->zeroAllFlags();
-    for(std::vector<Node*>::iterator p=nodes.begin(); p != nodes.end(); ++p){
-        if((*p)->getIsExtant())
-            (*p)->setFlag(1);
+    for(auto node : nodes){
+        if(node->getIsExtant())
+            node->setFlag(1);
     }
 
     this->setSampleFromFlags();
@@ -235,12 +234,12 @@ void Tree::setExtantTreeFlags(){
 
 
 void Tree::setSampleFromFlags(){
-    int flag;
-    Node *q = nullptr;
-    for(std::vector<Node *>::iterator p=nodes.begin(); p!=nodes.end(); ++p){
-        if((*p)->getIsTip()){
-            flag = (*p)->getFlag();
-            q = (*p);
+    int flag = -1;
+    std::shared_ptr<Node> q = nullptr;
+    for(auto node : nodes) {
+        if(node->getIsTip()) {
+            flag = node->getFlag();
+            q = node;
             if(flag == 1){
                 do{
                     q = q->getAnc();
@@ -256,8 +255,8 @@ void Tree::setSampleFromFlags(){
 
 double Tree::getTotalTreeLength(){
     double sum = 0.0;
-    for(std::vector<Node*>::iterator p = nodes.begin(); p != nodes.end(); ++p){
-        Node *n = (*p);
+    for(auto node : nodes){
+        std::shared_ptr<Node> n = node;
         sum += n->getBranchLength();
     }
     return sum;
@@ -265,7 +264,7 @@ double Tree::getTotalTreeLength(){
 
 double Tree::getTreeDepth(){
     double td = 0.0;
-    Node *r = this->getRoot();
+    std::shared_ptr<Node> r = this->getRoot();
     while(r->getIsTip() == false){
         if(!(r->getLdes()->getIsExtinct()))
             r = r->getLdes();
@@ -279,22 +278,24 @@ double Tree::getTreeDepth(){
     return td;
 }
 
-void Tree::reconstructTreeFromSim(Node *oRoot){
-    Node *n = new Node();
+void Tree::reconstructTreeFromSim(std::shared_ptr<Node> oRoot){
+    std::shared_ptr<Node> n = std::shared_ptr<Node>(new Node());
     unsigned tipCounter = numExtant;
     unsigned intNodeCounter = 0;
     reconstructLineageFromSim(n, oRoot, tipCounter, intNodeCounter);
-    delete n;
 }
 
-void Tree::reconstructLineageFromSim(Node *currN, Node *prevN, unsigned &tipCounter, unsigned &intNodeCounter){
-    Node *p = nullptr;
+void Tree::reconstructLineageFromSim(std::shared_ptr<Node> currN,
+                                    std::shared_ptr<Node> prevN, 
+                                    unsigned &tipCounter, 
+                                    unsigned &intNodeCounter) {
+    std::shared_ptr<Node> p = nullptr;
     bool rootN = prevN->getIsRoot();
     double brlen = prevN->getBranchLength();
     int oFlag = prevN->getFlag();
     if(prevN->getIsTip() && oFlag == 1){
         // need to recalculate branchlength
-        Node *prevAnc = prevN->getAnc();
+        std::shared_ptr<Node> prevAnc = prevN->getAnc();
         int ancFlag = prevAnc->getFlag();
         if(ancFlag == 1){
             brlen += prevAnc->getBranchLength();
@@ -306,7 +307,7 @@ void Tree::reconstructLineageFromSim(Node *currN, Node *prevN, unsigned &tipCoun
             }
         }
 
-        p = new Node();
+        p = std::shared_ptr<Node>(new Node());
         tipCounter++;
         p->setIndx(tipCounter);
         p->setBranchLength(brlen);
@@ -328,7 +329,7 @@ void Tree::reconstructLineageFromSim(Node *currN, Node *prevN, unsigned &tipCoun
     }
     else{
         if(oFlag > 1){
-            Node *s1 = new Node();
+            std::shared_ptr<Node> s1 = std::shared_ptr<Node>(new Node());
             intNodeCounter++;
             s1->setIndx(intNodeCounter);
             if(prevN->getLdes()->getFlag() > 0)
@@ -338,7 +339,7 @@ void Tree::reconstructLineageFromSim(Node *currN, Node *prevN, unsigned &tipCoun
 
 
             if(rootN == false){
-                Node *prevAnc = prevN->getAnc();
+                std::shared_ptr<Node> prevAnc = prevN->getAnc();
                 int ancFlag = prevAnc->getFlag();
                 if(ancFlag == 1){
                     brlen += prevAnc->getBranchLength();
@@ -391,7 +392,7 @@ void Tree::reconstructLineageFromSim(Node *currN, Node *prevN, unsigned &tipCoun
 }
 // Gene tree version only
 void Tree::getRootFromFlags(bool isGeneTree){
-    Node *p;
+    std::shared_ptr<Node> p = nullptr;
 
     this->setExtantTreeFlags();
     int numNodes = nodes.size() - 1;
@@ -407,74 +408,25 @@ void Tree::getRootFromFlags(bool isGeneTree){
         }
     }
     else{
-        if(outgrp != nullptr){
-            p = nodes[0]->getAnc();
-            extantRoot = p;
-            p->setAsRoot(true);
-        }
-        else{
-            // p = nodes[0];
-            // extantRoot = p;
-            // p->setAsRoot(true);
-            for(int i=0; i < numNodes; i++){
-                p = nodes[i];
-                if(p->getFlag() >= 2){
-                    extantRoot = p;
-                    p->setAsRoot(true);
-                    break;
-                }
 
+        for(int i=0; i < numNodes; i++){
+            p = nodes[i];
+            if(p->getFlag() >= 2){
+                extantRoot = p;
+                p->setAsRoot(true);
+                break;
             }
         }
     }
 }
 
-void Tree::rescaleTreeByOutgroupFrac(double outgroupFrac, double treeDepth){
-    double birthTime, deathTime;
-    double rescaleFactor = std::log(outgroupFrac) + std::log(treeDepth);
-    for(std::vector<Node*>::iterator it=nodes.begin(); it != nodes.end(); ++it){
-        birthTime = (*it)->getBirthTime();
-        deathTime = (*it)->getDeathTime();
 
-        (*it)->setBirthTime(birthTime + std::exp(rescaleFactor));
-        (*it)->setDeathTime(deathTime + std::exp(rescaleFactor));
-        (*it)->setBranchLength((*it)->getDeathTime() - (*it)->getBirthTime());
-    }
-}
-
-void Tree::setNewRootInfo(Node *rootN, Node *outgroupN, Node *currRoot, double t){
-   // rootN->setBirthTime(0.0);
-    rootN->setDeathTime(currRoot->getBirthTime());
-    rootN->setBranchLength(rootN->getDeathTime() - rootN->getBirthTime());
-    rootN->setAsRoot(true);
-    rootN->setLdes(currRoot);
-    rootN->setRdes(outgroupN);
-    rootN->setFlag(2);
-    // nodes.push_back(rootN);
-    this->setRoot(rootN);
-
-    currRoot->setAsRoot(false);
-    currRoot->setAnc(rootN);
-
-    outgroupN->setName("OUT");
-    outgroupN->setBirthTime(currRoot->getBirthTime());
-    outgroupN->setDeathTime(t);
-    outgroupN->setIsTip(true);
-    outgroupN->setFlag(1);
-    outgroupN->setBranchLength(outgroupN->getDeathTime() - outgroupN->getBirthTime());
-    outgroupN->setIsExtant(true);
-    outgroupN->setAnc(rootN);
-    outgroupN->setLdes(NULL);
-    outgroupN->setRdes(NULL);
-    this->setOutgroup(outgroupN);
-    // nodes.push_back(outgroupN);
-}
 
 double Tree::getEndTime(){
     double tipDtime = 0.0;
-    for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it){
-        if((*it)->getIsTip() && (*it)->getIsExtant()){
-            tipDtime = (*it)->getDeathTime();
+    for(auto node : nodes){
+        if(node->getIsTip() && node->getIsExtant()){
+            tipDtime = node->getDeathTime();
             break;
         }
     }
@@ -486,24 +438,24 @@ void Tree::scaleTree(double trScale, double currStime){
     double bt = 0.0;
     double dt = 0.0;
     double scalingFactor = std::log(trScale / currStime);
-    for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it){
-        bt = std::exp(std::log((*it)->getBirthTime()) + scalingFactor);
-        dt = std::exp(std::log((*it)->getDeathTime()) + scalingFactor);
-        (*it)->setBirthTime(bt);
-        (*it)->setDeathTime(dt);
-        (*it)->setBranchLength(dt - bt);
+    for(auto node : nodes){
+        bt = std::exp(std::log(node->getBirthTime()) + scalingFactor);
+        dt = std::exp(std::log(node->getDeathTime()) + scalingFactor);
+        node->setBirthTime(bt);
+        node->setDeathTime(dt);
+        node->setBranchLength(dt - bt);
     }
     return;
 }
 
 
-int Tree::calculatePatristicDistance(Node *n1, Node *n2){
+int Tree::calculatePatristicDistance(std::shared_ptr<Node> n1, std::shared_ptr<Node> n2){
     int count = 0;
     if(n1 != n2){
-        while((*n1).getIndex() != (*n2).getIndex()){
+        while(n1->getIndex() != n2->getIndex()){
             count++;
-            n1 = (*n1).getAnc();
-            n2 = (*n2).getAnc();
+            n1 = n1->getAnc();
+            n2 = n2->getAnc();
         }
     }
     return count;
@@ -513,9 +465,9 @@ int Tree::calculatePatristicDistance(Node *n1, Node *n2){
 std::vector<std::string> Tree::getTipNames(){
     std::vector<std::string> tipNames;
 
-    for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it){
-        if((*it)->getIsTip())
-            tipNames.push_back((*it)->getName());
+    for(auto node : nodes){
+        if(node->getIsTip())
+            tipNames.push_back(node->getName());
     }
     return tipNames;
 }
@@ -523,11 +475,11 @@ std::vector<std::string> Tree::getTipNames(){
 std::vector<std::string> Tree::getNodeLabels()
 {
     std::vector<std::string> nodeLabels;
-    for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it)
+    for(auto node : nodes)
     {
-        if(!((*it)->getIsTip())){
-            if((*it)->getIsDuplication())
-                nodeLabels.push_back((*it)->getName());
+        if(!(node->getIsTip())){
+            if(node->getIsDuplication())
+                nodeLabels.push_back(node->getName());
             else
                 nodeLabels.push_back("");
         }
@@ -537,16 +489,16 @@ std::vector<std::string> Tree::getNodeLabels()
 
 void Tree::setNumExtant(){
     numExtant = 0;
-    for(auto it = nodes.begin(); it != nodes.end(); ++it){
-        if((*it)->getIsTip() && (*it)->getIsExtant())
+    for(auto node : nodes){
+        if(node->getIsTip() && node->getIsExtant())
             numExtant++;
     }
 }
 
 void Tree::setNumExtinct(){
     numExtinct = 0;
-    for(auto it = nodes.begin(); it != nodes.end(); ++it){
-        if((*it)->getIsTip() && (*it)->getIsExtinct())
+    for(auto node : nodes){
+        if(node->getIsTip() && node->getIsExtinct())
             numExtinct++;
     }
 }
@@ -554,8 +506,8 @@ void Tree::setNumExtinct(){
 // TODO: write a function to convert bdsa sims to format to read out into R
 
 void Tree::reindexForR(){
-    int intNodeCount = numExtant + numExtinct + 1;
-    int tipCount = 1;
+    unsigned int intNodeCount = numExtant + numExtinct + 1;
+    unsigned int tipCount = 1;
     for(int i = 0; i < nodes.size(); i++){
         if(nodes[i]->getIsTip()){
             nodes[i]->setIndx(tipCount);
@@ -592,7 +544,7 @@ NumericMatrix Tree::getEdges(){
 
 std::vector<double> Tree::getEdgeLengths(){
     std::vector<double> edgeLengths;
-    edgeLengths = std::move(branchLengths);
+    edgeLengths = branchLengths;
     edgeLengths.erase(edgeLengths.begin());
     return edgeLengths;
 }

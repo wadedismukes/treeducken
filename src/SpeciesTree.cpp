@@ -1,6 +1,8 @@
 #include "SpeciesTree.h"
 #include <iostream>
 
+#include "math.h"
+
 using namespace Rcpp;
 
 
@@ -51,9 +53,10 @@ double SpeciesTree::getTimeToNextEvent(){
 }
 
 void SpeciesTree::lineageBirthEvent(unsigned indx){
-    Node *sis, *right;
-    right = new Node();
-    sis = new Node();
+    std::shared_ptr<Node> sis;
+    std::shared_ptr<Node> right;
+    right = std::shared_ptr<Node>(new Node());
+    sis = std::shared_ptr<Node>(new Node());
     setNewLineageInfo(indx, right, sis);
 }
 
@@ -80,7 +83,9 @@ void SpeciesTree::ermEvent(double cTime){
         lineageDeathEvent(nodeInd);
 }
 
-void SpeciesTree::setNewLineageInfo(unsigned int indx, Node *r, Node *l){
+void SpeciesTree::setNewLineageInfo(unsigned int indx,
+                                    std::shared_ptr<Node> r,
+                                    std::shared_ptr<Node> l){
     extantNodes[indx]->setLdes(l);
     extantNodes[indx]->setRdes(r);
     extantNodes[indx]->setDeathTime(currentTime);
@@ -106,10 +111,10 @@ void SpeciesTree::setNewLineageInfo(unsigned int indx, Node *r, Node *l){
     l->setIsExtant(true);
 
     extantNodes.erase(extantNodes.begin() + indx);
-    extantNodes.push_back(std::move(r));
-    extantNodes.push_back(std::move(l));
-    nodes.push_back(std::move(r));
-    nodes.push_back(std::move(l));
+    extantNodes.push_back(r);
+    extantNodes.push_back(l);
+    nodes.push_back(r);
+    nodes.push_back(l);
     numNodes = (int) nodes.size();
     numExtant = (int) extantNodes.size();
     r->setIndx(numNodes - 2);
@@ -118,18 +123,18 @@ void SpeciesTree::setNewLineageInfo(unsigned int indx, Node *r, Node *l){
 }
 
 void SpeciesTree::setBranchLengths(){
-    double bl;
-    for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it){
-      bl = (*it)->getDeathTime() - (*it)->getBirthTime();
-      branchLengths.push_back(std::move(bl));
-      (*it)->setBranchLength(bl);
+    double bl = NAN;
+    for(auto node : nodes){
+      bl = node->getDeathTime() - node->getBirthTime();
+      branchLengths.push_back(bl);
+      node->setBranchLength(bl);
     }
 }
 
 void SpeciesTree::setPresentTime(double currentT){
-    for(std::vector<Node*>::iterator it = extantNodes.begin(); it != extantNodes.end(); ++it){
-        (*it)->setDeathTime(currentT);
-        (*it)->setIsExtant(true);
+    for(auto node : nodes){
+        node->setDeathTime(currentT);
+        node->setIsExtant(true);
     }
     this->setBranchLengths();
     this->setTreeTipNames();
@@ -138,7 +143,7 @@ void SpeciesTree::setPresentTime(double currentT){
 void SpeciesTree::setTreeInfo(){
   //  double trDepth = this->getTreeDepth();
     std::set<double> deathTimes;
-    std::vector<Node*>::iterator it = nodes.begin();
+    auto it = nodes.begin();
     (*it)->setBirthTime(0.0);
     (*it)->setDeathTime((*it)->getBranchLength() + (*it)->getBirthTime());
     (*it)->setIndx(0);
@@ -155,17 +160,17 @@ void SpeciesTree::setTreeInfo(){
     double currentTime = *(set_iter);
     for(; it != nodes.end(); ++it){
         if((*it)->getIsTip()){
-            if(std::abs((*it)->getDeathTime() - currentTime) < 0.1){
-                (*it)->setIsExtant(true);
-                (*it)->setIsExtinct(false);
-                (*it)->setDeathTime(currentTime);
-                numTaxa++;
-                extantNodes.push_back(std::move(*it));
-            }
-            else{
-                (*it)->setIsExtant(false);
-                (*it)->setIsExtinct(true);
-            }
+          auto placeholder = 0.1;
+          if (std::abs((*it)->getDeathTime() - currentTime) < placeholder) {
+            (*it)->setIsExtant(true);
+            (*it)->setIsExtinct(false);
+            (*it)->setDeathTime(currentTime);
+            numTaxa++;
+            extantNodes.push_back(*it);
+          } else {
+            (*it)->setIsExtant(false);
+            (*it)->setIsExtinct(true);
+          }
         }
     }
     return;
@@ -202,7 +207,9 @@ void SpeciesTree::setTreeTipNames(){
 }
 
 
-void SpeciesTree::recTipNamer(Node *p, unsigned &nodeIndx, unsigned &tipIndx){
+void SpeciesTree::recTipNamer(std::shared_ptr<Node> p,
+                              unsigned &nodeIndx, 
+                              unsigned &tipIndx){
   if(p != NULL){
     std::stringstream tn;
     if(p->getIsTip()){
@@ -234,14 +241,14 @@ void SpeciesTree::recTipNamer(Node *p, unsigned &nodeIndx, unsigned &tipIndx){
 void SpeciesTree::setGSATipTreeFlags(){
     zeroAllFlags();
     numTotalTips = 0;
-    for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); it++){
-        if((*it)->getIsTip()){
+    for(auto node : nodes){
+        if(node->getIsTip()){
             numTotalTips++;
-            (*it)->setFlag(1);
+            node->setFlag(1);
 
         }
         else{
-            (*it)->setFlag(2);
+            node->setFlag(2);
         }
     }
     setSampleFromFlags();
@@ -256,41 +263,43 @@ void SpeciesTree::popNodes(){
 
 }
 
-void SpeciesTree::recPopNodes(Node *p){
+void SpeciesTree::recPopNodes(std::shared_ptr<Node> p){
     if(p != nullptr){
         if(p->getIsTip()){
             if(p->getIsExtant()){
-                extantNodes.push_back(std::move(p));
-                nodes.push_back(std::move(p));
+                extantNodes.push_back(p);
+                nodes.push_back(p);
             }
             else{
-                nodes.push_back(std::move(p));
+                nodes.push_back(p);
             }
         }
         else{
-            nodes.push_back(std::move(p));
             recPopNodes(p->getLdes());
             recPopNodes(p->getRdes());
+            nodes.push_back(p);
         }
     }
 }
 
-void SpeciesTree::reconstructTreeFromGSASim(Node *oRoot){
-    Node *n = new Node();
+void SpeciesTree::reconstructTreeFromGSASim(std::shared_ptr<Node> oRoot){
+    std::shared_ptr<Node> n = std::shared_ptr<Node>(new Node());
     unsigned tipCounter = 0;
     unsigned intNodeCounter = extantStop;
     reconstructLineageFromGSASim(n, oRoot, tipCounter, intNodeCounter);
-    delete n;
 }
 
-void SpeciesTree::reconstructLineageFromGSASim(Node *currN, Node *prevN, unsigned &tipCounter, unsigned &intNodeCounter){
-    Node *p;
+void SpeciesTree::reconstructLineageFromGSASim(std::shared_ptr<Node> currN, 
+                                               std::shared_ptr<Node> prevN, 
+                                               unsigned &tipCounter, 
+                                               unsigned &intNodeCounter){
+    std::shared_ptr<Node> p = nullptr;
     bool rootN = prevN->getIsRoot();
     double brlen = prevN->getBranchLength();
     int oFlag = prevN->getFlag();
     if(prevN->getIsTip() && oFlag == 1){
         // need to recalculate branchlength
-        Node *prevAnc = prevN->getAnc();
+        std::shared_ptr<Node> prevAnc = prevN->getAnc();
         int ancFlag = prevAnc->getFlag();
         if(ancFlag == 1){
             brlen += prevAnc->getBranchLength();
@@ -302,7 +311,7 @@ void SpeciesTree::reconstructLineageFromGSASim(Node *currN, Node *prevN, unsigne
             }
         }
 
-        p = new Node();
+        std::shared_ptr<Node> p = std::shared_ptr<Node>(new Node());
         tipCounter++;
         p->setIndx(tipCounter);
         p->setBranchLength(brlen);
@@ -323,7 +332,7 @@ void SpeciesTree::reconstructLineageFromGSASim(Node *currN, Node *prevN, unsigne
     }
     else{
         if(oFlag > 1){
-            Node *s1 = new Node();
+            std::shared_ptr<Node> s1 = std::shared_ptr<Node>(new Node());
             intNodeCounter++;
             s1->setIndx(intNodeCounter);
             if(prevN->getLdes()->getFlag() > 0)
@@ -333,7 +342,7 @@ void SpeciesTree::reconstructLineageFromGSASim(Node *currN, Node *prevN, unsigne
 
 
             if(rootN == false){
-                Node *prevAnc = prevN->getAnc();
+                std::shared_ptr<Node> prevAnc = prevN->getAnc();
                 int ancFlag = prevAnc->getFlag();
                 if(ancFlag == 1){
                     brlen += prevAnc->getBranchLength();
@@ -412,25 +421,25 @@ std::map<int, std::string> SpeciesTree::makeTipMap(){
 }
 
 std::map<int,double> SpeciesTree::getBirthTimesFromNodes(){
-    int indx;
-    double birthTime;
+    int indx = -1;
+    double birthTime = NAN;
     std::map<int,double> birthTimeMap;
-    for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it){
-        indx = (*it)->getIndex();
-        birthTime = (*it)->getBirthTime();
+    for(auto node : nodes){
+        indx = node->getIndex();
+        birthTime = node->getBirthTime();
         birthTimeMap.insert(std::pair<int,double>(indx, birthTime));
     }
     return birthTimeMap;
 }
 
 std::map<int,double> SpeciesTree::getDeathTimesFromNodes(){
-    int indx;
-    double deathTime;
+    int indx = -1;
+    double deathTime = NAN;
     std::map<int,double> deathTimeMap;
-    for(std::vector<Node*>::iterator it = nodes.begin(); it != nodes.end(); ++it){
-        if(!((*it)->getIsExtant())){
-            indx = (*it)->getIndex();
-            deathTime = (*it)->getDeathTime();
+    for(auto node : nodes){
+        if(!(node->getIsExtant())){
+            indx = node->getIndex();
+            deathTime = node->getDeathTime();
 
             deathTimeMap.insert(std::pair<int,double>(indx, deathTime));
         }
@@ -446,14 +455,14 @@ std::pair<int,int> SpeciesTree::preorderTraversalStep(int indx){
 }
 
 int SpeciesTree::postOrderTraversalStep(int index){
-    int d;
+    int d = -1;
     d = nodes[index]->getAnc()->getIndex();
     return d;
 }
 
 bool SpeciesTree::macroEvent(int indx){
-    bool isSpec;
-    Node* n = nodes[indx];
+    bool isSpec = 0;
+    std::shared_ptr<Node> n = nodes[indx];
 
     if(n->getIsTip())
         isSpec = false;

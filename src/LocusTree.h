@@ -1,11 +1,3 @@
-//
-//  LocusTree.h
-//  multiTree
-//
-//  Created by Dismukes, Wade T [EEOBS] on 11/13/17.
-//  Copyright © 2017 Dismukes, Wade T [EEOBS]. All rights reserved.
-//
-
 #ifndef LocusTree_h
 #define LocusTree_h
 
@@ -27,12 +19,12 @@ class LocusTree : public Tree
     public:
         LocusTree(unsigned nt, double stop, double gbr, double gdr, double lgtr);
         virtual         ~LocusTree();
-        virtual double  getTimeToNextEvent();
-        virtual void    lineageBirthEvent(unsigned indx);
-        virtual void    lineageDeathEvent(unsigned indx);
-        virtual void    setNewLineageInfo(int indx, Node *r, Node *s);
+        double  getTimeToNextEvent() override;
+        void    lineageBirthEvent(unsigned indx) override;
+        void    lineageDeathEvent(unsigned indx) override;
+        void    setNewLineageInfo(int indx, std::shared_ptr<Node> r, std::shared_ptr<Node> s);
         void    lineageTransferEvent(int indx, bool randTrans);
-        void    ermEvent(double ct);
+        void    ermEvent(double ct) override;
 
         int     speciationEvent(int indx, double time, std::pair<int,int> sibs);
         void    extinctionEvent(int indx, double time);
@@ -40,17 +32,17 @@ class LocusTree : public Tree
         void    setSpeciesNames(std::vector<std::string> spNames) { speciesNames = spNames; }
         std::vector<std::string> getSpeciesNames() {return speciesNames;}
         std::string   printNewickTree();
-        void    setTreeTipNames();
-        void    recTipNamer(Node *p, unsigned &copyNumber);
-        void    recGetNewickTree(Node *r, std::stringstream &ss);
-        void    setBranchLengths();
+        void    setTreeTipNames() override;
+        void    recTipNamer(std::shared_ptr<Node> p, unsigned &copyNumber);
+        void    recGetNewickTree(std::shared_ptr<Node> r, std::stringstream &ss);
+        void    setBranchLengths() override;
         void    setPresentTime(double currentT);
         void    setStopTime(double st) {stopTime = st; currentTime = 0;}
         double  getCurrentTime() { return currentTime; }
         void    setCurrentTime(double ct) {currentTime = ct; }
         int     getNumberTransfers();
-        int     getNumberDuplications() {return numDuplications;}
-        int     chooseRecipientSpeciesID(Node *d);
+        unsigned int     getNumberDuplications() {return numDuplications;}
+        int     chooseRecipientSpeciesID(std::shared_ptr<Node> s);
         std::map<int,double>     getBirthTimesFromNodes();
         std::set<int>            getExtLociIndx();
         std::set<int>            getCoalBounds();
@@ -61,10 +53,10 @@ class LocusTree : public Tree
         std::vector< std::string >    printSubTrees();
         int     postOrderTraversalStep(int indx);
         void   setNamesBySpeciesID(std::map<int,std::string> tipMap);
-        void   recursiveSetNamesBySpeciesID(Node *n,
+        void   recursiveSetNamesBySpeciesID(std::shared_ptr<Node> n,
                                             int duplicationCount,
                                             std::map<int, std::string> tipMap);
-        int    calculatePatristicDistance(Node *n1, Node *n2);
+        int    calculatePatristicDistance(std::shared_ptr<Node> n1, std::shared_ptr<Node> n2) override;
 
         bool   checkLocusTreeParams();
 

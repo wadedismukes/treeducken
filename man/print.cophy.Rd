@@ -46,11 +46,13 @@ association_mat(cophy)
 
 \item{...}{Further arguments used in generic classes}
 
-\item{details}{A logical value, outputs brief summary of each set in the list.}
+\item{details}{A logical value, outputs brief summary of each
+set in the list.}
 }
 \value{
 Print returns NULL. host_tree returns NULL, symb_tree returns NULL,
-association_mat returns the dimensions of the matrix, event_history returns NULL.
+association_mat returns the dimensions of the matrix, event_history
+ returns NULL.
 }
 \description{
 Prints a cophylogenetic set or a list of cophylogenetic sets.
@@ -61,21 +63,25 @@ Prints a cophylogenetic set or a list of cophylogenetic sets.
 
 \item \code{host_tree.cophy}: Returns host tree  of a cophylogenetic set
 
-\item \code{host_tree.multiCophy}: Returns host tree of each member of a list of cophylogenetic sets
+\item \code{host_tree.multiCophy}: Returns host tree of each member of a list
+of cophylogenetic sets
 
 \item \code{symb_tree}: Returns symb tree of a cophylogenetic set
 
 \item \code{symb_tree.cophy}: Returns symb tree of a cophylogenetic set
 
-\item \code{symb_tree.multiCophy}: Returns symb tree of each member of a list of cophylogenetic sets
+\item \code{symb_tree.multiCophy}: Returns symb tree of each member of a
+list of cophylogenetic sets
 
 \item \code{association_mat}: Returns association matrix of a cophylogenetic set
 
 \item \code{association_mat.cophy}: Returns association matrix of a cophylogenetic set
 
-\item \code{association_mat.multiCophy}: Returns association matrix for each member of a list of cophylogenetic sets
+\item \code{association_mat.multiCophy}: Returns association matrix for each member of a
+list of cophylogenetic sets
 
-\item \code{event_history.multiCophy}: Returns event_history for each member of a list of cophylogenetic sets
+\item \code{event_history.multiCophy}: Returns event_history for each member of a list
+of cophylogenetic sets
 
 \item \code{print.multiCophy}: Prints a list of cophylogenetic sets
 }}

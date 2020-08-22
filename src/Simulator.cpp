@@ -237,13 +237,13 @@ void Simulator::processGSASim(){
   // internode, and root
     this->prepGSATreeForReconstruction();
   // get our root from the original tree
-    Node *simRoot = spTree->getRoot();
+   auto simRoot = spTree->getRoot();
   // set that node to by the root of our new tree
     tt->setRoot(simRoot);
   // reconstruct the tree recursively from the root
     tt->reconstructTreeFromGSASim(simRoot);
   // add to vector of SpeciesTree
-    gsaTrees.push_back(std::move(tt));
+    gsaTrees.push_back(tt);
 }
 
 // post simulation processing function since we overwrite the tree held in
@@ -482,8 +482,8 @@ void Simulator::updateEventIndices(){
 
 // add an element to each event vector for an event
 void Simulator::updateEventVector(int h, int s, int e, double time){
-  inOrderVecOfHostIndx.push_back(std::move(h));
-  inOrderVecOfSymbIndx.push_back(std::move(s));
+  inOrderVecOfHostIndx.push_back(h);
+  inOrderVecOfSymbIndx.push_back(s);
   switch(e) {
     case 0:
       // symbiont loss
@@ -516,7 +516,7 @@ void Simulator::updateEventVector(int h, int s, int e, double time){
     default:
       Rcout << "not sure what happened there folks." << std::endl;
   }
-  inOrderVecOfEventTimes.push_back(std::move(time));
+  inOrderVecOfEventTimes.push_back(time);
 }
 
 
@@ -617,7 +617,7 @@ arma::umat Simulator::symbiontTreeEvent(double eventTime, arma::umat assocMat){
       // make a list of unoccupied hosts
       for(int i = 0; i < rvec.n_cols; i++){
         if(rvec(i) < 1)
-          hostIndices.push_back(std::move(i));
+          hostIndices.push_back(i);
       }
       // randomly choose from one of those unoccupied hosts
       int hostInd = unif_rand() * (hostIndices.size());
@@ -825,7 +825,7 @@ arma::umat Simulator::cospeciationEvent(double eventTime, arma::umat assocMat){
   // pick a host with symbionts at random
   for(int i = 0; i < numExtantHosts; i++){
     if(sum(assocMat.col(i)) >= 0.5)
-      hostIndices.push_back(std::move(i));
+      hostIndices.push_back(i);
   }
 
   int indxOfHost = unif_rand() * (hostIndices.size() - 1); //col of assocMat
@@ -969,8 +969,8 @@ bool Simulator::bdsaBDSim(){
     bool treesComplete = false;
     // get the stop time from the spTree
     double stopTime = spTree->getCurrentTime();
-    double eventTime;
-    bool isSpeciation;
+    double eventTime = NAN;
+    bool isSpeciation = 0;
     // start a new locus tree
 
     lociTree = new LocusTree(numTaxaToSim,
@@ -986,7 +986,7 @@ bool Simulator::bdsaBDSim(){
     spTree->switchIndicesFirstToSecond(rToTdckenIndxMap);
     
     // get the root
-    Node* spRoot = spTree->getRoot();
+    auto spRoot = spTree->getRoot();
 
     std::map<int, std::string> tipMap = spTree->makeTipMap();
     // set the locus tree index to line up with the species tree
@@ -1098,8 +1098,8 @@ bool Simulator::simLocusTree(){
 // function to get the epochs of the locus tree (i.e. our coalescent breakpoints)
 std::set<double, std::greater<double> > Simulator::getEpochs(){
     std::set<double, std::greater<double> > epochs;
-    std::vector<Node*> lociTreeNodes = lociTree->getNodes();
-    for(std::vector<Node*>::iterator it = lociTreeNodes.begin(); it != lociTreeNodes.end(); ++it){
+    auto lociTreeNodes = lociTree->getNodes();
+    for(auto it = lociTreeNodes.begin(); it != lociTreeNodes.end(); ++it){
         if(!((*it)->getIsExtinct())){
             if((*it)->getIsTip())
                 epochs.insert((*it)->getDeathTime());
@@ -1118,12 +1118,14 @@ bool Simulator::coalescentSim(){
 
     std::map<int,int> spToLo;
 
-    int ancIndx;
+    int ancIndx = -1;
     int epochCount = 0;
 
-    double stopTime, stopTimeEpoch, stopTimeLoci;
+    double stopTime = NAN;
+    double stopTimeEpoch = NAN;
+    double stopTimeLoci = NAN;
     bool allCoalesced = false, deathCheck = false;
-    bool is_ext;
+    bool is_ext = 0;
   // get the coalescent breakpoints from lociTree
     std::set<double, std::greater<double> > epochs = getEpochs();
     // how many epochs
