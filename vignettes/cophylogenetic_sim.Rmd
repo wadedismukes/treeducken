@@ -187,13 +187,10 @@ Currently, this only calculates the parafit statistic and conducts the permutati
 If that is set it will count the numbers of each event.
 
 ```{r}
-
-
-library(treeducken)
 gopher_lice_map <- read.table(system.file("extdata",
                                           "gopher_lice_mapping.txt",
                                           package = "treeducken"),
-                              stringsAsFactors = FALSE, header = TRUE)
+                              stringsAsFactors = FALSE, header ÷= TRUE)
 
 gopher_lice_assoc_matrix <- convert_assoc_table_to_matrix(gopher_lice_map)
 gopher_tree <- ape::read.nexus(system.file("extdata",
