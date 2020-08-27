@@ -1,11 +1,11 @@
 
 
 
-get_length_host_tree <- function(cophy){
+get_length_host_tree <- function(cophy) {
     max(ape::node.depth.edgelength(cophy$host_tree)) + cophy$host_tree$root.edge
 }
 
-get_all_host_tree_lengths <- function(multiCoph){
+get_all_host_tree_lengths <- function(multiCoph) {
     min(sapply(multiCoph, get_length_host_tree))
 }
 

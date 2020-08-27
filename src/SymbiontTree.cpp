@@ -17,7 +17,6 @@ SymbiontTree::SymbiontTree(int nt,
     hostExpanRate = her;
     numExpansions = 0;
     hostLimit = K;
-    Rcout << root << std::endl;
     root->addHost(0);
     std::vector<int> initialHosts;
     initialHosts.resize(1);
@@ -286,7 +285,7 @@ void SymbiontTree::setBranchLengths(){
     double bl = NAN;
     for(auto node : nodes){
         bl = node->getDeathTime() - node->getBirthTime();
-        branchLengths.push_back(bl);
+        branchLengths.push_back(std::move(bl));
         node->setBranchLength(bl);
     }
 }

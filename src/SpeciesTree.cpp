@@ -132,9 +132,9 @@ void SpeciesTree::setBranchLengths(){
 }
 
 void SpeciesTree::setPresentTime(double currentT){
-    for(auto node : nodes){
-        node->setDeathTime(currentT);
-        node->setIsExtant(true);
+    for(auto extantNode : extantNodes){
+        extantNode->setDeathTime(currentT);
+        extantNode->setIsExtant(true);
     }
     this->setBranchLengths();
     this->setTreeTipNames();
@@ -275,9 +275,9 @@ void SpeciesTree::recPopNodes(std::shared_ptr<Node> p){
             }
         }
         else{
+            nodes.push_back(p);
             recPopNodes(p->getLdes());
             recPopNodes(p->getRdes());
-            nodes.push_back(p);
         }
     }
 }

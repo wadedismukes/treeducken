@@ -29,9 +29,9 @@ sim_test_spt_loct_equality <- function(gene_birth = 0.0, gene_death = 0.0, trans
     all(sapply(loctr, ape::all.equal.phylo, current = tr[[1]], use.tip.label = FALSE))
 }
 test_that("sim_locustree_bdp produces the right number of trees", {
-    expect_equal(length(sim_test_spt_loct(1.0, 0.5, 0.5, 10)), 10)
-    expect_equal(length(sim_test_spt_loct(1.0, 0.5, 0.5, 5)), 5)
-    expect_equal(length(sim_test_spt_loct(1.0, 0.5, 0.5, 50)), 50)
+    expect_equal(length(sim_test_spt_loct(0.1, 0.05, 0.05, 10)), 10)
+    expect_equal(length(sim_test_spt_loct(0.1, 0.05, 0.05, 5)), 5)
+    expect_equal(length(sim_test_spt_loct(0.1, 0.05, 0.05, 50)), 50)
 })
 
 
