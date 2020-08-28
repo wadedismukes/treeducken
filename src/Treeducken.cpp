@@ -14,13 +14,12 @@ Rcpp::List bdsim_species_tree(double sbr,
                         int n_tips,
                         int gsa_stop){
 
-    Simulator *phySimulator;
     List multiphy(numbsim);
     for(int i = 0; i < numbsim; i++){
-        phySimulator = new Simulator(n_tips,
-                                     sbr,
-                                     sdr,
-                                     1);
+        std::shared_ptr<Simulator> phySimulator = std::shared_ptr<Simulator>(new Simulator(n_tips,
+                                                                                            sbr,
+                                                                                            sdr,
+                                                                                            1));
         phySimulator->setGSAStop(gsa_stop);
         phySimulator->simSpeciesTree();
 
@@ -37,7 +36,6 @@ Rcpp::List bdsim_species_tree(double sbr,
     multiphy.attr("class") = "multiPhylo";
 
 
-    delete phySimulator;
     return multiphy;
 }
 
@@ -45,13 +43,13 @@ Rcpp::List sim_bdsimple_species_tree(double sbr,
                                      double sdr,
                                      int numbsim,
                                      double timeToSimTo){
-    Simulator *phySimulator;
     List multiphy(numbsim);
     for(int i = 0; i < numbsim; i++){
-        phySimulator = new Simulator(1,
-                                     sbr,
-                                     sdr,
-                                     1);
+
+        auto phySimulator = std::shared_ptr<Simulator>(new Simulator(1,
+                                                                      sbr,
+                                                                      sdr,
+                                                                      1));
         phySimulator->setTimeToSim(timeToSimTo);
         phySimulator->simSpeciesTreeTime();
 
@@ -64,12 +62,11 @@ Rcpp::List sim_bdsimple_species_tree(double sbr,
         multiphy[i] = phy;
     }
 
-    delete phySimulator;
     multiphy.attr("class") = "multiPhylo";
     return multiphy;
 }
 
-Rcpp::List sim_locus_tree(SpeciesTree* species_tree,
+Rcpp::List sim_locus_tree(std::shared_ptr<SpeciesTree> species_tree,
                           double gbr,
                           double gdr,
                           double lgtr,
@@ -83,15 +80,15 @@ Rcpp::List sim_locus_tree(SpeciesTree* species_tree,
     unsigned numLociToSim = numbsim;
     for(int i = 0; i < numbsim; i++){
 
-        Simulator *phySimulator = new Simulator( ntax,
-                                     lambda,
-                                     mu,
-                                     rho,
-                                     numLociToSim,
-                                     gbr,
-                                     gdr,
-                                     lgtr,
-                                     trans_type);
+        auto phySimulator = std::shared_ptr<Simulator>(new Simulator( ntax,
+                                                        lambda,
+                                                        mu,
+                                                        rho,
+                                                        numLociToSim,
+                                                        gbr,
+                                                        gdr,
+                                                        lgtr,
+                                                        trans_type));
         phySimulator->setSpeciesTree(species_tree);
 
         phySimulator->simLocusTree();
@@ -105,7 +102,6 @@ Rcpp::List sim_locus_tree(SpeciesTree* species_tree,
         phy.attr("class") = "phylo";
 
         multiphy.push_back(phy);
-        delete phySimulator;
     }
     multiphy.attr("class") = "multiPhylo";
 
@@ -113,7 +109,7 @@ Rcpp::List sim_locus_tree(SpeciesTree* species_tree,
     return multiphy;
 }
 
-Rcpp::List sim_locus_tree_gene_tree(SpeciesTree* species_tree,
+Rcpp::List sim_locus_tree_gene_tree(std::shared_ptr<SpeciesTree> species_tree,
                                     double gbr,
                                     double gdr,
                                     double lgtr,
@@ -123,7 +119,6 @@ Rcpp::List sim_locus_tree_gene_tree(SpeciesTree* species_tree,
                                     int numGenesPerLocus){
     Rcpp::List multiphy;
     int ntax = species_tree->getNumExtant();
-    Rcout << "ntax extant: " << ntax << std::endl;
     double lambda = 0.0;
     double mu = 0.0;
     double rho = 1.0;
@@ -134,23 +129,22 @@ Rcpp::List sim_locus_tree_gene_tree(SpeciesTree* species_tree,
     double og = 0.0;
     for(int i = 0; i < numLoci; i++){
 
-        Simulator *phySimulator = new Simulator(ntax,
-                                                lambda,
-                                                mu,
-                                                rho,
-                                                numLociToSim,
-                                                gbr,
-                                                gdr,
-                                                lgtr,
-                                                samples_per_lineage,
-                                                popsize,
-                                                genTime,
-                                                numGenesPerLocus,
-                                                og,
-                                                ts,
-                                                sout);
+        auto phySimulator = std::shared_ptr<Simulator>(new Simulator(ntax,
+                                                        lambda,
+                                                        mu,
+                                                        rho,
+                                                        numLociToSim,
+                                                        gbr,
+                                                        gdr,
+                                                        lgtr,
+                                                        samples_per_lineage,
+                                                        popsize,
+                                                        genTime,
+                                                        numGenesPerLocus,
+                                                        og,
+                                                        ts,
+                                                        sout));
         phySimulator->setSpeciesTree(species_tree);
-                Rcout << "nope" << std::endl;
 
         phySimulator->simLocusTree();
 
@@ -178,7 +172,6 @@ Rcpp::List sim_locus_tree_gene_tree(SpeciesTree* species_tree,
                                          Named("gene.trees") = phyGenesPerLoc);
         multiphy.push_back(locusGeneSet);
         
-        delete phySimulator;
     }
 
 
@@ -187,7 +180,7 @@ Rcpp::List sim_locus_tree_gene_tree(SpeciesTree* species_tree,
 }
 
 
-Rcpp::List sim_genetree_msc(SpeciesTree* species_tree,
+Rcpp::List sim_genetree_msc(std::shared_ptr<SpeciesTree> species_tree,
                             double popsize,
                             int samples_per_lineage,
                             int numbsim){

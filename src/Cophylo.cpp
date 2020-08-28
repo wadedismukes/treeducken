@@ -17,7 +17,7 @@ Rcpp::List sim_host_symb_treepair(double hostbr,
     Rcpp::List multiphy;
     Rcpp::List hostSymbPair;
     for(int i = 0; i < numbsim; i++){
-        Simulator *phySimulator = new Simulator( timeToSimTo,
+        auto phySimulator = std::shared_ptr<Simulator>(new Simulator( timeToSimTo,
                                                  hostbr,
                                                  hostdr,
                                                  symbbr,
@@ -25,7 +25,7 @@ Rcpp::List sim_host_symb_treepair(double hostbr,
                                                  switchRate,
                                                  cospeciationRate,
                                                  rho,
-                                                 1);
+                                                 1));
 
         phySimulator->simHostSymbSpeciesTreePair();
 
@@ -54,7 +54,6 @@ Rcpp::List sim_host_symb_treepair(double hostbr,
                                     Named("event_history") = phySimulator->createEventDF());
         hostSymbPair.attr("class") = "cophy";
         multiphy.push_back(hostSymbPair);
-        delete phySimulator;
     }
 
 

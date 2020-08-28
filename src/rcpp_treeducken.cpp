@@ -179,7 +179,7 @@ Rcpp::List sim_locustree_bdp(Rcpp::List species_tree,
     if(trans_type !=  "cladewise" && trans_type != "random")
         stop("the transfer_type must be set to 'cladewise' or 'random'");
 
-    SpeciesTree* specTree = new SpeciesTree(species_tree);
+    std::shared_ptr<SpeciesTree> specTree = std::shared_ptr<SpeciesTree>(new SpeciesTree(species_tree));
     return sim_locus_tree(specTree, gbr_, gdr_, lgtr_, numLoci, trans_type);
 }
 //' Simulates a cophylogenetic system using a paired birth-death process
@@ -345,7 +345,7 @@ Rcpp::List sim_locustree_genetree_msc(SEXP species_tree,
         stop("'num_sampled_individuals' must be greater than or equal to 1");
     if(strcmp(species_tree_.attr("class"), "phylo") != 0)
         stop("species_tree must be an object of class phylo'.");
-    SpeciesTree* specTree = new SpeciesTree(species_tree_);
+    std::shared_ptr<SpeciesTree> specTree = std::shared_ptr<SpeciesTree>(new SpeciesTree(species_tree_));
     return sim_locus_tree_gene_tree(specTree,
                           gbr_,
                           gdr_,
@@ -412,7 +412,7 @@ Rcpp::List sim_multispecies_coal(SEXP species_tree,
         stop("'num_sampled_individuals' must be greater than or equal to 1");
     if(strcmp(species_tree_.attr("class"), "phylo") != 0)
         stop("species_tree must be an object of class phylo'.");
-    SpeciesTree* specTree = new SpeciesTree(species_tree_);
+    std::shared_ptr<SpeciesTree> specTree = std::shared_ptr<SpeciesTree>(new SpeciesTree(species_tree_));
     return sim_genetree_msc(specTree,
                             ne_,
                             num_sampled_individuals_,

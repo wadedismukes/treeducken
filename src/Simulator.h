@@ -23,14 +23,14 @@ class Simulator
         double      popSize;
         double      generationTime;
         bool        printSOUT;
-        std::vector<SpeciesTree*>   gsaTrees;
-        SpeciesTree*    spTree;
-        LocusTree*      lociTree;
-        std::vector<LocusTree*> locusTrees;
-        GeneTree*       geneTree;
-        std::vector<GeneTree*> geneTrees;
+        std::vector<std::shared_ptr<SpeciesTree>>   gsaTrees;
+        std::shared_ptr<SpeciesTree>    spTree;
+        std::shared_ptr<LocusTree>      lociTree;
+        std::vector<std::shared_ptr<LocusTree>> locusTrees;
+        std::shared_ptr<GeneTree>       geneTree;
+        std::vector<std::shared_ptr<GeneTree>> geneTrees;
         // symbiont tree varibles
-        SymbiontTree*   symbiontTree;
+        std::shared_ptr<SymbiontTree>   symbiontTree;
         double      cospeciationRate;
         double      timeToSim;
         int         hostLimit;
@@ -97,7 +97,7 @@ class Simulator
                   int hostLimit);
         ~Simulator();
         void    setGSAStop(int g) { gsaStop = g; }
-        void    setSpeciesTree(SpeciesTree *st) { spTree = st; }
+        void    setSpeciesTree(std::shared_ptr<SpeciesTree> st) { spTree = st; }
         bool    gsaBDSim();
         bool    bdsaBDSim();
         bool    bdSimpleSim();
@@ -118,10 +118,10 @@ class Simulator
         int     findNumberTransfers();
         std::set<double, std::greater<double> > getEpochs();
         //SpeciesTree*    getSpeciesTree() {SpeciesTree* spec_tree = new SpeciesTree(*spTree); return spec_tree;}
-        SpeciesTree*    getSpeciesTree() { return spTree; }
-        LocusTree*      getLocusTree() {return lociTree;}
-        SymbiontTree*   getSymbiontTree() {return symbiontTree;}
-        GeneTree*       getGeneTree() {return geneTree; }
+        std::shared_ptr<SpeciesTree>    getSpeciesTree() { return spTree; }
+        std::shared_ptr<LocusTree>      getLocusTree() {return lociTree;}
+        std::shared_ptr<SymbiontTree>   getSymbiontTree() {return symbiontTree;}
+        std::shared_ptr<GeneTree>       getGeneTree() {return geneTree; }
         double          getTimeToSim() {return timeToSim; }
         void            setTimeToSim(double tts) {timeToSim = tts; }
 
@@ -175,7 +175,7 @@ extern Rcpp::List sim_bdsimple_species_tree(double sbr,
                                             int numbsim,
                                             double timeToSimTo);
 
-extern Rcpp::List sim_locus_tree(SpeciesTree* species_tree,
+extern Rcpp::List sim_locus_tree(std::shared_ptr<SpeciesTree> species_tree,
                                  double gbr,
                                  double gdr,
                                  double lgtr,
@@ -191,7 +191,7 @@ extern Rcpp::List sim_host_symb_treepair(double hostbr,
                                          double timeToSimTo,
                                          int numbsim);
 
-extern Rcpp::List sim_locus_tree_gene_tree(SpeciesTree* species_tree,
+extern Rcpp::List sim_locus_tree_gene_tree(std::shared_ptr<SpeciesTree> species_tree,
                                            double gbr,
                                            double gdr,
                                            double lgtr,
@@ -200,7 +200,7 @@ extern Rcpp::List sim_locus_tree_gene_tree(SpeciesTree* species_tree,
                                            int samples_per_lineage,
                                            int numGenesPerLocus);
 
-extern Rcpp::List sim_genetree_msc(SpeciesTree* species_tree,
+extern Rcpp::List sim_genetree_msc(std::shared_ptr<SpeciesTree> species_tree,
                                    double popsize,
                                    int samples_per_lineage,
                                    int numbsim);

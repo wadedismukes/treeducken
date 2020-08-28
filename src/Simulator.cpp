@@ -133,26 +133,15 @@ Simulator::Simulator(double stopTime,
 
 
 Simulator::~Simulator(){
-    for(std::vector<SpeciesTree*>::iterator p=gsaTrees.begin(); p != gsaTrees.end(); ++p){
-        delete (*p);
-    }
     gsaTrees.clear();
-    int i = 0;
-    for(std::vector<LocusTree*>::iterator p=locusTrees.begin(); p != locusTrees.end(); ++p){
-        delete (*p);
-        for(std::vector<GeneTree*>::iterator q=geneTrees.begin(); q != geneTrees.end(); ++q){
-            delete (*q);
-        }
+    for(auto locusTree : locusTrees){
         geneTrees.clear();
-        ++i;
     }
     locusTrees.clear();
-
-
 }
 
 void Simulator::initializeSim(){
-    spTree = new SpeciesTree(numTaxaToSim, currentSimTime, speciationRate, extinctionRate);
+    spTree = std::shared_ptr<SpeciesTree>(new SpeciesTree(numTaxaToSim, currentSimTime, speciationRate, extinctionRate));
 }
 
 
@@ -174,8 +163,7 @@ bool Simulator::gsaBDSim(){
     bool treeComplete = false;
     // make a species tree object with the number of taxa to sim to, currsimtime (0.0)
     // and speciation and extinction rate
-    SpeciesTree st =  SpeciesTree(numTaxaToSim, currentSimTime, speciationRate, extinctionRate);
-    spTree = &st;
+    spTree = std::shared_ptr<SpeciesTree>(new SpeciesTree(numTaxaToSim, currentSimTime, speciationRate, extinctionRate));
     double eventTime;
     // runs until the number of extant tips reaches gsaStop (set by users, default is 10*number to sim to)
     while(spTree->getNumExtant() < gsaStop){
@@ -232,7 +220,7 @@ bool Simulator::gsaBDSim(){
 // that we are correctly sampling from the birth-death distribution
 void Simulator::processGSASim(){
   // make a new species tree with numTaxaToSim + however many extinct tips there are
-    SpeciesTree *tt = new SpeciesTree(numTaxaToSim + spTree->getNumExtinct());
+    auto tt = std::shared_ptr<SpeciesTree>(new SpeciesTree(numTaxaToSim + spTree->getNumExtinct()));
   // prep this by setting flags for nodes so that we know what is extant tip, extinct tip,
   // internode, and root
     this->prepGSATreeForReconstruction();
@@ -292,10 +280,10 @@ bool Simulator::bdSimpleSim(){
   currentSimTime = 0.0;
   // get the time to simulate to
   double stopTime = this->getTimeToSim();
-  double eventTime;
+  double eventTime = NAN;
   // make a variable SpeciesTree to hold our tree. numTaxaToSim is set to 1 here.
   // this is arbitrary and I should've planned out my classes and constructors better
-  spTree = new SpeciesTree(1, currentSimTime, speciationRate, extinctionRate);
+  spTree = std::shared_ptr<SpeciesTree>(new SpeciesTree(numTaxaToSim, currentSimTime, speciationRate, extinctionRate));
   while(currentSimTime < stopTime){
     // get the time to the next event as a function of speciation and extinction rates and number of currently alive
     // tips
@@ -311,14 +299,12 @@ bool Simulator::bdSimpleSim(){
     }
     // if tree goes to 0 living tips end prematurely
     if(spTree->getNumExtant() < 1){
-      delete spTree;
       treeComplete = false;
       return treeComplete;
     }
   }
 
   if(spTree->getNumExtant() <= 1){
-    delete spTree;
     treeComplete = false;
     return treeComplete;
   }
@@ -350,16 +336,17 @@ bool Simulator::pairedBDPSim(){
   // set stopTime
   double stopTime = this->getTimeToSim();
   // make a SpeciesTree (this is the host tree)
-  spTree = new SpeciesTree(1, currentSimTime, speciationRate, extinctionRate);
-  // and a SymbiontTree (this is the symbiont tree)
-  symbiontTree = new SymbiontTree(1,
-                                  currentSimTime,
-                                  geneBirthRate,
-                                  geneDeathRate,
-                                  transferRate,
-                                  hostLimit);
+  spTree = std::shared_ptr<SpeciesTree>(new SpeciesTree(1, currentSimTime, speciationRate, extinctionRate));
 
-  double eventTime;
+  // and a SymbiontTree (this is the symbiont tree)
+  symbiontTree = std::shared_ptr<SymbiontTree>( new SymbiontTree(1,
+                                                                currentSimTime,
+                                                                geneBirthRate,
+                                                                geneDeathRate,
+                                                                transferRate,
+                                                                hostLimit));
+
+  double eventTime = NAN;
   // initialize the four vectors that are output in R as the event dataframe
   this->initializeEventVector();
   // set the association matrix to start with the host and symbiont being associated
@@ -393,8 +380,6 @@ bool Simulator::pairedBDPSim(){
        assocMat.n_cols < 1){
       treePairGood = false;
       this->clearEventDFVecs();
-      delete spTree;
-      delete symbiontTree;
       return treePairGood;
     }
   }
@@ -402,8 +387,6 @@ bool Simulator::pairedBDPSim(){
   if(spTree->getNumExtant() <= 1 || symbiontTree->getNumExtant() <= 1){
     treePairGood = false;
     this->clearEventDFVecs();
-    delete spTree;
-    delete symbiontTree;
     return treePairGood;
   }
   treePairGood = true;
@@ -973,11 +956,11 @@ bool Simulator::bdsaBDSim(){
     bool isSpeciation = 0;
     // start a new locus tree
 
-    lociTree = new LocusTree(numTaxaToSim,
-                             currentSimTime,
-                             geneBirthRate,
-                             geneDeathRate,
-                             transferRate);
+    lociTree = std::shared_ptr<LocusTree>( new LocusTree(numTaxaToSim,
+                                                        currentSimTime,
+                                                        geneBirthRate,
+                                                        geneDeathRate,
+                                                        transferRate));
 
 
     // species tree is read in from r so convert index from R to C++ indexing
@@ -1114,7 +1097,7 @@ std::set<double, std::greater<double> > Simulator::getEpochs(){
 // multispecies coalescent simulator
 bool Simulator::coalescentSim(){
     bool treeGood = false;
-    geneTree = new GeneTree(numTaxaToSim, indPerPop, popSize, generationTime);
+    geneTree = std::shared_ptr<GeneTree>(new GeneTree(numTaxaToSim, indPerPop, popSize, generationTime));
 
     std::map<int,int> spToLo;
 
@@ -1240,13 +1223,12 @@ double Simulator::calcSpeciesTreeDepth(){
 }
 
 double Simulator::calcExtantSpeciesTreeDepth(){
-    SpeciesTree *tt = new SpeciesTree(numTaxaToSim);
+    std::shared_ptr<SpeciesTree> tt = std::shared_ptr<SpeciesTree> (new SpeciesTree(numTaxaToSim));
     spTree->getRootFromFlags(false);
     tt->setRoot(spTree->getExtantRoot());
     tt->setExtantRoot(tt->getRoot());
     tt->reconstructTreeFromSim(tt->getExtantRoot());
     double extTreeDepth = tt->getTreeDepth();
-    delete tt;
     tt = nullptr;
     return extTreeDepth;
 }
