@@ -35,7 +35,7 @@
 #'                   lgtr = transfer_rate,
 #'                   num_loci = 1)
 #' effect_popsize <- 1e6
-#' gene_tree_obj <- sim_multi_locus_coal(locus_tree[[1]],
+#' gene_tree_obj <- sim_multilocus_coal(locus_tree[[1]],
 #'                                       effect_popsize,
 #'                                       num_reps = 20)
 sim_multilocus_coal <- function(locus_tree,
