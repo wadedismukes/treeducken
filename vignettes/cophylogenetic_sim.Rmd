@@ -170,7 +170,7 @@ host_locus_tree <- host_tree_locus_trees[[3]]
 popsize <- 1e6
 host_loci_gene_trees <- sim_multilocus_coal(host_locus_tree,
                                             effective_pop_size = popsize,
-                                            num_genes = 100)
+                                            num_reps = 100)
 ```
 
 
@@ -190,7 +190,7 @@ If that is set it will count the numbers of each event.
 gopher_lice_map <- read.table(system.file("extdata",
                                           "gopher_lice_mapping.txt",
                                           package = "treeducken"),
-                              stringsAsFactors = FALSE, header ÷= TRUE)
+                              stringsAsFactors = FALSE, header = TRUE)
 
 gopher_lice_assoc_matrix <- convert_assoc_table_to_matrix(gopher_lice_map)
 gopher_tree <- ape::read.nexus(system.file("extdata",

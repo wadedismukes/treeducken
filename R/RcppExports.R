@@ -52,7 +52,7 @@ sim_sptree_bdp <- function(sbr, sdr, numbsim, n_tips, gsa_stop_mult = 10L) {
 #' mu <- 0.5 # death rate
 #' lambda <- 2.0 # birth rate
 #' numb_replicates <- 10
-#' time <- 2
+#' time <- 1
 #'
 #' tree_list <- sim_sptree_bdp_time(sbr = lambda,
 #'                 sdr = mu,
@@ -192,7 +192,7 @@ sim_cophylo_bdp <- function(hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_t
 #'                                            theta = 1,
 #'                                            num_sampled_individuals = 1,
 #'                                            num_loci = 4,
-#'                                            num_genes_per_locus = 100)
+#'                                            num_genes_per_locus = 20)
 #'
 #' @references
 #' Mallo D, de Oliveira Martins L, Posada D (2015) SimPhy: Phylogenomic Simulation of Gene, Locus and Species Trees. Syst. Biol. doi: http://dx.doi.org/10.1093/sysbio/syv082

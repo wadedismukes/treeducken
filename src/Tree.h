@@ -40,7 +40,6 @@ class Node
                 ~Node();
         void    setAsRoot(bool t) {isRoot = t; }
         void    setBirthTime(double bt) {birthTime = bt; }
-        void    setIndx(unsigned i) {indx = i; }
         void    setIsTip(bool t) {isTip = t; }
         void    setDeathTime(double dt) {deathTime = dt; }
         void    setIsExtant(bool t) {isExtant = t; }
@@ -87,8 +86,10 @@ class Tree
         std::shared_ptr<Node> extantRoot;
         std::vector<std::shared_ptr<Node>> nodes;
         std::vector<std::shared_ptr<Node>> extantNodes;
-        unsigned numTaxa, numNodes, numTotalTips;
-        unsigned numExtant, numExtinct;
+        int numTaxa;
+        int numNodes;
+        int numTotalTips;
+        int numExtant, numExtinct;
         double  currentTime;
         std::vector<double> branchLengths;
 
@@ -101,9 +102,9 @@ class Tree
         std::shared_ptr<Node>    getExtantRoot() { return extantRoot; }
         void        setExtantRoot(std::shared_ptr<Node> r) { extantRoot = r; }
         void        setRoot(std::shared_ptr<Node> r) { root = r; }
-        double      getNumExtant() {return numExtant; }
+        int      getNumExtant() {return numExtant; }
         int         getNumTips() { return extantNodes.size(); }
-        double      getNumExtinct() {return numExtinct; }
+        int      getNumExtinct() {return numExtinct; }
         int         getNodesSize() { return (int) nodes.size(); }
         double      getTotalTreeLength();
         double      getTreeDepth();

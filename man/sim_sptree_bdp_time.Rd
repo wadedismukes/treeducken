@@ -25,7 +25,7 @@ Forward simulates a tree until a provided time is reached.
 mu <- 0.5 # death rate
 lambda <- 2.0 # birth rate
 numb_replicates <- 10
-time <- 2
+time <- 1
 
 tree_list <- sim_sptree_bdp_time(sbr = lambda,
                 sdr = mu,

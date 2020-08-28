@@ -159,12 +159,13 @@ void Simulator::initializeEventVector(){
  Much of this code is modified from FossilGen (written by Tracy Heath)
  */
 bool Simulator::gsaBDSim(){
-    double timeIntv, sampTime;
+    double timeIntv = NAN;
+    double sampTime = NAN;
     bool treeComplete = false;
     // make a species tree object with the number of taxa to sim to, currsimtime (0.0)
     // and speciation and extinction rate
     spTree = std::shared_ptr<SpeciesTree>(new SpeciesTree(numTaxaToSim, currentSimTime, speciationRate, extinctionRate));
-    double eventTime;
+    double eventTime = NAN;
     // runs until the number of extant tips reaches gsaStop (set by users, default is 10*number to sim to)
     while(spTree->getNumExtant() < gsaStop){
         // find the time to the next event with rate speciation rate + extinction rate * number of current tips

@@ -29,9 +29,6 @@ Node::~Node(){
 
 }
 
-
-
-
 Tree::Tree(unsigned numExta, double curTime){
     numNodes = 0;
     // intialize tree with root

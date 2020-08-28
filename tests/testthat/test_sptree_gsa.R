@@ -14,7 +14,6 @@ get_number_extant_tips <- function(tr){
         pruned_tr <- geiger::drop.extinct(tr[[i]])
         tip_vec[i] <- length(pruned_tr$tip.label)
     }
-    print(tip_vec)
     unique(tip_vec)
 }
 

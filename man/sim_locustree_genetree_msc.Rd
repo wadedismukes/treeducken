@@ -54,7 +54,7 @@ loctr_gentr <- sim_locustree_genetree_msc(tr[[1]],
                                            theta = 1,
                                            num_sampled_individuals = 1,
                                            num_loci = 4,
-                                           num_genes_per_locus = 100)
+                                           num_genes_per_locus = 20)
 
 }
 \references{

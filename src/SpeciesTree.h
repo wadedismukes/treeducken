@@ -23,7 +23,7 @@ class SpeciesTree : public Tree
                       SpeciesTree(const SpeciesTree& speciestree, unsigned numTaxa);
         virtual       ~SpeciesTree();
 
-        SpeciesTree*  clone() const { return new SpeciesTree(*this); }
+        std::shared_ptr<SpeciesTree>  clone() const { return std::shared_ptr<SpeciesTree>(new SpeciesTree(*this)); }
         void          setSpeciationRate(double sr) {speciationRate = sr; }
         void          setExtinctionRate(double er) {extinctionRate = er; }
         void          setCurrentTime(double et) { currentTime = et; }
