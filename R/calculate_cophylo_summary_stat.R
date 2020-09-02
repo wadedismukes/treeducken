@@ -220,16 +220,3 @@ parafit_test <- function(host_tr, symb_tr, assoc_mat, D, reps = 99){
     null_dist <- append(null_dist, D)
     length(null_dist[null_dist >= D]) / (reps + 1)
 }
-
-#
-# almost_parafit_stat <- function(host_tr, symb_tr, assoc_mat){
-#    host_tree <- geiger::drop.extinct(host_tr, tol= 0.001)
-#    symb_tree <- geiger::drop.extinct(symb_tr, tol = 0.001)
-#    H <- ape::cophenetic.phylo(host_tree)
-#    S <- ape::cophenetic.phylo(symb_tree)
-#    H_eigen <- eigen(H)
-#    S_eigen <- eigen(S)
-#    # remember the weirdness with pca$values corresponding to cospeciations
-#    D <- t(H_eigen$vectors) %*% t(assoc_mat) %*% S_eigen$vectors
-#    sum(diag(D)^2)
-# }

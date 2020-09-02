@@ -180,7 +180,7 @@ bool GeneTree::censorCoalescentProcess(double startTime, double stopTime, int co
 std::shared_ptr<Node> GeneTree::coalescentEvent(double t, 
                                 std::shared_ptr<Node> p,
                                 std::shared_ptr<Node> q){
-    std::shared_ptr<Node> n = std::shared_ptr<Node>(new Node());
+    auto n = std::shared_ptr<Node>(new Node());
     n->setDeathTime(t);
     n->setLdes(p);
     n->setRdes(q);
@@ -217,11 +217,6 @@ std::multimap<int, double> GeneTree::rescaleTimes(std::multimap<int, double> tim
 
 
 void GeneTree::rootCoalescentProcess(double startTime){
-    int leftInd = -1;
-    int rightInd = -1;
-    std::shared_ptr<Node> l = nullptr;
-    std::shared_ptr<Node> r = nullptr;
-    std::shared_ptr<Node> n = nullptr;
     double t = startTime;
     // search extantNodes for members with Lindx = contempSpecisIndx
     std::vector<int> ind_in_ext_nodes;
@@ -231,19 +226,19 @@ void GeneTree::rootCoalescentProcess(double startTime){
     while(extantNodes.size() > 1){
         t -= getCoalTime(extantNodes.size());
 
-        rightInd = unif_rand() * (extantNodes.size() - 1);
-        r = extantNodes[rightInd];
+        int rightInd = unif_rand() * (extantNodes.size() - 1);
+        auto r = std::move(extantNodes[rightInd]);
         extantNodes.erase(extantNodes.begin() + rightInd);
 
-        leftInd = unif_rand() * (extantNodes.size() - 1);
-        l = extantNodes[leftInd];
+        int leftInd = unif_rand() * (extantNodes.size() - 1);
+        auto l = std::move(extantNodes[leftInd]);
         extantNodes.erase(extantNodes.begin() + leftInd);
 
-        n = coalescentEvent(t, l, r);
+        auto n = coalescentEvent(t, l, r);
         extantNodes.push_back(n);
     }
     extantNodes[0]->setAsRoot(true);
-    extantNodes[0]->setBirthTime(n->getDeathTime());
+    extantNodes[0]->setBirthTime(t);
     this->setRoot(extantNodes[0]);
     this->setBranchLengths();
 }
