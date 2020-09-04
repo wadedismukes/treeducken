@@ -366,7 +366,7 @@ Rcpp::List sim_locustree_genetree_msc(SEXP species_tree,
 //' @param num_sampled_individuals number of individuals sampled within each lineage
 //' @param num_genes number of genes to simulate within each locus
 //' @param mutation_rate The rate of mutation per generation
-//'
+//' @param rescale Rescale the tree into coalescent units (otherwise assumes it is in those units)
 //'
 //' @return A list of coalescent trees
 //' @seealso sim_locustree_bdp, sim_sptree_bdp, sim_sptree_bdp_time
@@ -390,15 +390,31 @@ Rcpp::List sim_multispecies_coal(SEXP species_tree,
                                  SEXP ne,
                                  SEXP num_sampled_individuals,
                                  SEXP num_genes,
-                                 Rcpp::NumericVector mutation_rate = 1.0,
+                                 Rcpp::LogicalVector rescale = false,
+                                 Rcpp::NumericVector mutation_rate = 1e-6,
                                  Rcpp::NumericVector generation_time = 1.0){
     Rcpp::List species_tree_ = as<Rcpp::List>(species_tree);
+    if(strcmp(species_tree_.attr("class"), "phylo") != 0)
+        stop("species_tree must be an object of class phylo'.");
+    auto specTree = std::shared_ptr<SpeciesTree>(new SpeciesTree(species_tree_));
+
     RNGScope scope;
     int num_sampled_individuals_ = as<int>(num_sampled_individuals);
     double ne_ = as<double>(ne);
     int num_genes_ = as<int>(num_genes);
     double mutation_rate_ = as<double>(mutation_rate);
     double generation_time_ = as<double>(generation_time);
+    // bool rescale_ = as<bool>(rescale);
+    bool rescale_ = true;
+    double u = generation_time_ * mutation_rate_; // this is the per generation mutation rate
+    double theta = ne_;
+    if(rescale_){
+        theta = 2 * ne_ * u;
+        if(theta < 1)
+            stop("You have set the combination of: generation_time, mutation_rate, and ne such that their product is less than 1");
+        specTree->scaleTreeDepthToValue(theta);
+    }
+    Rcout << theta << std::endl;
 
     if(mutation_rate_ <= 0.0)
         stop("'mutation_rate' must be greater than 0.0.");
@@ -410,11 +426,9 @@ Rcpp::List sim_multispecies_coal(SEXP species_tree,
         stop("'num_genes' must be greater than or equal to 1");
     if(num_sampled_individuals_ < 1)
         stop("'num_sampled_individuals' must be greater than or equal to 1");
-    if(strcmp(species_tree_.attr("class"), "phylo") != 0)
-        stop("species_tree must be an object of class phylo'.");
-    std::shared_ptr<SpeciesTree> specTree = std::shared_ptr<SpeciesTree>(new SpeciesTree(species_tree_));
+
     return sim_genetree_msc(specTree,
-                            ne_,
+                            theta,
                             num_sampled_individuals_,
                             num_genes_);
 }

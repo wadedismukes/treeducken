@@ -139,22 +139,9 @@ Tree::Tree(SEXP rtree){
 
 
 Tree::~Tree(){
-    // if(root != nullptr){
-    //     delete root;
-    //     root = nullptr;
-    // }
-    // if(outgrp != nullptr){
-    //     delete outgrp;
-    //     outgrp = nullptr;
-    // }
+
     clearNodes(root);
-    // for(std::vector<Node*>::iterator p=extantNodes.begin(); p != extantNodes.end(); ++p){
-    //     delete (*p);
-    // }
     extantNodes.clear();
-    // for(std::vector<Node*>::iterator p=nodes.begin(); p != nodes.end(); ++p){
-    //     delete (*p);
-    // }
     nodes.clear();
 }
 
@@ -445,6 +432,20 @@ void Tree::scaleTree(double trScale, double currStime){
     return;
 }
 
+void Tree::scaleTreeDepthToValue(double scVal){
+	
+	double depth = getTreeDepth();
+	double scaler = scVal / depth;
+
+	for(auto node : nodes){
+		double bt = node->getBirthTime();
+        double dt = node->getDeathTime();
+
+		node->setBirthTime(bt * scaler);
+        node->setDeathTime(dt * scaler);
+        node->setBranchLength(node->getDeathTime() - node->getBirthTime());
+	}
+}
 
 int Tree::calculatePatristicDistance(std::shared_ptr<Node> n1, std::shared_ptr<Node> n2){
     int count = 0;

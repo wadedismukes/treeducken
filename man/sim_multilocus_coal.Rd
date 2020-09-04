@@ -7,7 +7,8 @@
 sim_multilocus_coal(
   locus_tree,
   effective_pop_size,
-  generation_time = 1e-06,
+  generation_time = 1,
+  mutation_rate = 1e-06,
   num_reps
 )
 }
@@ -16,13 +17,15 @@ sim_multilocus_coal(
 
 \item{effective_pop_size}{the effective population size}
 
-\item{generation_time}{the number of generations per unit time}
+\item{generation_time}{unit time per generation (default 1 year per generation)}
+
+\item{mutation_rate}{number of mutations per unit time}
 
 \item{num_reps}{number of coalscent simulations per locus}
 }
 \value{
-A list containing each locus tree simulated and for each
-of those a number of gene trees equal to `num_reps`.
+A list of list of gene trees of length `num_reps` simulated along each locus.
+The first member of the list is the parent tree, all others are child trees
 }
 \description{
 Seperates a locus tree into loci broken up by
@@ -30,10 +33,12 @@ duplications  and simulates the coalescent on each loci.
 }
 \details{
 This simulation follows the algorithm given in Rasmussen and Kellis 2012.
-The locus tree is scaled into generations prior to being used
+The locus tree is scaled into coalescent units prior to being used.
 The generation_time parameter default assumes 1 generation
 per year if the units of the tree are in millions of years.
-Also note that the return type is a list of many trees so for 
+The mutation_rate parameter is by default set to 1e-6 mutations per year 
+(this is totally arbitrary).
+Also note that the return type is a list of many trees so for
 sufficiently complicated locus trees with `num_reps` set to a larger
 value may slow things considerably so use with caution.
 }
@@ -44,8 +49,8 @@ lambda <- 1.0
 nt <- 6
 tr <- sim_sptree_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
 # for a locus tree with 100 genes sampled per locus tree
-gene_br <- 1.0
-gene_dr <- 0.2
+gene_br <- 0.1
+gene_dr <- 0.02
 transfer_rate <- 0.2
 locus_tree <- sim_locustree_bdp(species_tree = tr[[1]],
                   gbr = gene_br,
@@ -53,7 +58,7 @@ locus_tree <- sim_locustree_bdp(species_tree = tr[[1]],
                   lgtr = transfer_rate,
                   num_loci = 1)
 effect_popsize <- 1e6
-gene_tree_obj <- sim_multi_locus_coal(locus_tree[[1]],
+gene_tree_obj <- sim_multilocus_coal(locus_tree[[1]],
                                       effect_popsize,
                                       num_reps = 20)
 }

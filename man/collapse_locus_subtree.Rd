@@ -7,7 +7,7 @@
 collapse_locus_subtree(list_of_subtrees, locus_to_collapse)
 }
 \arguments{
-\item{list_of_subtrees}{a list of type `multiPhy`}
+\item{list_of_subtrees}{a list of type `multiPhylo`}
 
 \item{locus_to_collapse}{a subtree found within a subst of `list_of_subtrees`}
 }
@@ -26,7 +26,7 @@ lambda <- 1.0
 mu <- 0.2
 nt <- 10
 trees <- sim_sptree_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
-subtrees_of_trees <- ape::subtrees(trees)
+subtrees_of_trees <- ape::subtrees(trees[[1]])
 st_of_interest <- subtrees_of_trees[[1]]
 collapse_st_of_interest <- collapse_locus_subtree(trees, st_of_interest)
 }

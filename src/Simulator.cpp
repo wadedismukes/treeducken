@@ -1193,6 +1193,7 @@ bool Simulator::coalescentSim(){
             // finish coalescing
             geneTree->rootCoalescentProcess(currentSimTime);
             treeGood = true;
+            geneTree->setBranchLengths();
         }
         // post incremenet
         epochCount++;

@@ -88,8 +88,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // sim_multispecies_coal
-Rcpp::List sim_multispecies_coal(SEXP species_tree, SEXP ne, SEXP num_sampled_individuals, SEXP num_genes, Rcpp::NumericVector mutation_rate, Rcpp::NumericVector generation_time);
-RcppExport SEXP _treeducken_sim_multispecies_coal(SEXP species_treeSEXP, SEXP neSEXP, SEXP num_sampled_individualsSEXP, SEXP num_genesSEXP, SEXP mutation_rateSEXP, SEXP generation_timeSEXP) {
+Rcpp::List sim_multispecies_coal(SEXP species_tree, SEXP ne, SEXP num_sampled_individuals, SEXP num_genes, Rcpp::LogicalVector rescale, Rcpp::NumericVector mutation_rate, Rcpp::NumericVector generation_time);
+RcppExport SEXP _treeducken_sim_multispecies_coal(SEXP species_treeSEXP, SEXP neSEXP, SEXP num_sampled_individualsSEXP, SEXP num_genesSEXP, SEXP rescaleSEXP, SEXP mutation_rateSEXP, SEXP generation_timeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -97,9 +97,10 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type ne(neSEXP);
     Rcpp::traits::input_parameter< SEXP >::type num_sampled_individuals(num_sampled_individualsSEXP);
     Rcpp::traits::input_parameter< SEXP >::type num_genes(num_genesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type rescale(rescaleSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type mutation_rate(mutation_rateSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type generation_time(generation_timeSEXP);
-    rcpp_result_gen = Rcpp::wrap(sim_multispecies_coal(species_tree, ne, num_sampled_individuals, num_genes, mutation_rate, generation_time));
+    rcpp_result_gen = Rcpp::wrap(sim_multispecies_coal(species_tree, ne, num_sampled_individuals, num_genes, rescale, mutation_rate, generation_time));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -110,7 +111,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_treeducken_sim_locustree_bdp", (DL_FUNC) &_treeducken_sim_locustree_bdp, 6},
     {"_treeducken_sim_cophylo_bdp", (DL_FUNC) &_treeducken_sim_cophylo_bdp, 8},
     {"_treeducken_sim_locustree_genetree_msc", (DL_FUNC) &_treeducken_sim_locustree_genetree_msc, 8},
-    {"_treeducken_sim_multispecies_coal", (DL_FUNC) &_treeducken_sim_multispecies_coal, 6},
+    {"_treeducken_sim_multispecies_coal", (DL_FUNC) &_treeducken_sim_multispecies_coal, 7},
     {NULL, NULL, 0}
 };
 

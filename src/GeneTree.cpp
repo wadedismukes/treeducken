@@ -23,13 +23,7 @@ GeneTree::GeneTree(unsigned nt, unsigned ipp, double ne, double genTime) : Tree(
 }
 
 GeneTree::~GeneTree(){
-    // for(std::vector<Node*>::iterator p=nodes.begin(); p != nodes.end(); ++p){
-    //     if((*p) != nullptr){
-    //         delete (*p);
-    //         (*p) = nullptr;
-    //     }
-    // }
-    //wclearNodes(extantRoot);
+
 }
 
 
@@ -50,10 +44,9 @@ void GeneTree::initializeTree(std::vector< std::vector<int> > extantLociInd, dou
     else{
         num_loci_in_prsent = extantLociInd[0].size();
     }
-    std::shared_ptr<Node> p = nullptr;
     for(int i = 0; i < num_loci_in_prsent; i++){
         for(int j = 0; j < individualsPerPop; j++){
-            p = std::shared_ptr<Node>(new Node());
+            auto p = std::shared_ptr<Node>(new Node());
             p->setDeathTime(presentTime);
             p->setLindx(extantLociInd[k][i]);
             p->setLdes(NULL);
@@ -239,8 +232,7 @@ void GeneTree::rootCoalescentProcess(double startTime){
     }
     extantNodes[0]->setAsRoot(true);
     extantNodes[0]->setBirthTime(t);
-    this->setRoot(extantNodes[0]);
-    this->setBranchLengths();
+    setRoot(extantNodes[0]);
 }
 
 void GeneTree::recursiveRescaleTimes(std::shared_ptr<Node> r, double add){

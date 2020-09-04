@@ -27,9 +27,9 @@ lambda <- 1.0
 nt <- 6
 tr <- sim_sptree_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
 # for a locus tree with 100 genes sampled per locus tree
-gene_br <- 1.0
-gene_dr <- 0.2
-transfer_rate <- 0.2
+gene_br <- 0.1
+gene_dr <- 0.02
+transfer_rate <- 0.0
 locus_tree <- sim_locustree_bdp(species_tree = tr[[1]],
                   gbr = gene_br,
                   gdr = gene_dr,

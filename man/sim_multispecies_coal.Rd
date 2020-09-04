@@ -9,6 +9,7 @@ sim_multispecies_coal(
   ne,
   num_sampled_individuals,
   num_genes,
+  rescale = FALSE,
   mutation_rate = 1,
   generation_time = 1
 )
@@ -21,6 +22,8 @@ sim_multispecies_coal(
 \item{num_sampled_individuals}{number of individuals sampled within each lineage}
 
 \item{num_genes}{number of genes to simulate within each locus}
+
+\item{rescale}{Rescale the tree into coalescent units (otherwise assumes it is in those units)}
 
 \item{mutation_rate}{The rate of mutation per generation}
 

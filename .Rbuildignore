@@ -1,2 +1,9 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.clang-tidy
+^\.clangd
+^\.vscode
+compile_commands\.json
+src/.*\.o\.json
+^\.travis\.yml$
+^\.github$

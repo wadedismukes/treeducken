@@ -102,9 +102,9 @@ class Tree
         std::shared_ptr<Node>    getExtantRoot() { return extantRoot; }
         void        setExtantRoot(std::shared_ptr<Node> r) { extantRoot = r; }
         void        setRoot(std::shared_ptr<Node> r) { root = r; }
-        int      getNumExtant() {return numExtant; }
+        int         getNumExtant() {return numExtant; }
         int         getNumTips() { return extantNodes.size(); }
-        int      getNumExtinct() {return numExtinct; }
+        int         getNumExtinct() {return numExtinct; }
         int         getNodesSize() { return (int) nodes.size(); }
         double      getTotalTreeLength();
         double      getTreeDepth();
@@ -112,8 +112,6 @@ class Tree
         double      getEndTime();
         void        setNumExtant();
         void        setNumExtinct();
-        void        rescaleTreeByOutgroupFrac(double outgroupFrac,
-                                              double getTreeDepth);
         void        clearNodes(std::shared_ptr<Node> r);
         void        zeroAllFlags();
         void        setWholeTreeFlags();
@@ -125,6 +123,8 @@ class Tree
         std::vector<std::shared_ptr<Node>> getNodes() { return nodes; }
         std::vector<std::shared_ptr<Node>> getExtantNodes() { return extantNodes; }
         void        scaleTree( double treeScale , double currtime);
+        void        scaleTreeDepthToValue(double scVal);
+
         void        reconstructTreeFromSim(std::shared_ptr<Node> oRoot);
         void        reconstructLineageFromSim(std::shared_ptr<Node> currN,
                                               std::shared_ptr<Node> prevN,

@@ -44,7 +44,6 @@ genetree_summary_stat <- function(locus_tree_gene_tree_obj, locus_tree_indx){
     }
     data.frame(colless, sackin, tmrca, gamma_locus, gamma, cherries)
 }
-#TODO: need to make sure I am doing this in the legal way
 #' Calculate cherry statistic for gene-trees
 #'
 #' @description Calculate cherry statistic according to the definition given in  McKenzie and Steel 2000 (see below for reference)

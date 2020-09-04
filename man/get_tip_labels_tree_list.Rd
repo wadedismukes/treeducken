@@ -2,18 +2,18 @@
 % Please edit documentation in R/sim_multilocus.R
 \name{get_tip_labels_tree_list}
 \alias{get_tip_labels_tree_list}
-\title{Get all the tip labels of a `multiPhy` object}
+\title{Get all the tip labels of a `multiPhylo` object}
 \usage{
 get_tip_labels_tree_list(multi_tree)
 }
 \arguments{
-\item{multi_tree}{an object of class `multiPhy`}
+\item{multi_tree}{an object of class `multiPhylo`}
 }
 \value{
 a list of the same length as `multi_tree` with only the tip labels
 }
 \description{
-Get all the tip labels of a `multiPhy` object
+Get all the tip labels of a `multiPhylo` object
 }
 \details{
 Retrieves the member "tip.label" from each tree in multi_tree
