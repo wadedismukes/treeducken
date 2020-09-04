@@ -50,7 +50,7 @@ convert_to_cophy <- function(hostTree, symbTree, assocMat, eventHistory = NULL){
         stop("`hostTree` input is not of class `phylo`")
     if(!(identical(class(symbTree), "phylo")))
         stop("`symbTree` input is not of class `phylo`")
-    if(!(identical(class(assocMat), "matrix")))
+    if(!("matrix" %in% class(assocMat)))
         stop("`assocMat` input is not of class `matrix`")
     if(!is.null(eventHistory)){
         if(!(identical(class(eventHistory), "data.frame")))

@@ -10,8 +10,8 @@ cophy_summary_stat_by_indx <- function(cophy_obj, cophy_obj_indx){
   if(!is.null(cophy_obj[[cophy_obj_indx]]$event_history)){
     cat("Calculating for replicate ", cophy_obj_indx, "\n")
     events <- cophy_obj[[cophy_obj_indx]]$event_history
-    event_types <- levels(events$Event_Type)
-    num_each_event <- tabulate(events$Event_Type)
+    event_types <- levels(as.factor(events$Event_Type))
+    num_each_event <- tabulate(as.factor(events$Event_Type))
     names(num_each_event) <- event_types
     cospeciations <- num_each_event["C"]
     host_speciations <- num_each_event["HG"]
@@ -84,9 +84,9 @@ cophy_summary_stat_by_indx <- function(cophy_obj, cophy_obj_indx){
 #'                            time_to_sim = time)
 #' summary_stats <- cophy_summary_stat(cophy_pair)
 #' @export
-cophy_summary_stat <- function(cophy_obj){
-    if(class(cophy_obj) != "multiCophy"){
-      if(class(cophy_obj) == "cophy"){
+cophy_summary_stat <- function(cophy_obj) {
+    if(class(cophy_obj) != "multiCophy") {
+      if(class(cophy_obj) == "cophy") {
         mult_cophy_obj <- list(cophy_obj)
         class(mult_cophy_obj) <- "multiCophylo"
         stat_df <- data.frame(matrix(0, nrow = 1, ncol = 7))
@@ -112,7 +112,7 @@ cophy_summary_stat <- function(cophy_obj){
                             "Parafit_P-value")
  ##                           "Cophylo_Eigen")
     if(!is.null(cophy_obj$event_history)){
-      stat_df[which(is.na.data.frame(stat_df[,1:5]), arr.ind = TRUE)] <- 0
+      stat_df[which(is.na(stat_df[, 1:5]), arr.ind = TRUE)] <- 0
     }
     stat_df
 }
@@ -162,7 +162,7 @@ parafit_stat <- function(host_tr, symb_tr, assoc_mat){
     if(class(symb_tr) != "phylo"){
       stop("'symb_tr' must be an object of class 'phylo'")
     }
-    if(class(assoc_mat) != "matrix")
+    if(!("matrix" %in% class(assoc_mat)))
       stop("'assoc_mat' must be an object of class 'matrix'")
     host_tree <- geiger::drop.extinct(host_tr, tol= 0.001)
     symb_tree <- geiger::drop.extinct(symb_tr, tol = 0.001)
@@ -210,7 +210,7 @@ parafit_test <- function(host_tr, symb_tr, assoc_mat, D, reps = 99){
     if(class(symb_tr) != "phylo"){
       stop("'symb_tr' must be a binary phylogenetic tree")
     }
-    if(class(assoc_mat) != "matrix")
+    if(!("matrix" %in% class(assoc_mat)))
       stop("'assoc_mat' must be a matrix")
     null_dist <- vector(length = reps)
     for(i in 1:reps){

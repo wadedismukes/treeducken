@@ -391,7 +391,7 @@ Rcpp::List sim_multispecies_coal(SEXP species_tree,
                                  SEXP num_sampled_individuals,
                                  SEXP num_genes,
                                  Rcpp::LogicalVector rescale = false,
-                                 Rcpp::NumericVector mutation_rate = 1e-6,
+                                 Rcpp::NumericVector mutation_rate = 0.000001,
                                  Rcpp::NumericVector generation_time = 1.0){
     Rcpp::List species_tree_ = as<Rcpp::List>(species_tree);
     if(strcmp(species_tree_.attr("class"), "phylo") != 0)
