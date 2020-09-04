@@ -160,46 +160,6 @@ sim_cophylo_bdp <- function(hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_t
     .Call(`_treeducken_sim_cophylo_bdp`, hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_to_sim, numbsim)
 }
 
-#' Simulate locus tree within species tree and gene trees within locus tree
-#'
-#' @description First simulates a locus tree within the confines of the input species tree using a constant-rate birth-death process
-#' based on values of `gbr`, `gdr` and `lgtr`. Then simulates gene trees within that locus tree using the multispecies coalescent process.
-#' This is not sensible in most cases as there should be coalescent bounds at duplications and this function may be removed in the future
-#' @param species_tree input species tree of class "phylo"
-#' @param gbr gene birth rate
-#' @param gdr gene death rate
-#' @param lgtr lateral gene transfer rate'
-#' @param theta the population genetic parameter
-#' @param num_sampled_individuals number of individuals sampled within each locus lineage
-#' @param num_loci number of loci to simulate
-#' @param num_genes_per_locus number of genes to simulate within each locus
-#'
-#' @return A list of lists of length 2. The first element of each list of length 2 is `locus.tree` the locus tree and the second element is a list of the gene trees simulated within that locus tree. All trees are of class "phylo".
-#'
-#' @seealso sim_locustree_bdp
-#'
-#' @examples
-#' # first simulate a species tree
-#' mu <- 0.5
-#' lambda <- 1.0
-#' nt <- 6
-#' tr <- sim_sptree_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
-#' # for a locus tree with 100 genes sampled per locus tree
-#' loctr_gentr <- sim_locustree_genetree_msc(tr[[1]],
-#'                                            gbr = 0.1,
-#'                                            gdr = 0.0,
-#'                                            lgtr = 0.0,
-#'                                            theta = 1,
-#'                                            num_sampled_individuals = 1,
-#'                                            num_loci = 4,
-#'                                            num_genes_per_locus = 20)
-#'
-#' @references
-#' Mallo D, de Oliveira Martins L, Posada D (2015) SimPhy: Phylogenomic Simulation of Gene, Locus and Species Trees. Syst. Biol. doi: http://dx.doi.org/10.1093/sysbio/syv082
-sim_locustree_genetree_msc <- function(species_tree, gbr, gdr, lgtr, num_loci, num_sampled_individuals, theta, num_genes_per_locus) {
-    .Call(`_treeducken_sim_locustree_genetree_msc`, species_tree, gbr, gdr, lgtr, num_loci, num_sampled_individuals, theta, num_genes_per_locus)
-}
-
 #' Simulate multispecies coalescent on a species tree
 #'
 #' @description Simulates the multispecies coalescent on a species tree.
@@ -223,13 +183,13 @@ sim_locustree_genetree_msc <- function(species_tree, gbr, gdr, lgtr, num_loci, n
 #' tr <- sim_sptree_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
 #' # for a locus tree with 100 genes sampled per locus tree
 #' loctr_gentr <- sim_multispecies_coal(tr[[1]],
-#'                                     ne = 1,
+#'                                     ne = 10000,
 #'                                     num_sampled_individuals = 1,
 #'                                     num_genes = 100)
 #'
 #' @references
 #' Mallo D, de Oliveira Martins L, Posada D (2015) SimPhy: Phylogenomic Simulation of Gene, Locus and Species Trees. Syst. Biol. doi: http://dx.doi.org/10.1093/sysbio/syv082
-sim_multispecies_coal <- function(species_tree, ne, num_sampled_individuals, num_genes, rescale = FALSE, mutation_rate = 1.0, generation_time = 1.0) {
+sim_multispecies_coal <- function(species_tree, ne, num_sampled_individuals, num_genes, rescale = FALSE, mutation_rate = 0.000001, generation_time = 1.0) {
     .Call(`_treeducken_sim_multispecies_coal`, species_tree, ne, num_sampled_individuals, num_genes, rescale, mutation_rate, generation_time)
 }
 

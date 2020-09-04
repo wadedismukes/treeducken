@@ -1,7 +1,9 @@
 ## Test environments
-* local OS X install, R 3.6.2
-* ubuntu 12.04 (on travis-ci), R 3.1.2
-* win-builder (devel and release)
+* local OS X install, R 4.0.2
+* macOS-latest (release) (on Github actions), 4.0.2
+* ubuntu 20.04 (release) (on Github actions), R 4.0.2
+* ubuntu 20.04 (devel) (on Github actions), R 4.0.2
+* windows-latest (on Github actions), R 4.0.2
 
 ## R CMD check results
 There were no ERRORs or WARNINGs. 

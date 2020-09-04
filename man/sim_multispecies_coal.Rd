@@ -10,7 +10,7 @@ sim_multispecies_coal(
   num_sampled_individuals,
   num_genes,
   rescale = FALSE,
-  mutation_rate = 1,
+  mutation_rate = 1e-06,
   generation_time = 1
 )
 }
@@ -43,7 +43,7 @@ nt <- 6
 tr <- sim_sptree_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
 # for a locus tree with 100 genes sampled per locus tree
 loctr_gentr <- sim_multispecies_coal(tr[[1]],
-                                    ne = 1,
+                                    ne = 10000,
                                     num_sampled_individuals = 1,
                                     num_genes = 100)
 

@@ -272,90 +272,6 @@ Rcpp::List sim_cophylo_bdp(SEXP hbr,
                                   timeToSimTo_,
                                   numbsim_);
 }
-//' Simulate locus tree within species tree and gene trees within locus tree
-//'
-//' @description First simulates a locus tree within the confines of the input species tree using a constant-rate birth-death process
-//' based on values of `gbr`, `gdr` and `lgtr`. Then simulates gene trees within that locus tree using the multispecies coalescent process.
-//' This is not sensible in most cases as there should be coalescent bounds at duplications and this function may be removed in the future
-//' @param species_tree input species tree of class "phylo"
-//' @param gbr gene birth rate
-//' @param gdr gene death rate
-//' @param lgtr lateral gene transfer rate'
-//' @param theta the population genetic parameter
-//' @param num_sampled_individuals number of individuals sampled within each locus lineage
-//' @param num_loci number of loci to simulate
-//' @param num_genes_per_locus number of genes to simulate within each locus
-//'
-//' @return A list of lists of length 2. The first element of each list of length 2 is `locus.tree` the locus tree and the second element is a list of the gene trees simulated within that locus tree. All trees are of class "phylo".
-//'
-//' @seealso sim_locustree_bdp
-//'
-//' @examples
-//' # first simulate a species tree
-//' mu <- 0.5
-//' lambda <- 1.0
-//' nt <- 6
-//' tr <- sim_sptree_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
-//' # for a locus tree with 100 genes sampled per locus tree
-//' loctr_gentr <- sim_locustree_genetree_msc(tr[[1]],
-//'                                            gbr = 0.1,
-//'                                            gdr = 0.0,
-//'                                            lgtr = 0.0,
-//'                                            theta = 1,
-//'                                            num_sampled_individuals = 1,
-//'                                            num_loci = 4,
-//'                                            num_genes_per_locus = 20)
-//'
-//' @references
-//' Mallo D, de Oliveira Martins L, Posada D (2015) SimPhy: Phylogenomic Simulation of Gene, Locus and Species Trees. Syst. Biol. doi: http://dx.doi.org/10.1093/sysbio/syv082
-// [[Rcpp::export]]
-Rcpp::List sim_locustree_genetree_msc(SEXP species_tree,
-                                      SEXP gbr,
-                                      SEXP gdr,
-                                      SEXP lgtr,
-                                      SEXP num_loci,
-                                      SEXP num_sampled_individuals,
-                                      SEXP theta,
-                                      SEXP num_genes_per_locus){
-    Rcpp::List species_tree_ = as<Rcpp::List>(species_tree);
-    double gbr_ = as<double>(gbr);
-    double gdr_ = as<double>(gdr);
-    double lgtr_ = as<double>(lgtr);
-    unsigned numLoci = as<int>(num_loci);
-    RNGScope scope;
-    int num_sampled_individuals_ = as<int>(num_sampled_individuals);
-    double theta_ = as<double>(theta);
-    int num_genes_ = as<int>(num_genes_per_locus);
-
-    if(gbr_ < 0.0)
-        stop("'gbr' must be a positive number or 0.0");
-    if(gbr_ < gdr_)
-        stop("'gbr' must be greater than 'gdr'");
-    if(numLoci < 1)
-        stop("'num_loci' must be greater than or equal to 1");
-    if(lgtr_ < 0.0)
-        stop("'lgtr' must be a positive number or 0.0");
-    if(gdr_ < 0.0)
-        stop("'gdr' must be greater than or equal to 0.0");
-    if(theta_ <= 0.0)
-        stop("'theta' must be greater than 0.0.");
-    if(num_genes_ < 1)
-        stop("'num_genes_per_locus' must be greater than or equal to 1");
-    if(num_sampled_individuals_ < 1)
-        stop("'num_sampled_individuals' must be greater than or equal to 1");
-    if(strcmp(species_tree_.attr("class"), "phylo") != 0)
-        stop("species_tree must be an object of class phylo'.");
-    std::shared_ptr<SpeciesTree> specTree = std::shared_ptr<SpeciesTree>(new SpeciesTree(species_tree_));
-    return sim_locus_tree_gene_tree(specTree,
-                          gbr_,
-                          gdr_,
-                          lgtr_,
-                          numLoci,
-                          theta_,
-                          num_sampled_individuals_,
-                          num_genes_);
-}
-
 //' Simulate multispecies coalescent on a species tree
 //'
 //' @description Simulates the multispecies coalescent on a species tree.
@@ -379,7 +295,7 @@ Rcpp::List sim_locustree_genetree_msc(SEXP species_tree,
 //' tr <- sim_sptree_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
 //' # for a locus tree with 100 genes sampled per locus tree
 //' loctr_gentr <- sim_multispecies_coal(tr[[1]],
-//'                                     ne = 1,
+//'                                     ne = 10000,
 //'                                     num_sampled_individuals = 1,
 //'                                     num_genes = 100)
 //'
@@ -391,7 +307,7 @@ Rcpp::List sim_multispecies_coal(SEXP species_tree,
                                  SEXP num_sampled_individuals,
                                  SEXP num_genes,
                                  Rcpp::LogicalVector rescale = false,
-                                 Rcpp::NumericVector mutation_rate = 1e-6,
+                                 Rcpp::NumericVector mutation_rate = 0.000001,
                                  Rcpp::NumericVector generation_time = 1.0){
     Rcpp::List species_tree_ = as<Rcpp::List>(species_tree);
     if(strcmp(species_tree_.attr("class"), "phylo") != 0)
