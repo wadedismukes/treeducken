@@ -13,7 +13,7 @@
 #include <vector>
 #include <iostream>
 #include <RcppArmadillo.h>
-
+#include <memory>
 using namespace Rcpp;
 
 class Node
