@@ -1,8 +1,8 @@
 Package: treeducken
 Type: Package
-Title: Cophylogenetic simulator
+Title: Cophylogenetic Simulator
 Version: 1.0.0
-Date: 2019-12-10
+Date: 2020-09-04
 Authors@R: person("Wade", "Dismukes", email="wade.dismukes@gmail.com",
     role=c("aut","cre"))
 Description: Simulates nested phylogenies (gene trees in species tree, 
