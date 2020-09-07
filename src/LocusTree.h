@@ -18,6 +18,8 @@ class LocusTree : public Tree
 
     public:
         LocusTree(unsigned nt, double stop, double gbr, double gdr, double lgtr);
+        LocusTree(const LocusTree& locustree, unsigned numTaxa);
+        LocusTree(const SpeciesTree& speciestree, unsigned numTaxa, double gbr, double gdr, double ltr);
         virtual         ~LocusTree();
         double  getTimeToNextEvent() override;
         void    lineageBirthEvent(unsigned indx) override;
@@ -59,6 +61,7 @@ class LocusTree : public Tree
         int    calculatePatristicDistance(std::shared_ptr<Node> n1, std::shared_ptr<Node> n2) override;
 
         bool   checkLocusTreeParams();
+        friend class SpeciesTree;
 
 };
 #endif /* LocusTree_h*/

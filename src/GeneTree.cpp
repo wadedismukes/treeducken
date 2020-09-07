@@ -33,11 +33,10 @@ void GeneTree::initializeTree(std::vector< std::vector<int> > extantLociInd, dou
     nodes.clear();
     extantNodes.clear();
     int k = 0;
-    
 
     if(extantLociInd[0].empty()) {
         while(extantLociInd[k].empty()) {
-            k++;
+            k++;            
         }
         num_loci_in_prsent = extantLociInd[k].size();
     }
@@ -60,6 +59,7 @@ void GeneTree::initializeTree(std::vector< std::vector<int> > extantLociInd, dou
             p->setIndx((int) nodes.size());
         }
     }
+
 }
 
 double GeneTree::getCoalTime(int n){
@@ -211,8 +211,6 @@ std::multimap<int, double> GeneTree::rescaleTimes(std::multimap<int, double> tim
 
 void GeneTree::rootCoalescentProcess(double startTime){
     double t = startTime;
-    // search extantNodes for members with Lindx = contempSpecisIndx
-    std::vector<int> ind_in_ext_nodes;
     for(auto en : extantNodes){
         en->setLindx(0);
     }

@@ -206,12 +206,6 @@ bool Simulator::gsaBDSim(){
     spTree->setTreeTipNames();
     // set currentSimTime
     currentSimTime = spTree->getCurrentTimeFromExtant();
-    // if scale is set scale the tree to the value of 'treeScale'
-    if(treeScale > 0.0){
-      spTree->scaleTree(treeScale, currentSimTime);
-      currentSimTime = treeScale;
-    }
-
     treeComplete = true;
 
     return treeComplete;
@@ -1099,7 +1093,6 @@ std::set<double, std::greater<double> > Simulator::getEpochs(){
 bool Simulator::coalescentSim(){
     bool treeGood = false;
     geneTree = std::shared_ptr<GeneTree>(new GeneTree(numTaxaToSim, indPerPop, popSize, generationTime));
-
     std::map<int,int> spToLo;
 
     int ancIndx = -1;
@@ -1197,6 +1190,7 @@ bool Simulator::coalescentSim(){
         }
         // post incremenet
         epochCount++;
+
     }
 
     return treeGood;

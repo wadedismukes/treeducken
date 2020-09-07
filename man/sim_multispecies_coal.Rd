@@ -9,9 +9,9 @@ sim_multispecies_coal(
   ne,
   num_sampled_individuals,
   num_genes,
-  rescale = FALSE,
-  mutation_rate = 1e-06,
-  generation_time = 1
+  rescale = TRUE,
+  mutation_rate = 1L,
+  generation_time = 1e-06
 )
 }
 \arguments{
@@ -27,13 +27,22 @@ sim_multispecies_coal(
 
 \item{mutation_rate}{The rate of mutation per generation}
 
-\item{generation_time}{Number of generations per species tree length}
+\item{generation_time}{Number of generations per time unit}
 }
 \value{
 A list of coalescent trees
 }
 \description{
 Simulates the multispecies coalescent on a species tree.
+}
+\details{
+The generation_time parameter default (1e6) assumes 1 generation per year if the units of the tree are in millions of years.
+The mutation_rate parameter is by default set to 1 mutations per unit time.
+This is set assuming that the unit time is in millions of years. 
+Rescale is set to true by default, this will rescale the tree to be in units of mutations per site per generation.
+If you put in a tree in those units then feel free to set this to false and use the `ne` parameter as the population
+genetic parameter theta.
+However, this is totally arbitrary.
 }
 \examples{
 # first simulate a species tree
@@ -42,13 +51,14 @@ lambda <- 1.0
 nt <- 6
 tr <- sim_sptree_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
 # for a locus tree with 100 genes sampled per locus tree
-loctr_gentr <- sim_multispecies_coal(tr[[1]],
-                                    ne = 1,
+gentrees <- sim_multispecies_coal(tr[[1]],
+                                    ne = 10000,
                                     num_sampled_individuals = 1,
                                     num_genes = 100)
 
 }
 \references{
+Bruce Rannala and Ziheng Yang (2003) Bayes Estimation of Species Divergence Times and Ancestral Population Sizes Using DNA Sequences From Multiple Loci Genetics August 1, 2003 vol. 164 no. 4 1645-1656
 Mallo D, de Oliveira Martins L, Posada D (2015) SimPhy: Phylogenomic Simulation of Gene, Locus and Species Trees. Syst. Biol. doi: http://dx.doi.org/10.1093/sysbio/syv082
 }
 \seealso{

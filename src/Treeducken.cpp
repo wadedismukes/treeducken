@@ -144,11 +144,19 @@ Rcpp::List sim_locus_tree_gene_tree(std::shared_ptr<SpeciesTree> species_tree,
                                                         og,
                                                         ts,
                                                         sout));
+
+
         phySimulator->setSpeciesTree(species_tree);
-
-        phySimulator->simLocusTree();
-
-
+        if(gbr + gdr + lgtr > 0.0){
+            phySimulator->simLocusTree();
+        }
+        else{
+            phySimulator->setLocusTree(std::shared_ptr<LocusTree>(new LocusTree(*species_tree, 
+                                                                                 ntax, 
+                                                                                 0.0, 
+                                                                                 0.0, 
+                                                                                 0.0)));
+        }
         List phyGenesPerLoc(numGenesPerLocus);
 
         for(int j=0; j<numGenesPerLocus; j++){
@@ -162,11 +170,14 @@ Rcpp::List sim_locus_tree_gene_tree(std::shared_ptr<SpeciesTree> species_tree,
             phyGene.attr("class") = "phylo";
             phyGenesPerLoc[j] = phyGene;
         }
+
+        // THE PROBLEM IS HERE I DON'T EVEN THINK I NEED THIS...
         List phyLoc = List::create(Named("edge") = phySimulator->getLocusEdges(),
                                    Named("edge.length") = phySimulator->getLocusEdgeLengths(),
                                    Named("Nnode") = phySimulator->getLocusNnodes(),
                                    Named("tip.label") = phySimulator->getLocusTipNames(),
                                    Named("root.edge") = phySimulator->getLocusTreeRootEdge());
+
         phyLoc.attr("class") = "phylo";
         List locusGeneSet = List::create(Named("container.tree") = phyLoc,
                                          Named("gene.trees") = phyGenesPerLoc);
@@ -184,14 +195,13 @@ Rcpp::List sim_genetree_msc(std::shared_ptr<SpeciesTree> species_tree,
                             double popsize,
                             int samples_per_lineage,
                             int numbsim){
-    
     return sim_locus_tree_gene_tree(species_tree,
                              0.0,
                              0.0,
                              0.0,
                              1,
-                             samples_per_lineage,
                              popsize,
+                             samples_per_lineage,
                              numbsim);
     // this one is a wrapper for above function with locus tree parameters set to 0
 }

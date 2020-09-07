@@ -122,7 +122,7 @@ class Tree
 
         std::vector<std::shared_ptr<Node>> getNodes() { return nodes; }
         std::vector<std::shared_ptr<Node>> getExtantNodes() { return extantNodes; }
-        void        scaleTree( double treeScale , double currtime);
+        void        scaleTree(double scVal);
         void        scaleTreeDepthToValue(double scVal);
 
         void        reconstructTreeFromSim(std::shared_ptr<Node> oRoot);

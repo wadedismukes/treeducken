@@ -2,8 +2,8 @@
 #'
 #' @description  Calculates summary statistics including Colless' statistic, gamma statistic of the locus tree input as an index as part of a list, gamma statistic of gene tree, sackin statistic, cherry statistic, and time to most recent common ancestor
 #'
-#' @param locus_tree_gene_tree_obj Locus tree object obtain from `sim_locustree_genetree_mlc`
-#' @param locus_tree_indx Index of locus tree object of interest
+#' @param container_tree_gene_tree_obj Locus tree object obtain from `sim_locustree_genetree_mlc`
+#' @param container_tree_indx Index of locus tree object of interest
 #'
 #' @return Dataframe with summary statistics for each gene tree
 #' @examples
@@ -13,21 +13,17 @@
 #' nt <- 6
 #' tr <- sim_sptree_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
 #' # for a locus tree with 100 genes sampled per locus tree
-#' loctr_gentr <- sim_locustree_genetree_msc(tr[[1]],
-#'                                           gbr = 0.1,
-#'                                           gdr = 0.0,
-#'                                           lgtr = 0.0,
-#'                                           theta = 1,
-#'                                           num_sampled_individuals = 1,
-#'                                           num_loci = 4,
-#'                                           num_genes_per_locus = 100)
-#' # based on the third locus tree calculate summary statistics
-#' gt_df <- genetree_summary_stat(loctr_gentr, locus_tree_indx = 3)
+#' gentrees <- sim_multispecies_coal(tr[[1]],
+#'                                   ne = 10000,
+#'                                   num_sampled_individuals = 1,
+#'                                   num_genes = 100)
+#'
+#' gt_df <- genetree_summary_stat(gentrees, container_tree_indx = 1)
 #' @export
-genetree_summary_stat <- function(locus_tree_gene_tree_obj, locus_tree_indx){
+genetree_summary_stat <- function(container_tree_gene_tree_obj, container_tree_indx){
 
-    genetrees <- locus_tree_gene_tree_obj[[locus_tree_indx]]$gene.trees
-    locus_tree <- locus_tree_gene_tree_obj[[locus_tree_indx]]$container.tree
+    genetrees <- container_tree_gene_tree_obj[[container_tree_indx]]$gene.trees
+    locus_tree <- container_tree_gene_tree_obj[[container_tree_indx]]$container.tree
     num_genetrees <- length(genetrees)
     colless <- vector(length = num_genetrees)
     gamma_locus <- rep(ape::gammaStat(locus_tree), times = length(genetrees))

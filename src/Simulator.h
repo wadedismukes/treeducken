@@ -98,6 +98,8 @@ class Simulator
         ~Simulator();
         void    setGSAStop(int g) { gsaStop = g; }
         void    setSpeciesTree(std::shared_ptr<SpeciesTree> st) { spTree = st; }
+        void    setLocusTree(std::shared_ptr<LocusTree> lt) { lociTree = lt; }
+
         bool    gsaBDSim();
         bool    bdsaBDSim();
         bool    bdSimpleSim();

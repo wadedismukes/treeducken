@@ -4,12 +4,12 @@
 \alias{genetree_summary_stat}
 \title{Calculate summary statistics for gene trees}
 \usage{
-genetree_summary_stat(locus_tree_gene_tree_obj, locus_tree_indx)
+genetree_summary_stat(container_tree_gene_tree_obj, container_tree_indx)
 }
 \arguments{
-\item{locus_tree_gene_tree_obj}{Locus tree object obtain from `sim_locustree_genetree_mlc`}
+\item{container_tree_gene_tree_obj}{Locus tree object obtain from `sim_locustree_genetree_mlc`}
 
-\item{locus_tree_indx}{Index of locus tree object of interest}
+\item{container_tree_indx}{Index of locus tree object of interest}
 }
 \value{
 Dataframe with summary statistics for each gene tree
@@ -24,14 +24,10 @@ lambda <- 1.0
 nt <- 6
 tr <- sim_sptree_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
 # for a locus tree with 100 genes sampled per locus tree
-loctr_gentr <- sim_locustree_genetree_msc(tr[[1]],
-                                          gbr = 0.1,
-                                          gdr = 0.0,
-                                          lgtr = 0.0,
-                                          theta = 1,
-                                          num_sampled_individuals = 1,
-                                          num_loci = 4,
-                                          num_genes_per_locus = 100)
-# based on the third locus tree calculate summary statistics
-gt_df <- genetree_summary_stat(loctr_gentr, locus_tree_indx = 3)
+gentrees <- sim_multispecies_coal(tr[[1]],
+                                  ne = 10000,
+                                  num_sampled_individuals = 1,
+                                  num_genes = 100)
+
+gt_df <- genetree_summary_stat(gentrees, container_tree_indx = 1)
 }

@@ -16,6 +16,43 @@ LocusTree::LocusTree(unsigned nt, double stop, double gbr, double gdr, double lg
     getRoot()->setLocusID(0);
 }
 
+LocusTree::LocusTree(const LocusTree& locustree, unsigned numTaxa) : Tree(numTaxa) {
+  nodes = locustree.nodes;
+  extantNodes = locustree.extantNodes;
+  root = locustree.root;
+  geneBirthRate = locustree.geneBirthRate;
+  geneDeathRate = locustree.geneDeathRate;
+  transferRate = locustree.transferRate;
+  extantRoot = locustree.extantRoot;
+  currentTime = locustree.currentTime;
+  numNodes = locustree.numNodes;
+  numTotalTips = locustree.numTotalTips;
+  numExtant = locustree.numExtant;
+  numExtinct = locustree.numExtinct;
+}
+
+
+LocusTree::LocusTree(const SpeciesTree& speciestree, unsigned numTaxa, double gbr, double gdr, double ltr) : Tree(numTaxa) {
+  nodes = speciestree.nodes;
+  extantNodes = speciestree.extantNodes;
+  root = speciestree.root;
+  geneBirthRate = gbr;
+  geneDeathRate = gdr;
+  transferRate = ltr;
+  extantRoot = speciestree.extantRoot;
+  currentTime = speciestree.currentTime;
+  numNodes = speciestree.numNodes;
+  numTotalTips = speciestree.numTotalTips;
+  numExtant = speciestree.numExtant;
+  numExtinct = speciestree.numExtinct;
+  int i = 0;
+  for(auto node : nodes) {
+      node->setLindx(i);
+      i++;
+  }
+  branchLengths = speciestree.branchLengths;
+}
+
 LocusTree::~LocusTree(){
 
 }
@@ -23,7 +60,7 @@ LocusTree::~LocusTree(){
 
 
 void LocusTree::setNewLineageInfo(int indx, 
-                                  std::shared_ptr<Node> r, 
+                                  std::shared_ptr<Node> r,
                                   std::shared_ptr<Node> l) {
     extantNodes[indx]->setLdes(l);
     extantNodes[indx]->setRdes(r);
@@ -493,7 +530,6 @@ std::vector< std::vector<int> > LocusTree::getExtantLoci(std::set<double, std::g
                 if(node->getIsExtant()){
                     locusIndx = node->getLindx();
                     locusInEpoch[epCount].push_back(locusIndx);
-
                 }
             }
             else{

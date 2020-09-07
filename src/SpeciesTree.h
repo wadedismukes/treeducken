@@ -67,7 +67,7 @@ class SpeciesTree : public Tree
         int                         postOrderTraversalStep(int index);
         int           findLastToGoExtinct(double eventTime);
         int           getNodesIndxFromExtantIndx(int extanIndx) {return extantNodes[extanIndx]->getIndex(); }
-
+        friend class LocusTree;
 
 };
 

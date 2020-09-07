@@ -259,6 +259,7 @@ double Tree::getTreeDepth(){
         td += r->getBranchLength();
         r = r->getAnc();
     }
+    td += r->getBranchLength();
     return td;
 }
 
@@ -418,18 +419,17 @@ double Tree::getEndTime(){
     return tipDtime;
 }
 
-void Tree::scaleTree(double trScale, double currStime){
-    double bt = 0.0;
-    double dt = 0.0;
-    double scalingFactor = std::log(trScale / currStime);
-    for(auto node : nodes){
-        bt = std::exp(std::log(node->getBirthTime()) + scalingFactor);
-        dt = std::exp(std::log(node->getDeathTime()) + scalingFactor);
-        node->setBirthTime(bt);
-        node->setDeathTime(dt);
-        node->setBranchLength(dt - bt);
-    }
-    return;
+void Tree::scaleTree(double scVal){
+	double scaler = scVal;
+	for(auto node : nodes){
+		double bt = node->getBirthTime();
+        double dt = node->getDeathTime();
+
+		node->setBirthTime(bt * scaler);
+        node->setDeathTime(dt * scaler);
+        node->setBranchLength(node->getDeathTime() - node->getBirthTime());
+	}
+    currentTime = getTreeDepth();
 }
 
 void Tree::scaleTreeDepthToValue(double scVal){
