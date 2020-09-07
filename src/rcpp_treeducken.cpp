@@ -304,6 +304,8 @@ Rcpp::List sim_cophylo_bdp(SEXP hbr,
 //' # for a locus tree with 100 genes sampled per locus tree
 //' gentrees <- sim_multispecies_coal(tr[[1]],
 //'                                     ne = 10000,
+//'                                     mutation_rate = 1e-9,
+//'                                     generation_time = 1e-6,
 //'                                     num_sampled_individuals = 1,
 //'                                     num_genes = 100)
 //'

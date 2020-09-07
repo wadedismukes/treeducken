@@ -171,13 +171,15 @@ sim_cophylo_bdp <- function(hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_t
 #' @param mutation_rate The rate of mutation per generation
 #' @param rescale Rescale the tree into coalescent units (otherwise assumes it is in those units)
 #' @details
-#' The generation_time parameter default (1e-6) assumes 1 year per generation if the units of the tree are in millions of years
-#' The mutation_rate parameter is by default set to 1 mutations per site per generation
-#' This is set assuming that the unit time is in millions of years. 
-#' Rescale is set to true by default, this will rescale the tree to be in units of mutations per site per generation.
-#' If you put in a tree in those units then feel free to set this to false and use the `ne` parameter as the population
+#' This a multispecies coalescent simulator with two usage options.
+#' The function can rescale the given tree into coalescent units given the `mutation_rate`, `ne`, and the `generation_time`.
+#' These result in a tree with coalescent times in units of expected number of mutations per site.
+#' The generation_time parameter default is 1 time unit per generation if the units of the tree are in millions of years
+#' The mutation_rate parameter is by default set to 1 mutations per site per generation (which is nonsensical).
+#' Rescale is set to true by default.
+#'
+#' If rescale is set to false the tree is assumed to be in coalescent units and `ne` is used as the population
 #' genetic parameter theta.
-#' However, this is totally arbitrary. 
 #' @return A list of coalescent trees
 #' @seealso sim_locustree_bdp, sim_sptree_bdp, sim_sptree_bdp_time
 #'
@@ -190,13 +192,15 @@ sim_cophylo_bdp <- function(hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_t
 #' # for a locus tree with 100 genes sampled per locus tree
 #' gentrees <- sim_multispecies_coal(tr[[1]],
 #'                                     ne = 10000,
+#'                                     mutation_rate = 1e-9,
+#'                                     generation_time = 1e-6,
 #'                                     num_sampled_individuals = 1,
 #'                                     num_genes = 100)
 #'
 #' @references
 #' Bruce Rannala and Ziheng Yang (2003) Bayes Estimation of Species Divergence Times and Ancestral Population Sizes Using DNA Sequences From Multiple Loci Genetics August 1, 2003 vol. 164 no. 4 1645-1656
 #' Mallo D, de Oliveira Martins L, Posada D (2015) SimPhy: Phylogenomic Simulation of Gene, Locus and Species Trees. Syst. Biol. doi: http://dx.doi.org/10.1093/sysbio/syv082
-sim_multispecies_coal <- function(species_tree, ne, num_sampled_individuals, num_genes, rescale = TRUE, mutation_rate = 0.0000001, generation_time = 0.000001) {
+sim_multispecies_coal <- function(species_tree, ne, num_sampled_individuals, num_genes, rescale = TRUE, mutation_rate = 1L, generation_time = 1L) {
     .Call(`_treeducken_sim_multispecies_coal`, species_tree, ne, num_sampled_individuals, num_genes, rescale, mutation_rate, generation_time)
 }
 

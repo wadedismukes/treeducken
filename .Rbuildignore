@@ -8,3 +8,5 @@ compile_commands\.json
 src/.*\.o\.json
 ^\.travis\.yml$
 ^\.github$
+^LICENSE\.md$
+^CODE_OF_CONDUCT\.md$

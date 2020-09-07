@@ -2,13 +2,12 @@ Package: treeducken
 Type: Package
 Title: Cophylogenetic Simulator
 Version: 1.0.0
-Date: 2020-09-04
 Authors@R: person("Wade", "Dismukes", email="wade.dismukes@gmail.com",
     role=c("aut","cre"))
 Description: Simulates nested phylogenies (gene trees in species tree, 
     parasite trees in host trees) using birth-death processes and transfers
     between lineages.
-License: GPL (>= 2)
+License: GPL-3
 SystemRequirements: C++11
 Imports: 
     Rcpp (>= 1.0.2),

@@ -11,7 +11,7 @@ sim_multispecies_coal(
   num_genes,
   rescale = TRUE,
   mutation_rate = 1L,
-  generation_time = 1e-06
+  generation_time = 1L
 )
 }
 \arguments{
@@ -27,7 +27,7 @@ sim_multispecies_coal(
 
 \item{mutation_rate}{The rate of mutation per generation}
 
-\item{generation_time}{Number of generations per time unit}
+\item{generation_time}{The number of time units per generation}
 }
 \value{
 A list of coalescent trees
@@ -36,13 +36,15 @@ A list of coalescent trees
 Simulates the multispecies coalescent on a species tree.
 }
 \details{
-The generation_time parameter default (1e6) assumes 1 generation per year if the units of the tree are in millions of years.
-The mutation_rate parameter is by default set to 1 mutations per unit time.
-This is set assuming that the unit time is in millions of years. 
-Rescale is set to true by default, this will rescale the tree to be in units of mutations per site per generation.
-If you put in a tree in those units then feel free to set this to false and use the `ne` parameter as the population
+This a multispecies coalescent simulator with two usage options.
+The function can rescale the given tree into coalescent units given the `mutation_rate`, `ne`, and the `generation_time`.
+These result in a tree with coalescent times in units of expected number of mutations per site.
+The generation_time parameter default is 1 time unit per generation if the units of the tree are in millions of years
+The mutation_rate parameter is by default set to 1 mutations per site per generation (which is nonsensical).
+Rescale is set to true by default.
+
+If rescale is set to false the tree is assumed to be in coalescent units and `ne` is used as the population
 genetic parameter theta.
-However, this is totally arbitrary.
 }
 \examples{
 # first simulate a species tree
@@ -53,6 +55,8 @@ tr <- sim_sptree_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
 # for a locus tree with 100 genes sampled per locus tree
 gentrees <- sim_multispecies_coal(tr[[1]],
                                     ne = 10000,
+                                    mutation_rate = 1e-9,
+                                    generation_time = 1e-6,
                                     num_sampled_individuals = 1,
                                     num_genes = 100)
 

@@ -51,15 +51,15 @@ tr_pair <- sim_cophylo_bdp(hbr=0.1,
                           host_exp_rate=0.4,
                           sbr = 0.05,
                           cosp_rate = 1.0,
-                          numbsim = 100,
-                          time_to_sim =1)
-# maybe we are interested in only cophylogenetic object 42
-ht <- tr_pair[[42]]$host_tree
-st <- tr_pair[[42]]$symb_tree
-A <- tr_pair[[42]]$association_mat
+                          numbsim = 1,
+                          time_to_sim = 1)
+# maybe we are interested in only cophylogenetic object 1
+ht <- tr_pair[[1]]$host_tree
+st <- tr_pair[[1]]$symb_tree
+A <- tr_pair[[1]]$association_mat
 pfs <- parafit_stat(host_tr = ht, symb_tr = st, assoc_mat = A)
 
-parafit_test(ht, st, A, pfs, reps = 99)
+parafit_test(ht, st, A, pfs, reps = 19)
 }
 \references{
 Legendre, P., Y. Desdevises and E. Bazin. 2002. A statistical test for host-parasite coevolution. Systematic Biology, 51(2), 217–234.
