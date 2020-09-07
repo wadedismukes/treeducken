@@ -106,13 +106,13 @@ Rcpp::List sim_sptree_bdp_time(SEXP sbr, SEXP sdr, SEXP numbsim, SEXP t){
 //' @param species_tree species tree to simulate along
 //' @param gbr gene birth rate
 //' @param gdr gene death rate
-//' @param lgtr gene trasnfer rate
+//' @param lgtr gene transfer rate
 //' @param num_loci number of locus trees to simulate
 //' @param transfer_type The type of transfer input. Acceptable options: "cladewise" or "random"
 //' @return List of objects of the tree class (as implemented in APE)
 //' @details Given a species tree will perform a birth-death process coupled with transfer.
 //' The simulation runs along the species tree speciating and going extinct in addition to locus tree birth and deaths.
-//' Thus with parameters set to 0.0 a tree identical to the species tree is returned (it is relabele however).
+//' Thus with parameters set to 0.0 a tree identical to the species tree is returned (it is relabel however).
 //'
 //' Transfers are implemented as a birth-death process.
 //' One descendant lineage retains its species identity the other gains a new identity.

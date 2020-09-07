@@ -56,7 +56,7 @@ cophy_summary_stat_by_indx <- function(cophy_obj, cophy_obj_indx){
     parafit_test)
    # cophy_eigen)
 }
-#' Calculates summary statistics for cophylogenetyic objects
+#' Calculates summary statistics for cophylogenetic objects
 #'
 #' @description For cophylogenetic objects produced in treeducken via `sim_cophylo_bdp`, calculates the numbers of different events of interest. In addition, calculates and tests the ParaFit test.
 #'

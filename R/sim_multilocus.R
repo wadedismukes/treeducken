@@ -1,6 +1,6 @@
 #' Simulates multi-locus coalescent on a given locus tree
 #'
-#' @description Seperates a locus tree into loci broken up by
+#' @description separates a locus tree into loci broken up by
 #' duplications  and simulates the coalescent on each loci.
 #'
 #' @param locus_tree a locus tree from `sim_locustree_bdp` of class `phy`
@@ -118,7 +118,7 @@ sim_multilocus_coal <- function(locus_tree,
 }
 #' Separate a locus tree into loci
 #'
-#' @details This seperates loci based on node labels "D[A-Z]". This is intended
+#' @details This separates loci based on node labels "D[A-Z]". This is intended
 #' to be used internally, but should work with other trees where duplications
 #' are marked similarly.
 #' 

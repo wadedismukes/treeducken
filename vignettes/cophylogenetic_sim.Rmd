@@ -158,7 +158,7 @@ symb_tree_locus_trees <- sim_locustree_bdp(symb_tree,
 str(symb_tree_locus_trees[[1]])
 ```
 
-Using these locus trees we can simulate under the multi-locus coalescent process (see Rasmussen and Kellis 2012). We can speficy
+Using these locus trees we can simulate under the multi-locus coalescent process (see Rasmussen and Kellis 2012). We can specify
 an effective population size and a generation time measured in generations per unit time. For now we will assume that the time of 
 our trees is in units of millions of years. The default for generation time is then 1 time per year (1e-6). And we will randomly
 draw an effective population size from a Lognormal with mean 14 and standard deviation 0.4. Note that the only reason these values

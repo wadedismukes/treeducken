@@ -3,7 +3,7 @@
 \name{cophy_summary_stat_by_indx}
 \alias{cophy_summary_stat_by_indx}
 \alias{cophy_summary_stat}
-\title{Calculates summary statistics for cophylogenetyic objects}
+\title{Calculates summary statistics for cophylogenetic objects}
 \usage{
 cophy_summary_stat_by_indx(cophy_obj, cophy_obj_indx)
 

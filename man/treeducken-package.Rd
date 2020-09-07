@@ -30,7 +30,7 @@ Wade Dismukes
 <wade.dismukes@gmail.com>
 }
 \references{
-  Dismukes W. and Tracy A. Heath, Something someting (work-in-progress)
+  Dismukes W. and Tracy A. Heath, Something something (work-in-progress)
 }
 \keyword{ package }
 \seealso{

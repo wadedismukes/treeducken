@@ -16,7 +16,7 @@ list of subtrees (with `locus_tree at the end`)
 Separate a locus tree into loci
 }
 \details{
-This seperates loci based on node labels "D[A-Z]". This is intended
+This separates loci based on node labels "D[A-Z]". This is intended
 to be used internally, but should work with other trees where duplications
 are marked similarly.
 }

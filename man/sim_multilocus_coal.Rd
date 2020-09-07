@@ -28,7 +28,7 @@ A list of list of gene trees of length `num_reps` simulated along each locus.
 The first member of the list is the parent tree, all others are child trees
 }
 \description{
-Seperates a locus tree into loci broken up by
+separates a locus tree into loci broken up by
 duplications  and simulates the coalescent on each loci.
 }
 \details{

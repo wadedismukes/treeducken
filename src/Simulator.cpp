@@ -1039,7 +1039,7 @@ bool Simulator::bdsaBDSim(){
       }
       // locus tree event (assuming parameters are NON-ZERO)
       // if parameters are all 0 no locus tree events occur and we get
-      // the species tree back (relabeled)
+      // the species tree back (relabeld)
       if(lociTree->checkLocusTreeParams()){
         lociTree->ermEvent(currentSimTime);
       }

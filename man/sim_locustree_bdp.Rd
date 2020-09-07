@@ -20,7 +20,7 @@ sim_locustree_bdp(
 
 \item{gdr}{gene death rate}
 
-\item{lgtr}{gene trasnfer rate}
+\item{lgtr}{gene transfer rate}
 
 \item{num_loci}{number of locus trees to simulate}
 
@@ -36,7 +36,7 @@ Given a species tree simulates a locus or gene family tree along
 \details{
 Given a species tree will perform a birth-death process coupled with transfer.
 The simulation runs along the species tree speciating and going extinct in addition to locus tree birth and deaths.
-Thus with parameters set to 0.0 a tree identical to the species tree is returned (it is relabele however).
+Thus with parameters set to 0.0 a tree identical to the species tree is returned (it is relabel however).
 
 Transfers are implemented as a birth-death process.
 One descendant lineage retains its species identity the other gains a new identity.
