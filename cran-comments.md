@@ -3,6 +3,7 @@
 * macOS-latest (release) (on Github actions), 4.0.2
 * ubuntu 20.04 (release) (on Github actions), R 4.0.2
 * windows-latest (on Github actions), R 4.0.2
+* win-builder (release)
 
 ## R CMD check results
 There were no ERRORs or WARNINGs.
