@@ -8,10 +8,10 @@ test_that("sim_sptree_bdp produces the right number of trees", {
     expect_equal(length(sim_sptree_bdp(1.0, 0.5, 20, 10)), 20)
 })
 
-get_number_extant_tips <- function(tr){
+get_number_extant_tips <- function(tr) {
     tip_vec <- vector(length = length(tr))
     for(i in 1:length(tr)){
-        pruned_tr <- geiger::drop.extinct(tr[[i]])
+        pruned_tr <- geiger::drop.extinct(tr[[i]], tol = 0.0000001)
         tip_vec[i] <- length(pruned_tr$tip.label)
     }
     unique(tip_vec)
@@ -19,9 +19,9 @@ get_number_extant_tips <- function(tr){
 
 # test that tree has correct extant tips (gsa)
 test_that("sim_sptree_bdp produces the right number of extant tips", {
-    expect_equal(get_number_extant_tips(sim_sptree_bdp(1.0, 0.5, 10, n_tips = 10)), 10)
-    expect_equal(get_number_extant_tips(sim_sptree_bdp(1.0, 0.5, 10, n_tips = 5)), 5)
-    expect_equal(get_number_extant_tips(sim_sptree_bdp(1.0, 0.5, 10, n_tips = 20)), 20)
+    expect_equal(get_number_extant_tips(sim_sptree_bdp(1.0, 0.5, 100, n_tips = 10)), 10)
+    expect_equal(get_number_extant_tips(sim_sptree_bdp(1.0, 0.5, 100, n_tips = 5)), 5)
+    expect_equal(get_number_extant_tips(sim_sptree_bdp(1.0, 0.5, 100, n_tips = 20)), 20)
 })
 
 
