@@ -1,7 +1,20 @@
+## Resubmission
+
+* Changed wording in DESCRIPTION to avoid spelling notes
+
+* Altered example to increase runtime
+
+* Fixed error in unit test causing it to fail occasionally
+
+* Updated URL in README.md
+
+* Fixed seg fault occurring during tests 
+
 ## Test environments
 * local OS X install, R 4.0.2
 * macOS-latest (release) (on Github actions), 4.0.2
 * ubuntu 20.04 (release) (on Github actions), R 4.0.2
+* ubuntu 20.04 (devel) (on Github actions), R 4.0.2
 * windows-latest (on Github actions), R 4.0.2
 * win-builder (release)
 

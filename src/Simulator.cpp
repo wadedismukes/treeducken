@@ -1037,17 +1037,18 @@ bool Simulator::bdsaBDSim(){
         currentSimTime = stopTime;
         break;
       }
+      // we get to 0 living nodes end sm
+      if(lociTree->getNumTips() < 1){ // TODO: this should be refactored because the function name makes no sense
+        treesComplete = false;
+        return treesComplete;
+      }
       // locus tree event (assuming parameters are NON-ZERO)
       // if parameters are all 0 no locus tree events occur and we get
       // the species tree back (relabeld)
       if(lociTree->checkLocusTreeParams()){
         lociTree->ermEvent(currentSimTime);
       }
-      // we get to 0 living nodes end sm
-      if(lociTree->getNumExtant() < 1){
-        treesComplete = false;
-        return treesComplete;
-      }
+
     }
 
     currentSimTime = stopTime;

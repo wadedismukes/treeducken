@@ -1,10 +1,10 @@
 Package: treeducken
 Type: Package
-Title: Cophylogenetic Simulator
+Title: Nested Phylogenetic Tree Simulator
 Version: 1.0.0
 Authors@R: person("Wade", "Dismukes", email="wade.dismukes@gmail.com",
     role=c("aut","cre"))
-Description: Simulates nested phylogenies (gene trees in species tree, 
+Description: Simulates nested phylogenetic trees (gene trees in species tree, 
     parasite trees in host trees) using birth-death processes and transfers
     between lineages.
 License: GPL-3

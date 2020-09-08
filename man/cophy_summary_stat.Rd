@@ -30,7 +30,7 @@ For cophylogenetic objects produced in treeducken via `sim_cophylo_bdp`, calcula
 \examples{
 host_mu <- 0.5 # death rate
 host_lambda <- 2.0 # birth rate
-numb_replicates <- 10
+numb_replicates <- 1
 time <- 1.0
 symb_mu <- 0.2
 symb_lambda <- 0.4
