@@ -164,8 +164,8 @@ parafit_stat <- function(host_tr, symb_tr, assoc_mat){
     }
     if(!("matrix" %in% class(assoc_mat)))
       stop("'assoc_mat' must be an object of class 'matrix'")
-    host_tree <- geiger::drop.extinct(host_tr, tol= 0.001)
-    symb_tree <- geiger::drop.extinct(symb_tr, tol = 0.001)
+    host_tree <- treeducken::drop_extinct(host_tr, tol= 0.001)
+    symb_tree <- treeducken::drop_extinct(symb_tr, tol = 0.001)
 
     if(length(host_tree$tip.label) < 3)
     {

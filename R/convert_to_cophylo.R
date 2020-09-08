@@ -56,8 +56,8 @@ convert_to_cophy <- function(hostTree, symbTree, assocMat, eventHistory = NULL){
         if(!(identical(class(eventHistory), "data.frame")))
             stop("`eventHistory` input is not of class `data.frame`")
     }
-    pruned_host_tree <- geiger::drop.extinct(hostTree, tol = 0.0001)
-    pruned_symb_tree <- geiger::drop.extinct(symbTree, tol = 0.0001)
+    pruned_host_tree <- treeducken::drop_extinct(hostTree, tol = 0.0001)
+    pruned_symb_tree <- treeducken::drop_extinct(symbTree, tol = 0.0001)
     nExtHostTips <- length(pruned_host_tree$tip.label)
     nExtSymbTips <- length(pruned_symb_tree$tip.label)
     if(nExtHostTips != ncol(assocMat))

@@ -11,7 +11,7 @@ test_that("sim_sptree_bdp produces the right number of trees", {
 get_number_extant_tips <- function(tr) {
     tip_vec <- vector(length = length(tr))
     for(i in 1:length(tr)){
-        pruned_tr <- geiger::drop.extinct(tr[[i]], tol = 0.0000001)
+        pruned_tr <- treeducken::drop_extinct(tr[[i]], tol = 0.0000001)
         tip_vec[i] <- length(pruned_tr$tip.label)
     }
     unique(tip_vec)

@@ -53,8 +53,8 @@ plot.cophy <-
 
     host <- x$host_tree
     symb <- x$symb_tree
-    host_tree_pruned <- geiger::drop.extinct(host)
-    symb_tree_pruned <- geiger::drop.extinct(symb)
+    host_tree_pruned <- treeducken::drop_extinct(host)
+    symb_tree_pruned <- treeducken::drop_extinct(symb)
     rownames(x$association_mat) <- symb_tree_pruned$tip.label
     colnames(x$association_mat) <- host_tree_pruned$tip.label
     assoc <- which(x$association_mat == 1, arr.ind = TRUE)
