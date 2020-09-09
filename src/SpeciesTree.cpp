@@ -181,7 +181,7 @@ void SpeciesTree::setTreeTipNames(){
   unsigned tipIt = 0;
   std::stringstream tn;
 
-  for(int i=0; i < nodes.size(); i++){
+  for(unsigned int i=0; i < nodes.size(); i++){
     if(nodes[i]->getIsTip()){
       tipIt++;
       nodes[i]->setIndx(tipIt);
@@ -397,7 +397,7 @@ void SpeciesTree::reconstructLineageFromGSASim(std::shared_ptr<Node> currN,
 
 std::map<int,int> SpeciesTree::makeIndxMap(){
   std::map<int,int> indxMap;
-  for(int i=0; i < nodes.size(); i++){
+  for(unsigned int i=0; i < nodes.size(); i++){
     int rIndx = nodes[i]->getIndex();
     int tdckenIndx = i;
     indxMap.insert(std::pair<int,int>(rIndx, tdckenIndx));
@@ -408,7 +408,7 @@ std::map<int,int> SpeciesTree::makeIndxMap(){
 
 std::map<int, std::string> SpeciesTree::makeTipMap(){
   std::map<int, std::string> tipMap;
-  for(int i = 0; i < nodes.size(); i++)
+  for(unsigned int i = 0; i < nodes.size(); i++)
   {
     if(nodes[i]->getIsTip())
     {
@@ -476,7 +476,7 @@ int SpeciesTree::findLastToGoExtinct(double EventTime){
   int indxExtinct = -1;
   double epsi = std::numeric_limits<double>::epsilon();
   bool is_near = false;
-  for(int i=0; i < nodes.size(); i++){
+  for(unsigned int i=0; i < nodes.size(); i++){
     if(nodes[i]->getIsTip() && nodes[i]->getIsExtinct()){
       double scale = std::max(abs(EventTime), abs(nodes[i]->getDeathTime()));
       is_near = abs(nodes[i]->getDeathTime() - EventTime) <= scale *(2*epsi);
@@ -493,7 +493,7 @@ int SpeciesTree::findLastToGoExtinct(double EventTime){
 double SpeciesTree::getCurrentTime() {
     std::vector<double> tempDeathTimes;
     tempDeathTimes.resize(nodes.size());
-    for(int i = 0; i < nodes.size(); i++) {
+    for(unsigned int i = 0; i < nodes.size(); i++) {
         tempDeathTimes[i] = nodes[i]->getDeathTime();
     }
     sort(tempDeathTimes.begin(), tempDeathTimes.end(), std::greater<double>());

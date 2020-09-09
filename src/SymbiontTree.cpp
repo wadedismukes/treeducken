@@ -68,9 +68,9 @@ void SymbiontTree::setSymbTreeInfoSpeciation(int indxToFind, int indxToReplace){
 
 void SymbiontTree::setSymbTreeInfoExtinction(int deadIndx){
     std::vector<int> toBeExtincted;
-    for(int i = 0; i < extantNodes.size(); i++){
+    for(unsigned int i = 0; i < extantNodes.size(); i++){
         std::vector<int> hostsOf = extantNodes[i]->getHosts();
-        for(int j = 0; j < hostsOf.size(); j++){
+        for(unsigned int j = 0; j < hostsOf.size(); j++){
             if(hostsOf[j] == deadIndx){
                 std::swap(hostsOf.back(),j);
                 hostsOf.pop_back();
@@ -228,7 +228,7 @@ void SymbiontTree::setTreeTipNames(){
     unsigned tipIt = 0;
     std::stringstream tn;
 
-    for(int i=0; i < nodes.size(); i++){
+    for(unsigned int i=0; i < nodes.size(); i++){
         if(nodes[i]->getIsTip()){
             tipIt++;
             nodes[i]->setIndx(tipIt);
@@ -323,7 +323,7 @@ void SymbiontTree::cospeciationMapUpdate(int oldHostIndx,
     std::vector<int> leftHostSymbiontsValues;
     std::vector<int> rightHostSymbiontsValues;
     std::vector<std::shared_ptr<Node>> nodesForUpdating = this->getNodes();
-    for(int i = 0; i < symbsOnHost.size(); i++){
+    for(unsigned int i = 0; i < symbsOnHost.size(); i++){
         std::vector<int> hostsInSymb = nodesForUpdating[symbsOnHost[i]]->getHosts();
         if(oldSymbIndx == symbsOnHost[i]){
             leftHostSymbiontsValues.push_back(this->getNodesSize() - 1);
@@ -333,14 +333,14 @@ void SymbiontTree::cospeciationMapUpdate(int oldHostIndx,
             double which = unif_rand();
             if(which < 0.5){
                 leftHostSymbiontsValues.push_back(symbsOnHost[i]);
-                for(int i=0; i < hostsInSymb.size(); i++){
+                for(unsigned int i=0; i < hostsInSymb.size(); i++){
                     if(hostsInSymb[i] == oldHostIndx)
                         hostsInSymb[i] = numNodesHost - 1;
                 }
             }
             else{
                 rightHostSymbiontsValues.push_back(symbsOnHost[i]);
-                for(int i=0; i < hostsInSymb.size(); i++){
+                for(unsigned int i=0; i < hostsInSymb.size(); i++){
                     if(hostsInSymb[i] == oldHostIndx)
                         hostsInSymb[i] = numNodesHost - 2;
                 }
@@ -359,9 +359,7 @@ void SymbiontTree::cospeciationMapUpdate(int oldHostIndx,
 }
 
 void SymbiontTree::updateHostsInNodes(){
-    for(int i=0; i < nodes.size(); i++){
 
-    }
 }
 
 int SymbiontTree::getExtantIndxFromNodes(int nodesIndx){

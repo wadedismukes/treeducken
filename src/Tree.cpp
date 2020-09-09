@@ -506,7 +506,7 @@ void Tree::setNumExtinct(){
 void Tree::reindexForR(){
     unsigned int intNodeCount = numExtant + numExtinct + 1;
     unsigned int tipCount = 1;
-    for(int i = 0; i < nodes.size(); i++){
+    for(unsigned int i = 0; i < nodes.size(); i++){
         if(nodes[i]->getIsTip()){
             nodes[i]->setIndx(tipCount);
             tipCount++;
@@ -526,7 +526,7 @@ void Tree::reindexForR(){
 NumericMatrix Tree::getEdges(){
     int numRows = (int) nodes.size() - 1;
     NumericMatrix edgeMat(numRows, 2);
-    for(int i=1; i < nodes.size(); i++){
+    for(unsigned int i=1; i < nodes.size(); i++){
         if(!(nodes[i]->getIsRoot())){
 
             NumericMatrix::Row row = edgeMat(i - 1, _);
@@ -548,7 +548,7 @@ std::vector<double> Tree::getEdgeLengths(){
 }
 
 void Tree::switchIndicesFirstToSecond(std::map<int,int> mappy){
-    for(int i = 0; i < nodes.size(); i++){
+    for(unsigned int i = 0; i < nodes.size(); i++){
         int newIndx = mappy[nodes[i]->getIndex()];
         nodes[i]->setIndx(newIndx);
     }

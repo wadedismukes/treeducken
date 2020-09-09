@@ -102,7 +102,7 @@ class Tree
         std::shared_ptr<Node>    getExtantRoot() { return extantRoot; }
         void        setExtantRoot(std::shared_ptr<Node> r) { extantRoot = r; }
         void        setRoot(std::shared_ptr<Node> r) { root = r; }
-        int         getNumExtant() {return numExtant; }
+        unsigned int         getNumExtant() {return numExtant; }
         int         getNumTips() { return extantNodes.size(); }
         int         getNumExtinct() {return numExtinct; }
         int         getNodesSize() { return (int) nodes.size(); }
