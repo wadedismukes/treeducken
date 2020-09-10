@@ -21,7 +21,7 @@ class SymbiontTree : public Tree {
       unsigned numTaxa;
       unsigned numExpansions;
       unsigned hostLimit;
-      std::map<int,std::vector<int>> symbHostMap; // keys are symb indices
+      std::map<unsigned int,std::vector<unsigned int>> symbHostMap; // keys are symb indices
 
     public:
       SymbiontTree(int nt,
@@ -40,16 +40,16 @@ class SymbiontTree : public Tree {
                                          arma::umat assocMat);
       void    lineageBirthEvent(unsigned indx) override;
       void    lineageDeathEvent(unsigned indx) override;
-      virtual void    setNewLineageInfo(int indx, std::shared_ptr<Node> r, std::shared_ptr<Node> s);
-      void            setNewLineageInfoExpan(int indx,
+      virtual void    setNewLineageInfo(unsigned int indx, std::shared_ptr<Node> r, std::shared_ptr<Node> s);
+      void            setNewLineageInfoExpan(unsigned int indx,
                                              std::shared_ptr<Node> r,
                                              std::shared_ptr<Node> s,
-                                             int hostIndx);
-      void            hostExpansionEvent(int indx, int hostIndx);
+                                             unsigned int hostIndx);
+      void            hostExpansionEvent(unsigned int indx, unsigned int hostIndx);
       arma::umat       ermJointEvent(double ct, arma::umat assocMat);
 
-      void            setSymbTreeInfoSpeciation(int ancIndx, int desIndx);
-      void            setSymbTreeInfoExtinction(int deadIndx);
+      void            setSymbTreeInfoSpeciation(unsigned int ancIndx, unsigned int desIndx);
+      void            setSymbTreeInfoExtinction(unsigned int deadIndx);
 
       //std::string     printNewickTree();
       void            setTreeTipNames() override;
@@ -64,14 +64,14 @@ class SymbiontTree : public Tree {
       int             getNumberExpansions() {return numExpansions; }
       int             getNumHostSymbPairs() { return symbHostMap.size(); }
 
-      std::vector<int>  getSymbsOnHost(int hostIndx);
-      void            updateCurrentMap(int oldHostIndx, int newHostIndx);
-      int             getExtantIndxFromNodes(int extantNodesIndx);
-      void            cospeciationMapUpdate(int oldHostIndx,
-                                            int numHosts,
-                                            int symbIndx);
+      std::vector<unsigned int>  getSymbsOnHost(unsigned int hostIndx);
+      void            updateCurrentMap(unsigned int oldHostIndx, unsigned int newHostIndx);
+      int             getExtantIndxFromNodes(unsigned int extantNodesIndx);
+      void            cospeciationMapUpdate(unsigned int oldHostIndx,
+                                            unsigned int numHosts,
+                                            unsigned int symbIndx);
       void            updateHostsInNodes();
-      int             getNodesIndxFromExtantIndx(int i) { return extantNodes[i]->getIndex(); }
+      unsigned int             getNodesIndxFromExtantIndx(int i) { return extantNodes[i]->getIndex(); }
 
 };
 

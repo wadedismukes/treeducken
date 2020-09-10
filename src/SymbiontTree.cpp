@@ -18,10 +18,10 @@ SymbiontTree::SymbiontTree(int nt,
     numExpansions = 0;
     hostLimit = K;
     root->addHost(0);
-    std::vector<int> initialHosts;
+    std::vector<unsigned> initialHosts;
     initialHosts.resize(1);
     initialHosts[0] = 0;
-    symbHostMap.insert(std::pair<int,std::vector<int>> (0,initialHosts));
+    symbHostMap.insert(std::pair<unsigned,std::vector<unsigned>> (0,initialHosts));
 }
 
 SymbiontTree::SymbiontTree(const SymbiontTree& symbionttree, unsigned numTaxa) : Tree(numTaxa) {
@@ -56,23 +56,23 @@ double SymbiontTree::getTimeToNextJointEvent(double hostSpecRate,
     return returnTime;
 }
 
-void SymbiontTree::setSymbTreeInfoSpeciation(int indxToFind, int indxToReplace){
+void SymbiontTree::setSymbTreeInfoSpeciation(unsigned int indxToFind, unsigned int indxToReplace){
     for(auto s = extantNodes.begin(); s != extantNodes.end(); ++s){
-        std::vector<int> hostsOfS = (*s)->getHosts();
-        for(std::vector<int>::iterator it=hostsOfS.begin(); it != hostsOfS.end(); ++it){
-            if((*it) == indxToFind)
-                (*it) = indxToReplace;
+        std::vector<unsigned int> hostsOfS = (*s)->getHosts();
+        for(auto hosts : hostsOfS){
+            if(hosts == indxToFind)
+                hosts = indxToReplace;
         }
     }
 }
 
-void SymbiontTree::setSymbTreeInfoExtinction(int deadIndx){
-    std::vector<int> toBeExtincted;
+void SymbiontTree::setSymbTreeInfoExtinction(unsigned int deadIndx){
+    std::vector<unsigned int> toBeExtincted;
     for(unsigned int i = 0; i < extantNodes.size(); i++){
-        std::vector<int> hostsOf = extantNodes[i]->getHosts();
+        std::vector<unsigned int> hostsOf = extantNodes[i]->getHosts();
         for(unsigned int j = 0; j < hostsOf.size(); j++){
             if(hostsOf[j] == deadIndx){
-                std::swap(hostsOf.back(),j);
+                std::swap(hostsOf.back(), j);
                 hostsOf.pop_back();
             }
              
@@ -81,14 +81,14 @@ void SymbiontTree::setSymbTreeInfoExtinction(int deadIndx){
             toBeExtincted.push_back(i);
     }
     if(!(toBeExtincted.empty())){
-        for(int i = 0; i < toBeExtincted.size(); i++){
+        for(unsigned int i = 0; i < toBeExtincted.size(); i++){
             this->lineageDeathEvent(toBeExtincted[i]);
         }
     }
 }
 
-std::vector<int> SymbiontTree::getSymbsOnHost(int hostIndx){
-    std::vector<int> symbs = symbHostMap[hostIndx];
+std::vector<unsigned int> SymbiontTree::getSymbsOnHost(unsigned int hostIndx){
+    auto symbs = symbHostMap[hostIndx];
     return symbs;
 }
 
@@ -108,7 +108,7 @@ void SymbiontTree::lineageDeathEvent(unsigned indx){
     numExtant = (int) extantNodes.size();
 }
 
-void SymbiontTree::setNewLineageInfo(int indx, std::shared_ptr<Node> r, std::shared_ptr<Node> l){
+void SymbiontTree::setNewLineageInfo(unsigned int indx, std::shared_ptr<Node> r, std::shared_ptr<Node> l){
     extantNodes[indx]->setLdes(l);
     extantNodes[indx]->setRdes(r);
     extantNodes[indx]->setDeathTime(currentTime);
@@ -182,13 +182,16 @@ arma::umat SymbiontTree::ermJointEvent(double ct, arma::umat assocMat){
     return assocMat;
 }
 
-void SymbiontTree::hostExpansionEvent(int indx, int hostIndx){
+void SymbiontTree::hostExpansionEvent(unsigned int indx, unsigned int hostIndx){
     std::shared_ptr<Node> right = std::shared_ptr<Node>(new Node());
     std::shared_ptr<Node> sis = std::shared_ptr<Node>(new Node());
     this->setNewLineageInfoExpan(indx, right, sis, hostIndx);
 }
 
-void SymbiontTree::setNewLineageInfoExpan(int indx, std::shared_ptr<Node> r, std::shared_ptr<Node> l, int hostIndx){
+void SymbiontTree::setNewLineageInfoExpan(unsigned int indx,
+                                         std::shared_ptr<Node> r, 
+                                         std::shared_ptr<Node> l, 
+                                         unsigned int hostIndx){
     extantNodes[indx]->setLdes(l);
     extantNodes[indx]->setRdes(r);
     extantNodes[indx]->setDeathTime(currentTime);
@@ -300,9 +303,8 @@ void SymbiontTree::setPresentTime(double currentT){
 }
 
 
-void SymbiontTree::updateCurrentMap(int oldHostIndx, int newHostIndx){
-    std::map<int, std::vector<int>>::iterator found;
-    found = symbHostMap.find(oldHostIndx);
+void SymbiontTree::updateCurrentMap(unsigned int oldHostIndx, unsigned int newHostIndx){
+    auto found = symbHostMap.find(oldHostIndx);
     if (found != symbHostMap.end()) {
         // Swap value from oldKey to newKey, note that a default constructed value
         // is created by operator[] if 'm' does not contain newKey.
@@ -315,16 +317,16 @@ void SymbiontTree::updateCurrentMap(int oldHostIndx, int newHostIndx){
 
 
 
-void SymbiontTree::cospeciationMapUpdate(int oldHostIndx,
-                                         int numNodesHost,
-                                         int oldSymbIndx){
+void SymbiontTree::cospeciationMapUpdate(unsigned int oldHostIndx,
+                                         unsigned int numNodesHost,
+                                         unsigned int oldSymbIndx){
 
-    std::vector<int> symbsOnHost = symbHostMap[oldHostIndx];
-    std::vector<int> leftHostSymbiontsValues;
-    std::vector<int> rightHostSymbiontsValues;
+    std::vector<unsigned int> symbsOnHost = symbHostMap[oldHostIndx];
+    std::vector<unsigned int> leftHostSymbiontsValues;
+    std::vector<unsigned int> rightHostSymbiontsValues;
     std::vector<std::shared_ptr<Node>> nodesForUpdating = this->getNodes();
-    for(unsigned int i = 0; i < symbsOnHost.size(); i++){
-        std::vector<int> hostsInSymb = nodesForUpdating[symbsOnHost[i]]->getHosts();
+    for(auto i = 0; i < symbsOnHost.size(); i++){
+        std::vector<unsigned int> hostsInSymb = nodesForUpdating[symbsOnHost[i]]->getHosts();
         if(oldSymbIndx == symbsOnHost[i]){
             leftHostSymbiontsValues.push_back(this->getNodesSize() - 1);
             rightHostSymbiontsValues.push_back(this->getNodesSize() - 2);
@@ -352,7 +354,7 @@ void SymbiontTree::cospeciationMapUpdate(int oldHostIndx,
     symbHostMap[numNodesHost - 2] = rightHostSymbiontsValues;
     symbHostMap[numNodesHost - 1] = leftHostSymbiontsValues;
     // need to update nodes[i].hosts
-    std::map<int, std::vector<int>>::iterator it = symbHostMap.find(oldHostIndx);
+    auto it = symbHostMap.find(oldHostIndx);
     symbHostMap.erase(it);
 
 
@@ -362,7 +364,7 @@ void SymbiontTree::updateHostsInNodes(){
 
 }
 
-int SymbiontTree::getExtantIndxFromNodes(int nodesIndx){
+int SymbiontTree::getExtantIndxFromNodes(unsigned int nodesIndx){
     int count = 0;
     for(auto extantNode : extantNodes){
         if(extantNode->getIndex() == nodesIndx)

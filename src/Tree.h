@@ -24,7 +24,7 @@ class Node
         std::shared_ptr<Node>    anc;
         std::shared_ptr<Node>    sib;
         int     indx, Lindx;
-        std::vector<int> hosts;
+        std::vector<unsigned int> hosts;
         int     flag;
         std::string name;
         bool    isRoot;
@@ -71,8 +71,8 @@ class Node
         double  getBirthTime() { return birthTime; }
         int     getIndex() {return indx; }
         int     getLindx() { return Lindx; }
-        std::vector<int> getHosts() { return hosts; }
-        void    setHosts(std::vector<int> hs) { hosts = hs; }
+        std::vector<unsigned int> getHosts() { return hosts; }
+        void    setHosts(std::vector<unsigned int> hs) { hosts = hs; }
         bool    getIsDuplication() { return isDuplication; }
         int     getLocusID() { return locusID; }
 };
