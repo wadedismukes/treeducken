@@ -587,7 +587,7 @@ arma::umat Simulator::symbiontTreeEvent(double eventTime, arma::umat assocMat){
     // check if the sum of the row equals the number of columns
     // in other words is the symbiont at rvec occupying all the hosts already?
     // if no, if yes go to else
-    if((unsigned) sum(rvec) != assocMat.n_cols){
+    if((arma::uword) sum(rvec) != assocMat.n_cols){
       std::vector<arma::uword> hostIndices;
       // make a list of unoccupied hosts
       for(arma::uword i = 0; i < rvec.n_cols; i++){
@@ -853,7 +853,7 @@ arma::umat Simulator::cospeciationEvent(double eventTime, arma::umat assocMat){
   for(arma::uword i = 0; i < cvec.n_rows; i++){
     if(cvec(i) == 1){
 
-      arma::umat rr = arma::ones<arma::umat>(1,2);
+      arma::umat rr(1,2,arma::fill::zeros);// = arma::ones<arma::umat>(1,2);
       int randOne = unif_rand() * 2;
       if(randOne == 0){
         rr(0, 0) = 0;
@@ -882,7 +882,7 @@ arma::umat Simulator::cospeciationEvent(double eventTime, arma::umat assocMat){
       assocMat(i, arma::span(numExtantHosts-2,numExtantHosts-1)) = rr;
     }
     else{
-      arma::umat rr = arma::zeros<arma::umat>(1,2);
+      arma::umat rr(1,2,arma::fill::zeros);// = arma::zeros<arma::umat>(1,2);
       assocMat(i, arma::span(numExtantHosts-2,numExtantHosts-1)) = rr;
       updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-2),
                         symbiontTree->getNodesIndxFromExtantIndx(i),
@@ -900,7 +900,7 @@ arma::umat Simulator::cospeciationEvent(double eventTime, arma::umat assocMat){
   // loop through rvec to sort the old symbs of the ancestor host on new hosts
   for(arma::uword i = 0; i < rvec.n_elem; i++){
     if(rvec(i) == 1){
-      arma::umat rr(1,2,arma::fill::ones); //= arma::ones<arma::umat>(1,2);
+      arma::umat rr(2,1,arma::fill::ones); //= arma::ones<arma::umat>(1,2);
 
       int randOne = unif_rand() * 2;
       if(randOne == 0){
@@ -916,7 +916,7 @@ arma::umat Simulator::cospeciationEvent(double eventTime, arma::umat assocMat){
                           eventTime);
       }
       else{
-        rr(0, 1) = 0;
+        rr(1, 0) = 0;
         updateEventVector(spTree->getNodesIndxFromExtantIndx(i),
                           symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs-2),
                           4,
@@ -929,11 +929,11 @@ arma::umat Simulator::cospeciationEvent(double eventTime, arma::umat assocMat){
       }
 
 
-      assocMat(arma::span(numExtantSymbs-2,numExtantSymbs-1),i) = rr.t();
+      assocMat(arma::span(numExtantSymbs-2,numExtantSymbs-1),i) = rr;
     }
     else{
-      arma::umat rr(1,2,arma::fill::zeros);// = arma::zeros<arma::umat>(1,2);
-      assocMat(arma::span(numExtantSymbs-2,numExtantSymbs-1), i) = rr.t();
+      arma::umat rr(2,1,arma::fill::zeros);// = arma::zeros<arma::umat>(1,2);
+      assocMat(arma::span(numExtantSymbs-2,numExtantSymbs-1), i) = rr;
     }
   }
   return assocMat;
