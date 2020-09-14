@@ -325,7 +325,7 @@ void SymbiontTree::cospeciationMapUpdate(unsigned int oldHostIndx,
     std::vector<unsigned int> leftHostSymbiontsValues;
     std::vector<unsigned int> rightHostSymbiontsValues;
     std::vector<std::shared_ptr<Node>> nodesForUpdating = this->getNodes();
-    for(auto i = 0; i < symbsOnHost.size(); i++){
+    for(unsigned i = 0; i < symbsOnHost.size(); i++){
         std::vector<unsigned int> hostsInSymb = nodesForUpdating[symbsOnHost[i]]->getHosts();
         if(oldSymbIndx == symbsOnHost[i]){
             leftHostSymbiontsValues.push_back(this->getNodesSize() - 1);
@@ -367,7 +367,7 @@ void SymbiontTree::updateHostsInNodes(){
 int SymbiontTree::getExtantIndxFromNodes(unsigned int nodesIndx){
     int count = 0;
     for(auto extantNode : extantNodes){
-        if(extantNode->getIndex() == nodesIndx)
+        if((unsigned) extantNode->getIndex() == nodesIndx)
             break;
         count++;
     }

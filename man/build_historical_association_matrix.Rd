@@ -29,7 +29,7 @@ numb_replicates <- 10
 time <- 1.0
 symb_mu <- 0.2
 symb_lambda <- 0.4
-host_shift_rate <- 0.1
+host_shift_rate <- 0.0
 cosp_rate <- 2.0
 
 cophylo_pair <- sim_cophylo_bdp(hbr = host_lambda,

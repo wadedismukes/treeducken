@@ -67,14 +67,22 @@ written by Damien de Vienne Copyright 2008 - 2010 under GPL.
 }}
 
 \examples{
+host_mu <- 1.0 # death rate
+host_lambda <- 2.0 # birth rate
+numb_replicates <- 10
+time <- 1.0
+symb_mu <- 0.2
+symb_lambda <- 0.4
+host_shift_rate <- 0.0
+cosp_rate <- 2.0
 
-tr_pair <- sim_cophylo_bdp(hbr = 0.1,
-                           hdr = 0.05,
-                           sdr = 0.1,
-                           host_exp_rate = 0.4,
-                           sbr = 0.05,
-                           cosp_rate =1.0,
-                           numbsim = 10,
-                           time_to_sim = 2)
-plot.cophy(tr_pair[[1]])
+cophylo_pair <- sim_cophylo_bdp(hbr = host_lambda,
+                           hdr = host_mu,
+                           cosp_rate = cosp_rate,
+                           host_exp_rate = host_shift_rate,
+                           sdr = symb_mu,
+                           sbr = symb_lambda,
+                           numbsim = numb_replicates,
+                           time_to_sim = time)
+plot.cophy(cophylo_pair[[1]])
 }
