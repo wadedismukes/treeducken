@@ -501,7 +501,7 @@ arma::umat Simulator::symbiontTreeEvent(double eventTime, arma::umat assocMat){
   // get the number of tips on the symbiont tree
   unsigned int numExtantSymbs = symbiontTree->getNumTips();
   // randomly choose one of these to have an event on
-  unsigned int nodeInd = unif_rand()*(numExtantSymbs - 1);
+  arma::uword nodeInd = unif_rand()*(numExtantSymbs - 1);
   // relative birth rate, uses geneBirthRate, geneDeathRate and transferRate
   // for the only purpose so that I did not need to add more members to the class
   // geneBirthRate = symbiont speciation rate
@@ -751,7 +751,7 @@ arma::umat Simulator::cophyloERMEvent(double eventTime, arma::umat assocMat){
         assocMat(i, arma::span(numExtantHosts-2,numExtantHosts-1)) = rr;
       }
       else{
-        arma::umat rr = arma::zeros<arma::umat>(1,2);
+        arma::umat rr(1,2,arma::fill::zeros);// = arma::zeros<arma::umat>(1,2);
         assocMat(i, arma::span(numExtantHosts-2,numExtantHosts-1)) = rr;
         updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-1),
                           symbiontTree->getNodesIndxFromExtantIndx(i),
@@ -768,7 +768,7 @@ arma::umat Simulator::cophyloERMEvent(double eventTime, arma::umat assocMat){
                       eventTime);
     numExtantSymbs = symbiontTree->getNumExtant();
     // check rows for 0's, rows with 0s get deleted in symbiont tree
-    arma::uvec hostless = arma::zeros<arma::uvec>(numExtantSymbs);
+    arma::uvec hostless(numExtantSymbs, arma::fill::zeros);// = arma::zeros<arma::uvec>(numExtantSymbs);
     for(arma::uword i = assocMat.n_rows; i != 0; i--){
       if(!(any(assocMat.row(i-1)))){
         updateEventVector(spTree->getNodesIndxFromExtantIndx(nodeInd),
@@ -783,7 +783,7 @@ arma::umat Simulator::cophyloERMEvent(double eventTime, arma::umat assocMat){
     // host tree death event
     spTree->lineageDeathEvent(nodeInd);
     // delete the rows from the association matrix
-    arma::uvec toBeDeleted = find(hostless);
+    arma::uvec toBeDeleted = arma::find(hostless);
     assocMat.shed_rows(toBeDeleted);
   }
 
@@ -799,7 +799,7 @@ arma::umat Simulator::cospeciationEvent(double eventTime, arma::umat assocMat){
   std::vector<arma::uword> hostIndices;
   // pick a host with symbionts at random
   for(arma::uword i = 0; i < numExtantHosts; i++){
-    if(sum(assocMat.col(i)) >= 0.5)
+    if(sum(assocMat.col(i)) > 0)
       hostIndices.push_back(i);
   }
 
@@ -825,8 +825,8 @@ arma::umat Simulator::cospeciationEvent(double eventTime, arma::umat assocMat){
   numExtantHosts = spTree->getNumExtant();
   unsigned numExtantSymbs = symbiontTree->getNumExtant();
   // delete a row and column of assocaition matrix
-  assocMat.shed_col(hostIndices[indxOfHost]);
   assocMat.shed_row(symbIndices[indxOfSymb]);
+  assocMat.shed_col(hostIndices[indxOfHost]);
 
   cvec.shed_row(symbIndices[indxOfSymb]);
   rvec.shed_col(hostIndices[indxOfHost]);
