@@ -32,3 +32,6 @@ ape::cherry(tr[[1]])
 \references{
 McKenzie, A. and Steel, M. (2000) Distributions of cherries for two models of trees. Mathematical Biosciences, 164, 81–92.
 }
+\author{
+Emmanuel Paradis
+}

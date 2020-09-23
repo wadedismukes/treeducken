@@ -41,9 +41,8 @@ genetree_summary_stat <- function(container_tree_gene_tree_obj, container_tree_i
     data.frame(colless, sackin, tmrca, gamma_locus, gamma, cherries)
 }
 #' Calculate cherry statistic for gene-trees
-#'
+#' @author Emmanuel Paradis
 #' @description Calculate cherry statistic according to the definition given in  McKenzie and Steel 2000 (see below for reference)
-#'
 #' @param tree an object of class "phylo"
 #' @return The value fo cherries on a tree
 #' @details This calculates the value for the cherry test statistic on a rooted tree. Note that this does not perform the actual

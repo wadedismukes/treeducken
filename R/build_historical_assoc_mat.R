@@ -8,7 +8,7 @@
 #' @param tr_pair_obj The tree pair object from `sim_cophylo_bdp`
 #' @return Matrix of the associations at given time
 #' @examples
-#' host_mu <- 1.0 # death rate
+#' \dontrun{ host_mu <- 1.0 # death rate
 #' host_lambda <- 2.0 # birth rate
 #' numb_replicates <- 10
 #' time <- 1.0
@@ -26,7 +26,7 @@
 #'                            numbsim = numb_replicates,
 #'                            time_to_sim = time)
 #' time <- 1.0
-#' # assoc_mat_at_t <- build_historical_association_matrix(t=time, tr_pair_obj = cophylo_pair[[1]])
+#' assoc_mat_at_t <- build_historical_association_matrix(t=time, tr_pair_obj = cophylo_pair[[1]]) }
 #'
 build_historical_association_matrix <- function(t, tr_pair_obj){
     times <- unique(tr_pair_obj$event_history$Event_Time)

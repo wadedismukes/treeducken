@@ -2,11 +2,25 @@ Package: treeducken
 Type: Package
 Title: Nested Phylogenetic Tree Simulator
 Version: 1.0.0
-Authors@R: person("Wade", "Dismukes", email="wade.dismukes@gmail.com",
-    role=c("aut","cre"))
+Authors@R: c(person("Wade", "Dismukes", email="wade.dismukes@gmail.com",
+                    role=c("aut","cre")),
+           person(c("Tracy","A."), "Heath", role=c("aut")),
+           person("Damien", "de Vienne", role=c("ctb")),
+           person("Liam", "Revell", role=c("ctb")),
+           person("Emmanuel", "Paradis", role=c("ctb")),
+           person("Klaus", "Schliep", role=c("ctb")),
+           person("Ben", "Bolker", role=c("ctb")),
+           person(c("Luke","J."), "Harmon", role=c("ctb")),
+           person(c("Joseph","W."), "Brown", role=c("ctb")))
 Description: Simulates nested phylogenetic trees (gene trees in species tree, 
-    parasite trees in host trees) using birth-death processes and transfers
-    between lineages.
+    symbiont trees in host trees) using birth-death processes and transfers
+    between lineages. Simulations of gene trees within species trees are performed
+    using a three-tree model with species trees, locus trees, and gene trees.
+    The cophylogenetic birth-death process is used to simulate sets of host and
+    symbiont trees with extant associations between tips.  
+    Mallo D, de Oliveira Martins L, Posada D (2015) <doi:10.1093/sysbio/syv082>.
+    Hartmann K, Wong D and Stadler T (2010) <doi:10.1093/sysbio/syq026>.
+    Rasmussen MD and Kellis M (2012) <doi:10.1101/gr.123901.111>.
 License: GPL-3
 SystemRequirements: C++11
 Imports: 

@@ -207,7 +207,6 @@ cophy_summary_stat(gopher_lice_cophylo)
 
 plot(gopher_lice_cophylo,
      fsize = 0.5,
-     show_scalebar = TRUE,
      show_tip_label = FALSE,
      gap = 1,
      col = "purple",

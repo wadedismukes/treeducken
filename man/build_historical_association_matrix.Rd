@@ -23,7 +23,7 @@ Given a time and a tree pair object produced by the `sim_cophylo_bdp`
     tree object. USER WARNING: this is still in development, and likely will not work all the time.
 }
 \examples{
-host_mu <- 1.0 # death rate
+\dontrun{ host_mu <- 1.0 # death rate
 host_lambda <- 2.0 # birth rate
 numb_replicates <- 10
 time <- 1.0
@@ -41,6 +41,6 @@ cophylo_pair <- sim_cophylo_bdp(hbr = host_lambda,
                            numbsim = numb_replicates,
                            time_to_sim = time)
 time <- 1.0
-# assoc_mat_at_t <- build_historical_association_matrix(t=time, tr_pair_obj = cophylo_pair[[1]])
+assoc_mat_at_t <- build_historical_association_matrix(t=time, tr_pair_obj = cophylo_pair[[1]]) }
 
 }

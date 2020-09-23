@@ -1,11 +1,9 @@
 ## This file was modified from 'summary.phylo.R' (2019-01-30)  in the R-package
-## `ape' version 5.3 with copyright 2003-2019 Emmanuel Paradis, 2006 Ben Bolker,
-## and Klaus Schliep 2016 under a GNU Public Lisence 2.0.
+## `ape' version 5.3 with copyright 2003-2019  Paradi,
 ##
 ## I modified this code here for my own uses.
 ## Distributed under GNU public license (>=2)
 ## Copyright 2020 Wade Dismukes
-##
 ## Print Summary of a Cophylogeny set and "multiCophylo" operators
 #' @param cophy Object of class `cophy`
 #' @describeIn print.cophy Returns host tree of a cophylogenetic set
@@ -80,7 +78,7 @@ event_history.multiCophy <- function(cophy) {
 #' @description Several utility functions for cophylogenetic set summarization.
 #' Including functions for printing an entire summary, and a summary of each
 #' part: host_tree, symb_tree, association_mat, and event_history.
-#'
+#' 
 #' @param object An object of class `cophy`
 #' @param ... Further arguments used in generic classes
 #'
@@ -88,8 +86,9 @@ event_history.multiCophy <- function(cophy) {
 #'  tree and the symbiont tree.
 #' The number of rows and columns of the association matrix, and a summary of
 #'  the event_history.
-#'
+#' 
 #' @return Summary returns NULL.
+#' @authors Wade Dismukes and Emmanuel Paradis
 #' @seealso sim_cophylo_bdp, summary for the generic, multiCophy, c.cophy
 #' @examples
 #' h_lambda <- 1.0
@@ -244,11 +243,12 @@ summary.cophy <- function(object, ...) {
 #' @param cophy An object of class `cophy`
 #' @param ... Further arguments used in generic classes
 #'
-#'
+#' 
 #' @return Print returns NULL. host_tree returns NULL, symb_tree returns NULL,
 #' association_mat returns the dimensions of the matrix, event_history
 #'  returns NULL.
 #' @seealso sim_cophylo_bdp, print for the generic, multiCophy, c.cophy
+#' @authors Wade Dismukes, Ben Bolker, and Emmanuel Paradis
 #' @examples
 #' h_lambda <- 1.0
 #' h_mu <- 0.3
@@ -353,6 +353,7 @@ str.multiCophy <- function(object, ...)
 #' @param ... Values of class `cophy`
 #' @return An object of class `multiCophy`
 #' @seealso `c` generic function
+#' @authors Wade Dismukes and Emmanuel Paradis
 #' @examples
 #' h_lambda <- 1.0
 #' h_mu <- 0.3

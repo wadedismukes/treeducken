@@ -15,8 +15,7 @@ drop_extinct(phy, tol = NULL)
 A 'phylo' class object with extinct tips removed
 }
 \description{
-This is a direct port of the geiger function, I import it here for convenience.
-This code is copied under  GPL 3 license.
+Drops extinct tips from tree
 }
 \examples{
 mu <- 0.5 # death rate

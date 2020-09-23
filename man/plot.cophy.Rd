@@ -16,8 +16,6 @@
   gap = 1,
   font = 3,
   fsize = 1,
-  show_scalebar = FALSE,
-  scalebar_fsize = 0,
   ...
 )
 
@@ -43,10 +41,6 @@
 \item{font}{What font to use (bold, italic (default), etc.)}
 
 \item{fsize}{What size font as a character expansion factor (same as cex)}
-
-\item{show_scalebar}{Show a scalebar}
-
-\item{scalebar_fsize}{Font size of scalebars (default is 0 -> no scalebar)}
 
 \item{...}{other plotting parameters}
 }

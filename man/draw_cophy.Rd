@@ -63,6 +63,8 @@ draw_cophy(
 internal plot function from ape::plotCophylo2 under GPL v. 2
 }
 \references{
-TODO: add in the ref
+Paradis E. & Schliep K. 2019. ape 5.0: an environment for modern
+phylogenetics and evolutionary analyses in R. Bioinformatics 35:
+526-528.
 }
 \keyword{Internal}

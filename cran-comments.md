@@ -1,16 +1,8 @@
 ## Resubmission
 
-* Changed wording in DESCRIPTION to avoid spelling notes
-
-* Altered example to increase runtime
-
-* Fixed error in unit test causing it to fail occasionally
-
-* Updated URL in README.md
-
-* Fixed seg fault occuring rarely on testing
-
-* Fixed runtime error found in GCC ASAN/UBSAN
+* Added contributing authors for various functions
+* Changed example from commented out to dontrun{} 
+* Added references and text to description in DESCRIPTION
 
 ## Test environments
 * local macOS install, R 4.0.2
@@ -39,14 +31,6 @@ This appears to be an issue with the web service being used to perform this chec
   Maintainer: 'Wade Dismukes <wade.dismukes@gmail.com>'
 
 This is a first time submission to CRAN for me (outside of the previous submission which was rejected).
-
-* checking installed package size ... NOTE
-    installed size is 12.6Mb
-    sub-directories of 1Mb or more:
-      libs  12.2Mb
-
-This only occurs on Linux systems. Mac and Windows builds do not contain this note. The large file is the 
-shared library (i.e. the .so file). 
 
 ## Downstream dependencies
 There are currently no downstream dependencies for this package.
