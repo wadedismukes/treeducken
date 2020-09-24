@@ -907,12 +907,12 @@ arma::umat Simulator::cospeciationEvent(double eventTime, arma::umat assocMat){
                           5,
                           eventTime);
       }
-      assocMat(i, arma::span(numExtantHosts - 2, numExtantHosts - 1));
+      assocMat(i, arma::span(numExtantHosts - 2, numExtantHosts - 1)) = rr;
       // assocMat.submat(i, numExtantHosts-2, i, numExtantHosts-1) = rr;
     }
     else{
       arma::umat rr(1,2,arma::fill::zeros);// = arma::zeros<arma::umat>(1,2);
-      assocMat(i, arma::span(numExtantHosts - 2, numExtantHosts - 1));
+      assocMat(i, arma::span(numExtantHosts - 2, numExtantHosts - 1)) = rr;
       updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-2),
                         symbiontTree->getNodesIndxFromExtantIndx(i),
                         5,
