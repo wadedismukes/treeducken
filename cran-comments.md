@@ -22,15 +22,24 @@ There were no ERRORs or WARNINGs.
 
 There were 3 NOTES:
 
-* checking for future file timestamps ... NOTE
-  unable to verify current time
-
-This appears to be an issue with the web service being used to perform this check not with the package.
-
 * checking CRAN incoming feasibility ... NOTE
   Maintainer: 'Wade Dismukes <wade.dismukes@gmail.com>'
 
 This is a first time submission to CRAN for me (outside of the previous submission which was rejected).
+
+* Found the following (possibly) invalid DOIs:
+
+This is not an invalid DOI.
+
+* Possibly mis-spelled words in DESCRIPTION:
+  Kellis (23:19)
+  Mallo (22:5)
+  al (22:14)
+  cophylogenetic (19:9)
+  et (22:11)
+  symbiont (16:5, 20:5)
+
+None of these words are misspelled. 
 
 ## Downstream dependencies
 There are currently no downstream dependencies for this package.

@@ -60,3 +60,6 @@ summary(host_symb_sets[[1]])
 \seealso{
 sim_cophylo_bdp, summary for the generic, multiCophy, c.cophy
 }
+\author{
+Wade Dismukes and Emmanuel Paradis
+}

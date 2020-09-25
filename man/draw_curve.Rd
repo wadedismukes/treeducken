@@ -21,4 +21,7 @@ internal function to draw curved links between tips modified from Liam Revell ph
 \references{
 Revell, L.J. (2012), phytools: an R package for phylogenetic comparative biology (and other things). Methods in Ecology and Evolution, 3: 217-223. doi:10.1111/j.2041-210X.2011.00169.x
 }
+\author{
+Wade Dismukes and Liam J Revell
+}
 \keyword{Internal}

@@ -52,3 +52,6 @@ multi_host_symb_alt <- c(host_symb_sets, host_symb_sets2)
 \seealso{
 `c` generic function
 }
+\author{
+Wade Dismukes and Emmanuel Paradis
+}

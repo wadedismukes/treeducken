@@ -36,3 +36,8 @@ pruned <- drop_extinct(tree_list[[1]])
 \references{
 Pennell M, Eastman J, Slater G, Brown J, Uyeda J, Fitzjohn R, Alfaro M, Harmon L (2014). “geiger v2.0: an expanded suite of methods for fitting macroevolutionary models to phylogenetic trees.” Bioinformatics, 30, 2216-2218
 }
+\author{
+LJ Harmon, and JW Brown
+This is a direct port of the geiger function, I import it here for convenience.
+This code is copied under  GPL 3 license.
+}

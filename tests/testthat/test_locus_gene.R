@@ -51,10 +51,3 @@ get_length_tree <- function(tr){
 get_all_tree_lengths <- function(multiTree){
     min(sapply(multiTree, get_length_tree))
 }
-
-# # test that tree has correct length (simple)
-# test_that("sim_locustree_bdp produces the right length trees", {
-#     expect_lte(get_all_tree_lengths(sim_test_spt_loct(0.1, 0.05, 0.0, 100, species_tree_len = 1.0)), 1.0)
-#     expect_lte(get_all_tree_lengths(sim_test_spt_loct(0.1, 0.05, 0.0, 100, species_tree_len = 2.0)), 2.0)
-#     expect_lte(get_all_tree_lengths(sim_test_spt_loct(0.1, 0.05, 0.0, 100, species_tree_len = 3.0)), 3.0)
-# })

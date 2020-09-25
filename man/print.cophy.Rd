@@ -111,3 +111,6 @@ print(host_symb_sets)
 \seealso{
 sim_cophylo_bdp, print for the generic, multiCophy, c.cophy
 }
+\author{
+Wade Dismukes, Ben Bolker, and Emmanuel Paradis
+}

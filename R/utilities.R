@@ -1,5 +1,5 @@
 #' Drops extinct tips from tree
-#' @authors LJ Harmon, and JW Brown
+#' @author LJ Harmon, and JW Brown
 #' This is a direct port of the geiger function, I import it here for convenience.
 #' This code is copied under  GPL 3 license. 
 #' 

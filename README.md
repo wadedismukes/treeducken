@@ -12,7 +12,7 @@ This simulation also accounts for extinction in its simulation of host-symbiont 
 
 Below is a quick example of how to use `treeducken` to simulate a set of ten
 host and symbiont tree sets. To do this we set a host birth rate, a host death 
-rate, a symbiont birth rate, a symbiont death rate, a cospecation rate, and a 
+rate, a symbiont birth rate, a symbiont death rate, a cospeciation rate, and a 
 host expansion rate. These parameters are further described in the manuscript 
 (in prep.) and the vignette (`cophylogenetic_sim.Rmd`). Finally, we have to set 
 the number of sets we would like and the time to simulate until. Note that since

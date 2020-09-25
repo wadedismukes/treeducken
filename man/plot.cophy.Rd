@@ -80,3 +80,6 @@ cophylo_pair <- sim_cophylo_bdp(hbr = host_lambda,
                            time_to_sim = time)
 plot.cophy(cophylo_pair[[1]])
 }
+\author{
+Wade Dismukes and Damien de Vienne
+}

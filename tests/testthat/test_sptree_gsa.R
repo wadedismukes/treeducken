@@ -11,10 +11,10 @@ test_that("sim_sptree_bdp produces the right number of trees", {
 get_number_extant_tips <- function(tr) {
     tip_vec <- vector(length = length(tr))
     for(i in 1:length(tr)) {
-        pruned_tr <- treeducken::drop_extinct(tr[[i]], tol = 0.00001)
+        pruned_tr <- treeducken::drop_extinct(tr[[i]], tol = 0.0001)
         tip_vec[i] <- length(pruned_tr$tip.label)
     }
-    unique(tip_vec)
+    min(tip_vec)
 }
 
 # test that tree has correct extant tips (gsa)
@@ -47,8 +47,3 @@ test_that("sim_sptree_bdp_time produces the right length trees", {
     expect_equal(get_all_tree_lengths(sim_sptree_bdp_time(1.0, 0.5, 1000, 2.0)), 2.0)
     expect_equal(get_all_tree_lengths(sim_sptree_bdp_time(1.0, 0.5, 1000, 3.0)), 3.0)
 })
-
-# test that species tree produces tree within correct distribution (simple)
-# test_that("sim_sptree_bdp_time produces trees under the right distribution"){
-#
-# }

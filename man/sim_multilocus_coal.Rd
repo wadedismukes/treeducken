@@ -21,7 +21,7 @@ sim_multilocus_coal(
 
 \item{mutation_rate}{number of mutations per unit time}
 
-\item{num_reps}{number of coalscent simulations per locus}
+\item{num_reps}{number of coalescent simulations per locus}
 }
 \value{
 A list of list of gene trees of length `num_reps` simulated along each locus.

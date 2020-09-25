@@ -7,7 +7,7 @@
 #'
 #' This function is mostly an altered version of the cophyloplot function
 #' written by Damien de Vienne Copyright 2008 - 2010 under GPL.
-#' @authors Wade Dismukes and Damien de Vienne
+#' @author Wade Dismukes and Damien de Vienne
 #' @param x a tree pair object returned by `sim_cophylo_bdp`
 #' @param use_edge_length Boolean to draw trees with edge length or not
 #' @param type string "phylogram" or "cladogram"
@@ -298,7 +298,7 @@ draw_cophy <-
 #' Internal tree plot function
 #' @description internal function to make textbox for tip labels
 #' modified from phytools::TEXTBOX package under GPL v. 2
-#' @authors Wade Dismukes and Liam J Revell
+#' @author Wade Dismukes and Liam J Revell
 #' @param x x coordinates
 #' @param y y coordinates
 #' @param label Labels as vector of strings
@@ -343,7 +343,7 @@ make_textbox <- function(x, y, label, pos, offset, cex, font) {
 #' @param y y positions on graph
 #' @param scale Scale of the logistic (which is where the curve comes from)
 #' @param ... Other plotting parameters
-#' @authors Wade Dismukes and Liam J Revell
+#' @author Wade Dismukes and Liam J Revell
 #' @references
 #' Revell, L.J. (2012), phytools: an R package for phylogenetic comparative biology (and other things). Methods in Ecology and Evolution, 3: 217-223. doi:10.1111/j.2041-210X.2011.00169.x
 #' @keywords Internal

@@ -18,9 +18,9 @@ Description: Simulates nested phylogenetic trees (gene trees in species tree,
     using a three-tree model with species trees, locus trees, and gene trees.
     The cophylogenetic birth-death process is used to simulate sets of host and
     symbiont trees with extant associations between tips.  
-    Mallo D, de Oliveira Martins L, Posada D (2015) <doi:10.1093/sysbio/syv082>.
-    Hartmann K, Wong D and Stadler T (2010) <doi:10.1093/sysbio/syq026>.
-    Rasmussen MD and Kellis M (2012) <doi:10.1101/gr.123901.111>.
+    For more information about the three-tree model see:
+    Mallo et al. (2015) <doi:10.1093/sysbio/syv082>, 
+    Rasmussen and Kellis (2012) <doi:10.1101/gr.123901.111>.
 License: GPL-3
 SystemRequirements: C++11
 Imports: 

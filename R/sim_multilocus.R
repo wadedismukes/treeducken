@@ -7,7 +7,7 @@
 #' @param effective_pop_size the effective population size
 #' @param generation_time unit time per generation (default 1 year per generation)
 #' @param mutation_rate number of mutations per unit time
-#' @param num_reps number of coalscent simulations per locus
+#' @param num_reps number of coalescent simulations per locus
 #' @return A list of list of gene trees of length `num_reps` simulated along each locus.
 #' The first member of the list is the parent tree, all others are child trees
 #'
