@@ -2,15 +2,16 @@
 #'
 #' @details Given a time and a tree pair object produced by the `sim_cophylo_bdp`
 #'     object will produce the association matrix at that time point for the
-#'     tree object. USER WARNING: this is still in development, and likely will not work all the time.
+#'     tree object.
+#' USER WARNING: this is still in development, and likely will not work all the time.
 #'
 #' @param t The time of interest
 #' @param tr_pair_obj The tree pair object from `sim_cophylo_bdp`
 #' @return Matrix of the associations at given time
 #' @examples
-#' \dontrun{ host_mu <- 1.0 # death rate
+#' host_mu <- 1.0 # death rate
 #' host_lambda <- 2.0 # birth rate
-#' numb_replicates <- 10
+#' numb_replicates <- 1
 #' time <- 1.0
 #' symb_mu <- 0.2
 #' symb_lambda <- 0.4
@@ -26,7 +27,8 @@
 #'                            numbsim = numb_replicates,
 #'                            time_to_sim = time)
 #' time <- 1.0
-#' assoc_mat_at_t <- build_historical_association_matrix(t=time, tr_pair_obj = cophylo_pair[[1]]) }
+#' assoc_mat_at_t <- build_historical_association_matrix(t=time, tr_pair_obj = cophylo_pair[[1]])
+#'
 #'
 build_historical_association_matrix <- function(t, tr_pair_obj){
     times <- unique(tr_pair_obj$event_history$Event_Time)
@@ -38,40 +40,45 @@ build_historical_association_matrix <- function(t, tr_pair_obj){
     if(t<=0){
       stop("'t' needs to be positive")
     }
-    if( t>( max(ape::branching.times(tr_pair_obj$host_tree))+tr_pair_obj$host_tree$root.edge ) ){
+    if( t > (max(ape::branching.times(tr_pair_obj$host_tree)) + tr_pair_obj$host_tree$root.edge )){
       stop("The chosen 't' is beyond the duration of the cophylogeny. We don't know the future.")
     }
     if(t<times[2]){
-      warning("you chose a 't' before the first real event")
+      warning("you chose a 't' before the first event")
       return(1) ##this seems like a valid choice to me and I don't think it should error out but I don't know what it should return.
       ##it maybe should come with a wanring or message that this is a sort of dubious time that they picked
     }
 
 
-    times<-times[times<=t] ###only consider times that are before or at 't'
+    times <- times[times <= t] ###only consider times that are before or at 't'
     events <- tr_pair_obj$event_history
-    curr_indx<-which.max(times)
+    curr_indx <- which.max(times)
     init_mat <- matrix(1, nrow = 1, ncol = 1)
-    colnames(init_mat) <- as.character(length(tr_pair_obj$host_tree$tip.label) + 1)
-    rownames(init_mat) <- as.character(length(tr_pair_obj$symb_tree$tip.label) + 1)
+    colnames(init_mat) <- as.character(
+                            length(tr_pair_obj$host_tree$tip.label) + 1)
+    rownames(init_mat) <- as.character(
+                            length(tr_pair_obj$symb_tree$tip.label) + 1)
     prev_mat <- init_mat
-    for(i in 2:curr_indx){
+    for(i in 2:curr_indx) {
         curr_events <- subset(events, events[,4] == times[i])
         # what is first row of curr_events
         curr_events
         main_event <- curr_events[1,]$Event_Type
-        if(main_event == "HG"){
+        if(main_event == "HG") {
             # make new matrix with dimensions of prev_mat same matrix
             # remove column indicated by curr_events[1,]$Host.Index
             # make 2 new column vectors name them correctly based on
             # curr_events[2,]$Host.Index whichever rows correspond to 4 in matrx are 1
             # curr_events[3,]$Host.Index
-            curr_mat <- matrix(0, nrow = nrow(prev_mat), ncol = ncol(prev_mat) + 1)
+            curr_mat <- matrix(0,
+                               nrow = nrow(prev_mat),
+                               ncol = ncol(prev_mat) + 1)
             rownames(curr_mat) <- as.character(rownames(prev_mat))
             prev_col_names <- colnames(prev_mat)
             prev_mat <- as.matrix(prev_mat[,-which(colnames(prev_mat) == as.character(curr_events[1,]$Host_Index))])
             if(length(prev_mat) > 0)
-                curr_mat[1:nrow(prev_mat), 1:ncol(prev_mat)] <- prev_mat
+                curr_mat[seq_len(nrow(prev_mat)),
+                         seq_len(ncol(prev_mat))] <- prev_mat
 
             prev_col_names_cut <- prev_col_names[which(prev_col_names != as.character(curr_events[1,]$Host_Index))]
             # if(length(prev_col_names_cut) > 0)
@@ -102,7 +109,7 @@ build_historical_association_matrix <- function(t, tr_pair_obj){
             prev_row_names <- rownames(prev_mat)
             prev_mat <- as.matrix(prev_mat[-which(rownames(prev_mat) == as.character(curr_events[1,]$Symbiont_Index)),], )
             if(length(prev_mat) > 0)
-                curr_mat[1:nrow(prev_mat), 1:ncol(prev_mat)] <- prev_mat
+                curr_mat[seq_len(nrow(prev_mat)), seq_len(ncol(prev_mat))] <- prev_mat
 
             prev_row_names_cut <- prev_row_names[which(prev_row_names != as.character(curr_events[1,]$Symbiont_Index))]
             # if(length(prev_row_names_cut) > 0)
@@ -182,6 +189,8 @@ build_historical_association_matrix <- function(t, tr_pair_obj){
         # else if SG delete col, add 2 new columns
         # else if SL delete col
         # else if HL delete col
+        if(nrow(curr_mat) || ncol(curr_mat))
+          return(curr_mat)
         prev_mat <- curr_mat
     }
 
@@ -195,20 +204,3 @@ build_historical_association_matrix <- function(t, tr_pair_obj){
 
     prev_mat
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

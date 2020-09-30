@@ -5,6 +5,7 @@ Version: 1.0.0
 Authors@R: c(person("Wade", "Dismukes", email="wade.dismukes@gmail.com",
                     role=c("aut","cre")),
            person(c("Tracy","A."), "Heath", role=c("aut")),
+           person("Josh", "Justison", role=c("ctb")),
            person("Damien", "de Vienne", role=c("ctb")),
            person("Liam", "Revell", role=c("ctb")),
            person("Emmanuel", "Paradis", role=c("ctb")),

@@ -20,12 +20,13 @@ Reconstruct historical association matrix
 \details{
 Given a time and a tree pair object produced by the `sim_cophylo_bdp`
     object will produce the association matrix at that time point for the
-    tree object. USER WARNING: this is still in development, and likely will not work all the time.
+    tree object.
+USER WARNING: this is still in development, and likely will not work all the time.
 }
 \examples{
-\dontrun{ host_mu <- 1.0 # death rate
+host_mu <- 1.0 # death rate
 host_lambda <- 2.0 # birth rate
-numb_replicates <- 10
+numb_replicates <- 1
 time <- 1.0
 symb_mu <- 0.2
 symb_lambda <- 0.4
@@ -41,6 +42,7 @@ cophylo_pair <- sim_cophylo_bdp(hbr = host_lambda,
                            numbsim = numb_replicates,
                            time_to_sim = time)
 time <- 1.0
-assoc_mat_at_t <- build_historical_association_matrix(t=time, tr_pair_obj = cophylo_pair[[1]]) }
+assoc_mat_at_t <- build_historical_association_matrix(t=time, tr_pair_obj = cophylo_pair[[1]])
+
 
 }

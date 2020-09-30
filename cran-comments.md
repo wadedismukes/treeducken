@@ -1,12 +1,9 @@
 ## Resubmission
 
-* Added contributing authors for various functions
-* Changed example from commented out to dontrun{} 
-* Added references and text to description in DESCRIPTION
+* removed dontrun from example
 
 ## Test environments
 * local macOS install, R 4.0.2
-* local Debian 10, R 4.0.2
 * macOS-latest (release) (on Github actions), 4.0.2
 * ubuntu 20.04 (release) (on Github actions), R 4.0.2
 * ubuntu 20.04 (devel) (on Github actions), R 4.0.2
@@ -25,7 +22,7 @@ There were 3 NOTES:
 * checking CRAN incoming feasibility ... NOTE
   Maintainer: 'Wade Dismukes <wade.dismukes@gmail.com>'
 
-This is a first time submission to CRAN for me (outside of the previous submission which was rejected).
+This is a first time submission to CRAN for me (outside of the previous submissions which were rejected).
 
 * Found the following (possibly) invalid DOIs:
 

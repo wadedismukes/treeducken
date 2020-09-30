@@ -23,3 +23,5 @@ vignettes/cophylogenetic_sim.md
 .clangd/*
 .clang-tidy
 compile_commands.json
+src-i386/*
+src-x64/*
