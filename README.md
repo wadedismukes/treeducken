@@ -43,10 +43,16 @@ host_symb_sets <- sim_cophylo_bdp(hbr = h_lambda,
 
 ## Installation 
 
-For now you may install the development version using the `devtools` package.
+You may install the development version using the `devtools` package.
 
 In R:
 ```
 library(devtools)
 install_github("wadedismukes/rtreeducken")
+```
+You may install the package itself from CRAN:
+
+In R:
+```
+install.packages("treeducken")
 ```
