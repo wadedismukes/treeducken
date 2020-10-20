@@ -48,7 +48,7 @@ You may install the development version using the `devtools` package.
 In R:
 ```
 library(devtools)
-install_github("wadedismukes/rtreeducken")
+install_github("wadedismukes/treeducken")
 ```
 You may install the package itself from CRAN:
 
