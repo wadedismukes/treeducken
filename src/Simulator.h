@@ -95,6 +95,17 @@ class Simulator
                   double cospeciationRate,
                   double rho,
                   int hostLimit);
+        Simulator(double timeToSimTo,
+                  double hostSpeciationRate,
+                  double hostExtinctionRate,
+                  double symbSpeciationRate,
+                  double symbExtinctionRate,
+                  double symbDispersalRate,
+                  double symbExtirpationRate,
+                  double switchingRate,
+                  double cospeciationRate,
+                  double rho,
+                  int hostLimit);
         ~Simulator();
         void    setGSAStop(int g) { gsaStop = g; }
         void    setSpeciesTree(std::shared_ptr<SpeciesTree> st) { spTree = st; }
@@ -110,6 +121,7 @@ class Simulator
         bool    simLocusTree();
         bool    simGeneTree(int j);
         bool    simHostSymbSpeciesTreePair();
+        bool    simHostSymbSpeciesTreePairWithAnagenesis();
         void    initializeSim();
         void    processGSASim();
         void    prepGSATreeForReconstruction();

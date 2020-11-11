@@ -124,10 +124,39 @@ Simulator::Simulator(double stopTime,
     geneTree = nullptr;
     lociTree = nullptr;
     symbiontTree = nullptr;
-    
+
 }
 
 
+Simulator::Simulator(double stopTime,
+                     double hostSpeciationRate,
+                     double hostExtinctionRate,
+                     double symbSpeciationRate,
+                     double symbExtinctionRate,
+                     double symbDispersalRate,
+                     double symbExtirpationRate,
+                     double switchingRate,
+                     double csr,
+                     double rho,
+                     int hl){
+
+  speciationRate = hostSpeciationRate;
+  extinctionRate = hostExtinctionRate;
+  samplingRate = rho;
+  cospeciationRate = csr;
+  geneBirthRate = symbSpeciationRate;
+  geneDeathRate = symbExtinctionRate;
+  transferRate = switchingRate;
+  timeToSim = stopTime;
+
+  hostLimit = hl;
+
+  spTree = nullptr;
+  geneTree = nullptr;
+  lociTree = nullptr;
+  symbiontTree = nullptr;
+
+}
 
 Simulator::~Simulator(){
     gsaTrees.clear();
@@ -525,7 +554,7 @@ arma::umat Simulator::symbiontTreeEvent(double eventTime, arma::umat assocMat){
   symbiontTree->setCurrentTime(eventTime);
 
   unsigned int numExtantHosts = spTree->getNumExtant();
-  
+
   arma::urowvec rvec = assocMat.row(nodeInd);
 
   // delete the appropriate row of the association matrix
@@ -682,7 +711,7 @@ arma::umat Simulator::cophyloERMEvent(double eventTime, arma::umat assocMat){
   spTree->setCurrentTime(eventTime);
   symbiontTree->setCurrentTime(eventTime);
   unsigned numExtantSymbs = symbiontTree->getNumExtant();
-  // delete a column 
+  // delete a column
   arma::ucolvec cvec = assocMat.col(nodeInd);
 
   assocMat.shed_col(nodeInd);
@@ -828,7 +857,7 @@ arma::umat Simulator::cospeciationEvent(double eventTime, arma::umat assocMat){
   if(hostsWithSymbs.n_elem > 1)
     indxOfHost = arma::randi<arma::uword>(arma::distr_param(0, hostEndpoint)); //col of assocMat
 
-  
+
   arma::ucolvec cvec = assocMat.col(hostsWithSymbs(indxOfHost));
 
   arma::uvec symbIndices = arma::find(cvec);
@@ -864,7 +893,7 @@ arma::umat Simulator::cospeciationEvent(double eventTime, arma::umat assocMat){
   // throw the identity matrix into the bottom right corner representing
   // that each new host is associated with one new symbiont
 
-  assocMat(arma::span(numExtantSymbs - 2, numExtantSymbs - 1), 
+  assocMat(arma::span(numExtantSymbs - 2, numExtantSymbs - 1),
            arma::span(numExtantHosts - 2, numExtantHosts -1)) = arma::eye<arma::umat>(2,2);
 
   // record in event vector
@@ -988,7 +1017,7 @@ bool Simulator::bdsaBDSim(){
     std::map<int, int> rToTdckenIndxMap = spTree->makeIndxMap();
 
     spTree->switchIndicesFirstToSecond(rToTdckenIndxMap);
-    
+
     // get the root
     auto spRoot = spTree->getRoot();
 

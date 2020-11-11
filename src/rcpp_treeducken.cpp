@@ -182,6 +182,68 @@ Rcpp::List sim_locustree_bdp(Rcpp::List species_tree,
     std::shared_ptr<SpeciesTree> specTree = std::shared_ptr<SpeciesTree>(new SpeciesTree(species_tree));
     return sim_locus_tree(specTree, gbr_, gdr_, lgtr_, numLoci, trans_type);
 }
+//'
+//'
+//'
+//'
+
+Rcpp::List sim_cophylo_bdp_ana(SEXP hbr,
+                               SEXP hdr,
+                               SEXP sbr,
+                               SEXP sdr,
+                               SEXP symb_dispersal_rate,
+                               SEXP symb_extirpation_rate,
+                               SEXP host_exp_rate,
+                               SEXP cosp_rate,
+                               SEXP time_to_sim,
+                               SEXP numbsim){
+
+    double hbr_ = as<double>(hbr);
+    double hdr_ = as<double>(hdr);
+    double sbr_ = as<double>(sbr);
+    double sdr_ = as<double>(sdr);
+    double symb_disp_ = as<double>(symb_dispersal_rate);
+    double symb_ext_ = as<double>(symb_extirpation_rate);
+    double cosp_rate_ = as<double>(cosp_rate);
+    double host_exp_rate_ = as<double>(host_exp_rate);
+    double timeToSimTo_ = as<double>(time_to_sim);
+    int numbsim_ = as<int>(numbsim);
+    RNGScope scope;
+    if(hbr_ < 0.0){
+        stop("'hbr' must be positive or 0.0.");
+    }
+    if((hbr_ + cosp_rate_) < hdr_){
+        stop("'hbr + cosp_rate' must be greater than 'hdr'.");
+    }
+    if(hdr_ < 0.0){
+        stop("'hdr' must be a positive value or 0.0.");
+    }
+    if(host_exp_rate_ < 0.0){
+        stop("'host_exp_rate' must be a positive value or 0.0.");
+    }
+    if(numbsim_ < 1){
+        stop("'numbsim' must be larger than 1.");
+    }
+    if(cosp_rate_ < 0.0)
+        stop("'cosp_rate' must be a positive value or 0.0.");
+    if(timeToSimTo_ < 0.0)
+        stop("'timeToSimTo' must be a positive value or 0.0.");
+    if(symb_disp_ < 0.0)
+        stop("symbiont dispersal cannot be negative");
+    if(symb_ext_ < 0.0)
+        stop("symbiont extirpation cannot be negative");
+
+    return sim_host_symb_treepair_ana(hbr_,
+                                  hdr_,
+                                  sbr_,
+                                  sdr_,
+                                  symb_disp_,
+                                  symb_ext_,
+                                  host_exp_rate_,
+                                  cosp_rate_,
+                                  timeToSimTo_,
+                                  numbsim_);
+}
 //' Simulates a cophylogenetic system using a paired birth-death process
 //'
 //' @details Simulates a cophylogenetic system using birth-death processes. The
