@@ -52,8 +52,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // sim_cophylo_bdp
-Rcpp::List sim_cophylo_bdp(SEXP hbr, SEXP hdr, SEXP sbr, SEXP sdr, SEXP host_exp_rate, SEXP cosp_rate, SEXP time_to_sim, SEXP numbsim);
-RcppExport SEXP _treeducken_sim_cophylo_bdp(SEXP hbrSEXP, SEXP hdrSEXP, SEXP sbrSEXP, SEXP sdrSEXP, SEXP host_exp_rateSEXP, SEXP cosp_rateSEXP, SEXP time_to_simSEXP, SEXP numbsimSEXP) {
+Rcpp::List sim_cophylo_bdp(SEXP hbr, SEXP hdr, SEXP sbr, SEXP sdr, SEXP host_exp_rate, SEXP cosp_rate, SEXP time_to_sim, SEXP numbsim, Rcpp::NumericVector host_limit);
+RcppExport SEXP _treeducken_sim_cophylo_bdp(SEXP hbrSEXP, SEXP hdrSEXP, SEXP sbrSEXP, SEXP sdrSEXP, SEXP host_exp_rateSEXP, SEXP cosp_rateSEXP, SEXP time_to_simSEXP, SEXP numbsimSEXP, SEXP host_limitSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -65,7 +65,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type cosp_rate(cosp_rateSEXP);
     Rcpp::traits::input_parameter< SEXP >::type time_to_sim(time_to_simSEXP);
     Rcpp::traits::input_parameter< SEXP >::type numbsim(numbsimSEXP);
-    rcpp_result_gen = Rcpp::wrap(sim_cophylo_bdp(hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_to_sim, numbsim));
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type host_limit(host_limitSEXP);
+    rcpp_result_gen = Rcpp::wrap(sim_cophylo_bdp(hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -91,7 +92,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_treeducken_sim_sptree_bdp", (DL_FUNC) &_treeducken_sim_sptree_bdp, 5},
     {"_treeducken_sim_sptree_bdp_time", (DL_FUNC) &_treeducken_sim_sptree_bdp_time, 4},
     {"_treeducken_sim_locustree_bdp", (DL_FUNC) &_treeducken_sim_locustree_bdp, 6},
-    {"_treeducken_sim_cophylo_bdp", (DL_FUNC) &_treeducken_sim_cophylo_bdp, 8},
+    {"_treeducken_sim_cophylo_bdp", (DL_FUNC) &_treeducken_sim_cophylo_bdp, 9},
     {"_treeducken_sim_multispecies_coal", (DL_FUNC) &_treeducken_sim_multispecies_coal, 7},
     {NULL, NULL, 0}
 };

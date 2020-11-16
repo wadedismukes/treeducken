@@ -1,7 +1,7 @@
 #include <RcppArmadillo.h>
 #include "SymbiontTree.h"
 #include "Simulator.h"
-
+using namespace Rcpp;
 
 Rcpp::List sim_host_symb_treepair_ana(double hostbr,
                                   double hostdr,
@@ -12,6 +12,7 @@ Rcpp::List sim_host_symb_treepair_ana(double hostbr,
                                   double switchRate,
                                   double cospeciationRate,
                                   double timeToSimTo,
+                                  int host_limit,
                                   int numbsim){
     double rho = 1.0;
     Rcpp::List multiphy;
@@ -27,7 +28,7 @@ Rcpp::List sim_host_symb_treepair_ana(double hostbr,
                                                                       switchRate,
                                                                       cospeciationRate,
                                                                       rho,
-                                                                      1));
+                                                                      host_limit));
 
         phySimulator->simHostSymbSpeciesTreePairWithAnagenesis();
 
@@ -60,7 +61,7 @@ Rcpp::List sim_host_symb_treepair_ana(double hostbr,
 
 
     multiphy.attr("class") = "multiCophy";
-
+    return multiphy;
 }
 
 Rcpp::List sim_host_symb_treepair(double hostbr,
@@ -70,6 +71,7 @@ Rcpp::List sim_host_symb_treepair(double hostbr,
                                   double switchRate,
                                   double cospeciationRate,
                                   double timeToSimTo,
+                                  int host_limit,
                                   int numbsim){
 
     double rho = 1.0;
@@ -84,7 +86,7 @@ Rcpp::List sim_host_symb_treepair(double hostbr,
                                                  switchRate,
                                                  cospeciationRate,
                                                  rho,
-                                                 1));
+                                                 host_limit));
 
         phySimulator->simHostSymbSpeciesTreePair();
 

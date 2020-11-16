@@ -196,7 +196,8 @@ Rcpp::List sim_cophylo_bdp_ana(SEXP hbr,
                                SEXP host_exp_rate,
                                SEXP cosp_rate,
                                SEXP time_to_sim,
-                               SEXP numbsim){
+                               SEXP numbsim,
+                               Rcpp::NumericVector host_limit = 0){
 
     double hbr_ = as<double>(hbr);
     double hdr_ = as<double>(hdr);
@@ -207,6 +208,7 @@ Rcpp::List sim_cophylo_bdp_ana(SEXP hbr,
     double cosp_rate_ = as<double>(cosp_rate);
     double host_exp_rate_ = as<double>(host_exp_rate);
     double timeToSimTo_ = as<double>(time_to_sim);
+    int hl_ = as<int>(host_limit);
     int numbsim_ = as<int>(numbsim);
     RNGScope scope;
     if(hbr_ < 0.0){
@@ -224,6 +226,8 @@ Rcpp::List sim_cophylo_bdp_ana(SEXP hbr,
     if(numbsim_ < 1){
         stop("'numbsim' must be larger than 1.");
     }
+    if(hl_ < 0)
+        stop("'host_limit' must be a positive number or 0 (0 turns off the host limit).");
     if(cosp_rate_ < 0.0)
         stop("'cosp_rate' must be a positive value or 0.0.");
     if(timeToSimTo_ < 0.0)
@@ -242,6 +246,7 @@ Rcpp::List sim_cophylo_bdp_ana(SEXP hbr,
                                   host_exp_rate_,
                                   cosp_rate_,
                                   timeToSimTo_,
+                                  hl_,
                                   numbsim_);
 }
 //' Simulates a cophylogenetic system using a paired birth-death process
@@ -295,11 +300,13 @@ Rcpp::List sim_cophylo_bdp(SEXP hbr,
                            SEXP host_exp_rate,
                            SEXP cosp_rate,
                            SEXP time_to_sim,
-                           SEXP numbsim){
+                           SEXP numbsim,
+                           Rcpp::NumericVector host_limit = 0){
     double hbr_ = as<double>(hbr);
     double hdr_ = as<double>(hdr);
     double sbr_ = as<double>(sbr);
     double sdr_ = as<double>(sdr);
+    int hl_ = as<int>(host_limit);
     double cosp_rate_ = as<double>(cosp_rate);
     double host_exp_rate_ = as<double>(host_exp_rate);
     double timeToSimTo_ = as<double>(time_to_sim);
@@ -324,7 +331,8 @@ Rcpp::List sim_cophylo_bdp(SEXP hbr,
         stop("'cosp_rate' must be a positive value or 0.0.");
     if(timeToSimTo_ < 0.0)
         stop("'timeToSimTo' must be a positive value or 0.0.");
-
+    if(hl_ < 0)
+        stop("'host_limit' must be a positive number or 0 (0 turns off the host limit).");
     return sim_host_symb_treepair(hbr_,
                                   hdr_,
                                   sbr_,
@@ -332,6 +340,7 @@ Rcpp::List sim_cophylo_bdp(SEXP hbr,
                                   host_exp_rate_,
                                   cosp_rate_,
                                   timeToSimTo_,
+                                  hl_,
                                   numbsim_);
 }
 //' Simulate multispecies coalescent on a species tree

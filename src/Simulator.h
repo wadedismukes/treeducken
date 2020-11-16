@@ -115,6 +115,7 @@ class Simulator
         bool    bdsaBDSim();
         bool    bdSimpleSim();
         bool    pairedBDPSim();
+        bool    pairedBDPSimAna();
         bool    coalescentSim();
         bool    simSpeciesTree();
         bool    simSpeciesTreeTime();
@@ -165,7 +166,7 @@ class Simulator
         double    getLocusTreeRootEdge();
         double    getSymbiontTreeRootEdge();
         double    getGeneTreeRootEdge(int j);
-
+        arma::umat    hostLimitCheck(arma::umat assocMat, int hostLimit);
         arma::umat    getAssociationMatrix() { return assocMat; }
         arma::umat    cophyloEvent(double eventTime, arma::umat assocMat);
         arma::umat    cophyloERMEvent(double eventTime, arma::umat assocMat);
@@ -203,7 +204,20 @@ extern Rcpp::List sim_host_symb_treepair(double hostbr,
                                          double switchrate,
                                          double cosprate,
                                          double timeToSimTo,
+                                         int host_limit,
                                          int numbsim);
+
+extern Rcpp::List sim_host_symb_treepair_ana(double hostbr,
+                                            double hostdr,
+                                            double symbbr,
+                                            double symbdr,
+                                            double symbdispersal,
+                                            double symbextirpation,
+                                            double switchrate,
+                                            double cosprate,
+                                            double timeToSimTo,
+                                            int host_limit,
+                                            int numbsim);
 
 extern Rcpp::List sim_locus_tree_gene_tree(std::shared_ptr<SpeciesTree> species_tree,
                                            double gbr,
