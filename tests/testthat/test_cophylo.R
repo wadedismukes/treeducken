@@ -1,4 +1,41 @@
+get_number_hosts <- function(cophylo_obj, hl) {
+    assoc_mats <- association_mat.multiCophy(cophylo_obj)
+    x <- lapply(assoc_mats, rowSums)
+    y <- lapply(x, function(z) {any(z > hl)})
+    any(y)
+}
 
+
+test_that("host_limit is set correctly", {
+    expect_equal(get_number_hosts(sim_cophylo_bdp(hbr = 0.5,
+                                                  hdr = 0.3,
+                                                  sbr = 1.0,
+                                                  sdr = 0.15,
+                                                  host_exp_rate = 0.15,
+                                                  cosp_rate = 0.5,
+                                                  time_to_sim = 2.0,
+                                                  numbsim = 10,
+                                                  host_limit = 2), 2), FALSE)
+    expect_equal(get_number_hosts(sim_cophylo_bdp(hbr = 0.5,
+                                                  hdr = 0.3,
+                                                  sbr = 1.0,
+                                                  sdr = 0.15,
+                                                  host_exp_rate = 0.15,
+                                                  cosp_rate = 0.5,
+                                                  time_to_sim = 2.0,
+                                                  numbsim = 10,
+                                                  host_limit = 3), 3), FALSE)
+    expect_equal(get_number_hosts(sim_cophylo_bdp(hbr = 0.5,
+                                                  hdr = 0.3,
+                                                  sbr = 1.0,
+                                                  sdr = 0.15,
+                                                  host_exp_rate = 0.15,
+                                                  cosp_rate = 0.5,
+                                                  time_to_sim = 2.0,
+                                                  numbsim = 10,
+                                                  host_limit = 4), 4), FALSE)
+}
+          )
 
 
 get_length_host_tree <- function(cophy) {

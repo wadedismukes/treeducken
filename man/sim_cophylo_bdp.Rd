@@ -12,7 +12,8 @@ sim_cophylo_bdp(
   host_exp_rate,
   cosp_rate,
   time_to_sim,
-  numbsim
+  numbsim,
+  host_limit = 0L
 )
 }
 \arguments{

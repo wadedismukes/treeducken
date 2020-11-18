@@ -46,7 +46,7 @@ association_mat.cophy <- function(cophy) cophy$association_mat
 #' @export
 association_mat.multiCophy <- function(cophy) {
     x <- unlist(cophy, recursive = FALSE)
-    x[seq(from = 2, to = length(x), by = 3)]
+    x[seq(from = 3, to = length(x), by = 4)]
 }
 
 #' @param cophy Object of class `cophy`
@@ -71,7 +71,7 @@ event_history.multiCophy <- function(cophy) {
 #' @description Several utility functions for cophylogenetic set summarization.
 #' Including functions for printing an entire summary, and a summary of each
 #' part: host_tree, symb_tree, association_mat, and event_history.
-#' 
+#'
 #' @param object An object of class `cophy`
 #' @param ... Further arguments used in generic classes
 #'
@@ -79,7 +79,7 @@ event_history.multiCophy <- function(cophy) {
 #'  tree and the symbiont tree.
 #' The number of rows and columns of the association matrix, and a summary of
 #'  the event_history.
-#' 
+#'
 #' @return Summary returns NULL.
 #' @author Wade Dismukes and Emmanuel Paradis
 #' @seealso sim_cophylo_bdp, summary for the generic, multiCophy, c.cophy
@@ -236,7 +236,7 @@ summary.cophy <- function(object, ...) {
 #' @param cophy An object of class `cophy`
 #' @param ... Further arguments used in generic classes
 #'
-#' 
+#'
 #' @return Print returns NULL. host_tree returns NULL, symb_tree returns NULL,
 #' association_mat returns the dimensions of the matrix, event_history
 #'  returns NULL.
