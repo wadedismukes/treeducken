@@ -150,7 +150,8 @@ Simulator::Simulator(double stopTime,
   timeToSim = stopTime;
 
   hostLimit = hl;
-
+  extirpationRate = symbExtirpationRate;
+  dispersalRate = symbDispersalRate;
   spTree = nullptr;
   geneTree = nullptr;
   lociTree = nullptr;
@@ -183,7 +184,7 @@ void Simulator::initializeEventVector(){
  of tips under the constant-rate birth-death process.
 
  Below is the machinery to use GSA sampling (Hartmann 2010) to simulate a species tree.
- Much of this code is modified from FossilGen (written by Tracy Heath)
+ Much of this code is modified from Fossiln (written by Tracy Heath)
  */
 bool Simulator::gsaBDSim(){
     double timeIntv = NAN;
@@ -351,6 +352,16 @@ bool Simulator::simHostSymbSpeciesTreePairWithAnagenesis() {
   return good;
 }
 
+double Simulator::getTimeToAnaEvent(double dispersalRate,
+                                    double extirpationRate,
+                                    arma::umat assocMat) {
+  arma::uword numSymbs = assocMat.n_rows;
+  Rcpp::NumericVector randNum = Rcpp::runif(1);
+  double sumrt = dispersalRate + extirpationRate;
+  double t = -log(randNum[0]) / (double(numSymbs) * sumrt);
+  return t;
+}
+
 bool Simulator::pairedBDPSimAna() {
   bool treePairGood = false;
 
@@ -369,6 +380,7 @@ bool Simulator::pairedBDPSimAna() {
                                                                  hostLimit));
 
   double eventTime = NAN;
+  double anageneticEventTime = NAN;
   // initialize the four vectors that are output in R as the event dataframe
   this->initializeEventVector();
   // set the association matrix to start with the host and symbiont being associated
@@ -381,6 +393,12 @@ bool Simulator::pairedBDPSimAna() {
                                                       extinctionRate,
                                                       cospeciationRate,
                                                       assocMat);
+    anageneticEventTime = this->getTimeToAnaEvent(dispersalRate,
+                                                  extirpationRate,
+                                                  assocMat);
+    if(anageneticEventTime < eventTime){
+     // anagenetic event
+    }
     currentSimTime += eventTime;
     // if we exceed the sim time set to stopTime so as not to go over
     if(currentSimTime >= stopTime){

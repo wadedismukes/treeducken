@@ -19,6 +19,7 @@ class Simulator
         double      treeScale;
         double      geneBirthRate, geneDeathRate, transferRate;
         double      propTransfer, propDuplicate;
+        double      dispersalRate, extirpationRate;
         unsigned    indPerPop;
         double      popSize;
         double      generationTime;
@@ -58,7 +59,8 @@ class Simulator
                   double geneDeathRate,
                   double transferRate,
                   std::string transferRandomly);
-        // Simulating species and locus tree with proportion of transfer (e.g. hybridization, linkage)
+        // Simulating species and locus tree with proportion of transfer
+        // (e.g. hybridization, linkage)
         //.
         Simulator(unsigned numTaxaToSim,
                   double speciationRate,
@@ -139,7 +141,7 @@ class Simulator
         std::shared_ptr<GeneTree>       getGeneTree() {return geneTree; }
         double          getTimeToSim() {return timeToSim; }
         void            setTimeToSim(double tts) {timeToSim = tts; }
-
+        double          getTimeToAnaEvent(double dispersRate, double extirpRate, arma::umat assocMat);
         NumericMatrix   getSymbiontEdges() { return symbiontTree->getEdges(); }
         NumericMatrix   getSpeciesEdges() { return spTree->getEdges(); }
         NumericMatrix   getLocusEdges() { return lociTree->getEdges(); }
