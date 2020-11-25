@@ -2,7 +2,7 @@ get_number_hosts <- function(cophylo_obj, hl) {
     assoc_mats <- association_mat.multiCophy(cophylo_obj)
     x <- lapply(assoc_mats, rowSums)
     y <- lapply(x, function(z) {any(z > hl)})
-    any(y)
+    any(unlist(y))
 }
 
 

@@ -473,6 +473,8 @@ bool Simulator::pairedBDPSim(){
       // or a joint event (a.k.a. a cospeciation)
       // this returns the association matrix
       assocMat = this->cophyloEvent(currentSimTime, assocMat);
+      if(hostLimit > 0)
+        assocMat = this->hostLimitCheck(assocMat, hostLimit);
     }
     // if either tree goes to 0 or the association matrix becomes malformed
     // prematurely end the simulation, clearing the event dataframe vectors
@@ -605,11 +607,21 @@ void Simulator::updateEventVector(int h, int s, int e, double time){
 }
 
 arma::umat Simulator::hostLimitCheck(arma::umat assocMat, int hostLimit) {
-  // arma::colvec hostCounts = sum(assocMat, 1);
-  // arma::uvec tooManyHostsIndices = find(hostCounts > hostLimit);
-  // for(arma::uword i = 0; i < tooManyHostsIndices.n_rows; i++) {
-  //
-  // }
+  arma::uvec hostCounts = arma::sum(assocMat, 1); // I.e. the sums of each row
+
+  arma::uvec tooManyHostsIndices = find(hostCounts > hostLimit); // index of rows with too many hosts
+  for(arma::uword i = 0; i < tooManyHostsIndices.n_rows; i++) {
+    arma::urowvec symbWithTooMany = assocMat.row(tooManyHostsIndices(i));
+    int howManyOver =  sum(symbWithTooMany) - hostLimit;
+    while(howManyOver > 0) {
+      arma::uvec inhabiteSymbs = find(symbWithTooMany > 0);
+      int nodeInd = arma::randi<arma::uword>(arma::distr_param(0, inhabiteSymbs.size() - 1));
+      symbWithTooMany(inhabiteSymbs(nodeInd)) = 0;
+      assocMat.row(tooManyHostsIndices(i)) = symbWithTooMany;
+      howManyOver =  sum(symbWithTooMany) - hostLimit;
+    }
+  }
+  return assocMat;
 }
 
 // Event occurring on the symbiont tree at eventTiem with matrix assocMat
