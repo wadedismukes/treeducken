@@ -32,6 +32,8 @@ sim_cophylo_bdp(
 \item{time_to_sim}{time units to simulate until}
 
 \item{numbsim}{number of replicates}
+
+\item{host_limit}{Maximum number of hosts for symbionts (0 implies no limit)}
 }
 \value{
 A list containing the `host_tree`, the `symbiont_tree`, the

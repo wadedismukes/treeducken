@@ -139,6 +139,7 @@ sim_locustree_bdp <- function(species_tree, gbr, gdr, lgtr, num_loci, transfer_t
 #' @param cosp_rate cospeciation rate
 #' @param time_to_sim time units to simulate until
 #' @param numbsim number of replicates
+#' @param host_limit Maximum number of hosts for symbionts (0 implies no limit)
 #' @return A list containing the `host_tree`, the `symbiont_tree`, the
 #'     association matrix at present, and the history of events that have
 #'     occurred.
