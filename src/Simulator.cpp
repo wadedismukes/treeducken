@@ -362,6 +362,66 @@ double Simulator::getTimeToAnaEvent(double dispersalRate,
   return t;
 }
 
+arma::umat Simulator::symbiontDispersalEvent(double symbInd, arma::umat assocMat) {
+  // check if symbiont row has max number of hosts if so delete one at random
+  arma::uvec symbiontHosts = assocMat.row(symbInd);
+  arma::uvec occupiedIndices = arma::find(symbiontHosts);
+  arma::uword numHosts = arma::sum(occupiedIndices);
+  if(numHosts >= hostLimit){
+    arma::uvec shuffledOccupants = arma::shuffle(occupiedIndices);
+    symbiontHosts(shuffledOccupants(0)) = 0;
+  }
+  arma::uvec unoccupiedIndices = arma::find(symbiontHosts < 1);
+  unoccupiedIndices = arma::shuffle(unoccupiedIndices);
+  symbiontHosts(unoccupiedIndices(0)) = 1;
+  assocMat.row(symbInd) = symbiontHosts;
+        // then add one at rrandom
+
+
+  return assocMat;
+}
+
+arma::umat Simulator::symbiontExtirpationEvent(double symbInd, arma::umat assocMat) {
+  // find symbiont's hosts
+  arma::uvec symbiontHosts = assocMat.row(symbInd);
+  arma::uvec occupiedIndices = arma::find(symbiontHosts);
+  occupiedIndices = arma::shuffle(occupiedIndices);
+  symbiontHosts(occupiedIndices(0)) = 0; // deletes a host association
+  arma::uword numHosts = arma::sum(symbiontHosts);
+  if(numHosts == 0){
+    // this means that the symbiont now has no hosts so extinction occurs
+    assocMat.shed_row(symbInd); // gets rid of row in association matrix
+    symbiontTree->lineageDeathEvent(symbInd);
+  }
+
+  // check if there are no more hosts if so extinction event here
+
+  return assocMat;
+}
+
+arma::umat Simulator::anageneticEvent(double dispersalRate,
+                                      double extirpationRate,
+                                      double currTime,
+                                       arma::umat assocMat) {
+  // 1 - which event
+  double sumRates = dispersalRate + extirpationRate;
+  Rcpp::NumericVector randNum = Rcpp::runif(2);
+  double relaDispersalRate = dispersalRate / (dispersalRate + extirpationRate);
+  bool isDispersal = (randNum[0] < relaDispersalRate ? true : false);
+  // 2 - which lineage does event happen to
+
+  int nodeInd = randNum[0]*(assocMat.n_rows - 1);
+
+
+  if(isDispersal)
+    assocMat = symbiontDispersalEvent(nodeInd, assocMat);
+  else
+    assocMat = symbiontExtirpationEvent(nodeInd, assocMat);
+  // need to make sure hostLimit is respected.
+
+  return assocMat;
+}
+
 bool Simulator::pairedBDPSimAna() {
   bool treePairGood = false;
 
@@ -381,7 +441,7 @@ bool Simulator::pairedBDPSimAna() {
 
   double eventTime = NAN;
   double anageneticEventTime = NAN;
-  // initialize the four vectors that are output in R as the event dataframe
+  // initialize the four vectors that are output in R as the event dataframe lsa
   this->initializeEventVector();
   // set the association matrix to start with the host and symbiont being associated
   // a 1x1 matrix of 1
@@ -393,13 +453,27 @@ bool Simulator::pairedBDPSimAna() {
                                                       extinctionRate,
                                                       cospeciationRate,
                                                       assocMat);
-    anageneticEventTime = this->getTimeToAnaEvent(dispersalRate,
-                                                  extirpationRate,
-                                                  assocMat);
-    if(anageneticEventTime < eventTime){
-     // anagenetic event
-    }
+
+
+    double anaTimeTrack = currentSimTime;
+
+
     currentSimTime += eventTime;
+
+    while(anaTimeTrack < currentSimTime) {
+      anageneticEventTime = this->getTimeToAnaEvent(dispersalRate,
+                                                    extirpationRate,
+                                                    assocMat);
+      anaTimeTrack += anageneticEventTime;
+      if(anaTimeTrack > currentSimTime)
+          break;
+      else
+        assocMat = this->anageneticEvent(dispersalRate,
+                                         extirpationRate,
+                                         anaTimeTrack,
+                                         assocMat);
+
+    }
     // if we exceed the sim time set to stopTime so as not to go over
     if(currentSimTime >= stopTime){
       currentSimTime = stopTime;

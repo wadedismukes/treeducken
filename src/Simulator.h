@@ -141,7 +141,6 @@ class Simulator
         std::shared_ptr<GeneTree>       getGeneTree() {return geneTree; }
         double          getTimeToSim() {return timeToSim; }
         void            setTimeToSim(double tts) {timeToSim = tts; }
-        double          getTimeToAnaEvent(double dispersRate, double extirpRate, arma::umat assocMat);
         NumericMatrix   getSymbiontEdges() { return symbiontTree->getEdges(); }
         NumericMatrix   getSpeciesEdges() { return spTree->getEdges(); }
         NumericMatrix   getLocusEdges() { return lociTree->getEdges(); }
@@ -179,6 +178,13 @@ class Simulator
         void      updateEventVector(int h, int s, int e, double time);
         void    clearEventDFVecs();
         void    initializeEventVector();
+
+        // anagenetic functions
+        double    getTimeToAnaEvent(double dispRate, double extRate, arma::umat assocMat);
+        arma::umat symbiontDispersalEvent(double symbInd, arma::umat assocMat);
+        arma::umat symbiontExtirpationEvent(double symbInd, arma::umat assocMat);
+        arma::umat anageneticEvent(double dispersalRate, double extirpationRate, double currTime, arma::umat assocMat);
+
 };
 
 extern Rcpp::List bdsim_species_tree(double sbr,
