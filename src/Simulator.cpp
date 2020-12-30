@@ -362,18 +362,25 @@ double Simulator::getTimeToAnaEvent(double dispersalRate,
   return t;
 }
 
-arma::umat Simulator::symbiontDispersalEvent(double symbInd, arma::umat assocMat) {
+arma::umat Simulator::symbiontDispersalEvent(int symbInd, arma::umat assocMat) {
   // check if symbiont row has max number of hosts if so delete one at random
-  arma::uvec symbiontHosts = assocMat.row(symbInd);
-  arma::uvec occupiedIndices = arma::find(symbiontHosts);
-  arma::uword numHosts = arma::sum(occupiedIndices);
+  Rcout << "1" << std::endl;
+
+  arma::urowvec symbiontHosts = assocMat.row(symbInd);
+  arma::uvec occupiedIndices = arma::find(symbiontHosts > 0);
+  arma::uword numHosts = arma::sum(symbiontHosts);
   if(numHosts >= hostLimit){
-    arma::uvec shuffledOccupants = arma::shuffle(occupiedIndices);
-    symbiontHosts(shuffledOccupants(0)) = 0;
+    Rcout << "poop1" << std::endl;
+    int nodeInd = arma::randi<arma::uword>(arma::distr_param(0, occupiedIndices.size() - 1));
+    symbiontHosts(occupiedIndices(nodeInd)) = 0;
   }
+  Rcout << "poop2" << std::endl;
+
   arma::uvec unoccupiedIndices = arma::find(symbiontHosts < 1);
-  unoccupiedIndices = arma::shuffle(unoccupiedIndices);
-  symbiontHosts(unoccupiedIndices(0)) = 1;
+  if(unoccupiedIndices.size() > 0) {
+    int nodeInd = arma::randi<arma::uword>(arma::distr_param(0, unoccupiedIndices.size() - 1));
+    symbiontHosts(unoccupiedIndices(nodeInd)) = 1;
+  }
   assocMat.row(symbInd) = symbiontHosts;
         // then add one at rrandom
 
@@ -381,19 +388,30 @@ arma::umat Simulator::symbiontDispersalEvent(double symbInd, arma::umat assocMat
   return assocMat;
 }
 
-arma::umat Simulator::symbiontExtirpationEvent(double symbInd, arma::umat assocMat) {
+arma::umat Simulator::symbiontExtirpationEvent(int symbInd, arma::umat assocMat) {
+  Rcout << "0" << std::endl;
+
   // find symbiont's hosts
   arma::uvec symbiontHosts = assocMat.row(symbInd);
-  arma::uvec occupiedIndices = arma::find(symbiontHosts);
-  occupiedIndices = arma::shuffle(occupiedIndices);
-  symbiontHosts(occupiedIndices(0)) = 0; // deletes a host association
+  arma::uvec occupiedIndices = arma::find(symbiontHosts > 0);
+  // so now im getting an error where occupiedindices is empty
+  // what does this mean???
+  // this means that there are no 1's in this row.
+  int nodeInd = arma::randi<arma::uword>(arma::distr_param(0, occupiedIndices.size() - 1));
+
+
+  symbiontHosts(occupiedIndices(nodeInd)) = 0; // deletes a host association
   arma::uword numHosts = arma::sum(symbiontHosts);
   if(numHosts == 0){
-    // this means that the symbiont now has no hosts so extinction occurs
-    assocMat.shed_row(symbInd); // gets rid of row in association matrix
-    symbiontTree->lineageDeathEvent(symbInd);
-  }
 
+    // this means that the symbiont now has no hosts so extinction occurs
+    symbiontTree->lineageDeathEvent(symbInd);
+    assocMat.shed_row(symbInd); // gets rid of row in association matrix
+
+  }
+  else{
+    assocMat.row(symbInd) = symbiontHosts;
+  }
   // check if there are no more hosts if so extinction event here
 
   return assocMat;
@@ -404,13 +422,11 @@ arma::umat Simulator::anageneticEvent(double dispersalRate,
                                       double currTime,
                                        arma::umat assocMat) {
   // 1 - which event
-  double sumRates = dispersalRate + extirpationRate;
   Rcpp::NumericVector randNum = Rcpp::runif(2);
   double relaDispersalRate = dispersalRate / (dispersalRate + extirpationRate);
   bool isDispersal = (randNum[0] < relaDispersalRate ? true : false);
   // 2 - which lineage does event happen to
-
-  int nodeInd = randNum[0]*(assocMat.n_rows - 1);
+  int nodeInd = randNum[1]*(assocMat.n_rows - 1);
 
 
   if(isDispersal)

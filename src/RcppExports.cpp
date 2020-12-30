@@ -51,6 +51,27 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// sim_cophylo_bdp_ana
+Rcpp::List sim_cophylo_bdp_ana(SEXP hbr, SEXP hdr, SEXP sbr, SEXP sdr, SEXP symb_dispersal_rate, SEXP symb_extirpation_rate, SEXP host_exp_rate, SEXP cosp_rate, SEXP time_to_sim, SEXP numbsim, Rcpp::NumericVector host_limit);
+RcppExport SEXP _treeducken_sim_cophylo_bdp_ana(SEXP hbrSEXP, SEXP hdrSEXP, SEXP sbrSEXP, SEXP sdrSEXP, SEXP symb_dispersal_rateSEXP, SEXP symb_extirpation_rateSEXP, SEXP host_exp_rateSEXP, SEXP cosp_rateSEXP, SEXP time_to_simSEXP, SEXP numbsimSEXP, SEXP host_limitSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type hbr(hbrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type hdr(hdrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type sbr(sbrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type sdr(sdrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type symb_dispersal_rate(symb_dispersal_rateSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type symb_extirpation_rate(symb_extirpation_rateSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type host_exp_rate(host_exp_rateSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type cosp_rate(cosp_rateSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type time_to_sim(time_to_simSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type numbsim(numbsimSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type host_limit(host_limitSEXP);
+    rcpp_result_gen = Rcpp::wrap(sim_cophylo_bdp_ana(hbr, hdr, sbr, sdr, symb_dispersal_rate, symb_extirpation_rate, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit));
+    return rcpp_result_gen;
+END_RCPP
+}
 // sim_cophylo_bdp
 Rcpp::List sim_cophylo_bdp(SEXP hbr, SEXP hdr, SEXP sbr, SEXP sdr, SEXP host_exp_rate, SEXP cosp_rate, SEXP time_to_sim, SEXP numbsim, Rcpp::NumericVector host_limit);
 RcppExport SEXP _treeducken_sim_cophylo_bdp(SEXP hbrSEXP, SEXP hdrSEXP, SEXP sbrSEXP, SEXP sdrSEXP, SEXP host_exp_rateSEXP, SEXP cosp_rateSEXP, SEXP time_to_simSEXP, SEXP numbsimSEXP, SEXP host_limitSEXP) {
@@ -92,6 +113,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_treeducken_sim_sptree_bdp", (DL_FUNC) &_treeducken_sim_sptree_bdp, 5},
     {"_treeducken_sim_sptree_bdp_time", (DL_FUNC) &_treeducken_sim_sptree_bdp_time, 4},
     {"_treeducken_sim_locustree_bdp", (DL_FUNC) &_treeducken_sim_locustree_bdp, 6},
+    {"_treeducken_sim_cophylo_bdp_ana", (DL_FUNC) &_treeducken_sim_cophylo_bdp_ana, 11},
     {"_treeducken_sim_cophylo_bdp", (DL_FUNC) &_treeducken_sim_cophylo_bdp, 9},
     {"_treeducken_sim_multispecies_coal", (DL_FUNC) &_treeducken_sim_multispecies_coal, 7},
     {NULL, NULL, 0}

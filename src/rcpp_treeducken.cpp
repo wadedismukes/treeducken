@@ -186,7 +186,7 @@ Rcpp::List sim_locustree_bdp(Rcpp::List species_tree,
 //'
 //'
 //'
-
+// [[Rcpp::export]]
 Rcpp::List sim_cophylo_bdp_ana(SEXP hbr,
                                SEXP hdr,
                                SEXP sbr,

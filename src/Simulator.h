@@ -181,8 +181,8 @@ class Simulator
 
         // anagenetic functions
         double    getTimeToAnaEvent(double dispRate, double extRate, arma::umat assocMat);
-        arma::umat symbiontDispersalEvent(double symbInd, arma::umat assocMat);
-        arma::umat symbiontExtirpationEvent(double symbInd, arma::umat assocMat);
+        arma::umat symbiontDispersalEvent(int symbInd, arma::umat assocMat);
+        arma::umat symbiontExtirpationEvent(int symbInd, arma::umat assocMat);
         arma::umat anageneticEvent(double dispersalRate, double extirpationRate, double currTime, arma::umat assocMat);
 
 };
