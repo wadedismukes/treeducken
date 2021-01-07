@@ -364,17 +364,14 @@ double Simulator::getTimeToAnaEvent(double dispersalRate,
 
 arma::umat Simulator::symbiontDispersalEvent(int symbInd, arma::umat assocMat) {
   // check if symbiont row has max number of hosts if so delete one at random
-  Rcout << "1" << std::endl;
 
   arma::urowvec symbiontHosts = assocMat.row(symbInd);
   arma::uvec occupiedIndices = arma::find(symbiontHosts > 0);
   arma::uword numHosts = arma::sum(symbiontHosts);
   if(numHosts >= hostLimit){
-    Rcout << "poop1" << std::endl;
     int nodeInd = arma::randi<arma::uword>(arma::distr_param(0, occupiedIndices.size() - 1));
     symbiontHosts(occupiedIndices(nodeInd)) = 0;
   }
-  Rcout << "poop2" << std::endl;
 
   arma::uvec unoccupiedIndices = arma::find(symbiontHosts < 1);
   if(unoccupiedIndices.size() > 0) {
@@ -389,19 +386,20 @@ arma::umat Simulator::symbiontDispersalEvent(int symbInd, arma::umat assocMat) {
 }
 
 arma::umat Simulator::symbiontExtirpationEvent(int symbInd, arma::umat assocMat) {
-  Rcout << "0" << std::endl;
-
   // find symbiont's hosts
-  arma::uvec symbiontHosts = assocMat.row(symbInd);
+  arma::urowvec symbiontHosts = assocMat.row(symbInd);
   arma::uvec occupiedIndices = arma::find(symbiontHosts > 0);
   // so now im getting an error where occupiedindices is empty
   // what does this mean???
   // this means that there are no 1's in this row.
+
+
   int nodeInd = arma::randi<arma::uword>(arma::distr_param(0, occupiedIndices.size() - 1));
 
 
   symbiontHosts(occupiedIndices(nodeInd)) = 0; // deletes a host association
   arma::uword numHosts = arma::sum(symbiontHosts);
+
   if(numHosts == 0){
 
     // this means that the symbiont now has no hosts so extinction occurs
@@ -410,7 +408,10 @@ arma::umat Simulator::symbiontExtirpationEvent(int symbInd, arma::umat assocMat)
 
   }
   else{
+
     assocMat.row(symbInd) = symbiontHosts;
+
+
   }
   // check if there are no more hosts if so extinction event here
 
@@ -481,6 +482,16 @@ bool Simulator::pairedBDPSimAna() {
                                                     extirpationRate,
                                                     assocMat);
       anaTimeTrack += anageneticEventTime;
+
+      if(spTree->getNumExtant() < 1 ||
+         symbiontTree->getNumExtant() < 1 ||
+         assocMat.n_rows < 1 ||
+         assocMat.n_cols < 1){
+        treePairGood = false;
+        this->clearEventDFVecs();
+        return treePairGood;
+      }
+
       if(anaTimeTrack > currentSimTime)
           break;
       else
