@@ -2,9 +2,12 @@
 % Please edit documentation in R/estimate_node_heights.R
 \name{calculate_expected_leaves_sptree}
 \alias{calculate_expected_leaves_sptree}
+\alias{ave_tips_st}
 \title{Calculate expected leaves of a species tree}
 \usage{
 calculate_expected_leaves_sptree(lambda, mu, t)
+
+ave_tips_st(lambda, mu, t)
 }
 \arguments{
 \item{lambda}{speciation rate}
@@ -27,7 +30,7 @@ Calculates the expected number of leaves for a birth-death
 spec_rate <- 1.0
 ext_rate <- 0.5
 time <- 2
-calculate_expected_leaves_sptree(spec_rate, ext_rate, time)
+ave_tips_st(spec_rate, ext_rate, time)
 }
 \references{
 Mooers, A., Gascuel, O., Stadler, T., Li, H., & Steel, M. (2012).

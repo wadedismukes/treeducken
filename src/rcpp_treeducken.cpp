@@ -26,12 +26,12 @@
 //' # numb_extant_tips * 100 tips counting each time we have a tree with 10 tips
 //' # then randomly picks one of those trees
 //'
-//' tree_list <- sim_sptree_bdp(sbr = lambda,
+//' tree_list <- sim_st_bdp(sbr = lambda,
 //'                 sdr = mu,
 //'                 numbsim = numb_replicates,
 //'                 n_tips = numb_extant_tips)
 // [[Rcpp::export]]
-Rcpp::List sim_sptree_bdp(SEXP sbr,
+Rcpp::List sim_st_bdp(SEXP sbr,
                           SEXP sdr,
                           SEXP numbsim,
                           Rcpp::NumericVector n_tips,
@@ -77,12 +77,12 @@ Rcpp::List sim_sptree_bdp(SEXP sbr,
 //' numb_replicates <- 10
 //' time <- 1
 //'
-//' tree_list <- sim_sptree_bdp_time(sbr = lambda,
+//' tree_list <- sim_st_bdp_t(sbr = lambda,
 //'                 sdr = mu,
 //'                 numbsim = numb_replicates,
 //'                 t = time)
 // [[Rcpp::export]]
-Rcpp::List sim_sptree_bdp_time(SEXP sbr, SEXP sdr, SEXP numbsim, SEXP t){
+Rcpp::List sim_st_bdp_t(SEXP sbr, SEXP sdr, SEXP numbsim, SEXP t){
     double sbr_ = as<double>(sbr);
     double sdr_ = as<double>(sdr);
     unsigned numbsim_ = as<int>(numbsim);
@@ -133,7 +133,7 @@ Rcpp::List sim_sptree_bdp_time(SEXP sbr, SEXP sdr, SEXP numbsim, SEXP t){
 //' # numb_extant_tips * 100 tips counting each time we have a tree with 10 tips
 //' # then randomly picks one of those trees
 //'
-//' sp_tree <- sim_sptree_bdp(sbr = lambda,
+//' sp_tree <- sim_st_bdp(sbr = lambda,
 //'                 sdr = mu,
 //'                 numbsim = numb_replicates,
 //'                 n_tips = numb_extant_tips)
@@ -141,13 +141,13 @@ Rcpp::List sim_sptree_bdp_time(SEXP sbr, SEXP sdr, SEXP numbsim, SEXP t){
 //' gene_br <- 1.0
 //' gene_dr <- 0.2
 //' transfer_rate <- 0.2
-//' sim_locustree_bdp(species_tree = sp_tree[[1]],
+//' sim_lt_bdp(species_tree = sp_tree[[1]],
 //'                   gbr = gene_br,
 //'                   gdr = gene_dr,
 //'                   lgtr = transfer_rate,
 //'                   num_loci = 10)
 // [[Rcpp::export]]
-Rcpp::List sim_locustree_bdp(Rcpp::List species_tree,
+Rcpp::List sim_lt_bdp(Rcpp::List species_tree,
                              SEXP gbr,
                              SEXP gdr,
                              SEXP lgtr,
@@ -182,22 +182,69 @@ Rcpp::List sim_locustree_bdp(Rcpp::List species_tree,
     std::shared_ptr<SpeciesTree> specTree = std::shared_ptr<SpeciesTree>(new SpeciesTree(species_tree));
     return sim_locus_tree(specTree, gbr_, gdr_, lgtr_, numLoci, trans_type);
 }
+//' Simulates a host-symbiont system using a cophylogenetic birth-death process
 //'
+//' @details Simulates a cophylogenetic system using birth-death processes with
+//'     anagenetic processes allowing symbiont to gain or loss associations with
+//'     hosts. The host tree is simulated following a constant rate birth-death process
+//'     with an additional parameter - the cospeciation rate. This rate works as
+//'     the speciation rate with the additional effect that if cospeciation
+//'     occurs the symbiont tree also speciates. The symbiont tree is related to
+//'     the host tree via an association matrix that describes which lineages
+//'     are associated with which. The symbiont tree has an independent
+//'     birth-death process with the addition of a host shift speciation rate
+//'     that allows for the addition of more associated hosts upon symbiont
+//'     speciation. The anagenetic processes are modeled using a poisson process
+//'     occurring along the tree. THe dispersal to hosts is at present random;
+//'     there is no preferential host-switching.
+//' @param hbr host tree birth rate
+//' @param hdr host tree death rate
+//' @param sbr symbiont tree birth rate
+//' @param sdr symbiont tree death rate
+//' @param symb_dispersal_rate symbiont dispersal rate to new hosts
+//' @param symb_extirpation_rate symbiont exirpation rate on h
+//' @param host_exp_rate host shift speciation rate
+//' @param cosp_rate cospeciation rate
+//' @param time_to_sim time units to simulate until
+//' @param numbsim number of replicates
+//' @param host_limit Maximum number of hosts for symbionts (0 implies no limit)
+//' @return A list containing the `host_tree`, the `symbiont_tree`, the
+//'     association matrix at present, and the history of events that have
+//'     occurred.
+//' @examples
 //'
+//' host_mu <- 0.5 # death rate
+//' host_lambda <- 2.0 # birth rate
+//' numb_replicates <- 10
+//' time <- 1.0
+//' symb_mu <- 0.2
+//' symb_lambda <- 0.4
+//' host_shift_rate <- 0.0
+//' cosp_rate <- 2.0
 //'
+//' cophylo_pair <- sim_cbdp_ana(hbr = host_lambda,
+//'                            hdr = host_mu,
+//'                            cosp_rate = cosp_rate,
+//'                            symb_dispersal_rate = 1,
+//'                            symb_extirpation_rate = 0.4,
+//'                            host_exp_rate = host_shift_rate,
+//'                            sdr = symb_mu,
+//'                            sbr = symb_lambda,
+//'                            numbsim = numb_replicates,
+//'                            time_to_sim = time)
 //'
 // [[Rcpp::export]]
-Rcpp::List sim_cophylo_bdp_ana(SEXP hbr,
-                               SEXP hdr,
-                               SEXP sbr,
-                               SEXP sdr,
-                               SEXP symb_dispersal_rate,
-                               SEXP symb_extirpation_rate,
-                               SEXP host_exp_rate,
-                               SEXP cosp_rate,
-                               SEXP time_to_sim,
-                               SEXP numbsim,
-                               Rcpp::NumericVector host_limit = 0){
+Rcpp::List sim_cbdp_ana(SEXP hbr,
+                        SEXP hdr,
+                        SEXP sbr,
+                        SEXP sdr,
+                        SEXP symb_dispersal_rate,
+                        SEXP symb_extirpation_rate,
+                        SEXP host_exp_rate,
+                        SEXP cosp_rate,
+                        SEXP time_to_sim,
+                        SEXP numbsim,
+                        Rcpp::NumericVector host_limit = 0){
 
     double hbr_ = as<double>(hbr);
     double hdr_ = as<double>(hdr);
@@ -249,7 +296,7 @@ Rcpp::List sim_cophylo_bdp_ana(SEXP hbr,
                                   hl_,
                                   numbsim_);
 }
-//' Simulates a cophylogenetic system using a paired birth-death process
+//' Simulates a host-symbiont system using a cophylogenetic birth-death process
 //'
 //' @details Simulates a cophylogenetic system using birth-death processes. The
 //'     host tree is simulated following a constant rate birth-death process
@@ -284,7 +331,7 @@ Rcpp::List sim_cophylo_bdp_ana(SEXP hbr,
 //' host_shift_rate <- 0.0
 //' cosp_rate <- 2.0
 //'
-//' cophylo_pair <- sim_cophylo_bdp(hbr = host_lambda,
+//' cophylo_pair <- sim_cbdp(hbr = host_lambda,
 //'                            hdr = host_mu,
 //'                            cosp_rate = cosp_rate,
 //'                            host_exp_rate = host_shift_rate,
@@ -294,15 +341,15 @@ Rcpp::List sim_cophylo_bdp_ana(SEXP hbr,
 //'                            time_to_sim = time)
 //'
 // [[Rcpp::export]]
-Rcpp::List sim_cophylo_bdp(SEXP hbr,
-                           SEXP hdr,
-                           SEXP sbr,
-                           SEXP sdr,
-                           SEXP host_exp_rate,
-                           SEXP cosp_rate,
-                           SEXP time_to_sim,
-                           SEXP numbsim,
-                           Rcpp::NumericVector host_limit = 0){
+Rcpp::List sim_cbdp(SEXP hbr,
+                    SEXP hdr,
+                    SEXP sbr,
+                    SEXP sdr,
+                    SEXP host_exp_rate,
+                    SEXP cosp_rate,
+                    SEXP time_to_sim,
+                    SEXP numbsim,
+                    Rcpp::NumericVector host_limit = 0){
     double hbr_ = as<double>(hbr);
     double hdr_ = as<double>(hdr);
     double sbr_ = as<double>(sbr);
@@ -365,27 +412,27 @@ Rcpp::List sim_cophylo_bdp(SEXP hbr,
 //' If rescale is set to false the tree is assumed to be in coalescent units and `ne` is used as the population
 //' genetic parameter theta.
 //' @return A list of coalescent trees
-//' @seealso sim_locustree_bdp, sim_sptree_bdp, sim_sptree_bdp_time
+//' @seealso sim_lt_bdp, sim_st_bdp, sim_st_bdp_t
 //'
 //' @examples
 //' # first simulate a species tree
 //' mu <- 0.5
 //' lambda <- 1.0
 //' nt <- 6
-//' tr <- sim_sptree_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
+//' tr <- sim_st_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
 //' # for a locus tree with 100 genes sampled per locus tree
-//' gentrees <- sim_multispecies_coal(tr[[1]],
-//'                                     ne = 10000,
-//'                                     mutation_rate = 1e-9,
-//'                                     generation_time = 1e-6,
-//'                                     num_sampled_individuals = 1,
-//'                                     num_genes = 100)
+//' gentrees <- sim_msc(tr[[1]],
+//'                     ne = 10000,
+//'                     mutation_rate = 1e-9,
+//'                     generation_time = 1e-6,
+//'                     num_sampled_individuals = 1,
+//'                     num_genes = 100)
 //'
 //' @references
 //' Bruce Rannala and Ziheng Yang (2003) Bayes Estimation of Species Divergence Times and Ancestral Population Sizes Using DNA Sequences From Multiple Loci Genetics August 1, 2003 vol. 164 no. 4 1645-1656
 //' Mallo D, de Oliveira Martins L, Posada D (2015) SimPhy: Phylogenomic Simulation of Gene, Locus and Species Trees. Syst. Biol. doi: http://dx.doi.org/10.1093/sysbio/syv082
 // [[Rcpp::export]]
-Rcpp::List sim_multispecies_coal(SEXP species_tree,
+Rcpp::List sim_msc(SEXP species_tree,
                                  SEXP ne,
                                  SEXP num_sampled_individuals,
                                  SEXP num_genes,

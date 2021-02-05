@@ -2,12 +2,18 @@
 % Please edit documentation in R/sim_multilocus.R
 \name{retrieve_parent_genetrees}
 \alias{retrieve_parent_genetrees}
+\alias{get_parent_gts}
 \alias{retrieve_child_genetrees}
-\title{Retrieve all gene trees of the parent tree from a list generated from sim_multilocus_coal}
+\alias{get_child_gts}
+\title{Retrieve all gene trees of the parent tree from a list generated from sim_mlc}
 \usage{
 retrieve_parent_genetrees(gene_tree_list)
 
+get_parent_gts(gene_tree_list)
+
 retrieve_child_genetrees(gene_tree_list)
+
+get_child_gts(gene_tree_list)
 }
 \arguments{
 \item{gene_tree_list}{A list of length 2: "parent_tree" and "child_trees" both of which are of class "multiPhylo"}
@@ -16,7 +22,7 @@ retrieve_child_genetrees(gene_tree_list)
 A `multiPhylo` object of only the gene trees generated on the parent subtree
 }
 \description{
-Retrieve all gene trees of the parent tree from a list generated from sim_multilocus_coal
+Retrieve all gene trees of the parent tree from a list generated from sim_mlc
 
 Retrieves the gene trees of the child subtrees
 }
@@ -30,18 +36,18 @@ Retrieves the gene trees of the child subtrees
 mu <- 0.5
 lambda <- 1.0
 nt <- 6
-tr <- sim_sptree_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
+tr <- sim_st_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
 # for a locus tree with 100 genes sampled per locus tree
 gene_br <- 0.1
 gene_dr <- 0.02
 transfer_rate <- 0.2
-locus_tree <- sim_locustree_bdp(species_tree = tr[[1]],
+locus_tree <- sim_lt_bdp(species_tree = tr[[1]],
                   gbr = gene_br,
                   gdr = gene_dr,
                   lgtr = transfer_rate,
                   num_loci = 1)
 effect_popsize <- 1e6
-gene_tree_obj <- sim_multilocus_coal(locus_tree[[1]],
+gene_tree_obj <- sim_mlc(locus_tree[[1]],
                                       effect_popsize,
                                       num_reps = 2)
 parent_trees <- retrieve_parent_genetrees(gene_tree_obj)

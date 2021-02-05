@@ -15,11 +15,19 @@
 #' spec_rate <- 1.0
 #' ext_rate <- 0.5
 #' time <- 2
-#' calculate_expected_leaves_sptree(spec_rate, ext_rate, time)
+#' ave_tips_st(spec_rate, ext_rate, time)
 #' @export
 calculate_expected_leaves_sptree <- function(lambda,
                                       mu,
                                       t) {
+    warning("please use ave_tips_st instead of calculate_expected_leaves_sptree", call.=FALSE)
+    ave_tips_st(lambda, mu, t)
+}
+#' @export
+#' @rdname calculate_expected_leaves_sptree
+ave_tips_st <- function(lambda,
+                        mu,
+                        t) {
     if (!is.numeric(lambda)) {
         stop("'lambda' needs to be a number")
     }
@@ -61,7 +69,7 @@ calculate_expected_leaves_sptree <- function(lambda,
 #' gene_death_rate <- 0.5
 #' time <- 2
 #' num_species <- 10
-#' calculate_expected_leaves_locustree(time,
+#' ave_tips_lt(time,
 #'                                     gene_birth_rate,
 #'                                     gene_death_rate,
 #'                                     num_species)
@@ -70,6 +78,15 @@ calculate_expected_leaves_locustree <- function(t,
                                                 dup_rate,
                                                 loss_rate,
                                                 num_species) {
+    warning("please use ave_tips_lt() instead of calculate_expected_leaves_locustree()", call. = FALSE)
+    ave_tips_lt(t, dup_rate, loss_rate, num_species)
+}
+#' @export
+#' @rdname calculate_expected_leaves_locustree
+ave_tips_lt <- function(t,
+                        dup_rate,
+                        loss_rate,
+                        num_species) {
     if (!is.numeric(t)) {
         stop("'t' needs to be a number")
     }
@@ -94,6 +111,7 @@ calculate_expected_leaves_locustree <- function(t,
     (num_species * exp(t * (dup_rate - loss_rate))) /
         (1 - (f ^ (num_species - 2)))
 }
+
 #' Calculate expected time to branching point of a species tree
 #'
 #' @description Calculates the expected time to branching point of a
@@ -119,14 +137,23 @@ calculate_expected_leaves_locustree <- function(t,
 #' spec_rate <- 1.0
 #' ext_rate <- 0.5
 #' nt <- 10
-#' estimate_node_heights(lambda = spec_rate, mu = ext_rate, n = nt)
+#' node_heights(lambda = spec_rate, mu = ext_rate, n = nt)
 #'
-#' estimate_node_heights(lambda = spec_rate, mu = ext_rate, n = nt, k = 2)
+#' node_heights(lambda = spec_rate, mu = ext_rate, n = nt, k = 2)
 #' @export
 estimate_node_heights <- function(lambda,
                                   mu,
                                   n,
                                   k = 1) {
+    warning("please use node_heights() instead of estimate_node_heights", call. = FALSE)
+    node_heights(lambda, mu, n, k)
+}
+#' @export
+#' @rdname estimate_node_heights
+node_heights <- function(lambda,
+                         mu,
+                         n,
+                         k = 1) {
     if (!is.numeric(lambda))
         stop("'lambda' needs to be a number")
     if (!is.numeric(mu))

@@ -2,9 +2,12 @@
 % Please edit documentation in R/convert_to_cophylo.R
 \name{convert_to_cophy}
 \alias{convert_to_cophy}
+\alias{to_cophy}
 \title{Converts an object into an object of type cophy}
 \usage{
 convert_to_cophy(hostTree, symbTree, assocMat, eventHistory = NULL)
+
+to_cophy(hostTree, symbTree, assocMat, eventHistory = NULL)
 }
 \arguments{
 \item{hostTree}{An object of type `phylo`}
@@ -53,7 +56,7 @@ lice_tree_path <- system.file("extdata",
                               "lice_bd.tre",
                                package = "treeducken")
 lice_tree <- ape::read.nexus(lice_tree_path)
-gopher_lice_cophy <- convert_to_cophy(hostTree = gopher_tree,
+gopher_lice_cophy <- to_cophy(hostTree = gopher_tree,
                                          symbTree = lice_tree,
                                          assocMat = gopher_lice_assoc_matrix)
 }

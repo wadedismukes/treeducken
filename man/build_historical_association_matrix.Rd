@@ -2,14 +2,17 @@
 % Please edit documentation in R/build_historical_assoc_mat.R
 \name{build_historical_association_matrix}
 \alias{build_historical_association_matrix}
+\alias{get_assoc}
 \title{Reconstruct historical association matrix}
 \usage{
 build_historical_association_matrix(t, tr_pair_obj)
+
+get_assoc(t, tr_pair_obj)
 }
 \arguments{
 \item{t}{The time of interest}
 
-\item{tr_pair_obj}{The tree pair object from `sim_cophylo_bdp`}
+\item{tr_pair_obj}{The tree pair object from `sim_cbdp`}
 }
 \value{
 Matrix of the associations at given time
@@ -18,7 +21,7 @@ Matrix of the associations at given time
 Reconstruct historical association matrix
 }
 \details{
-Given a time and a tree pair object produced by the `sim_cophylo_bdp`
+Given a time and a tree pair object produced by the `sim_cbdp`
     object will produce the association matrix at that time point for the
     tree object.
 USER WARNING: this is still in development, and likely will not work all the time.
@@ -33,7 +36,7 @@ symb_lambda <- 0.4
 host_shift_rate <- 0.0
 cosp_rate <- 2.0
 
-cophylo_pair <- sim_cophylo_bdp(hbr = host_lambda,
+cophylo_pair <- sim_cbdp(hbr = host_lambda,
                            hdr = host_mu,
                            cosp_rate = cosp_rate,
                            host_exp_rate = host_shift_rate,

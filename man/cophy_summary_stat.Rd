@@ -2,17 +2,23 @@
 % Please edit documentation in R/calculate_cophylo_summary_stat.R
 \name{cophy_summary_stat_by_indx}
 \alias{cophy_summary_stat_by_indx}
+\alias{summarize_1cophy}
 \alias{cophy_summary_stat}
+\alias{summarize_cophy}
 \title{Calculates summary statistics for cophylogenetic objects}
 \usage{
 cophy_summary_stat_by_indx(cophy_obj, cophy_obj_indx)
 
+summarize_1cophy(cophy_obj, cophy_obj_indx)
+
 cophy_summary_stat(cophy_obj)
+
+summarize_cophy(cophy_obj)
 }
 \arguments{
-\item{cophy_obj}{The cophylogenetic object produced via `sim_cophylo_bdp`}
+\item{cophy_obj}{The cophylogenetic object produced via `sim_cbdp`}
 
-\item{cophy_obj_indx}{The index with `cophy_obj` for `cophylo_summary_stat_by_indx`}
+\item{cophy_obj_indx}{The index with `cophy_obj` for `summarize_1cophy`}
 }
 \value{
 A vector consisting of (in order) cospeciations, host speciations, host extinctions, symbiont speciations, symbiont extinctions, parafit statistic, and parafit p-value
@@ -20,7 +26,7 @@ A vector consisting of (in order) cospeciations, host speciations, host extincti
 A dataframe containing statistics relevant to cophylogenetic analysis
 }
 \description{
-For cophylogenetic objects produced in treeducken via `sim_cophylo_bdp`, calculates the numbers of different events of interest. In addition, calculates and tests the ParaFit test.
+For cophylogenetic objects produced in treeducken via `sim_cbdp`, calculates the numbers of different events of interest. In addition, calculates and tests the ParaFit test.
 }
 \section{Functions}{
 \itemize{
@@ -37,7 +43,7 @@ symb_lambda <- 0.4
 host_shift_rate <- 0.0
 cosp_rate <- 2.0
 
-cophy_pair <- sim_cophylo_bdp(hbr = host_lambda,
+cophy_pair <- sim_cbdp(hbr = host_lambda,
                            hdr = host_mu,
                            cosp_rate = cosp_rate,
                            host_exp_rate = host_shift_rate,
@@ -45,5 +51,5 @@ cophy_pair <- sim_cophylo_bdp(hbr = host_lambda,
                            sbr = symb_lambda,
                            numbsim = numb_replicates,
                            time_to_sim = time)
-summary_stats <- cophy_summary_stat(cophy_pair)
+summary_stats <- summarize_cophy(cophy_pair)
 }

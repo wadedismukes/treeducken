@@ -2,9 +2,12 @@
 % Please edit documentation in R/estimate_node_heights.R
 \name{estimate_node_heights}
 \alias{estimate_node_heights}
+\alias{node_heights}
 \title{Calculate expected time to branching point of a species tree}
 \usage{
 estimate_node_heights(lambda, mu, n, k = 1)
+
+node_heights(lambda, mu, n, k = 1)
 }
 \arguments{
 \item{lambda}{speciation rate}
@@ -32,9 +35,9 @@ the root, k = 3 the second, and so on. For more details see Gernhard 2008.
 spec_rate <- 1.0
 ext_rate <- 0.5
 nt <- 10
-estimate_node_heights(lambda = spec_rate, mu = ext_rate, n = nt)
+node_heights(lambda = spec_rate, mu = ext_rate, n = nt)
 
-estimate_node_heights(lambda = spec_rate, mu = ext_rate, n = nt, k = 2)
+node_heights(lambda = spec_rate, mu = ext_rate, n = nt, k = 2)
 }
 \references{
 Gernhard, T. (2008). The conditioned reconstructed process. Journal of

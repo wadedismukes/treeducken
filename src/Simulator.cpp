@@ -358,7 +358,9 @@ double Simulator::getTimeToAnaEvent(double dispersalRate,
   arma::uword numSymbs = assocMat.n_rows;
   Rcpp::NumericVector randNum = Rcpp::runif(1);
   double sumrt = dispersalRate + extirpationRate;
+  //double t = -log(randNum[0]) / (sumrt);
   double t = -log(randNum[0]) / (double(numSymbs) * sumrt);
+
   return t;
 }
 
@@ -430,10 +432,22 @@ arma::umat Simulator::anageneticEvent(double dispersalRate,
   int nodeInd = randNum[1]*(assocMat.n_rows - 1);
 
 
-  if(isDispersal)
+  if(isDispersal){
+    updateEventVector(spTree->getNodesIndxFromExtantIndx(0),
+                      symbiontTree->getNodesIndxFromExtantIndx(nodeInd),
+                      7,
+                      currTime);
     assocMat = symbiontDispersalEvent(nodeInd, assocMat);
-  else
+
+    }
+  else{
+    updateEventVector(spTree->getNodesIndxFromExtantIndx(0),
+                      symbiontTree->getNodesIndxFromExtantIndx(nodeInd),
+                      8,
+                      currTime);
     assocMat = symbiontExtirpationEvent(nodeInd, assocMat);
+  }
+
   // need to make sure hostLimit is respected.
 
   return assocMat;
@@ -718,6 +732,14 @@ void Simulator::updateEventVector(int h, int s, int e, double time){
     case 6:
       // cospeciation
       inOrderVecOfEvent.push_back("C");
+      break;
+    case 7:
+      // dispersal
+      inOrderVecOfEvent.push_back("DISP");
+      break;
+    case 8:
+      // extirpation
+      inOrderVecOfEvent.push_back("EXTP");
       break;
     default:
       Rcout << "not sure what happened there folks." << std::endl;
