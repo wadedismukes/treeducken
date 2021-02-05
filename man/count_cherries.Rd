@@ -24,7 +24,7 @@ hypothesis test against Yule or uniform tree models.
 mu <- 0.5
 lambda <- 1.0
 nt <- 6
-tr <- sim_sptree_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
+tr <- sim_st_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
 treeducken::count_cherries(tr[[1]])
 # to do the hypothesis test you can use the ape version of this function
 ape::cherry(tr[[1]])

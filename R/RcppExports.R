@@ -26,12 +26,12 @@
 #' # numb_extant_tips * 100 tips counting each time we have a tree with 10 tips
 #' # then randomly picks one of those trees
 #'
-#' tree_list <- sim_sptree_bdp(sbr = lambda,
+#' tree_list <- sim_st_bdp(sbr = lambda,
 #'                 sdr = mu,
 #'                 numbsim = numb_replicates,
 #'                 n_tips = numb_extant_tips)
-sim_sptree_bdp <- function(sbr, sdr, numbsim, n_tips, gsa_stop_mult = 10L) {
-    .Call(`_treeducken_sim_sptree_bdp`, sbr, sdr, numbsim, n_tips, gsa_stop_mult)
+sim_st_bdp <- function(sbr, sdr, numbsim, n_tips, gsa_stop_mult = 10L) {
+    .Call(`_treeducken_sim_st_bdp`, sbr, sdr, numbsim, n_tips, gsa_stop_mult)
 }
 
 #' Simulates species tree using constant rate birth-death process to a time
@@ -54,12 +54,12 @@ sim_sptree_bdp <- function(sbr, sdr, numbsim, n_tips, gsa_stop_mult = 10L) {
 #' numb_replicates <- 10
 #' time <- 1
 #'
-#' tree_list <- sim_sptree_bdp_time(sbr = lambda,
+#' tree_list <- sim_st_bdp_t(sbr = lambda,
 #'                 sdr = mu,
 #'                 numbsim = numb_replicates,
 #'                 t = time)
-sim_sptree_bdp_time <- function(sbr, sdr, numbsim, t) {
-    .Call(`_treeducken_sim_sptree_bdp_time`, sbr, sdr, numbsim, t)
+sim_st_bdp_t <- function(sbr, sdr, numbsim, t) {
+    .Call(`_treeducken_sim_st_bdp_t`, sbr, sdr, numbsim, t)
 }
 
 #' Simulates locus tree using constant rate birth-death-transfer process
@@ -96,7 +96,7 @@ sim_sptree_bdp_time <- function(sbr, sdr, numbsim, t) {
 #' # numb_extant_tips * 100 tips counting each time we have a tree with 10 tips
 #' # then randomly picks one of those trees
 #'
-#' sp_tree <- sim_sptree_bdp(sbr = lambda,
+#' sp_tree <- sim_st_bdp(sbr = lambda,
 #'                 sdr = mu,
 #'                 numbsim = numb_replicates,
 #'                 n_tips = numb_extant_tips)
@@ -104,24 +104,71 @@ sim_sptree_bdp_time <- function(sbr, sdr, numbsim, t) {
 #' gene_br <- 1.0
 #' gene_dr <- 0.2
 #' transfer_rate <- 0.2
-#' sim_locustree_bdp(species_tree = sp_tree[[1]],
+#' sim_lt_bdp(species_tree = sp_tree[[1]],
 #'                   gbr = gene_br,
 #'                   gdr = gene_dr,
 #'                   lgtr = transfer_rate,
 #'                   num_loci = 10)
-sim_locustree_bdp <- function(species_tree, gbr, gdr, lgtr, num_loci, transfer_type = "random") {
-    .Call(`_treeducken_sim_locustree_bdp`, species_tree, gbr, gdr, lgtr, num_loci, transfer_type)
+sim_lt_bdp <- function(species_tree, gbr, gdr, lgtr, num_loci, transfer_type = "random") {
+    .Call(`_treeducken_sim_lt_bdp`, species_tree, gbr, gdr, lgtr, num_loci, transfer_type)
 }
 
+#' Simulates a host-symbiont system using a cophylogenetic birth-death process
 #'
+#' @details Simulates a cophylogenetic system using birth-death processes with
+#'     anagenetic processes allowing symbiont to gain or loss associations with
+#'     hosts. The host tree is simulated following a constant rate birth-death process
+#'     with an additional parameter - the cospeciation rate. This rate works as
+#'     the speciation rate with the additional effect that if cospeciation
+#'     occurs the symbiont tree also speciates. The symbiont tree is related to
+#'     the host tree via an association matrix that describes which lineages
+#'     are associated with which. The symbiont tree has an independent
+#'     birth-death process with the addition of a host shift speciation rate
+#'     that allows for the addition of more associated hosts upon symbiont
+#'     speciation. The anagenetic processes are modeled using a poisson process
+#'     occurring along the tree. THe dispersal to hosts is at present random;
+#'     there is no preferential host-switching.
+#' @param hbr host tree birth rate
+#' @param hdr host tree death rate
+#' @param sbr symbiont tree birth rate
+#' @param sdr symbiont tree death rate
+#' @param symb_dispersal_rate symbiont dispersal rate to new hosts
+#' @param symb_extirpation_rate symbiont exirpation rate on h
+#' @param host_exp_rate host shift speciation rate
+#' @param cosp_rate cospeciation rate
+#' @param time_to_sim time units to simulate until
+#' @param numbsim number of replicates
+#' @param host_limit Maximum number of hosts for symbionts (0 implies no limit)
+#' @return A list containing the `host_tree`, the `symbiont_tree`, the
+#'     association matrix at present, and the history of events that have
+#'     occurred.
+#' @examples
 #'
+#' host_mu <- 0.5 # death rate
+#' host_lambda <- 2.0 # birth rate
+#' numb_replicates <- 10
+#' time <- 1.0
+#' symb_mu <- 0.2
+#' symb_lambda <- 0.4
+#' host_shift_rate <- 0.0
+#' cosp_rate <- 2.0
 #'
+#' cophylo_pair <- sim_cbdp_ana(hbr = host_lambda,
+#'                            hdr = host_mu,
+#'                            cosp_rate = cosp_rate,
+#'                            symb_dispersal_rate = 1,
+#'                            symb_extirpation_rate = 0.4,
+#'                            host_exp_rate = host_shift_rate,
+#'                            sdr = symb_mu,
+#'                            sbr = symb_lambda,
+#'                            numbsim = numb_replicates,
+#'                            time_to_sim = time)
 #'
-sim_cophylo_bdp_ana <- function(hbr, hdr, sbr, sdr, symb_dispersal_rate, symb_extirpation_rate, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit = 0L) {
-    .Call(`_treeducken_sim_cophylo_bdp_ana`, hbr, hdr, sbr, sdr, symb_dispersal_rate, symb_extirpation_rate, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit)
+sim_cbdp_ana <- function(hbr, hdr, sbr, sdr, symb_dispersal_rate, symb_extirpation_rate, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit = 0L) {
+    .Call(`_treeducken_sim_cbdp_ana`, hbr, hdr, sbr, sdr, symb_dispersal_rate, symb_extirpation_rate, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit)
 }
 
-#' Simulates a cophylogenetic system using a paired birth-death process
+#' Simulates a host-symbiont system using a cophylogenetic birth-death process
 #'
 #' @details Simulates a cophylogenetic system using birth-death processes. The
 #'     host tree is simulated following a constant rate birth-death process
@@ -156,7 +203,7 @@ sim_cophylo_bdp_ana <- function(hbr, hdr, sbr, sdr, symb_dispersal_rate, symb_ex
 #' host_shift_rate <- 0.0
 #' cosp_rate <- 2.0
 #'
-#' cophylo_pair <- sim_cophylo_bdp(hbr = host_lambda,
+#' cophylo_pair <- sim_cbdp(hbr = host_lambda,
 #'                            hdr = host_mu,
 #'                            cosp_rate = cosp_rate,
 #'                            host_exp_rate = host_shift_rate,
@@ -165,8 +212,8 @@ sim_cophylo_bdp_ana <- function(hbr, hdr, sbr, sdr, symb_dispersal_rate, symb_ex
 #'                            numbsim = numb_replicates,
 #'                            time_to_sim = time)
 #'
-sim_cophylo_bdp <- function(hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit = 0L) {
-    .Call(`_treeducken_sim_cophylo_bdp`, hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit)
+sim_cbdp <- function(hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit = 0L) {
+    .Call(`_treeducken_sim_cbdp`, hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit)
 }
 
 #' Simulate multispecies coalescent on a species tree
@@ -190,26 +237,26 @@ sim_cophylo_bdp <- function(hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_t
 #' If rescale is set to false the tree is assumed to be in coalescent units and `ne` is used as the population
 #' genetic parameter theta.
 #' @return A list of coalescent trees
-#' @seealso sim_locustree_bdp, sim_sptree_bdp, sim_sptree_bdp_time
+#' @seealso sim_lt_bdp, sim_st_bdp, sim_st_bdp_t
 #'
 #' @examples
 #' # first simulate a species tree
 #' mu <- 0.5
 #' lambda <- 1.0
 #' nt <- 6
-#' tr <- sim_sptree_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
+#' tr <- sim_st_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
 #' # for a locus tree with 100 genes sampled per locus tree
-#' gentrees <- sim_multispecies_coal(tr[[1]],
-#'                                     ne = 10000,
-#'                                     mutation_rate = 1e-9,
-#'                                     generation_time = 1e-6,
-#'                                     num_sampled_individuals = 1,
-#'                                     num_genes = 100)
+#' gentrees <- sim_msc(tr[[1]],
+#'                     ne = 10000,
+#'                     mutation_rate = 1e-9,
+#'                     generation_time = 1e-6,
+#'                     num_sampled_individuals = 1,
+#'                     num_genes = 100)
 #'
 #' @references
 #' Bruce Rannala and Ziheng Yang (2003) Bayes Estimation of Species Divergence Times and Ancestral Population Sizes Using DNA Sequences From Multiple Loci Genetics August 1, 2003 vol. 164 no. 4 1645-1656
 #' Mallo D, de Oliveira Martins L, Posada D (2015) SimPhy: Phylogenomic Simulation of Gene, Locus and Species Trees. Syst. Biol. doi: http://dx.doi.org/10.1093/sysbio/syv082
-sim_multispecies_coal <- function(species_tree, ne, num_sampled_individuals, num_genes, rescale = TRUE, mutation_rate = 1L, generation_time = 1L) {
-    .Call(`_treeducken_sim_multispecies_coal`, species_tree, ne, num_sampled_individuals, num_genes, rescale, mutation_rate, generation_time)
+sim_msc <- function(species_tree, ne, num_sampled_individuals, num_genes, rescale = TRUE, mutation_rate = 1L, generation_time = 1L) {
+    .Call(`_treeducken_sim_msc`, species_tree, ne, num_sampled_individuals, num_genes, rescale, mutation_rate, generation_time)
 }
 

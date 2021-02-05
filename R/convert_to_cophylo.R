@@ -41,11 +41,18 @@
 #'                               "lice_bd.tre",
 #'                                package = "treeducken")
 #' lice_tree <- ape::read.nexus(lice_tree_path)
-#' gopher_lice_cophy <- convert_to_cophy(hostTree = gopher_tree,
+#' gopher_lice_cophy <- to_cophy(hostTree = gopher_tree,
 #'                                          symbTree = lice_tree,
 #'                                          assocMat = gopher_lice_assoc_matrix)
 #' @export
 convert_to_cophy <- function(hostTree, symbTree, assocMat, eventHistory = NULL){
+    warning("please use to_cophy instead of convert_to_cophy", call.=FALSE)
+    to_cophy(hostTree, symbTree, assocMat, eventHistory)
+}
+#' @export
+#' @rdname convert_to_cophy
+to_cophy <- function(hostTree, symbTree, assocMat, eventHistory = NULL){
+
     if(!(identical(class(hostTree), "phylo")))
         stop("`hostTree` input is not of class `phylo`")
     if(!(identical(class(symbTree), "phylo")))
@@ -65,9 +72,9 @@ convert_to_cophy <- function(hostTree, symbTree, assocMat, eventHistory = NULL){
     if(nExtSymbTips != nrow(assocMat))
         stop("number of extant tips in 'symbTree' does not match number rows in 'assocMat'")
     cophy <- list("host_tree" = hostTree,
-                    "symb_tree" = symbTree,
-                    "association_mat" = assocMat,
-                    "event_history" = eventHistory)
+                  "symb_tree" = symbTree,
+                  "association_mat" = assocMat,
+                  "event_history" = eventHistory)
     class(cophy) <- "cophy"
     cophy
 }

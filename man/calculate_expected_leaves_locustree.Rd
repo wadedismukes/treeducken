@@ -2,9 +2,12 @@
 % Please edit documentation in R/estimate_node_heights.R
 \name{calculate_expected_leaves_locustree}
 \alias{calculate_expected_leaves_locustree}
+\alias{ave_tips_lt}
 \title{Calculate expected leaves of a locus tree}
 \usage{
 calculate_expected_leaves_locustree(t, dup_rate, loss_rate, num_species)
+
+ave_tips_lt(t, dup_rate, loss_rate, num_species)
 }
 \arguments{
 \item{t}{time to simulate until (the length of the species tree)}
@@ -31,7 +34,7 @@ gene_birth_rate <- 1.0
 gene_death_rate <- 0.5
 time <- 2
 num_species <- 10
-calculate_expected_leaves_locustree(time,
+ave_tips_lt(time,
                                     gene_birth_rate,
                                     gene_death_rate,
                                     num_species)

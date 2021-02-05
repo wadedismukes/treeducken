@@ -2,9 +2,12 @@
 % Please edit documentation in R/convert_assoc_tab_to_mat.R
 \name{convert_assoc_table_to_matrix}
 \alias{convert_assoc_table_to_matrix}
+\alias{make_mat}
 \title{Convert a table with host and symbiont associations to a matrix}
 \usage{
 convert_assoc_table_to_matrix(assoc_table)
+
+make_mat(assoc_table)
 }
 \arguments{
 \item{assoc_table}{A dataframe with two columns}

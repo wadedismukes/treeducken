@@ -21,6 +21,13 @@
 #'
 #' @export
 convert_assoc_table_to_matrix <- function(assoc_table){
+    warning("please use make_mat() instead of convert_assoc_table_to_matrix", call.=FALSE)
+    make_mat(assoc_table)
+}
+#' @export
+#' @rdname convert_assoc_table_to_matrix
+make_mat <- function(assoc_table){
+
     if(dim(assoc_table)[2] != 2)
         stop("The 'assoc_table' should have two columns.")
 

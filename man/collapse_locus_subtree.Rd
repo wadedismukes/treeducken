@@ -2,9 +2,12 @@
 % Please edit documentation in R/sim_multilocus.R
 \name{collapse_locus_subtree}
 \alias{collapse_locus_subtree}
+\alias{collapse_clade}
 \title{Collapse a clade into a single tip}
 \usage{
 collapse_locus_subtree(list_of_subtrees, locus_to_collapse)
+
+collapse_clade(list_of_subtrees, locus_to_collapse)
 }
 \arguments{
 \item{list_of_subtrees}{a list of type `multiPhylo`}
@@ -25,7 +28,7 @@ in all trees in `list_of_subtrees`.
 lambda <- 1.0
 mu <- 0.2
 nt <- 10
-trees <- sim_sptree_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
+trees <- sim_st_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
 subtrees_of_trees <- ape::subtrees(trees[[1]])
 st_of_interest <- subtrees_of_trees[[1]]
 collapse_st_of_interest <- collapse_locus_subtree(trees, st_of_interest)
