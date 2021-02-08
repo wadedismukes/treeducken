@@ -58,7 +58,7 @@ sim_cophylo_bdp_ana(
 }
 \value{
 A list containing the `host_tree`, the `symbiont_tree`, the
-    association matrix at present, and the history of events that have
+    association matrix in the present, with hosts as rows and smybionts as columns, and the history of events that have
     occurred.
 }
 \description{

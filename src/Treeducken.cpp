@@ -2,7 +2,7 @@
 #include <string>
 #include "SpeciesTree.h"
 #include "Simulator.h"
-#include <sstream>
+#include <sstream> 
 #include <RcppArmadillo.h>
 
 using namespace Rcpp;
@@ -171,7 +171,6 @@ Rcpp::List sim_locus_tree_gene_tree(std::shared_ptr<SpeciesTree> species_tree,
             phyGenesPerLoc[j] = phyGene;
         }
 
-        // THE PROBLEM IS HERE I DON'T EVEN THINK I NEED THIS...
         List phyLoc = List::create(Named("edge") = phySimulator->getLocusEdges(),
                                    Named("edge.length") = phySimulator->getLocusEdgeLengths(),
                                    Named("Nnode") = phySimulator->getLocusNnodes(),
