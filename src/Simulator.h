@@ -178,7 +178,8 @@ class Simulator
         void      updateEventVector(int h, int s, int e, double time);
         void    clearEventDFVecs();
         void    initializeEventVector();
-
+        Rcpp::CharacterVector  getExtantHostNames(std::vector<std::string> hostNames);
+        Rcpp::CharacterVector  getExtantSymbNames(std::vector<std::string> symbNames);
         // anagenetic functions
         double    getTimeToAnaEvent(double dispRate, double extRate, arma::umat assocMat);
         arma::umat symbiontDispersalEvent(int symbInd, arma::umat assocMat);

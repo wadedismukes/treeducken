@@ -37,6 +37,7 @@
 #'                            sdr = symb_mu,
 #'                            sbr = symb_lambda,
 #'                            numbsim = numb_replicates,
+#' 
 #'                            time_to_sim = time)
 #' plot.cophy(cophylo_pair[[1]])
 plot.cophy <-
@@ -61,11 +62,11 @@ plot.cophy <-
     symb <- x$symb_tree
     host_tree_pruned <- treeducken::drop_extinct(host)
     symb_tree_pruned <- treeducken::drop_extinct(symb)
-    rownames(x$association_mat) <- symb_tree_pruned$tip.label
-    colnames(x$association_mat) <- host_tree_pruned$tip.label
+   # rownames(x$association_mat) <- symb_tree_pruned$tip.label
+   # colnames(x$association_mat) <- host_tree_pruned$tip.label
     assoc <- which(x$association_mat == 1, arr.ind = TRUE)
-    assoc <- cbind(host_tree_pruned$tip.label[assoc[, 2]],
-                   symb_tree_pruned$tip.label[assoc[, 1]])
+   assoc <- cbind(host_tree_pruned$tip.label[assoc[, 1]],
+                   symb_tree_pruned$tip.label[assoc[, 2]])
     length_line <- 1
 
     treeducken::draw_cophy(host,
@@ -92,7 +93,7 @@ plot.cophy <-
 #'
 #' @param x Host tree as phylo object
 #' @param y Symb tree as phylo object
-#' @param assoc Association matrix as a two column list of strings
+#' @param assoc Association matrix
 #' @param use_edge_length Boolean to draw trees with edge length or not
 #' @param length_line Length of interactions lines
 #' @param return Return an object or no (default = FALSE)

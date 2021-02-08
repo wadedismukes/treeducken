@@ -50,10 +50,15 @@ Rcpp::List sim_host_symb_treepair_ana(double hostbr,
                                     Named("tip.label") = phySimulator->getSymbiontTipNames(),
                                     Named("root.edge") = phySimulator->getSymbiontTreeRootEdge());
         phySymb.attr("class") = "phylo";
-
+        Rcpp::NumericMatrix assocMat = Rcpp::wrap(phySimulator->getAssociationMatrix());
+        assocMat = Rcpp::transpose(assocMat);
+        Rcpp::CharacterVector hostNames = phySimulator->getExtantHostNames(phySimulator->getSpeciesTipNames());
+        Rcpp::CharacterVector symbNames = phySimulator->getExtantSymbNames(phySimulator->getSymbiontTipNames());
+        Rcpp::rownames(assocMat) = hostNames;
+        Rcpp::colnames(assocMat) = symbNames;
         hostSymbPair = List::create(Named("host_tree") = phyHost,
                                     Named("symb_tree") = phySymb,
-                                    Named("association_mat") = phySimulator->getAssociationMatrix(),
+                                    Named("association_mat") = assocMat,
                                     Named("event_history") = phySimulator->createEventDF());
         hostSymbPair.attr("class") = "cophy";
         multiphy.push_back(hostSymbPair);
@@ -108,10 +113,15 @@ Rcpp::List sim_host_symb_treepair(double hostbr,
                                 Named("tip.label") = phySimulator->getSymbiontTipNames(),
                                 Named("root.edge") = phySimulator->getSymbiontTreeRootEdge());
         phySymb.attr("class") = "phylo";
-
+        Rcpp::NumericMatrix assocMat = Rcpp::wrap(phySimulator->getAssociationMatrix());
+        assocMat = Rcpp::transpose(assocMat);
+        Rcpp::CharacterVector hostNames = phySimulator->getExtantHostNames(phySimulator->getSpeciesTipNames());
+        Rcpp::CharacterVector symbNames = phySimulator->getExtantSymbNames(phySimulator->getSymbiontTipNames());
+        Rcpp::rownames(assocMat) = hostNames;
+        Rcpp::colnames(assocMat) = symbNames;
         hostSymbPair = List::create(Named("host_tree") = phyHost,
                                     Named("symb_tree") = phySymb,
-                                    Named("association_mat") = phySimulator->getAssociationMatrix(),
+                                    Named("association_mat") = assocMat,
                                     Named("event_history") = phySimulator->createEventDF());
         hostSymbPair.attr("class") = "cophy";
         multiphy.push_back(hostSymbPair);
