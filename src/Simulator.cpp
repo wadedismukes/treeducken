@@ -1,5 +1,7 @@
 #include "Simulator.h"
 #include <iostream>
+#include <algorithm>
+
 #include <RcppArmadillo.h>
 
 // [[Rcpp::depends(RcppArmadillo)]]
@@ -1579,7 +1581,29 @@ bool Simulator::simGeneTree(int j){
   return gGood;
 }
 
+Rcpp::CharacterVector  Simulator::getExtantHostNames(std::vector<std::string> hostNames){
+  std::vector<std::string> extantHostNames;
+  for(int i = 0; i < hostNames.size(); i++) {
+    if (hostNames[i].find("X") == std::string::npos) {
+        extantHostNames.push_back(hostNames[i]);
+    }
+  }
+  Rcpp::CharacterVector outVec = Rcpp::wrap(extantHostNames);
+  return outVec;
+}
 
+
+
+Rcpp::CharacterVector  Simulator::getExtantSymbNames(std::vector<std::string> symbNames){
+  std::vector<std::string> extantSymbNames;
+  for(int i = 0; i < symbNames.size(); i++) {
+    if (symbNames[i].find("X") == std::string::npos) {
+        extantSymbNames.push_back(symbNames[i]);
+    }
+  }
+  Rcpp::CharacterVector outVec = Rcpp::wrap(extantSymbNames);
+  return outVec;
+}
 // ##################################
 //
 // below here is I think dead code?
@@ -1627,3 +1651,4 @@ double Simulator::getSymbiontTreeRootEdge(){
 double Simulator::getGeneTreeRootEdge(int j){
   return geneTrees[j]->getRoot()->getBranchLength();
 }
+
