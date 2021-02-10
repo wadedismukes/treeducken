@@ -22,7 +22,7 @@ sim_mlc(
 )
 }
 \arguments{
-\item{locus_tree}{a locus tree from `sim_lt_bdp` of class `phy`}
+\item{locus_tree}{a locus tree from `sim_ltBD` of class `phy`}
 
 \item{effective_pop_size}{the effective population size}
 
@@ -56,12 +56,12 @@ value may slow things considerably so use with caution.
 mu <- 0.5
 lambda <- 1.0
 nt <- 6
-tr <- sim_st_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
+tr <- sim_stBD(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
 # for a locus tree with 100 genes sampled per locus tree
 gene_br <- 0.1
 gene_dr <- 0.02
 transfer_rate <- 0.2
-locus_tree <- sim_lt_bdp(species_tree = tr[[1]],
+locus_tree <- sim_ltBD(species_tree = tr[[1]],
                   gbr = gene_br,
                   gdr = gene_dr,
                   lgtr = transfer_rate,

@@ -64,9 +64,9 @@ summarize_1cophy <- function(cophy_obj, cophy_obj_indx) {
 }
 #' Calculates summary statistics for cophylogenetic objects
 #'
-#' @description For cophylogenetic objects produced in treeducken via `sim_cbdp`, calculates the numbers of different events of interest. In addition, calculates and tests the ParaFit test.
+#' @description For cophylogenetic objects produced in treeducken via `sim_cophyBD`, calculates the numbers of different events of interest. In addition, calculates and tests the ParaFit test.
 #'
-#' @param cophy_obj The cophylogenetic object produced via `sim_cbdp`
+#' @param cophy_obj The cophylogenetic object produced via `sim_cophyBD`
 #' @param cophy_obj_indx The index with `cophy_obj` for `summarize_1cophy`
 #'
 #' @return A dataframe containing statistics relevant to cophylogenetic analysis
@@ -80,7 +80,7 @@ summarize_1cophy <- function(cophy_obj, cophy_obj_indx) {
 #' host_shift_rate <- 0.0
 #' cosp_rate <- 2.0
 #'
-#' cophy_pair <- sim_cbdp(hbr = host_lambda,
+#' cophy_pair <- sim_cophyBD(hbr = host_lambda,
 #'                            hdr = host_mu,
 #'                            cosp_rate = cosp_rate,
 #'                            host_exp_rate = host_shift_rate,
@@ -148,7 +148,7 @@ summarize_cophy <- function(cophy_obj) {
 #' The value from this is input into the test function. Note that this gives only the raw statistic unlike `ape::parafit`. That is the
 #' only reason it is implemented here in treeducken (similar to `treeducken::cherries`).
 #' @examples
-#' tr_pair <- sim_cbdp(hbr=0.1,
+#' tr_pair <- sim_cophyBD(hbr=0.1,
 #'                           hdr=0.05,
 #'                           sdr=0.1,
 #'                           host_exp_rate=0.4,

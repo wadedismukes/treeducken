@@ -12,7 +12,7 @@ get_assoc(t, tr_pair_obj)
 \arguments{
 \item{t}{The time of interest}
 
-\item{tr_pair_obj}{The tree pair object from `sim_cbdp`}
+\item{tr_pair_obj}{The tree pair object from `sim_cophyBD`}
 }
 \value{
 Matrix of the associations at given time
@@ -21,7 +21,7 @@ Matrix of the associations at given time
 Reconstruct historical association matrix
 }
 \details{
-Given a time and a tree pair object produced by the `sim_cbdp`
+Given a time and a tree pair object produced by the `sim_cophyBD`
     object will produce the association matrix at that time point for the
     tree object.
 USER WARNING: this is still in development, and likely will not work all the time.
@@ -36,7 +36,7 @@ symb_lambda <- 0.4
 host_shift_rate <- 0.0
 cosp_rate <- 2.0
 
-cophylo_pair <- sim_cbdp(hbr = host_lambda,
+cophylo_pair <- sim_cophyBD(hbr = host_lambda,
                            hdr = host_mu,
                            cosp_rate = cosp_rate,
                            host_exp_rate = host_shift_rate,

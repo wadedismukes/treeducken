@@ -1,7 +1,7 @@
 # test species tree output is a list of trees with correct length
 sim_test_spt_loct <- function(gbr, gdr, lgtr, numLoci, species_tree_len = 5.0){
-    tr <- sim_st_bdp_t(0.1, 0.05, 1, species_tree_len)
-    sim_lt_bdp(tr[[1]],
+    tr <- sim_stBD_t(0.1, 0.05, 1, species_tree_len)
+    sim_ltBD(tr[[1]],
                       gbr = gbr,
                       gdr = gdr,
                       lgtr = lgtr,
@@ -10,8 +10,8 @@ sim_test_spt_loct <- function(gbr, gdr, lgtr, numLoci, species_tree_len = 5.0){
 }
 
 sim_test_spt_loct <- function(gbr, gdr, lgtr, numLoci, species_tree_len = 5.0){
-    tr <- sim_st_bdp_t(0.1, 0.05, 1, species_tree_len)
-    sim_lt_bdp(tr[[1]],
+    tr <- sim_stBD_t(0.1, 0.05, 1, species_tree_len)
+    sim_ltBD(tr[[1]],
                       gbr = gbr,
                       gdr = gdr,
                       lgtr = lgtr,
@@ -20,8 +20,8 @@ sim_test_spt_loct <- function(gbr, gdr, lgtr, numLoci, species_tree_len = 5.0){
 }
 
 sim_test_spt_loct_equality <- function(gene_birth = 0.0, gene_death = 0.0, transfers = 0.0, numLoci){
-    tr <- sim_st_bdp_t(0.1, 0.05, 1, 5.0)
-    loctr <- sim_lt_bdp(tr[[1]],
+    tr <- sim_stBD_t(0.1, 0.05, 1, 5.0)
+    loctr <- sim_ltBD(tr[[1]],
                                gbr = gene_birth,
                                gdr = gene_death,
                                lgtr = transfers,
@@ -29,7 +29,7 @@ sim_test_spt_loct_equality <- function(gene_birth = 0.0, gene_death = 0.0, trans
     all(sapply(loctr, ape::all.equal.phylo, current = tr[[1]], use.tip.label = FALSE))
 }
 
-test_that("sim_lt_bdp produces the right number of trees", {
+test_that("sim_ltBD produces the right number of trees", {
     expect_equal(length(sim_test_spt_loct(0.1, 0.05, 0.05, 10)), 10)
     expect_equal(length(sim_test_spt_loct(0.1, 0.05, 0.05, 5)), 5)
     expect_equal(length(sim_test_spt_loct(0.1, 0.05, 0.05, 50)), 50)
@@ -39,7 +39,7 @@ test_that("sim_lt_bdp produces the right number of trees", {
 
 # test that input species tree is the same as locus tree if every param is set
 # 0.0
-test_that("sim_lt_bdp returns tree concordant with species tree when locus tree parameters are 0.0",{
+test_that("sim_ltBD returns tree concordant with species tree when locus tree parameters are 0.0",{
     expect_true(sim_test_spt_loct_equality(numLoci = 20))
 })
 

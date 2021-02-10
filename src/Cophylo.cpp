@@ -13,7 +13,8 @@ Rcpp::List sim_host_symb_treepair_ana(double hostbr,
                                   double cospeciationRate,
                                   double timeToSimTo,
                                   int host_limit,
-                                  int numbsim){
+                                  int numbsim,
+                                  bool hsMode){
     double rho = 1.0;
     Rcpp::List multiphy;
     Rcpp::List hostSymbPair;
@@ -28,7 +29,8 @@ Rcpp::List sim_host_symb_treepair_ana(double hostbr,
                                                                       switchRate,
                                                                       cospeciationRate,
                                                                       rho,
-                                                                      host_limit));
+                                                                      host_limit,
+                                                                      hsMode));
 
         phySimulator->simHostSymbSpeciesTreePairWithAnagenesis();
 
@@ -77,7 +79,8 @@ Rcpp::List sim_host_symb_treepair(double hostbr,
                                   double cospeciationRate,
                                   double timeToSimTo,
                                   int host_limit,
-                                  int numbsim){
+                                  int numbsim,
+                                  bool hsMode){
 
     double rho = 1.0;
     Rcpp::List multiphy;
@@ -91,7 +94,8 @@ Rcpp::List sim_host_symb_treepair(double hostbr,
                                                  switchRate,
                                                  cospeciationRate,
                                                  rho,
-                                                 host_limit));
+                                                 host_limit,
+                                                 hsMode));
 
         phySimulator->simHostSymbSpeciesTreePair();
 

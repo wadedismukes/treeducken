@@ -45,7 +45,7 @@ only reason it is implemented here in treeducken (similar to `treeducken::cherri
 }}
 
 \examples{
-tr_pair <- sim_cbdp(hbr=0.1,
+tr_pair <- sim_cophyBD(hbr=0.1,
                           hdr=0.05,
                           sdr=0.1,
                           host_exp_rate=0.4,
