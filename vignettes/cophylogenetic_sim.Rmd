@@ -16,14 +16,14 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette summarizes the workflow for simulating a host and symbiont tree using the `sim_cbdp` function. 
+This vignette summarizes the workflow for simulating a host and symbiont tree using the `sim_cophyloBD` function. 
 
 ## Introduction
 
 
 ## Figuring out parameters and what they mean
 
-This model has a number of parameters that are input into the `sim_cbdp` function. Let us assume that we just want to simulate to a time of 2.0 units. We can then use `ave_tips_st` and `ave_tips_lt` to figure out the average number of extant tips that will be on our host and symbiont trees respectively.
+This model has a number of parameters that are input into the `sim_cophyloBD` function. Let us assume that we just want to simulate to a time of 2.0 units. We can then use `ave_tips_st` and `ave_tips_lt` to figure out the average number of extant tips that will be on our host and symbiont trees respectively.
 
 ```{r}
 
@@ -56,11 +56,11 @@ Now we have all the necessary parameters set with some idea of what they mean.
 
 ## Simulating a set of host and symbiont pairs
 
-We will now use the main function, `sim_cbdp` with the parameters we set in the previous section.
+We will now use the main function, `sim_cophyloBD` with the parameters we set in the previous section.
 Let's simulate ten sets and then we can print out a summary for each set.
 ```{r} 
 # simulate 10 paired trees with our set parameters.
-host_symb_sets <- sim_cbdp(hbr = h_lambda,
+host_symb_sets <- sim_cophyloBD(hbr = h_lambda,
                            hdr = h_mu,
                           sbr = s_lambda,
                           cosp_rate = c_lambda,
@@ -133,7 +133,7 @@ We can use either symbiont or host trees to simulate locus trees. First we will 
 
 
 ```{r}
-host_tree_locus_trees <- sim_lt_bdp(host_tree,
+host_tree_locus_trees <- sim_ltBD(host_tree,
                                     gbr = 0.4,
                                     gdr = 0.2,
                                     lgtr = 0.0,
@@ -150,7 +150,7 @@ plot(host_tree_locus_trees)
 Now we will use the symbiont tree:
 
 ```{r}
-symb_tree_locus_trees <- sim_lt_bdp(symb_tree,
+symb_tree_locus_trees <- sim_ltBD(symb_tree,
                                     gbr = 0.2,
                                     gdr = 0.1,
                                     lgtr = 0.1,

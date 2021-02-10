@@ -61,7 +61,7 @@ genetic parameter theta.
 mu <- 0.5
 lambda <- 1.0
 nt <- 6
-tr <- sim_st_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
+tr <- sim_stBD(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
 # for a locus tree with 100 genes sampled per locus tree
 gentrees <- sim_msc(tr[[1]],
                     ne = 10000,
@@ -76,5 +76,5 @@ Bruce Rannala and Ziheng Yang (2003) Bayes Estimation of Species Divergence Time
 Mallo D, de Oliveira Martins L, Posada D (2015) SimPhy: Phylogenomic Simulation of Gene, Locus and Species Trees. Syst. Biol. doi: http://dx.doi.org/10.1093/sysbio/syv082
 }
 \seealso{
-sim_lt_bdp, sim_st_bdp, sim_st_bdp_t
+sim_ltBD, sim_stBD, sim_stBD_t
 }

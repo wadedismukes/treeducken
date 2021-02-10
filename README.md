@@ -30,7 +30,7 @@ s_lambda <- 1.0
 s_mu <- 0.3
 s_her <- 0.0
 
-host_symb_sets <- sim_cbdp(hbr = h_lambda,
+host_symb_sets <- sim_cophyloBD(hbr = h_lambda,
                             hdr = h_mu,
                             sbr = s_lambda,
                             cosp_rate = c_lambda,

@@ -3,7 +3,7 @@
 #' @description separates a locus tree into loci broken up by
 #' duplications  and simulates the coalescent on each loci.
 #'
-#' @param locus_tree a locus tree from `sim_lt_bdp` of class `phy`
+#' @param locus_tree a locus tree from `sim_ltBD` of class `phy`
 #' @param effective_pop_size the effective population size
 #' @param generation_time unit time per generation (default 1 year per generation)
 #' @param mutation_rate number of mutations per unit time
@@ -27,12 +27,12 @@
 #' mu <- 0.5
 #' lambda <- 1.0
 #' nt <- 6
-#' tr <- sim_st_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
+#' tr <- sim_stBD(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
 #' # for a locus tree with 100 genes sampled per locus tree
 #' gene_br <- 0.1
 #' gene_dr <- 0.02
 #' transfer_rate <- 0.2
-#' locus_tree <- sim_lt_bdp(species_tree = tr[[1]],
+#' locus_tree <- sim_ltBD(species_tree = tr[[1]],
 #'                   gbr = gene_br,
 #'                   gdr = gene_dr,
 #'                   lgtr = transfer_rate,
@@ -139,12 +139,12 @@ sim_mlc <- function(locus_tree,
 #' mu <- 0.5
 #' lambda <- 1.0
 #' nt <- 6
-#' tr <- sim_st_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
+#' tr <- sim_stBD(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
 #' # for a locus tree with 100 genes sampled per locus tree
 #' gene_br <- 0.1
 #' gene_dr <- 0.02
 #' transfer_rate <- 0.0
-#' locus_tree <- sim_lt_bdp(species_tree = tr[[1]],
+#' locus_tree <- sim_ltBD(species_tree = tr[[1]],
 #'                   gbr = gene_br,
 #'                   gdr = gene_dr,
 #'                   lgtr = transfer_rate,
@@ -178,7 +178,7 @@ get_loci <- function(locus_tree) {
 #' lambda <- 1.0
 #' mu <- 0.2
 #' nt <- 10
-#' trees <- sim_st_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
+#' trees <- sim_stBD(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
 #' subtrees_of_trees <- ape::subtrees(trees[[1]])
 #' st_of_interest <- subtrees_of_trees[[1]]
 #' collapse_st_of_interest <- collapse_locus_subtree(trees, st_of_interest)
@@ -229,7 +229,7 @@ collapse_clade <- function(list_of_subtrees,
 #' mu <- 0.5
 #' lambda <- 1.0
 #' nt <- 6
-#' tr <- sim_st_bdp(sbr = lambda, sdr = mu, numbsim = 5, n_tips = nt)
+#' tr <- sim_stBD(sbr = lambda, sdr = mu, numbsim = 5, n_tips = nt)
 #' tips_of_tr <- get_tip_labels_tree_list(tr)
 get_tip_labels_tree_list <- function(multi_tree) {
     warning("please use get_tipnames() instead of get_tip_labels_tree_list()", call. = FALSE)
@@ -252,12 +252,12 @@ get_tipnames <- function(multi_tree) {
 #' mu <- 0.5
 #' lambda <- 1.0
 #' nt <- 6
-#' tr <- sim_st_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
+#' tr <- sim_stBD(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
 #' # for a locus tree with 100 genes sampled per locus tree
 #' gene_br <- 0.1
 #' gene_dr <- 0.02
 #' transfer_rate <- 0.2
-#' locus_tree <- sim_lt_bdp(species_tree = tr[[1]],
+#' locus_tree <- sim_ltBD(species_tree = tr[[1]],
 #'                   gbr = gene_br,
 #'                   gdr = gene_dr,
 #'                   lgtr = transfer_rate,

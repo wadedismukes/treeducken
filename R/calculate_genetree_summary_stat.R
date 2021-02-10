@@ -11,7 +11,7 @@
 #' mu <- 0.5
 #' lambda <- 1.0
 #' nt <- 6
-#' tr <- sim_st_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
+#' tr <- sim_stBD(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
 #' # for a locus tree with 100 genes sampled per locus tree
 #' gentrees <- sim_msc(tr[[1]],
 #'                     ne = 10000,
@@ -58,7 +58,7 @@ summarize_gt <- function(lt_obj, lt_indx){
 #' mu <- 0.5
 #' lambda <- 1.0
 #' nt <- 6
-#' tr <- sim_st_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
+#' tr <- sim_stBD(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
 #' treeducken::count_cherries(tr[[1]])
 #' # to do the hypothesis test you can use the ape version of this function
 #' ape::cherry(tr[[1]])

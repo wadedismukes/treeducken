@@ -1,36 +1,36 @@
 #' @export
-#' @rdname sim_st_bdp
+#' @rdname sim_stBD
 sim_sptree_bdp<- function(sbr,
                           sdr,
                           numbsim,
                           n_tips,
                           gsa_stop_mult = 10) {
-    warning("please use sim_st_bdp instead of sim_sptree_bdp", call. = FALSE)
-    sim_st_bdp(sbr, sdr, numbsim, n_tips, gsa_stop_mult)
+    warning("please use sim_stBD instead of sim_sptree_bdp", call. = FALSE)
+    sim_stBD(sbr, sdr, numbsim, n_tips, gsa_stop_mult)
 }
 #' @export
-#' @rdname sim_st_bdp_t
+#' @rdname sim_stBD_t
 sim_sptree_bdp_time <- function(sbr,
                             sdr,
                             numbsim,
                             t) {
-    warning("please use sim_st_bdp_t instead of sim_sptree_bdp_time", call. = FALSE)
-    sim_st_bdp_t(sbr, sdr, numbsim, t)
+    warning("please use sim_stBD_t instead of sim_sptree_bdp_time", call. = FALSE)
+    sim_stBD_t(sbr, sdr, numbsim, t)
 }
 
 #' @export
-#' @rdname sim_lt_bdp
+#' @rdname sim_ltBD
 sim_locustree_bdp <- function(species_tree,
                              gbr,
                              gdr,
                              lgtr,
                              num_loci,
                              transfer_type = "random") {
-    warning("please use sim_lt_bdp instead of sim_locustree_bdp", call. = FALSE)
-    sim_lt_bdp(species_tree, gbr, gdr, lgtr, num_loci, transfer_type)
+    warning("please use sim_ltBD instead of sim_locustree_bdp", call. = FALSE)
+    sim_ltBD(species_tree, gbr, gdr, lgtr, num_loci, transfer_type)
 }
 #' @export
-#' @rdname sim_cbdp_ana
+#' @rdname sim_cophyloBD_ana
 sim_cophylo_bdp_ana <- function(hbr,
                                 hdr,
                                 sbr,
@@ -42,8 +42,8 @@ sim_cophylo_bdp_ana <- function(hbr,
                                 time_to_sim,
                                 numbsim,
                                 host_limit = 0) {
-    warning("please use sim_cbdp_ana instead of sim_cophylo_bdp_ana", call. = FALSE)
-    sim_cbdp_ana(hbr,
+    warning("please use sim_cophyloBD_ana instead of sim_cophylo_bdp_ana", call. = FALSE)
+    sim_cophyloBD_ana(hbr,
                  hdr,
                  sbr,
                  sdr,
@@ -56,7 +56,7 @@ sim_cophylo_bdp_ana <- function(hbr,
                  host_limit)
 }
 #' @export
-#' @rdname sim_cbdp
+#' @rdname sim_cophyloBD
 sim_cophylo_bdp <- function(hbr,
                             hdr,
                             sbr,
@@ -66,8 +66,8 @@ sim_cophylo_bdp <- function(hbr,
                             time_to_sim,
                             numbsim,
                             host_limit = 0) {
-    warning("please use sim_cbdp instead of sim_cophylo_bdp", call. = FALSE)
-    sim_cbdp(hbr,
+    warning("please use sim_cophyloBD instead of sim_cophylo_bdp", call. = FALSE)
+    sim_cophyloBD(hbr,
                  hdr,
                  sbr,
                  sdr,

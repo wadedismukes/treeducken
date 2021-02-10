@@ -26,12 +26,12 @@
 //' # numb_extant_tips * 100 tips counting each time we have a tree with 10 tips
 //' # then randomly picks one of those trees
 //'
-//' tree_list <- sim_st_bdp(sbr = lambda,
+//' tree_list <- sim_stBD(sbr = lambda,
 //'                 sdr = mu,
 //'                 numbsim = numb_replicates,
 //'                 n_tips = numb_extant_tips)
 // [[Rcpp::export]]
-Rcpp::List sim_st_bdp(SEXP sbr,
+Rcpp::List sim_stBD(SEXP sbr,
                           SEXP sdr,
                           SEXP numbsim,
                           Rcpp::NumericVector n_tips,
@@ -77,12 +77,12 @@ Rcpp::List sim_st_bdp(SEXP sbr,
 //' numb_replicates <- 10
 //' time <- 1
 //'
-//' tree_list <- sim_st_bdp_t(sbr = lambda,
+//' tree_list <- sim_stBD_t(sbr = lambda,
 //'                 sdr = mu,
 //'                 numbsim = numb_replicates,
 //'                 t = time)
 // [[Rcpp::export]]
-Rcpp::List sim_st_bdp_t(SEXP sbr, SEXP sdr, SEXP numbsim, SEXP t){
+Rcpp::List sim_stBD_t(SEXP sbr, SEXP sdr, SEXP numbsim, SEXP t){
     double sbr_ = as<double>(sbr);
     double sdr_ = as<double>(sdr);
     unsigned numbsim_ = as<int>(numbsim);
@@ -133,7 +133,7 @@ Rcpp::List sim_st_bdp_t(SEXP sbr, SEXP sdr, SEXP numbsim, SEXP t){
 //' # numb_extant_tips * 100 tips counting each time we have a tree with 10 tips
 //' # then randomly picks one of those trees
 //'
-//' sp_tree <- sim_st_bdp(sbr = lambda,
+//' sp_tree <- sim_stBD(sbr = lambda,
 //'                 sdr = mu,
 //'                 numbsim = numb_replicates,
 //'                 n_tips = numb_extant_tips)
@@ -141,13 +141,13 @@ Rcpp::List sim_st_bdp_t(SEXP sbr, SEXP sdr, SEXP numbsim, SEXP t){
 //' gene_br <- 1.0
 //' gene_dr <- 0.2
 //' transfer_rate <- 0.2
-//' sim_lt_bdp(species_tree = sp_tree[[1]],
+//' sim_ltBD(species_tree = sp_tree[[1]],
 //'                   gbr = gene_br,
 //'                   gdr = gene_dr,
 //'                   lgtr = transfer_rate,
 //'                   num_loci = 10)
 // [[Rcpp::export]]
-Rcpp::List sim_lt_bdp(Rcpp::List species_tree,
+Rcpp::List sim_ltBD(Rcpp::List species_tree,
                              SEXP gbr,
                              SEXP gdr,
                              SEXP lgtr,
@@ -222,7 +222,7 @@ Rcpp::List sim_lt_bdp(Rcpp::List species_tree,
 //' host_shift_rate <- 0.0
 //' cosp_rate <- 2.0
 //'
-//' cophylo_pair <- sim_cbdp_ana(hbr = host_lambda,
+//' cophylo_pair <- sim_cophyloBD_ana(hbr = host_lambda,
 //'                            hdr = host_mu,
 //'                            cosp_rate = cosp_rate,
 //'                            symb_dispersal_rate = 1,
@@ -234,7 +234,7 @@ Rcpp::List sim_lt_bdp(Rcpp::List species_tree,
 //'                            time_to_sim = time)
 //'
 // [[Rcpp::export]]
-Rcpp::List sim_cbdp_ana(SEXP hbr,
+Rcpp::List sim_cophyloBD_ana(SEXP hbr,
                         SEXP hdr,
                         SEXP sbr,
                         SEXP sdr,
@@ -331,7 +331,7 @@ Rcpp::List sim_cbdp_ana(SEXP hbr,
 //' host_shift_rate <- 0.0
 //' cosp_rate <- 2.0
 //'
-//' cophylo_pair <- sim_cbdp(hbr = host_lambda,
+//' cophylo_pair <- sim_cophyloBD(hbr = host_lambda,
 //'                            hdr = host_mu,
 //'                            cosp_rate = cosp_rate,
 //'                            host_exp_rate = host_shift_rate,
@@ -341,7 +341,7 @@ Rcpp::List sim_cbdp_ana(SEXP hbr,
 //'                            time_to_sim = time)
 //'
 // [[Rcpp::export]]
-Rcpp::List sim_cbdp(SEXP hbr,
+Rcpp::List sim_cophyloBD(SEXP hbr,
                     SEXP hdr,
                     SEXP sbr,
                     SEXP sdr,
@@ -412,14 +412,14 @@ Rcpp::List sim_cbdp(SEXP hbr,
 //' If rescale is set to false the tree is assumed to be in coalescent units and `ne` is used as the population
 //' genetic parameter theta.
 //' @return A list of coalescent trees
-//' @seealso sim_lt_bdp, sim_st_bdp, sim_st_bdp_t
+//' @seealso sim_ltBD, sim_stBD, sim_stBD_t
 //'
 //' @examples
 //' # first simulate a species tree
 //' mu <- 0.5
 //' lambda <- 1.0
 //' nt <- 6
-//' tr <- sim_st_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
+//' tr <- sim_stBD(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
 //' # for a locus tree with 100 genes sampled per locus tree
 //' gentrees <- sim_msc(tr[[1]],
 //'                     ne = 10000,

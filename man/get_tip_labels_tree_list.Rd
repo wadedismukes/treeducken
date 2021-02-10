@@ -25,6 +25,6 @@ Retrieves the member "tip.label" from each tree in multi_tree
 mu <- 0.5
 lambda <- 1.0
 nt <- 6
-tr <- sim_st_bdp(sbr = lambda, sdr = mu, numbsim = 5, n_tips = nt)
+tr <- sim_stBD(sbr = lambda, sdr = mu, numbsim = 5, n_tips = nt)
 tips_of_tr <- get_tip_labels_tree_list(tr)
 }

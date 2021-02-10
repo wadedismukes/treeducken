@@ -25,7 +25,7 @@ Calculates summary statistics including Colless' statistic, gamma statistic of t
 mu <- 0.5
 lambda <- 1.0
 nt <- 6
-tr <- sim_st_bdp(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
+tr <- sim_stBD(sbr = lambda, sdr = mu, numbsim = 1, n_tips = nt)
 # for a locus tree with 100 genes sampled per locus tree
 gentrees <- sim_msc(tr[[1]],
                     ne = 10000,
