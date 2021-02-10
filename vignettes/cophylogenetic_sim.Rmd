@@ -16,14 +16,14 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette summarizes the workflow for simulating a host and symbiont tree using the `sim_cophyloBD` function. 
+This vignette summarizes the workflow for simulating a host and symbiont tree using the `sim_cophyBD` function. 
 
 ## Introduction
 
 
 ## Figuring out parameters and what they mean
 
-This model has a number of parameters that are input into the `sim_cophyloBD` function. Let us assume that we just want to simulate to a time of 2.0 units. We can then use `ave_tips_st` and `ave_tips_lt` to figure out the average number of extant tips that will be on our host and symbiont trees respectively.
+This model has a number of parameters that are input into the `sim_cophyBD` function. Let us assume that we just want to simulate to a time of 2.0 units. We can then use `ave_tips_st` and `ave_tips_lt` to figure out the average number of extant tips that will be on our host and symbiont trees respectively.
 
 ```{r}
 
@@ -56,11 +56,11 @@ Now we have all the necessary parameters set with some idea of what they mean.
 
 ## Simulating a set of host and symbiont pairs
 
-We will now use the main function, `sim_cophyloBD` with the parameters we set in the previous section.
+We will now use the main function, `sim_cophyBD` with the parameters we set in the previous section.
 Let's simulate ten sets and then we can print out a summary for each set.
 ```{r} 
 # simulate 10 paired trees with our set parameters.
-host_symb_sets <- sim_cophyloBD(hbr = h_lambda,
+host_symb_sets <- sim_cophyBD(hbr = h_lambda,
                            hdr = h_mu,
                           sbr = s_lambda,
                           cosp_rate = c_lambda,
@@ -85,7 +85,7 @@ print(tree_set_of_interest)
 ```{r}
 plot(tree_set_of_interest, col = "red", lty = "dotted")
 ```
-Notice that the output of `sim_cophylo_bdp` is a list of `cophy` objects.
+Notice that the output of `sim_cophyBD` is a list of `cophy` objects.
 Each `cophy` object is composed of 4 elements: `host_tree`, `symb_tree`, `association_mat`, an `event_history`.
 The `host_tree` an `symb_tree` are both of the `phylo` object (from the ape package).
 The `association_mat` which is a matrix with number of rows equal to the number of extant tips in the symbiont tree, and number of columns equal to the number of extant tips in the host tree.

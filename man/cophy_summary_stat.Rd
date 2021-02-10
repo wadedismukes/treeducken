@@ -16,7 +16,7 @@ cophy_summary_stat(cophy_obj)
 summarize_cophy(cophy_obj)
 }
 \arguments{
-\item{cophy_obj}{The cophylogenetic object produced via `sim_cophyloBD`}
+\item{cophy_obj}{The cophylogenetic object produced via `sim_cophyBD`}
 
 \item{cophy_obj_indx}{The index with `cophy_obj` for `summarize_1cophy`}
 }
@@ -26,7 +26,7 @@ A vector consisting of (in order) cospeciations, host speciations, host extincti
 A dataframe containing statistics relevant to cophylogenetic analysis
 }
 \description{
-For cophylogenetic objects produced in treeducken via `sim_cophyloBD`, calculates the numbers of different events of interest. In addition, calculates and tests the ParaFit test.
+For cophylogenetic objects produced in treeducken via `sim_cophyBD`, calculates the numbers of different events of interest. In addition, calculates and tests the ParaFit test.
 }
 \section{Functions}{
 \itemize{
@@ -43,7 +43,7 @@ symb_lambda <- 0.4
 host_shift_rate <- 0.0
 cosp_rate <- 2.0
 
-cophy_pair <- sim_cophyloBD(hbr = host_lambda,
+cophy_pair <- sim_cophyBD(hbr = host_lambda,
                            hdr = host_mu,
                            cosp_rate = cosp_rate,
                            host_exp_rate = host_shift_rate,

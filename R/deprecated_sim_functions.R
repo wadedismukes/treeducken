@@ -30,7 +30,7 @@ sim_locustree_bdp <- function(species_tree,
     sim_ltBD(species_tree, gbr, gdr, lgtr, num_loci, transfer_type)
 }
 #' @export
-#' @rdname sim_cophyloBD_ana
+#' @rdname sim_cophyBD_ana
 sim_cophylo_bdp_ana <- function(hbr,
                                 hdr,
                                 sbr,
@@ -42,8 +42,8 @@ sim_cophylo_bdp_ana <- function(hbr,
                                 time_to_sim,
                                 numbsim,
                                 host_limit = 0) {
-    warning("please use sim_cophyloBD_ana instead of sim_cophylo_bdp_ana", call. = FALSE)
-    sim_cophyloBD_ana(hbr,
+    warning("please use sim_cophyBD_ana instead of sim_cophylo_bdp_ana", call. = FALSE)
+    sim_cophyBD_ana(hbr,
                  hdr,
                  sbr,
                  sdr,
@@ -56,7 +56,7 @@ sim_cophylo_bdp_ana <- function(hbr,
                  host_limit)
 }
 #' @export
-#' @rdname sim_cophyloBD
+#' @rdname sim_cophyBD
 sim_cophylo_bdp <- function(hbr,
                             hdr,
                             sbr,
@@ -66,8 +66,8 @@ sim_cophylo_bdp <- function(hbr,
                             time_to_sim,
                             numbsim,
                             host_limit = 0) {
-    warning("please use sim_cophyloBD instead of sim_cophylo_bdp", call. = FALSE)
-    sim_cophyloBD(hbr,
+    warning("please use sim_cophyBD instead of sim_cophylo_bdp", call. = FALSE)
+    sim_cophyBD(hbr,
                  hdr,
                  sbr,
                  sdr,

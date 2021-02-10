@@ -1,12 +1,12 @@
 #' Reconstruct historical association matrix
 #'
-#' @details Given a time and a tree pair object produced by the `sim_cophyloBD`
+#' @details Given a time and a tree pair object produced by the `sim_cophyBD`
 #'     object will produce the association matrix at that time point for the
 #'     tree object.
 #' USER WARNING: this is still in development, and likely will not work all the time.
 #'
 #' @param t The time of interest
-#' @param tr_pair_obj The tree pair object from `sim_cophyloBD`
+#' @param tr_pair_obj The tree pair object from `sim_cophyBD`
 #' @return Matrix of the associations at given time
 #' @examples
 #' host_mu <- 1.0 # death rate
@@ -18,7 +18,7 @@
 #' host_shift_rate <- 0.0
 #' cosp_rate <- 2.0
 #'
-#' cophylo_pair <- sim_cophyloBD(hbr = host_lambda,
+#' cophylo_pair <- sim_cophyBD(hbr = host_lambda,
 #'                            hdr = host_mu,
 #'                            cosp_rate = cosp_rate,
 #'                            host_exp_rate = host_shift_rate,

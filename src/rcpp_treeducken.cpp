@@ -222,7 +222,7 @@ Rcpp::List sim_ltBD(Rcpp::List species_tree,
 //' host_shift_rate <- 0.0
 //' cosp_rate <- 2.0
 //'
-//' cophylo_pair <- sim_cophyloBD_ana(hbr = host_lambda,
+//' cophylo_pair <- sim_cophyBD_ana(hbr = host_lambda,
 //'                            hdr = host_mu,
 //'                            cosp_rate = cosp_rate,
 //'                            symb_dispersal_rate = 1,
@@ -234,7 +234,7 @@ Rcpp::List sim_ltBD(Rcpp::List species_tree,
 //'                            time_to_sim = time)
 //'
 // [[Rcpp::export]]
-Rcpp::List sim_cophyloBD_ana(SEXP hbr,
+Rcpp::List sim_cophyBD_ana(SEXP hbr,
                         SEXP hdr,
                         SEXP sbr,
                         SEXP sdr,
@@ -331,7 +331,7 @@ Rcpp::List sim_cophyloBD_ana(SEXP hbr,
 //' host_shift_rate <- 0.0
 //' cosp_rate <- 2.0
 //'
-//' cophylo_pair <- sim_cophyloBD(hbr = host_lambda,
+//' cophylo_pair <- sim_cophyBD(hbr = host_lambda,
 //'                            hdr = host_mu,
 //'                            cosp_rate = cosp_rate,
 //'                            host_exp_rate = host_shift_rate,
@@ -341,7 +341,7 @@ Rcpp::List sim_cophyloBD_ana(SEXP hbr,
 //'                            time_to_sim = time)
 //'
 // [[Rcpp::export]]
-Rcpp::List sim_cophyloBD(SEXP hbr,
+Rcpp::List sim_cophyBD(SEXP hbr,
                     SEXP hdr,
                     SEXP sbr,
                     SEXP sdr,

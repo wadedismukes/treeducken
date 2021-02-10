@@ -153,7 +153,7 @@ sim_ltBD <- function(species_tree, gbr, gdr, lgtr, num_loci, transfer_type = "ra
 #' host_shift_rate <- 0.0
 #' cosp_rate <- 2.0
 #'
-#' cophylo_pair <- sim_cophyloBD_ana(hbr = host_lambda,
+#' cophylo_pair <- sim_cophyBD_ana(hbr = host_lambda,
 #'                            hdr = host_mu,
 #'                            cosp_rate = cosp_rate,
 #'                            symb_dispersal_rate = 1,
@@ -164,8 +164,8 @@ sim_ltBD <- function(species_tree, gbr, gdr, lgtr, num_loci, transfer_type = "ra
 #'                            numbsim = numb_replicates,
 #'                            time_to_sim = time)
 #'
-sim_cophyloBD_ana <- function(hbr, hdr, sbr, sdr, symb_dispersal_rate, symb_extirpation_rate, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit = 0L) {
-    .Call(`_treeducken_sim_cophyloBD_ana`, hbr, hdr, sbr, sdr, symb_dispersal_rate, symb_extirpation_rate, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit)
+sim_cophyBD_ana <- function(hbr, hdr, sbr, sdr, symb_dispersal_rate, symb_extirpation_rate, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit = 0L) {
+    .Call(`_treeducken_sim_cophyBD_ana`, hbr, hdr, sbr, sdr, symb_dispersal_rate, symb_extirpation_rate, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit)
 }
 
 #' Simulates a host-symbiont system using a cophylogenetic birth-death process
@@ -203,7 +203,7 @@ sim_cophyloBD_ana <- function(hbr, hdr, sbr, sdr, symb_dispersal_rate, symb_exti
 #' host_shift_rate <- 0.0
 #' cosp_rate <- 2.0
 #'
-#' cophylo_pair <- sim_cophyloBD(hbr = host_lambda,
+#' cophylo_pair <- sim_cophyBD(hbr = host_lambda,
 #'                            hdr = host_mu,
 #'                            cosp_rate = cosp_rate,
 #'                            host_exp_rate = host_shift_rate,
@@ -212,8 +212,8 @@ sim_cophyloBD_ana <- function(hbr, hdr, sbr, sdr, symb_dispersal_rate, symb_exti
 #'                            numbsim = numb_replicates,
 #'                            time_to_sim = time)
 #'
-sim_cophyloBD <- function(hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit = 0L) {
-    .Call(`_treeducken_sim_cophyloBD`, hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit)
+sim_cophyBD <- function(hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit = 0L) {
+    .Call(`_treeducken_sim_cophyBD`, hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit)
 }
 
 #' Simulate multispecies coalescent on a species tree
