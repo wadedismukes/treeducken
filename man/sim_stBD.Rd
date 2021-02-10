@@ -3,7 +3,7 @@
 \name{sim_stBD}
 \alias{sim_stBD}
 \alias{sim_sptree_bdp}
-\title{Simulates species tree using constant rate birth-death process}
+\title{Simulates species trees using constant rate birth-death process}
 \usage{
 sim_stBD(sbr, sdr, numbsim, n_tips, gsa_stop_mult = 10L)
 
@@ -25,7 +25,8 @@ List of objects of the tree class (as implemented in APE)
 }
 \description{
 Forward simulates to a number of tips. This function does so using
-    the general algorithm of Hartmann et al. 2010.
+    the general algorithm of Hartmann et al. 2010. Short for simulate species tree under
+    birth-death process.
 }
 \examples{
 mu <- 0.5 # death rate

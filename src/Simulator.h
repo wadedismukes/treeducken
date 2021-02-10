@@ -24,6 +24,7 @@ class Simulator
         double      popSize;
         double      generationTime;
         bool        printSOUT;
+        bool        hsMode;
         std::vector<std::shared_ptr<SpeciesTree>>   gsaTrees;
         std::shared_ptr<SpeciesTree>    spTree;
         std::shared_ptr<LocusTree>      lociTree;
@@ -96,7 +97,8 @@ class Simulator
                   double switchingRate,
                   double cospeciationRate,
                   double rho,
-                  int hostLimit);
+                  int hostLimit,
+                  bool hsMode);
         Simulator(double timeToSimTo,
                   double hostSpeciationRate,
                   double hostExtinctionRate,
@@ -107,7 +109,8 @@ class Simulator
                   double switchingRate,
                   double cospeciationRate,
                   double rho,
-                  int hostLimit);
+                  int hostLimit,
+                  bool hsMode);
         ~Simulator();
         void    setGSAStop(int g) { gsaStop = g; }
         void    setSpeciesTree(std::shared_ptr<SpeciesTree> st) { spTree = st; }
@@ -213,7 +216,8 @@ extern Rcpp::List sim_host_symb_treepair(double hostbr,
                                          double cosprate,
                                          double timeToSimTo,
                                          int host_limit,
-                                         int numbsim);
+                                         int numbsim,
+                                         bool hsMode);
 
 extern Rcpp::List sim_host_symb_treepair_ana(double hostbr,
                                             double hostdr,
@@ -225,7 +229,8 @@ extern Rcpp::List sim_host_symb_treepair_ana(double hostbr,
                                             double cosprate,
                                             double timeToSimTo,
                                             int host_limit,
-                                            int numbsim);
+                                            int numbsim,
+                                            bool hsMode);
 
 extern Rcpp::List sim_locus_tree_gene_tree(std::shared_ptr<SpeciesTree> species_tree,
                                            double gbr,

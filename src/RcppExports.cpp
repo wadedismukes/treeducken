@@ -52,8 +52,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // sim_cophyBD_ana
-Rcpp::List sim_cophyBD_ana(SEXP hbr, SEXP hdr, SEXP sbr, SEXP sdr, SEXP symb_dispersal_rate, SEXP symb_extirpation_rate, SEXP host_exp_rate, SEXP cosp_rate, SEXP time_to_sim, SEXP numbsim, Rcpp::NumericVector host_limit);
-RcppExport SEXP _treeducken_sim_cophyBD_ana(SEXP hbrSEXP, SEXP hdrSEXP, SEXP sbrSEXP, SEXP sdrSEXP, SEXP symb_dispersal_rateSEXP, SEXP symb_extirpation_rateSEXP, SEXP host_exp_rateSEXP, SEXP cosp_rateSEXP, SEXP time_to_simSEXP, SEXP numbsimSEXP, SEXP host_limitSEXP) {
+Rcpp::List sim_cophyBD_ana(SEXP hbr, SEXP hdr, SEXP sbr, SEXP sdr, SEXP s_disp_r, SEXP s_extp_r, SEXP host_exp_rate, SEXP cosp_rate, SEXP time_to_sim, SEXP numbsim, Rcpp::NumericVector host_limit, Rcpp::LogicalVector host_switch_mode);
+RcppExport SEXP _treeducken_sim_cophyBD_ana(SEXP hbrSEXP, SEXP hdrSEXP, SEXP sbrSEXP, SEXP sdrSEXP, SEXP s_disp_rSEXP, SEXP s_extp_rSEXP, SEXP host_exp_rateSEXP, SEXP cosp_rateSEXP, SEXP time_to_simSEXP, SEXP numbsimSEXP, SEXP host_limitSEXP, SEXP host_switch_modeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -61,20 +61,21 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type hdr(hdrSEXP);
     Rcpp::traits::input_parameter< SEXP >::type sbr(sbrSEXP);
     Rcpp::traits::input_parameter< SEXP >::type sdr(sdrSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type symb_dispersal_rate(symb_dispersal_rateSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type symb_extirpation_rate(symb_extirpation_rateSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type s_disp_r(s_disp_rSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type s_extp_r(s_extp_rSEXP);
     Rcpp::traits::input_parameter< SEXP >::type host_exp_rate(host_exp_rateSEXP);
     Rcpp::traits::input_parameter< SEXP >::type cosp_rate(cosp_rateSEXP);
     Rcpp::traits::input_parameter< SEXP >::type time_to_sim(time_to_simSEXP);
     Rcpp::traits::input_parameter< SEXP >::type numbsim(numbsimSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type host_limit(host_limitSEXP);
-    rcpp_result_gen = Rcpp::wrap(sim_cophyBD_ana(hbr, hdr, sbr, sdr, symb_dispersal_rate, symb_extirpation_rate, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit));
+    Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type host_switch_mode(host_switch_modeSEXP);
+    rcpp_result_gen = Rcpp::wrap(sim_cophyBD_ana(hbr, hdr, sbr, sdr, s_disp_r, s_extp_r, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit, host_switch_mode));
     return rcpp_result_gen;
 END_RCPP
 }
 // sim_cophyBD
-Rcpp::List sim_cophyBD(SEXP hbr, SEXP hdr, SEXP sbr, SEXP sdr, SEXP host_exp_rate, SEXP cosp_rate, SEXP time_to_sim, SEXP numbsim, Rcpp::NumericVector host_limit);
-RcppExport SEXP _treeducken_sim_cophyBD(SEXP hbrSEXP, SEXP hdrSEXP, SEXP sbrSEXP, SEXP sdrSEXP, SEXP host_exp_rateSEXP, SEXP cosp_rateSEXP, SEXP time_to_simSEXP, SEXP numbsimSEXP, SEXP host_limitSEXP) {
+Rcpp::List sim_cophyBD(SEXP hbr, SEXP hdr, SEXP sbr, SEXP sdr, SEXP host_exp_rate, SEXP cosp_rate, SEXP time_to_sim, SEXP numbsim, Rcpp::NumericVector host_limit, Rcpp::LogicalVector hs_mode);
+RcppExport SEXP _treeducken_sim_cophyBD(SEXP hbrSEXP, SEXP hdrSEXP, SEXP sbrSEXP, SEXP sdrSEXP, SEXP host_exp_rateSEXP, SEXP cosp_rateSEXP, SEXP time_to_simSEXP, SEXP numbsimSEXP, SEXP host_limitSEXP, SEXP hs_modeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -87,7 +88,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type time_to_sim(time_to_simSEXP);
     Rcpp::traits::input_parameter< SEXP >::type numbsim(numbsimSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type host_limit(host_limitSEXP);
-    rcpp_result_gen = Rcpp::wrap(sim_cophyBD(hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit));
+    Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type hs_mode(hs_modeSEXP);
+    rcpp_result_gen = Rcpp::wrap(sim_cophyBD(hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit, hs_mode));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -113,8 +115,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_treeducken_sim_stBD", (DL_FUNC) &_treeducken_sim_stBD, 5},
     {"_treeducken_sim_stBD_t", (DL_FUNC) &_treeducken_sim_stBD_t, 4},
     {"_treeducken_sim_ltBD", (DL_FUNC) &_treeducken_sim_ltBD, 6},
-    {"_treeducken_sim_cophyBD_ana", (DL_FUNC) &_treeducken_sim_cophyBD_ana, 11},
-    {"_treeducken_sim_cophyBD", (DL_FUNC) &_treeducken_sim_cophyBD, 9},
+    {"_treeducken_sim_cophyBD_ana", (DL_FUNC) &_treeducken_sim_cophyBD_ana, 12},
+    {"_treeducken_sim_cophyBD", (DL_FUNC) &_treeducken_sim_cophyBD, 10},
     {"_treeducken_sim_msc", (DL_FUNC) &_treeducken_sim_msc, 7},
     {NULL, NULL, 0}
 };

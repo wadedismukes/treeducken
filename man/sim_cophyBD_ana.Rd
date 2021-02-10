@@ -10,8 +10,8 @@ sim_cophyBD_ana(
   hdr,
   sbr,
   sdr,
-  symb_dispersal_rate,
-  symb_extirpation_rate,
+  s_disp_r,
+  s_extp_r,
   host_exp_rate,
   cosp_rate,
   time_to_sim,
@@ -24,8 +24,8 @@ sim_cophylo_bdp_ana(
   hdr,
   sbr,
   sdr,
-  symb_dispersal_rate,
-  symb_extirpation_rate,
+  s_disp_r,
+  s_extp_r,
   host_exp_rate,
   cosp_rate,
   time_to_sim,
@@ -42,9 +42,9 @@ sim_cophylo_bdp_ana(
 
 \item{sdr}{symbiont tree death rate}
 
-\item{symb_dispersal_rate}{symbiont dispersal rate to new hosts}
+\item{s_disp_r}{symbiont dispersal rate to new hosts}
 
-\item{symb_extirpation_rate}{symbiont exirpation rate on h}
+\item{s_extp_r}{symbiont exirpation rate on h}
 
 \item{host_exp_rate}{host shift speciation rate}
 
@@ -93,8 +93,8 @@ cosp_rate <- 2.0
 cophylo_pair <- sim_cophyBD_ana(hbr = host_lambda,
                            hdr = host_mu,
                            cosp_rate = cosp_rate,
-                           symb_dispersal_rate = 1,
-                           symb_extirpation_rate = 0.4,
+                           s_disp_r = 1,
+                           s_extp_r = 0.4,
                            host_exp_rate = host_shift_rate,
                            sdr = symb_mu,
                            sbr = symb_lambda,

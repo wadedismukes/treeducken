@@ -1,10 +1,11 @@
 #include "Simulator.h"
 #include <string.h>
 
-//' Simulates species tree using constant rate birth-death process
+//' Simulates species trees using constant rate birth-death process
 //'
 //' @description Forward simulates to a number of tips. This function does so using
-//'     the general algorithm of Hartmann et al. 2010.
+//'     the general algorithm of Hartmann et al. 2010. Short for simulate species tree under
+//'     birth-death process.
 //' @param sbr species birth rate (i.e. speciation rate)
 //' @param sdr species death rate (i.e. extinction rate)
 //' @param numbsim number of species trees to simulate
@@ -102,7 +103,8 @@ Rcpp::List sim_stBD_t(SEXP sbr, SEXP sdr, SEXP numbsim, SEXP t){
 //' Simulates locus tree using constant rate birth-death-transfer process
 //'
 //' @description Given a species tree simulates a locus or gene family tree along
-//'     the species tree.
+//'     the species tree. Short for simulates a locus tree under a birth-death-transfer
+//'     process.
 //' @param species_tree species tree to simulate along
 //' @param gbr gene birth rate
 //' @param gdr gene death rate
@@ -195,19 +197,28 @@ Rcpp::List sim_ltBD(Rcpp::List species_tree,
 //'     birth-death process with the addition of a host shift speciation rate
 //'     that allows for the addition of more associated hosts upon symbiont
 //'     speciation. The anagenetic processes are modeled using a poisson process
-//'     occurring along the tree. THe dispersal to hosts is at present random;
-//'     there is no preferential host-switching.
+//'     occurring along the tree. The dispersal to hosts is at present random;
+//'     there is no preferential host expansion.
+//'
+//'     Host expansions are similar to the more commonly found host switching. 
+//'     In this model, host-expansion speciation describes events where a symbiont 
+//'     speciates and at that time, both descendants retain the ancestral host 
+//'     associations. Randomly one of these descendant symbionts then randomly acquires a new 
+//'     host. When the option `host_switch_mode = TRUE`, the behavior of this changes to a 
+//'     more traditional host switching where one descendant retains the ancestral range and
+//'     the other gains a novel host association. 
 //' @param hbr host tree birth rate
 //' @param hdr host tree death rate
 //' @param sbr symbiont tree birth rate
 //' @param sdr symbiont tree death rate
-//' @param symb_dispersal_rate symbiont dispersal rate to new hosts
-//' @param symb_extirpation_rate symbiont exirpation rate on h
+//' @param s_disp_r symbiont dispersal rate to new hosts
+//' @param s_extp_r symbiont exirpation rate on h
 //' @param host_exp_rate host shift speciation rate
 //' @param cosp_rate cospeciation rate
 //' @param time_to_sim time units to simulate until
 //' @param numbsim number of replicates
 //' @param host_limit Maximum number of hosts for symbionts (0 implies no limit)
+//' @param host_switch_mode Boolean turning host expansion into host switching (explained above) (default = FALSE)
 //' @return A list containing the `host_tree`, the `symbiont_tree`, the
 //'     association matrix at present, and the history of events that have
 //'     occurred.
@@ -225,8 +236,8 @@ Rcpp::List sim_ltBD(Rcpp::List species_tree,
 //' cophylo_pair <- sim_cophyBD_ana(hbr = host_lambda,
 //'                            hdr = host_mu,
 //'                            cosp_rate = cosp_rate,
-//'                            symb_dispersal_rate = 1,
-//'                            symb_extirpation_rate = 0.4,
+//'                            s_disp_r = 1,
+//'                            s_extp_r = 0.4,
 //'                            host_exp_rate = host_shift_rate,
 //'                            sdr = symb_mu,
 //'                            sbr = symb_lambda,
@@ -238,25 +249,28 @@ Rcpp::List sim_cophyBD_ana(SEXP hbr,
                         SEXP hdr,
                         SEXP sbr,
                         SEXP sdr,
-                        SEXP symb_dispersal_rate,
-                        SEXP symb_extirpation_rate,
+                        SEXP s_disp_r,
+                        SEXP s_extp_r,
                         SEXP host_exp_rate,
                         SEXP cosp_rate,
                         SEXP time_to_sim,
                         SEXP numbsim,
-                        Rcpp::NumericVector host_limit = 0){
+                        Rcpp::NumericVector host_limit = 0,
+                        Rcpp::LogicalVector host_switch_mode = false){
 
     double hbr_ = as<double>(hbr);
     double hdr_ = as<double>(hdr);
     double sbr_ = as<double>(sbr);
     double sdr_ = as<double>(sdr);
-    double symb_disp_ = as<double>(symb_dispersal_rate);
-    double symb_ext_ = as<double>(symb_extirpation_rate);
+    double symb_disp_ = as<double>(s_disp_r);
+    double symb_ext_ = as<double>(s_extp_r);
     double cosp_rate_ = as<double>(cosp_rate);
     double host_exp_rate_ = as<double>(host_exp_rate);
     double timeToSimTo_ = as<double>(time_to_sim);
     int hl_ = as<int>(host_limit);
     int numbsim_ = as<int>(numbsim);
+    bool host_switch_mode_ = as<bool>(host_switch_mode);
+
     RNGScope scope;
     if(hbr_ < 0.0){
         stop("'hbr' must be positive or 0.0.");
@@ -294,7 +308,8 @@ Rcpp::List sim_cophyBD_ana(SEXP hbr,
                                   cosp_rate_,
                                   timeToSimTo_,
                                   hl_,
-                                  numbsim_);
+                                  numbsim_,
+                                  host_switch_mode_);
 }
 //' Simulates a host-symbiont system using a cophylogenetic birth-death process
 //'
@@ -308,6 +323,14 @@ Rcpp::List sim_cophyBD_ana(SEXP hbr,
 //'     birth-death process with the addition of a host shift speciation rate
 //'     that allows for the addition of more associated hosts upon symbiont
 //'     speciation.
+//'
+//'     Host expansions are similar to the more commonly found host switching. 
+//'     In this model, host-expansion speciation describes events where a symbiont 
+//'     speciates and at that time, both descendants retain the ancestral host 
+//'     associations. Randomly one of these descendant symbionts then randomly acquires a new 
+//'     host. When the option `host_switch_mode = TRUE`, the behavior of this changes to a 
+//'     more traditional host switching where one descendant retains the ancestral range and
+//'     the other gains a novel host association. 
 //' @param hbr host tree birth rate
 //' @param hdr host tree death rate
 //' @param sbr symbiont tree birth rate
@@ -317,6 +340,7 @@ Rcpp::List sim_cophyBD_ana(SEXP hbr,
 //' @param time_to_sim time units to simulate until
 //' @param numbsim number of replicates
 //' @param host_limit Maximum number of hosts for symbionts (0 implies no limit)
+//' @param hs_mode Boolean turning host expansion into host switching (explained above) (default = FALSE)
 //' @return A list containing the `host_tree`, the `symbiont_tree`, the
 //'     association matrix at present, and the history of events that have
 //'     occurred.
@@ -349,16 +373,18 @@ Rcpp::List sim_cophyBD(SEXP hbr,
                     SEXP cosp_rate,
                     SEXP time_to_sim,
                     SEXP numbsim,
-                    Rcpp::NumericVector host_limit = 0){
+                    Rcpp::NumericVector host_limit = 0,
+                    Rcpp::LogicalVector hs_mode = false){
     double hbr_ = as<double>(hbr);
     double hdr_ = as<double>(hdr);
     double sbr_ = as<double>(sbr);
     double sdr_ = as<double>(sdr);
-    int hl_ = as<int>(host_limit);
+    int hl_ = as<int>(hs_mode);
     double cosp_rate_ = as<double>(cosp_rate);
     double host_exp_rate_ = as<double>(host_exp_rate);
     double timeToSimTo_ = as<double>(time_to_sim);
     int numbsim_ = as<int>(numbsim);
+    bool host_switch_mode_ = as<bool>(hs_mode);
     RNGScope scope;
     if(hbr_ < 0.0){
          stop("'hbr' must be positive or 0.0.");
@@ -378,7 +404,7 @@ Rcpp::List sim_cophyBD(SEXP hbr,
     if(cosp_rate_ < 0.0)
         stop("'cosp_rate' must be a positive value or 0.0.");
     if(timeToSimTo_ < 0.0)
-        stop("'timeToSimTo' must be a positive value or 0.0.");
+        stop("'time_to_sim' must be a positive value or 0.0.");
     if(hl_ < 0)
         stop("'host_limit' must be a positive number or 0 (0 turns off the host limit).");
     return sim_host_symb_treepair(hbr_,
@@ -389,7 +415,8 @@ Rcpp::List sim_cophyBD(SEXP hbr,
                                   cosp_rate_,
                                   timeToSimTo_,
                                   hl_,
-                                  numbsim_);
+                                  numbsim_,
+                                  host_switch_mode_);
 }
 //' Simulate multispecies coalescent on a species tree
 //'

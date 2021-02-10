@@ -34,7 +34,8 @@ List of objects of the tree class (as implemented in APE)
 }
 \description{
 Given a species tree simulates a locus or gene family tree along
-    the species tree.
+    the species tree. Short for simulates a locus tree under a birth-death-transfer
+    process.
 }
 \details{
 Given a species tree will perform a birth-death process coupled with transfer.

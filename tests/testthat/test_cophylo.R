@@ -129,8 +129,8 @@ are_trees_identical_matrix_not <- function(t, n, disp_rate, ext_rate) {
                             hdr = 0.0,
                             sbr = 0.0,
                             sdr = 0.0,
-                            symb_dispersal_rate = disp_rate,
-                            symb_extirpation_rate = ext_rate,
+                            s_disp_r = disp_rate,
+                            s_extp_r = ext_rate,
                             host_exp_rate = 0.0,
                             cosp_rate = 1.0,
                             time_to_sim = t,
@@ -156,7 +156,7 @@ are_trees_identical_matrix_not <- function(t, n, disp_rate, ext_rate) {
     }
     any(pair_true == TRUE)
 }
-
+# this test is bad.
 # test_that("sim_cophy_bdp_ana produces trees but non-identity matrix association matrix", {
 #     expect_true(are_trees_identical_matrix_not(t = 2.0, n = 10, disp_rate = 0.15, ext_rate = 0.01))
 # })
