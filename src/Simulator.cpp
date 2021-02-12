@@ -111,7 +111,7 @@ Simulator::Simulator(double stopTime,
           double rho,
           int hl,
           bool hsMode){
-    hsMode = hsMode;
+    host_switch_mode = hsMode;
     speciationRate = hostSpeciationRate;
     extinctionRate = hostExtinctionRate;
     samplingRate = rho;
@@ -143,7 +143,6 @@ Simulator::Simulator(double stopTime,
                      double rho,
                      int hl,
                      bool hsMode){
-  hsMode = hsMode;
   speciationRate = hostSpeciationRate;
   extinctionRate = hostExtinctionRate;
   samplingRate = rho;
@@ -154,6 +153,10 @@ Simulator::Simulator(double stopTime,
   timeToSim = stopTime;
 
   hostLimit = hl;
+
+
+  host_switch_mode = hsMode;
+
   extirpationRate = symbExtirpationRate;
   dispersalRate = symbDispersalRate;
   spTree = nullptr;
@@ -610,6 +613,9 @@ bool Simulator::pairedBDPSim(){
       // or a joint event (a.k.a. a cospeciation)
       // this returns the association matrix
       assocMat = this->cophyloEvent(currentSimTime, assocMat);
+      Rcout << hostLimit << " ./././././" << std::endl;
+      Rcout << host_switch_mode << " ./././././" << std::endl;
+
       if(hostLimit > 0)
         assocMat = this->hostLimitCheck(assocMat, hostLimit);
     }
@@ -753,7 +759,7 @@ void Simulator::updateEventVector(int h, int s, int e, double time){
 
 arma::umat Simulator::hostLimitCheck(arma::umat assocMat, int hostLimit) {
   arma::uvec hostCounts = arma::sum(assocMat, 1); // I.e. the sums of each row
-
+  Rcout << "poop" << std::endl;
   arma::uvec tooManyHostsIndices = find(hostCounts > hostLimit); // index of rows with too many hosts
   for(arma::uword i = 0; i < tooManyHostsIndices.n_rows; i++) {
     arma::urowvec symbWithTooMany = assocMat.row(tooManyHostsIndices(i));
@@ -887,13 +893,13 @@ arma::umat Simulator::symbiontTreeEvent(double eventTime, arma::umat assocMat){
         numExtantSymbs = symbiontTree->getNumExtant();
         // add two rows
         assocMat.resize(numExtantSymbs, numExtantHosts);
-        if(hsMode) {
+        if(host_switch_mode) {
           // host switch mode on so one symbiont desc gets range
           assocMat(numExtantSymbs - 2, arma::span::all) = rvec;
           // and the other gets the random event
           arma::urowvec nRowVec(rvec.n_cols, arma::fill::zeros);
           nRowVec(hostIndices(hostInd)) = 1;
-          assocMat(numExtantSymbs-1, arma::span::all) = rvec;
+          assocMat(numExtantSymbs-1, arma::span::all) = nRowVec;
 
         }
         else { 
@@ -969,13 +975,13 @@ arma::umat Simulator::symbiontTreeEvent(double eventTime, arma::umat assocMat){
         numExtantSymbs = symbiontTree->getNumExtant();
         // add two rows
         assocMat.resize(numExtantSymbs, numExtantHosts);
-        if(hsMode) {
+        if(host_switch_mode) {
           // host switch mode on so one symbiont desc gets range
           assocMat(numExtantSymbs - 2, arma::span::all) = rvec;
           // and the other gets the random event
           arma::urowvec nRowVec(rvec.n_cols, arma::fill::zeros);
           nRowVec(hostIndices(hostInd)) = 1;
-          assocMat(numExtantSymbs-1, arma::span::all) = rvec;
+          assocMat(numExtantSymbs-1, arma::span::all) = nRowVec;
 
         }
         else { 
@@ -1007,7 +1013,7 @@ arma::umat Simulator::symbiontTreeEvent(double eventTime, arma::umat assocMat){
 
 
         assocMat.resize(numExtantSymbs, numExtantHosts);
-        if(hsMode) {
+        if(host_switch_mode) {
           arma::urowvec hostIndices(rvec.n_cols, arma::fill::zeros);
 
           // make a list of unoccupied hosts
@@ -1028,7 +1034,7 @@ arma::umat Simulator::symbiontTreeEvent(double eventTime, arma::umat assocMat){
           // and the other gets the random event
           arma::urowvec nRowVec(rvec.n_cols, arma::fill::zeros);
           nRowVec(hostIndices(hostInd)) = 1;
-          assocMat(numExtantSymbs-1, arma::span::all) = rvec;
+          assocMat(numExtantSymbs-1, arma::span::all) = nRowVec;
 
         }
         else { 
@@ -1097,11 +1103,11 @@ arma::umat Simulator::cophyloERMEvent(double eventTime, arma::umat assocMat){
     // add two rows
     assocMat.resize(numExtantSymbs, numExtantHosts);
     // make two new rows of data frame to be clear about which host speciated into what
-    updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-2),
+    updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts - 2),
                       symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs - 1),
                       4,
                       eventTime);
-    updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-1),
+    updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts - 1),
                       symbiontTree->getNodesIndxFromExtantIndx(numExtantSymbs - 1),
                       4,
                       eventTime);

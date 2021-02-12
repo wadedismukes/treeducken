@@ -218,7 +218,7 @@ Rcpp::List sim_ltBD(Rcpp::List species_tree,
 //' @param time_to_sim time units to simulate until
 //' @param numbsim number of replicates
 //' @param host_limit Maximum number of hosts for symbionts (0 implies no limit)
-//' @param host_switch_mode Boolean turning host expansion into host switching (explained above) (default = FALSE)
+//' @param hs_mode Boolean turning host expansion into host switching (explained above) (default = FALSE)
 //' @return A list containing the `host_tree`, the `symbiont_tree`, the
 //'     association matrix in the present, with hosts as rows and smybionts as columns, and the history of events that have
 //'     occurred.
@@ -256,7 +256,7 @@ Rcpp::List sim_cophyBD_ana(SEXP hbr,
                         SEXP time_to_sim,
                         SEXP numbsim,
                         Rcpp::NumericVector host_limit = 0,
-                        Rcpp::LogicalVector host_switch_mode = false){
+                        Rcpp::LogicalVector hs_mode = false){
 
     double hbr_ = as<double>(hbr);
     double hdr_ = as<double>(hdr);
@@ -269,7 +269,7 @@ Rcpp::List sim_cophyBD_ana(SEXP hbr,
     double timeToSimTo_ = as<double>(time_to_sim);
     int hl_ = as<int>(host_limit);
     int numbsim_ = as<int>(numbsim);
-    bool host_switch_mode_ = as<bool>(host_switch_mode);
+    bool host_switch_mode_ = as<bool>(hs_mode);
 
     RNGScope scope;
     if(hbr_ < 0.0){
@@ -297,7 +297,7 @@ Rcpp::List sim_cophyBD_ana(SEXP hbr,
         stop("symbiont dispersal cannot be negative");
     if(symb_ext_ < 0.0)
         stop("symbiont extirpation cannot be negative");
-
+    Rcout << "host limt" << hl_ << std::endl;
     return sim_host_symb_treepair_ana(hbr_,
                                   hdr_,
                                   sbr_,
@@ -379,7 +379,7 @@ Rcpp::List sim_cophyBD(SEXP hbr,
     double hdr_ = as<double>(hdr);
     double sbr_ = as<double>(sbr);
     double sdr_ = as<double>(sdr);
-    int hl_ = as<int>(hs_mode);
+    int hl_ = as<int>(host_limit);
     double cosp_rate_ = as<double>(cosp_rate);
     double host_exp_rate_ = as<double>(host_exp_rate);
     double timeToSimTo_ = as<double>(time_to_sim);

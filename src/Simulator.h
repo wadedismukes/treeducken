@@ -24,7 +24,7 @@ class Simulator
         double      popSize;
         double      generationTime;
         bool        printSOUT;
-        bool        hsMode;
+        bool        host_switch_mode;
         std::vector<std::shared_ptr<SpeciesTree>>   gsaTrees;
         std::shared_ptr<SpeciesTree>    spTree;
         std::shared_ptr<LocusTree>      lociTree;
