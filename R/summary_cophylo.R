@@ -235,7 +235,13 @@ summary.cophy <- function(object, ...) {
 #' @param x An object of class `cophy` or class `multiCophy`
 #' @param cophy An object of class `cophy`
 #' @param ... Further arguments used in generic classes
-#'
+#' @details The association matrix is output with symbionts in 
+#' columns and hosts in rows.
+#' The event history data frame has codes for the following events: 
+#' "CSP" = cospeciation/codivergence, "HSP" = host speciation,
+#' "HX" = host extinction, "SSP" = symbiont speciation, "SX" = 
+#' Symbiont extinction, "DISP" = Symbiont dispersal, and "EXTP" = 
+#' symbiont extirpation.
 #'
 #' @return Print returns NULL. host_tree returns NULL, symb_tree returns NULL,
 #' association_mat returns the dimensions of the matrix, event_history
