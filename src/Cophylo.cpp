@@ -86,8 +86,6 @@ Rcpp::List sim_host_symb_treepair(double hostbr,
     Rcpp::List multiphy;
     Rcpp::List hostSymbPair;
     for(int i = 0; i < numbsim; i++){
-        Rcout << "hsMode " << hsMode << std::endl;
-        Rcout << "host_limit " << host_limit << std::endl;
         auto phySimulator = std::shared_ptr<Simulator>(new Simulator( timeToSimTo,
                                                  hostbr,
                                                  hostdr,

@@ -46,5 +46,5 @@ make_mat <- function(assoc_table){
     for(h in 1:length(hosts)){
         assoc_mat[symbs_on_host[[h]],h] <- 1
     }
-    assoc_mat
+    t(assoc_mat)
 }

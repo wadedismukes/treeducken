@@ -84,10 +84,11 @@ print(tree_set_of_interest)
 
 ```{r}
 plot(tree_set_of_interest, col = "red", lty = "dotted")
+add_events(tree_set_of_interest)
 ```
 Notice that the output of `sim_cophyBD` is a list of `cophy` objects.
 Each `cophy` object is composed of 4 elements: `host_tree`, `symb_tree`, `association_mat`, an `event_history`.
-The `host_tree` an `symb_tree` are both of the `phylo` object (from the ape package).
+The `host_tree` and `symb_tree` are both of the `phylo` object (from the ape package).
 The `association_mat` which is a matrix with number of rows equal to the number of extant tips in the symbiont tree, and number of columns equal to the number of extant tips in the host tree.
 The `event_history` is a data frame which shows the full history of the simulation. 
 It contains which events occur on which symbiont and/or host and at which time.

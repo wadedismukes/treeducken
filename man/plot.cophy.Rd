@@ -77,6 +77,7 @@ cophylo_pair <- sim_cophylo_bdp(hbr = host_lambda,
                            sdr = symb_mu,
                            sbr = symb_lambda,
                            numbsim = numb_replicates,
+
                            time_to_sim = time)
 plot.cophy(cophylo_pair[[1]])
 }

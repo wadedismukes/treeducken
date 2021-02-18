@@ -673,7 +673,7 @@ arma::umat Simulator::cophyloEvent(double eventTime, arma::umat assocMat){
 // Function that creates the dataframe out of the vectors that record events
 Rcpp::DataFrame Simulator::createEventDF(){
   this->updateEventIndices();
-  DataFrame df = DataFrame::create(Named("Symbiont Index") = inOrderVecOfSymbIndx,
+  DataFrame df = DataFrame::create(Named("Symbiont_Index") = inOrderVecOfSymbIndx,
                                    Named("Host_Index") = inOrderVecOfHostIndx,
                                    Named("Event_Type") = inOrderVecOfEvent,
                                    Named("Event_Time") = inOrderVecOfEventTimes);
@@ -748,6 +748,10 @@ void Simulator::updateEventVector(int h, int s, int e, double time){
     case 8:
       // extirpation
       inOrderVecOfEvent.push_back("EXTP");
+      break;
+    case 9:
+      // host expansion or switching
+      inOrderVecOfEvent.push_back("SHE");
       break;
     default:
       Rcout << "not sure what happened there folks." << std::endl;
@@ -860,10 +864,7 @@ arma::umat Simulator::symbiontTreeEvent(double eventTime, arma::umat assocMat){
   }
   else{
     // expansion event (a.k.a. birth event with the addition of one host in a descendent symbiont lineage)
-    updateEventVector(spTree->getNodesIndxFromExtantIndx(assocMat.n_cols - 1),
-                      symbiontTree->getNodesIndxFromExtantIndx(nodeInd),
-                      2,
-                      eventTime);
+
     // check if the sum of the row equals the number of columns
     // in other words is the symbiont at rvec occupying all the hosts already?
     // if no: here, if yes go to else
@@ -899,7 +900,7 @@ arma::umat Simulator::symbiontTreeEvent(double eventTime, arma::umat assocMat){
           assocMat(numExtantSymbs-1, arma::span::all) = nRowVec;
 
         }
-        else { 
+        else {
           // make one of these rows the same as the deleted row
           assocMat(numExtantSymbs-2, arma::span::all) = rvec;
           // change that row to have an extra one where the randomly picked unoccupied host was
@@ -921,11 +922,18 @@ arma::umat Simulator::symbiontTreeEvent(double eventTime, arma::umat assocMat){
                                 eventTime);
           }
         } */
+        updateEventVector(hostIndices(hostInd),
+                  symbiontTree->getNodesIndxFromExtantIndx(nodeInd),
+                  9,
+                  eventTime);
       }
       else{ // if all hosts are occupied (i.e the row is all 1's) this is just a regular birth event
         symbiontTree->lineageBirthEvent(nodeInd);
         numExtantSymbs = symbiontTree->getNumExtant();
-
+        updateEventVector(spTree->getNodesIndxFromExtantIndx(assocMat.n_cols - 1),
+                          symbiontTree->getNodesIndxFromExtantIndx(nodeInd),
+                          2,
+                          eventTime);
 
         assocMat.resize(numExtantSymbs, numExtantHosts);
 
@@ -981,7 +989,7 @@ arma::umat Simulator::symbiontTreeEvent(double eventTime, arma::umat assocMat){
           assocMat(numExtantSymbs-1, arma::span::all) = nRowVec;
 
         }
-        else { 
+        else {
           // make one of these rows the same as the deleted row
           assocMat(numExtantSymbs-2, arma::span::all) = rvec;
           // change that row to have an extra one where the randomly picked unoccupied host was
@@ -1003,6 +1011,10 @@ arma::umat Simulator::symbiontTreeEvent(double eventTime, arma::umat assocMat){
                               eventTime);
           }
         } */
+        updateEventVector(hostIndices(hostInd),
+                  symbiontTree->getNodesIndxFromExtantIndx(nodeInd),
+                  9,
+                  eventTime);
       }
       else{ // if all hosts are occupied this is just a regular birth event
         symbiontTree->lineageBirthEvent(nodeInd);
@@ -1032,15 +1044,22 @@ arma::umat Simulator::symbiontTreeEvent(double eventTime, arma::umat assocMat){
           arma::urowvec nRowVec(rvec.n_cols, arma::fill::zeros);
           nRowVec(hostIndices(hostInd)) = 1;
           assocMat(numExtantSymbs-1, arma::span::all) = nRowVec;
-
+          updateEventVector(hostIndices(hostInd),
+                            symbiontTree->getNodesIndxFromExtantIndx(nodeInd),
+                            9,
+                            eventTime);
         }
-        else { 
+        else {
           // if host switching off here we just get a speciation basically (since its just replacemtn)
           assocMat(numExtantSymbs-2, arma::span::all) = rvec;
           // change that row to have an extra one where the randomly picked unoccupied host was
 
           // make that a new row
           assocMat(numExtantSymbs-1, arma::span::all) = rvec;
+          updateEventVector(spTree->getNodesIndxFromExtantIndx(assocMat.n_cols - 1),
+                            symbiontTree->getNodesIndxFromExtantIndx(nodeInd),
+                            2,
+                            eventTime);
         }
 
         // sort symbs on new hosts
@@ -1113,8 +1132,8 @@ arma::umat Simulator::cophyloERMEvent(double eventTime, arma::umat assocMat){
    for(arma::uword i = 0; i < cvec.n_rows; ++i) {
       if(cvec(i) == 1){
         arma::umat rr = arma::randi<arma::umat>(1,2, arma::distr_param(0,1));
-/*         if(rr(0,0) == 0 && rr(0,1) == 1){
-          updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-2),
+         if(rr(0,0) == 0 && rr(0,1) == 1){
+/*           updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-2),
                             symbiontTree->getNodesIndxFromExtantIndx(i),
                             5,
                             eventTime);
@@ -1122,9 +1141,9 @@ arma::umat Simulator::cophyloERMEvent(double eventTime, arma::umat assocMat){
           updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-1),
                             symbiontTree->getNodesIndxFromExtantIndx(i),
                             4,
-                            eventTime);
+                            eventTime); */
 
-        } */
+        }
         else if(rr(0,0) == 1 && rr(0,1) == 0){
 
 /*           updateEventVector(spTree->getNodesIndxFromExtantIndx(numExtantHosts-2),

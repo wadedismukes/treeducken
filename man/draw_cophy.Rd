@@ -29,7 +29,7 @@ draw_cophy(
 
 \item{y}{Symb tree as phylo object}
 
-\item{assoc}{Association matrix as a two column list of strings}
+\item{assoc}{Association matrix}
 
 \item{use_edge_length}{Boolean to draw trees with edge length or not}
 

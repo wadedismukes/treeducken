@@ -57,6 +57,15 @@ association_mat returns the dimensions of the matrix, event_history
 \description{
 Prints a cophylogenetic set or a list of cophylogenetic sets.
 }
+\details{
+The association matrix is output with symbionts in
+columns and hosts in rows.
+The event history data frame has codes for the following events:
+"CSP" = cospeciation/codivergence, "HSP" = host speciation,
+"HX" = host extinction, "SSP" = symbiont speciation, "SX" =
+Symbiont extinction, "DISP" = Symbiont dispersal, and "EXTP" =
+symbiont extirpation, "SHE" symbiont speciation with host spread or host switch.
+}
 \section{Functions}{
 \itemize{
 \item \code{host_tree}: Returns host tree of a cophylogenetic set

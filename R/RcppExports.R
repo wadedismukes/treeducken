@@ -149,7 +149,7 @@ sim_ltBD <- function(species_tree, gbr, gdr, lgtr, num_loci, transfer_type = "ra
 #' @param time_to_sim time units to simulate until
 #' @param numbsim number of replicates
 #' @param host_limit Maximum number of hosts for symbionts (0 implies no limit)
-#' @param host_switch_mode Boolean turning host expansion into host switching (explained above) (default = FALSE)
+#' @param hs_mode Boolean turning host expansion into host switching (explained above) (default = FALSE)
 #' @return A list containing the `host_tree`, the `symbiont_tree`, the
 #'     association matrix in the present, with hosts as rows and smybionts as columns, and the history of events that have
 #'     occurred.
@@ -175,8 +175,8 @@ sim_ltBD <- function(species_tree, gbr, gdr, lgtr, num_loci, transfer_type = "ra
 #'                            numbsim = numb_replicates,
 #'                            time_to_sim = time)
 #'
-sim_cophyBD_ana <- function(hbr, hdr, sbr, sdr, s_disp_r, s_extp_r, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit = 0L, host_switch_mode = FALSE) {
-    .Call(`_treeducken_sim_cophyBD_ana`, hbr, hdr, sbr, sdr, s_disp_r, s_extp_r, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit, host_switch_mode)
+sim_cophyBD_ana <- function(hbr, hdr, sbr, sdr, s_disp_r, s_extp_r, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit = 0L, hs_mode = FALSE) {
+    .Call(`_treeducken_sim_cophyBD_ana`, hbr, hdr, sbr, sdr, s_disp_r, s_extp_r, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit, hs_mode)
 }
 
 #' Simulates a host-symbiont system using a cophylogenetic birth-death process

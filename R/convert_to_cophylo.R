@@ -67,9 +67,9 @@ to_cophy <- function(hostTree, symbTree, assocMat, eventHistory = NULL){
     pruned_symb_tree <- treeducken::drop_extinct(symbTree, tol = 0.0001)
     nExtHostTips <- length(pruned_host_tree$tip.label)
     nExtSymbTips <- length(pruned_symb_tree$tip.label)
-    if(nExtHostTips != ncol(assocMat))
+    if(nExtHostTips != nrow(assocMat))
         stop("number of extant tips in 'hostTree' does not match number cols in 'assocMat'")
-    if(nExtSymbTips != nrow(assocMat))
+    if(nExtSymbTips != ncol(assocMat))
         stop("number of extant tips in 'symbTree' does not match number rows in 'assocMat'")
     cophy <- list("host_tree" = hostTree,
                   "symb_tree" = symbTree,

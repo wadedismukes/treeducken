@@ -110,7 +110,7 @@ sim_mlc <- function(locus_tree,
             num_genes = num_reps)
         little_trees[[i]] <- mlc_df[[i]][[1]]$gene.trees
         # collapse those loci on all
-        locus_trees_by_dup <- collapse_locus_subtree(
+        locus_trees_by_dup <- collapse_clade(
             locus_trees_by_dup,
             locus_trees_by_dup)
     }
@@ -192,7 +192,7 @@ collapse_locus_subtree <- function(list_of_subtrees,
 #' @rdname collapse_locus_subtree
 collapse_clade <- function(list_of_subtrees,
                            locus_to_collapse) {
-    tip_labels_subtrees <- get_tip_labels_tree_list(list_of_subtrees)
+    tip_labels_subtrees <- get_tipnames(list_of_subtrees)
     tips_to_remove <- locus_to_collapse$tip.label[-1]
     # figure out which loci have those tips
 

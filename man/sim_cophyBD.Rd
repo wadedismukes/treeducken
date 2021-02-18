@@ -14,7 +14,8 @@ sim_cophyBD(
   cosp_rate,
   time_to_sim,
   numbsim,
-  host_limit = 0L
+  host_limit = 0L,
+  hs_mode = FALSE
 )
 
 sim_cophylo_bdp(
@@ -47,10 +48,12 @@ sim_cophylo_bdp(
 \item{numbsim}{number of replicates}
 
 \item{host_limit}{Maximum number of hosts for symbionts (0 implies no limit)}
+
+\item{hs_mode}{Boolean turning host expansion into host switching (explained above) (default = FALSE)}
 }
 \value{
 A list containing the `host_tree`, the `symbiont_tree`, the
-    association matrix at present, and the history of events that have
+    association matrix in the present, with hosts as rows and smybionts as columns, and the history of events that have
     occurred.
 }
 \description{
@@ -67,6 +70,14 @@ Simulates a cophylogenetic system using birth-death processes. The
     birth-death process with the addition of a host shift speciation rate
     that allows for the addition of more associated hosts upon symbiont
     speciation.
+
+    Host expansions are similar to the more commonly found host switching. 
+    In this model, host-expansion speciation describes events where a symbiont 
+    speciates and at that time, both descendants retain the ancestral host 
+    associations. Randomly one of these descendant symbionts then randomly acquires a new 
+    host. When the option `host_switch_mode = TRUE`, the behavior of this changes to a 
+    more traditional host switching where one descendant retains the ancestral range and
+    the other gains a novel host association.
 }
 \examples{
 

@@ -297,7 +297,6 @@ Rcpp::List sim_cophyBD_ana(SEXP hbr,
         stop("symbiont dispersal cannot be negative");
     if(symb_ext_ < 0.0)
         stop("symbiont extirpation cannot be negative");
-    Rcout << "host limt" << hl_ << std::endl;
     return sim_host_symb_treepair_ana(hbr_,
                                   hdr_,
                                   sbr_,

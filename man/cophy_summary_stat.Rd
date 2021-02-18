@@ -21,7 +21,7 @@ summarize_cophy(cophy_obj)
 \item{cophy_obj_indx}{The index with `cophy_obj` for `summarize_1cophy`}
 }
 \value{
-A vector consisting of (in order) cospeciations, host speciations, host extinctions, symbiont speciations, symbiont extinctions, parafit statistic, and parafit p-value
+A vector consisting of (in order) cospeciations, host speciations, host extinctions, symbiont speciations, symbiont extinctions, host spread/switch speciations, symbiont dispersals, symbiont extirpations, parafit statistic, and parafit p-value
 
 A dataframe containing statistics relevant to cophylogenetic analysis
 }
