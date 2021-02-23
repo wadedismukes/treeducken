@@ -498,35 +498,37 @@ bool Simulator::pairedBDPSimAna() {
 
     currentSimTime += eventTime;
 
-    while(anaTimeTrack < currentSimTime) {
-      anageneticEventTime = this->getTimeToAnaEvent(dispersalRate,
-                                                    extirpationRate,
-                                                    assocMat);
-      anaTimeTrack += anageneticEventTime;
 
-      if(spTree->getNumExtant() < 1 ||
-         symbiontTree->getNumExtant() < 1 ||
-         assocMat.n_rows < 1 ||
-         assocMat.n_cols < 1){
-        treePairGood = false;
-        this->clearEventDFVecs();
-        return treePairGood;
-      }
-
-      if(anaTimeTrack > currentSimTime)
-          break;
-      else
-        assocMat = this->anageneticEvent(dispersalRate,
-                                         extirpationRate,
-                                         anaTimeTrack,
-                                         assocMat);
-
-    }
     // if we exceed the sim time set to stopTime so as not to go over
     if(currentSimTime >= stopTime){
       currentSimTime = stopTime;
     }
     else{
+
+      while(anaTimeTrack < currentSimTime) {
+        anageneticEventTime = this->getTimeToAnaEvent(dispersalRate,
+                                                      extirpationRate,
+                                                      assocMat);
+        anaTimeTrack += anageneticEventTime;
+
+        if(spTree->getNumExtant() < 1 ||
+           symbiontTree->getNumExtant() < 1 ||
+           assocMat.n_rows < 1 ||
+           assocMat.n_cols < 1){
+          treePairGood = false;
+          this->clearEventDFVecs();
+          return treePairGood;
+        }
+
+        if(anaTimeTrack > currentSimTime)
+          break;
+        else
+          assocMat = this->anageneticEvent(dispersalRate,
+                                           extirpationRate,
+                                           anaTimeTrack,
+                                           assocMat);
+
+      }
       // otherwise a cophylogenetic event occurs, this can be three things:
       // host event (host speciation or extinction)
       // symbiont event (symbiont speciation or extinction)
