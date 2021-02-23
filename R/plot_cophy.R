@@ -1,14 +1,14 @@
 #' Plot host and symbiont pair with current associations
 #'
 #' This function plots a host and symbiont tree given the object returned by
-#' `sim_cophylo_bdp`.
+#' `sim_cophyBD`.
 #'
 #'
 #'
 #' This function is mostly an altered version of the cophyloplot function
 #' written by Damien de Vienne Copyright 2008 - 2010 under GPL.
 #' @author Wade Dismukes and Damien de Vienne
-#' @param x a tree pair object returned by `sim_cophylo_bdp`
+#' @param x a tree pair object returned by `sim_cophyBD`
 #' @param use_edge_length Boolean to draw trees with edge length or not
 #' @param type string "phylogram" or "cladogram"
 #' @param col What color to draw links between trees
@@ -30,7 +30,7 @@
 #' host_shift_rate <- 0.0
 #' cosp_rate <- 2.0
 #'
-#' cophylo_pair <- sim_cophylo_bdp(hbr = host_lambda,
+#' cophylo_pair <- sim_cophyBD(hbr = host_lambda,
 #'                            hdr = host_mu,
 #'                            cosp_rate = cosp_rate,
 #'                            host_exp_rate = host_shift_rate,
@@ -160,14 +160,23 @@ draw_cophy <-
                             use_edge_length = use_edge_length,
                             type = type)
     res$a <- a
+    p <- a
+    h_root_row <- a[which(min(a[,1]) == p[,1]), ]
+    h_root_row[1] <- h_root_row[1] - x$root.edge
     # b is coordinates of symbiont
     b <- ape::plotPhyloCoor(y,
                             use_edge_length = use_edge_length,
                             direction = "leftwards",
                             type = type)
-###for the two trees to have the extreme leaves at the same ordinate.
+
+
+
+    ###for the two trees to have the extreme leaves at the same ordinate.
     a[, 2] <- a[, 2] - min(a[, 2])
     b[, 2] <- b[, 2] - min(b[, 2])
+
+    h_root_row[2] <- h_root_row[2] - min(a[,2])
+
     res$b <- b
     b2 <- b
 
@@ -175,12 +184,21 @@ draw_cophy <-
         space + max(a[, 1])
     b2[, 2] <- b[seq_len(nrow(b)), 2] * (max(a[, 2]) / max(b[, 2]))
     res$b2 <- b2
+
+
+    # find symbiont root
+    p2 <- b2
+
+    s_root_row <- b2[which(max(b2[,1]) == p2[,1]), ]
+    s_root_row[1] <- s_root_row[1] + y$root.edge
+
+
     c <- matrix(ncol = 2, nrow = nrow(a) + nrow(b))
     c[seq_len(nrow(a)), ] <- a[seq_len(nrow(a)), ]
     c[nrow(a) + seq_len(nrow(b)), 1] <- b2[, 1]
     c[nrow(a) + seq_len(nrow(b)), 2] <- b2[, 2]
     res$c <- c
-    graphics::plot(c, type = "n", xlim = NULL, ylim = NULL, log = "", main = NULL,
+    graphics::plot(c, type = "n", xlim = c(h_root_row[1], s_root_row[1]), ylim = NULL, log = "", main = NULL,
         mar = c(0, 0, 0, 0),
         sub = NULL, xlab = NULL, ylab = NULL, ann = FALSE, axes = FALSE,
         frame.plot = FALSE)
@@ -198,10 +216,10 @@ draw_cophy <-
         for (i in (n_tip_x + 1):nrow(a)) {
             l <- length(x$edge[x$edge[, 1] == i, ][, 1])
             for (j in 1:l) {
-                segments(a[x$edge[x$edge[, 1] == i, ][1, 1],
-                  1], a[x$edge[x$edge[, 1] == i, 2], 2][1], a[x$edge[x$edge[,
-                  1] == i, ][1, 1], 1], a[x$edge[x$edge[, 1] ==
-                  i, 2], 2][j])
+                segments(a[x$edge[x$edge[, 1] == i, ][1, 1], 1],
+                  a[x$edge[x$edge[, 1] == i, 2], 2][1],
+                  a[x$edge[x$edge[, 1] == i, ][1, 1], 1],
+                  a[x$edge[x$edge[, 1] == i, 2], 2][j])
                 segments(a[x$edge[x$edge[, 1] == i, ][1, 1], 1],
                          a[x$edge[x$edge[, 1] == i, 2], 2][j],
                          a[x$edge[x$edge[, 1] == i, 2], 1][j],
@@ -221,20 +239,34 @@ draw_cophy <-
                          b2[y$edge[y$edge[, 1] == i, 2], 2][j])
             }
         }
+        segments(h_root_row[1],
+                 (a[x$edge[x$edge[, 1] == (n_tip_x + 1), 2], 2][1] +
+                     a[x$edge[x$edge[, 1] == (n_tip_x + 1), 2], 2][2]) / 2 ,
+                 min(a[,1]),
+                 (a[x$edge[x$edge[, 1] == (n_tip_x + 1), 2], 2][1] +
+                      a[x$edge[x$edge[, 1] == (n_tip_x + 1), 2], 2][2]) / 2)
+            segments(max(b2[,1]),
+                 (b2[y$edge[y$edge[, 1] == (n_tip_y + 1), 2], 2][1] +
+                     b2[y$edge[y$edge[, 1] == (n_tip_y + 1), 2], 2][2]) / 2,
+                 s_root_row[1],
+                 (b2[y$edge[y$edge[, 1] == (n_tip_y + 1), 2], 2][1] +
+                      b2[y$edge[y$edge[, 1] == (n_tip_y + 1), 2], 2][2]) / 2)
+
+
     }
     if (show_tip_label) {
         # add host tips
         make_textbox(a[1:n_tip_x, 1], a[1:n_tip_x, 2],
                     label = x$tip.label,
                     pos = 4,
-                    offset = 0.2,
+                    offset = 0.4,
                     cex = fsize,
                     font = font)
         # symb tips
         make_textbox(b2[1:n_tip_y, 1], b2[1:n_tip_y, 2],
                     label = y$tip.label,
                     pos = 2,
-                    offset = 0.2,
+                    offset = 0.4,
                     cex = fsize,
                     font = font)
 
@@ -364,7 +396,7 @@ draw_curve <- function(x, y, scale=0.01, ...) {
 #' Add scale bar to cophylo plot
 #'
 #' This function plots a host and symbiont tree given the object returned by
-#' `sim_cophylo_bdp`.
+#' `sim_cophyBD`.
 #'
 #' @param host_coords Host x,y coordinates
 #' @param symb_coords Symb x,y coordinates
@@ -439,8 +471,8 @@ plot.multiCophy <- function(x, ...) {
 #'   * Position 7 = anagenetic symbiont dispersal
 #'   * Position 8 = anadenetic symbiont extirpation
 #'
-#'  By default a color vector is used in this order: goldenrod, red2, darkorange3,
-#'  blue2, forestgreen, mediumpurple, dodgerblue, chartreuse.
+#'  By default a color vector is used in this order: purple, red, blue,
+#'  darkorange, cyan, yellow, brown, seagreen
 #' @examples
 #' host_mu <- 1.0 # death rate
 #' host_lambda <- 2.0 # birth rate
@@ -451,7 +483,7 @@ plot.multiCophy <- function(x, ...) {
 #' host_shift_rate <- 0.0
 #' cosp_rate <- 2.0
 #'
-#' cophylo_pair <- sim_cophylo_bdp(hbr = host_lambda,
+#' cophylo_pair <- sim_cophyBD(hbr = host_lambda,
 #'                            hdr = host_mu,
 #'                            cosp_rate = cosp_rate,
 #'                            host_exp_rate = host_shift_rate,
@@ -470,7 +502,8 @@ add_events <- function(cophy_obj, legend = TRUE, pch = NULL, col = NULL, gap = 1
     }
 
     if(is.null(pch) && is.null(col))
-        col <- c("goldenrod", "red2", "darkorange3", "blue2", "forestgreen", "mediumpurple", "dodgerblue", "chartreuse")
+
+        col <- c("purple", "red", "blue", "darkorange", "cyan", "yellow", "brown", "seagreen")
     else{
         if(!is.null(pch)) {
             if(length(pch) != 8)
@@ -493,7 +526,7 @@ add_events <- function(cophy_obj, legend = TRUE, pch = NULL, col = NULL, gap = 1
         left <- max(nchar(host_tree$tip.label, type = "width")) * fsize
         right <- max(nchar(symb_tree$tip.label, type = "width")) * fsize
         if (gap <= (left + right))
-            gap <- -gap
+           gap <- -gap
     }
     else {
         left <- 0.0
@@ -508,46 +541,50 @@ add_events <- function(cophy_obj, legend = TRUE, pch = NULL, col = NULL, gap = 1
     # deal with host tree first
     n_tip_host_tree <- ape::Ntip(host_tree)
 
-    host_speciations <- subset(events, "HSP" == Event_Type)
+    host_speciations <- subset(events, "HSP" == events[,3])
     host_speciations$Event_Time <- round(host_speciations$Event_Time - host_tree$root.edge,
                                     digits = 6)
-    cospeciations <- subset(events, "CSP" == Event_Type)
+    cospeciations <- subset(events, "CSP" == events[,3])
     cospeciations$Event_Time <- round(cospeciations$Event_Time - host_tree$root.edge,
                                     digits = 6)
 
-    host_extinctions <- subset(events, "HX" == Event_Type)
+    host_extinctions <- subset(events, "HX" == events[,3])
     host_extinctions$Event_Time <- round(host_extinctions$Event_Time - host_tree$root.edge,
                                     digits = 6)
     host_events <- rbind(host_extinctions, cospeciations, host_speciations)
 
     host_coords <- ape::plotPhyloCoor(host_tree,
-                                      use_edge_length = use_edge_length,
+                                      use_edge_length = T,
                                       type = type)
     host_coords[, 2] <- host_coords[, 2] - min(host_coords[, 2])
 
 
 
-    symb_cospeciations <- subset(events, "CSP" == Event_Type)
-    symb_speciations <- subset(events, "SSP" == Event_Type)
-    symb_extinctions <- subset(events, "SX" == Event_Type)
-    host_expansions <- subset(events, "SHE" == Event_Type)
-    dispersals <- subset(events, "DISP" == Event_Type)
-    extirpations <- subset(events, "EXTP" == Event_Type)
+    symb_cospeciations <- subset(events, "CSP" == events[,3])
+    symb_speciations <- subset(events, "SSP" == events[,3])
+    symb_extinctions <- subset(events, "SX" == events[,3])
+    host_expansions <- subset(events, "SHE" == events[,3])
+    dispersals <- subset(events, "DISP" == events[,3])
+    extirpations <- subset(events, "EXTP" == events[,3])
     symb_events <- rbind(symb_speciations,
                  symb_cospeciations,
                  symb_extinctions,
-                 host_expansions,
-                 dispersals,
-                 extirpations)
+                 host_expansions)
+
+    anagenetic_events <- rbind(dispersals, extirpations)
+
     # symb_events$Event_Time <- round(symb_events$Event_Time - host_tree$root.edge,
     #                                 digits = 6)
     symb_events$Event_Time <- -symb_events$Event_Time
+
     symb_events$Event_Time <- symb_events$Event_Time + max(host_coords[,1]) +
-        symb_tree$root.edge
+            host_tree$root.edge
+
+
     ### get x and y coords for the host and symb tree
 
     symb_coords <- ape::plotPhyloCoor(symb_tree,
-                            use_edge_length = use_edge_length,
+                            use_edge_length = T,
                             direction = "leftwards",
                             type = type)
 ###for the two trees to have the extreme leaves at the same ordinate.sr
@@ -565,7 +602,15 @@ add_events <- function(cophy_obj, legend = TRUE, pch = NULL, col = NULL, gap = 1
     symb_coords2[, 2] <- symb_coords[seq_len(nrow(symb_coords)), 2] * (max(host_coords[, 2]) / max(symb_coords[, 2]))
 
 
-    # add to a big coords matrix
+
+    if(nrow(anagenetic_events) != 0) {
+        anagenetic_events$Event_Time <- -anagenetic_events$Event_Time
+        anagenetic_events$Event_Time <- anagenetic_events$Event_Time + max(host_coords[,1]) +
+            host_tree$root.edge
+        anagenetic_events$Event_Time <- round(anagenetic_events$Event_Time * (max(host_coords[, 1]) / max(symb_coords[, 1])) + space + max(host_coords[, 1]), digits = 6)
+        anagenetic_events2 <- get_ana_events(symb_tree, symb_coords2, anagenetic_events)
+    }
+    # add to a big coords matrixxq
     coords <- matrix(ncol = 2, nrow = nrow(host_coords) + nrow(symb_coords))
     coords[seq_len(nrow(host_coords)), ] <- host_coords[seq_len(nrow(host_coords)), ]
     coords[nrow(host_coords) + seq_len(nrow(symb_coords)), 1] <- symb_coords2[, 1]
@@ -585,19 +630,18 @@ add_events <- function(cophy_obj, legend = TRUE, pch = NULL, col = NULL, gap = 1
     symb_events <- symb_events[order(symb_events$Event_Time),]
     symb_events$y <- symb_event_coords[,2]
     if(is.null(pch)) {
-        with(subset(host_events, Event_Type == "CSP"), points(Event_Time, y, pch = 16, col = col[1]))
-        with(subset(host_events, Event_Type == "HSP"), points(Event_Time, y, pch = 16, col = col[2]))
-        with(subset(host_events, Event_Type == "HX"), points(Event_Time, y, pch = 16, col = col[3]))
-
-        with(subset(symb_events, Event_Type == "CSP"), points(Event_Time, y, pch = 16, col = col[1]))
-        with(subset(symb_events, Event_Type == "SSP"), points(Event_Time, y, pch = 16, col = col[4]))
-        with(subset(symb_events, Event_Type == "SX"), points(Event_Time, y, pch = 16, col = col[5]))
-        with(subset(symb_events, Event_Type == "SHE"), points(Event_Time, y, pch = 16,  col = col[6]))
-        with(subset(symb_events, Event_Type == "DISP"), points(Event_Time, y, pch = 16,  col = col[7]))
-        with(subset(symb_events, Event_Type == "EXTP"), points(Event_Time, y, pch = 16,  col = col[8]))
+        with(subset(host_events, host_events[,3] == "CSP"), points(Event_Time, y, pch = 16, col = col[1]))
+        with(subset(host_events, host_events[,3] == "HSP"), points(Event_Time, y, pch = 16, col = col[2]))
+        with(subset(host_events, host_events[,3] == "HX"), points(Event_Time, y, pch = 16, col = col[3]))
+        with(subset(symb_events, symb_events[,3] == "CSP"), points(Event_Time, y, pch = 16, col = col[1]))
+        with(subset(symb_events, symb_events[,3] == "SSP"), points(Event_Time, y, pch = 16, col = col[4]))
+        with(subset(symb_events, symb_events[,3] == "SX"), points(Event_Time, y, pch = 16, col = col[5]))
+        with(subset(symb_events, symb_events[,3] == "SHE"), points(Event_Time, y, pch = 16,  col = col[6]))
+        with(subset(anagenetic_events2, anagenetic_events2[,3] == "DISP"), points(Event_Time, y_coords, pch = 16,  col = col[7]))
+        with(subset(anagenetic_events2, anagenetic_events2[,3] == "EXTP"), points(Event_Time, y_coords, pch = 16,  col = col[8]))
         if(legend) {
-            par(xpd = TRUE)
-            legend("bottom", inset = c(-0.25, -0.25),
+            legend(x = (min(coords[,1]) + max(coords[,1])) * 0.0075,
+                   y = max(coords[,2]) + max(coords[,2]) * 0.275,
                    pch = 16, col = col,
                    legend = c("Cospeciation",
                               "Host Speciation",
@@ -607,23 +651,26 @@ add_events <- function(cophy_obj, legend = TRUE, pch = NULL, col = NULL, gap = 1
                               "Host Spreading",
                               "Dispersal",
                               "Extirpation"),
-                   xpd = TRUE, bty = "n", cex = 1, ncol = 4)
+                   xpd = TRUE, bty = "n", cex = 1, ncol = 3)
         }
 
     }
     else{
-        with(subset(host_events, Event_Type == "CSP"), points(Event_Time, y, pch = pch[1]))
-        with(subset(host_events, Event_Type == "HSP"), points(Event_Time, y, pch = pch[2]))
-        with(subset(host_events, Event_Type == "HX"), points(Event_Time, y, pch = pch[3]))
+        with(subset(host_events, host_events[,3] == "CSP"), points(Event_Time, y, pch = pch[1]))
+        with(subset(host_events, host_events[,3] == "HSP"), points(Event_Time, y, pch = pch[2]))
+        with(subset(host_events, host_events[,3] == "HX"), points(Event_Time, y, pch = pch[3]))
 
-        with(subset(symb_events, Event_Type == "CSP"), points(Event_Time, y, pch = pch[1]))
-        with(subset(symb_events, Event_Type == "SSP"), points(Event_Time, y, pch = pch[4]))
-        with(subset(symb_events, Event_Type == "SX"), points(Event_Time, y, pch = pch[5]))
-        with(subset(symb_events, Event_Type == "SHE"), points(Event_Time, y, pch = pch[6]))
-        with(subset(symb_events, Event_Type == "DISP"), points(Event_Time, y, pch = pch[7]))
-        with(subset(symb_events, Event_Type == "EXTP"), points(Event_Time, y, pch = pch[8]))
+        with(subset(symb_events, symb_events[,3] == "CSP"), points(Event_Time, y, pch = pch[1]))
+        with(subset(symb_events, symb_events[,3] == "SSP"), points(Event_Time, y, pch = pch[4]))
+        with(subset(symb_events, symb_events[,3] == "SX"), points(Event_Time, y, pch = pch[5]))
+        with(subset(symb_events, symb_events[,3] == "SHE"), points(Event_Time, y, pch = pch[6]))
+
+
+        with(subset(anagenetic_events2, anagenetic_events2[,3] == "DISP"), points(Event_Time, y_coords, pch = pch[7]))
+        with(subset(anagenetic_events2, anagenetic_events2[,3] == "EXTP"), points(Event_Time, y_coords, pch = pch[8]))
         if(legend) {
-            legend("bottom", inset = c(-0.25, -0.25),
+            legend(x = (min(coords[,1]) + max(coords[,1])) * 0.0075,
+                   y = max(coords[,2]) + max(coords[,2]) * 0.275,
                    pch = pch,
                    legend = c("Cospeciation",
                               "Host Speciation",
@@ -633,7 +680,7 @@ add_events <- function(cophy_obj, legend = TRUE, pch = NULL, col = NULL, gap = 1
                               "Host Spreading",
                               "Dispersal",
                               "Extirpation"),
-                   xpd = TRUE, bty = "n", cex = 1, ncol = 4)
+                   xpd = TRUE, bty = "n", cex = 1, ncol = 3)
         }
     }
 
@@ -643,3 +690,15 @@ add_events <- function(cophy_obj, legend = TRUE, pch = NULL, col = NULL, gap = 1
 
 }
 
+get_ana_events <- function(symb_tree, symb_coords, anagenetic_event_df) {
+    # find row that is closest to event times
+    # then make that y I tihnk?
+    y_coords <- vector(length = nrow(anagenetic_event_df))
+    s_indices <- anagenetic_event_df$Symbiont_Index
+    for (i in seq_len(nrow(anagenetic_event_df))) {
+        y_coords[i] <- symb_coords[s_indices[i],2]
+    }
+
+    anagenetic_event_df2 <- cbind(anagenetic_event_df, y_coords)
+    anagenetic_event_df2
+}

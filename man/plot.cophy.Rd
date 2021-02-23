@@ -49,7 +49,7 @@ a plot of the host and symbiont tree with extant interactions
 }
 \description{
 This function plots a host and symbiont tree given the object returned by
-`sim_cophylo_bdp`.
+`sim_cophyBD`.
 }
 \details{
 This function is mostly an altered version of the cophyloplot function
@@ -70,7 +70,7 @@ symb_lambda <- 0.4
 host_shift_rate <- 0.0
 cosp_rate <- 2.0
 
-cophylo_pair <- sim_cophylo_bdp(hbr = host_lambda,
+cophylo_pair <- sim_cophyBD(hbr = host_lambda,
                            hdr = host_mu,
                            cosp_rate = cosp_rate,
                            host_exp_rate = host_shift_rate,

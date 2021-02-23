@@ -50,8 +50,8 @@ event.
   * Position 7 = anagenetic symbiont dispersal
   * Position 8 = anadenetic symbiont extirpation
 
- By default a color vector is used in this order: goldenrod, red2, darkorange3,
- blue2, forestgreen, mediumpurple, dodgerblue, chartreuse.
+ By default a color vector is used in this order: purple, red, blue,
+ darkorange, cyan, yellow, brown, seagreen
 }
 \examples{
 host_mu <- 1.0 # death rate
@@ -63,7 +63,7 @@ symb_lambda <- 0.4
 host_shift_rate <- 0.0
 cosp_rate <- 2.0
 
-cophylo_pair <- sim_cophylo_bdp(hbr = host_lambda,
+cophylo_pair <- sim_cophyBD(hbr = host_lambda,
                            hdr = host_mu,
                            cosp_rate = cosp_rate,
                            host_exp_rate = host_shift_rate,

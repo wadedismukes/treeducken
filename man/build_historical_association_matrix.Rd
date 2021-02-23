@@ -45,7 +45,7 @@ cophylo_pair <- sim_cophyBD(hbr = host_lambda,
                            numbsim = numb_replicates,
                            time_to_sim = time)
 time <- 1.0
-assoc_mat_at_t <- build_historical_association_matrix(t=time, tr_pair_obj = cophylo_pair[[1]])
+assoc_mat_at_t <- get_assoc(t=time, tr_pair_obj = cophylo_pair[[1]])
 
 
 }

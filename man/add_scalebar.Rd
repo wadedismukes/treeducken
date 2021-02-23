@@ -15,6 +15,6 @@ add_scalebar(host_coords, symb_coords, fsize)
 }
 \description{
 This function plots a host and symbiont tree given the object returned by
-`sim_cophylo_bdp`.
+`sim_cophyBD`.
 }
 \keyword{Internal}
