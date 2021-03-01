@@ -410,7 +410,10 @@ arma::umat Simulator::symbiontExtirpationEvent(int symbInd, arma::umat assocMat)
   arma::uword numHosts = arma::sum(symbiontHosts);
 
   if(numHosts == 0){
-
+    updateEventVector(spTree->getNodesIndxFromExtantIndx(0),
+                      symbiontTree->getNodesIndxFromExtantIndx(symbInd),
+                      0,
+                      currentSimTime);
     // this means that the symbiont now has no hosts so extinction occurs
     symbiontTree->lineageDeathEvent(symbInd);
     assocMat.shed_row(symbInd); // gets rid of row in association matrix

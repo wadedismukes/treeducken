@@ -51,12 +51,13 @@ plot.cophy <-
              gap = 1,
              font = 3,
              fsize = 1.0,
+             show_scalebar = FALSE,
              ...) {
 
     if (!inherits(x, "cophy"))
         stop("cophy_obj should be an object of class 'cophy'.")
 
-    show_scalebar = FALSE
+    show_scalebar = show_scalebar
     scalebar_fsize = 0
     host <- x$host_tree
     symb <- x$symb_tree
@@ -617,9 +618,16 @@ add_events <- function(cophy_obj, legend = TRUE, pch = NULL, col = NULL, gap = 1
     coords[nrow(host_coords) + seq_len(nrow(symb_coords)), 2] <- symb_coords2[, 2]
     coords <- round(coords, digits = 6)
 
-    rows_w_evnts <- which(coords[, 1] %in% host_events$Event_Time)
-    rows_w_sy_evnts <- which(coords[, 1] %in% symb_events$Event_Time)
-
+   # rows_w_evnts <- which(round(coords[, 1], digits = 6) %in% host_events$Event_Time)
+   # rows_w_sy_evnts <- which(round(coords[, 1], digits = 6) %in% symb_events$Event_Time)
+    rows_w_evnts <- vector(length = nrow(host_events))
+    rows_w_sy_evnts <- vector(length = nrow(symb_events))
+    for(j in seq_len(nrow(host_events))) {
+        rows_w_evnts[j] <- which.min(abs(coords[,1] - host_events$Event_Time[j]))
+    }
+    for(i in seq_len(nrow(symb_events))) {
+        rows_w_sy_evnts[i] <- which.min(abs(coords[,1] - symb_events$Event_Time[i]))
+    }
     host_event_coords <- coords[rows_w_evnts,]
     host_event_coords <- host_event_coords[order(host_event_coords[,1]),]
     host_events <- host_events[order(host_events$Event_Time),]
