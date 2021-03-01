@@ -1,6 +1,6 @@
 #' Calculate summary statistics for gene trees
 #'
-#' @description  Calculates summary statistics including Colless' statistic, gamma statistic of the locus tree input as an index as part of a list, gamma statistic of gene tree, sackin statistic, cherry statistic, and time to most recent common ancestor
+#' @description  Calculates summary statistics including Colless' statistic, gamma statistic of the locus tree input as an index as part of a list, gamma statistic of gene tree, Sackin statistic, cherry statistic, and time to most recent common ancestor
 #'
 #' @param lt_obj Locus tree object obtain from `sim_lt_gt_mlc`
 #' @param lt_indx Index of locus tree object of interest
@@ -49,7 +49,7 @@ summarize_gt <- function(lt_obj, lt_indx){
 #' @author Emmanuel Paradis
 #' @description Calculate cherry statistic according to the definition given in  McKenzie and Steel 2000 (see below for reference)
 #' @param tree an object of class "phylo"
-#' @return The value fo cherries on a tree
+#' @return The value of cherries on a tree
 #' @details This calculates the value for the cherry test statistic on a rooted tree. Note that this does not perform the actual
 #' hypothesis test against Yule or uniform tree models.
 #'

@@ -1,4 +1,22 @@
-# treeducken 1.0.0.9999
+# treeducken 1.1.0
+
+# treeducken 1.1.0
+
+## Major changes
+
+* Function names shortened to be more user friendly
+* Added functionality for plotting events on cophylogeny from `event_history` data frame
+* `sim_cophyloBD` (formerly `sim_cophylo_bdp`) now has two arguments:
+    * `host_limit` controlling the number of hosts a symbiont is allowed to have at one time
+    * `hs_mode` which changes host expansion events to host switch events (`h_exp_r` is still used to change the rate)
+* Added new simulation mode `sim_cophyloBD_ana` which adds anagenetic events (i.e., happening between speciation nodes)  to the functionality of `sim_cophyloBD`
+* Changed event history to output only major events (description of abbreviations added to documentation)
+* `show_div_bar` option added to plot. This outputs a bar showing the different events as tick marks.
+* swapped output of `association_mat` from hosts in columns and symbionts in rows to hosts in rows and symbionts in columns.
+
+# Bug fixes
+
+* Fixed typo in README.md
 
 
 # treeducken 1.0.0

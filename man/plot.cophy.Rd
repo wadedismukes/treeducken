@@ -16,6 +16,7 @@
   gap = 1,
   font = 3,
   fsize = 1,
+  show_div_bar = FALSE,
   ...
 )
 
@@ -41,6 +42,8 @@
 \item{font}{What font to use (bold, italic (default), etc.)}
 
 \item{fsize}{What size font as a character expansion factor (same as cex)}
+
+\item{show_div_bar}{Shows a bar under both trees with ticks where the divergences are (default: F)}
 
 \item{...}{other plotting parameters}
 }

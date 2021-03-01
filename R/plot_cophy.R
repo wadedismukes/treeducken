@@ -18,6 +18,7 @@
 #' @param font What font to use (bold, italic (default), etc.)
 #' @param fsize What size font as a character expansion factor (same as cex)
 #' @param gap Size of the gap between the tips and tip names
+#' @param show_div_bar Shows a bar under both trees with ticks where the divergences are (default: F)
 #' @param ... other plotting parameters
 #' @return a plot of the host and symbiont tree with extant interactions
 #' @examples
@@ -51,13 +52,13 @@ plot.cophy <-
              gap = 1,
              font = 3,
              fsize = 1.0,
-             show_scalebar = FALSE,
+             show_div_bar = FALSE,
              ...) {
 
     if (!inherits(x, "cophy"))
         stop("cophy_obj should be an object of class 'cophy'.")
 
-    show_scalebar = show_scalebar
+    show_scalebar = show_div_bar
     scalebar_fsize = 0
     host <- x$host_tree
     symb <- x$symb_tree
@@ -470,7 +471,7 @@ plot.multiCophy <- function(x, ...) {
 #'   * Position 5 = symbiont extinction
 #'   * Position 6 = host spread or host-switch symbiont speciation
 #'   * Position 7 = anagenetic symbiont dispersal
-#'   * Position 8 = anadenetic symbiont extirpation
+#'   * Position 8 = anagenetic symbiont extirpation
 #'
 #'  By default a color vector is used in this order: purple, red, blue,
 #'  darkorange, cyan, yellow, brown, seagreen
@@ -645,8 +646,10 @@ add_events <- function(cophy_obj, legend = TRUE, pch = NULL, col = NULL, gap = 1
         with(subset(symb_events, symb_events[,3] == "SSP"), points(Event_Time, y, pch = 16, col = col[4]))
         with(subset(symb_events, symb_events[,3] == "SX"), points(Event_Time, y, pch = 16, col = col[5]))
         with(subset(symb_events, symb_events[,3] == "SHE"), points(Event_Time, y, pch = 16,  col = col[6]))
-        with(subset(anagenetic_events2, anagenetic_events2[,3] == "DISP"), points(Event_Time, y_coords, pch = 16,  col = col[7]))
-        with(subset(anagenetic_events2, anagenetic_events2[,3] == "EXTP"), points(Event_Time, y_coords, pch = 16,  col = col[8]))
+        if(nrow(anagenetic_events) != 0) {
+            with(subset(anagenetic_events2, anagenetic_events2[,3] == "DISP"), points(Event_Time, y_coords, pch = 16,  col = col[7]))
+            with(subset(anagenetic_events2, anagenetic_events2[,3] == "EXTP"), points(Event_Time, y_coords, pch = 16,  col = col[8]))
+        }
         if(legend) {
             legend(x = (min(coords[,1]) + max(coords[,1])) * 0.0075,
                    y = max(coords[,2]) + max(coords[,2]) * 0.275,
@@ -673,9 +676,10 @@ add_events <- function(cophy_obj, legend = TRUE, pch = NULL, col = NULL, gap = 1
         with(subset(symb_events, symb_events[,3] == "SX"), points(Event_Time, y, pch = pch[5]))
         with(subset(symb_events, symb_events[,3] == "SHE"), points(Event_Time, y, pch = pch[6]))
 
-
-        with(subset(anagenetic_events2, anagenetic_events2[,3] == "DISP"), points(Event_Time, y_coords, pch = pch[7]))
-        with(subset(anagenetic_events2, anagenetic_events2[,3] == "EXTP"), points(Event_Time, y_coords, pch = pch[8]))
+        if(nrow(anagenetic_events) != 0) {
+            with(subset(anagenetic_events2, anagenetic_events2[,3] == "DISP"), points(Event_Time, y_coords, pch = pch[7]))
+            with(subset(anagenetic_events2, anagenetic_events2[,3] == "EXTP"), points(Event_Time, y_coords, pch = pch[8]))
+        }
         if(legend) {
             legend(x = (min(coords[,1]) + max(coords[,1])) * 0.0075,
                    y = max(coords[,2]) + max(coords[,2]) * 0.275,
@@ -697,7 +701,11 @@ add_events <- function(cophy_obj, legend = TRUE, pch = NULL, col = NULL, gap = 1
 
 
 }
-
+#' Internal function for plotting anagenetic events
+#' @param symb_tree the symb tree on which to plot the events
+#' @param symb_coords the xy coordinates of `symb_tree` (obtained from the ape::plotPhyloCoor() function)
+#' @param anagenetic_event_df a data frame formatted with these columns Host Index, Symbiont Index, Event Type, Event Time
+#' @keywords internal
 get_ana_events <- function(symb_tree, symb_coords, anagenetic_event_df) {
     # find row that is closest to event times
     # then make that y I tihnk?

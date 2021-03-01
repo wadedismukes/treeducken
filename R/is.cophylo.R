@@ -1,9 +1,9 @@
-#' Test for the cophygenetic set object
+#' Test for the cophylogenetic set object
 #' @description Tests if an object is of class `cophy`
 #'
 #' @param cophy an object to test to see if it is of class `cophy`
 #' @details Checks that an object is of class `cophy`. For multicophy checks that
-#' the class is `multiCophylo` and that each element is of class `cophy`.
+#' the class is `multiCophy` and that each element is of class `cophy`.
 #' @return A logical vector
 #' @seealso as.cophy
 #' @examples

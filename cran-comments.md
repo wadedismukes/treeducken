@@ -22,7 +22,7 @@ There were 3 NOTES:
 * checking CRAN incoming feasibility ... NOTE
   Maintainer: 'Wade Dismukes <wade.dismukes@gmail.com>'
 
-This is a first time submission to CRAN for me (outside of the previous submissions which were rejected).
+I am unsure why I am receiving this note.
 
 * Found the following (possibly) invalid DOIs:
 
