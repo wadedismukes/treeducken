@@ -127,17 +127,17 @@ sim_ltBD <- function(species_tree, gbr, gdr, lgtr, num_loci, transfer_type = "ra
 #'     are associated with which. The symbiont tree has an independent
 #'     birth-death process with the addition of a host shift speciation rate
 #'     that allows for the addition of more associated hosts upon symbiont
-#'     speciation. The anagenetic processes are modeled using a poisson process
+#'     speciation. The anagenetic processes are modeled using a Poisson process
 #'     occurring along the tree. The dispersal to hosts is at present random;
 #'     there is no preferential host expansion.
 #'
-#'     Host expansions are similar to the more commonly found host switching. 
-#'     In this model, host-expansion speciation describes events where a symbiont 
-#'     speciates and at that time, both descendants retain the ancestral host 
-#'     associations. Randomly one of these descendant symbionts then randomly acquires a new 
-#'     host. When the option `host_switch_mode = TRUE`, the behavior of this changes to a 
+#'     Host expansions are similar to the more commonly found host switching.
+#'     In this model, host-expansion speciation describes events where a symbiont
+#'     speciates and at that time, both descendants retain the ancestral host
+#'     associations. Randomly one of these descendant symbionts then randomly acquires a new
+#'     host. When the option `host_switch_mode = TRUE`, the behavior of this changes to a
 #'     more traditional host switching where one descendant retains the ancestral range and
-#'     the other gains a novel host association. 
+#'     the other gains a novel host association.
 #' @param hbr host tree birth rate
 #' @param hdr host tree death rate
 #' @param sbr symbiont tree birth rate
@@ -151,7 +151,7 @@ sim_ltBD <- function(species_tree, gbr, gdr, lgtr, num_loci, transfer_type = "ra
 #' @param host_limit Maximum number of hosts for symbionts (0 implies no limit)
 #' @param hs_mode Boolean turning host expansion into host switching (explained above) (default = FALSE)
 #' @return A list containing the `host_tree`, the `symbiont_tree`, the
-#'     association matrix in the present, with hosts as rows and smybionts as columns, and the history of events that have
+#'     association matrix in the present, with hosts as rows and symbionts as columns, and the history of events that have
 #'     occurred.
 #' @examples
 #'
@@ -192,13 +192,13 @@ sim_cophyBD_ana <- function(hbr, hdr, sbr, sdr, s_disp_r, s_extp_r, host_exp_rat
 #'     that allows for the addition of more associated hosts upon symbiont
 #'     speciation.
 #'
-#'     Host expansions are similar to the more commonly found host switching. 
-#'     In this model, host-expansion speciation describes events where a symbiont 
-#'     speciates and at that time, both descendants retain the ancestral host 
-#'     associations. Randomly one of these descendant symbionts then randomly acquires a new 
-#'     host. When the option `host_switch_mode = TRUE`, the behavior of this changes to a 
+#'     Host expansions are similar to the more commonly found host switching.
+#'     In this model, host-expansion speciation describes events where a symbiont
+#'     speciates and at that time, both descendants retain the ancestral host
+#'     associations. Randomly one of these descendant symbionts then randomly acquires a new
+#'     host. When the option `host_switch_mode = TRUE`, the behavior of this changes to a
 #'     more traditional host switching where one descendant retains the ancestral range and
-#'     the other gains a novel host association. 
+#'     the other gains a novel host association.
 #' @param hbr host tree birth rate
 #' @param hdr host tree death rate
 #' @param sbr symbiont tree birth rate
@@ -210,7 +210,7 @@ sim_cophyBD_ana <- function(hbr, hdr, sbr, sdr, s_disp_r, s_extp_r, host_exp_rat
 #' @param host_limit Maximum number of hosts for symbionts (0 implies no limit)
 #' @param hs_mode Boolean turning host expansion into host switching (explained above) (default = FALSE)
 #' @return A list containing the `host_tree`, the `symbiont_tree`, the
-#'     association matrix in the present, with hosts as rows and smybionts as columns, and the history of events that have
+#'     association matrix in the present, with hosts as rows and symbionts as columns, and the history of events that have
 #'     occurred.
 #' @examples
 #'

@@ -538,6 +538,9 @@ bool Simulator::pairedBDPSimAna() {
       // or a joint event (a.k.a. a cospeciation)
       // this returns the association matrix
       assocMat = this->cophyloEvent(currentSimTime, assocMat);
+
+      if(hostLimit > 0)
+        assocMat = this->hostLimitCheck(assocMat, hostLimit);
     }
     // if either tree goes to 0 or the association matrix becomes malformed
     // prematurely end the simulation, clearing the event dataframe vectors
