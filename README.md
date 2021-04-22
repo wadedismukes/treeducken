@@ -1,7 +1,9 @@
 # treeducken
 <!-- badges: start -->
 [![R build status](https://github.com/wadedismukes/rtreeducken/workflows/R-CMD-check/badge.svg)](https://github.com/wadedismukes/treeducken/actions)
+[![DOI](https://zenodo.org/badge/234439870.svg)](https://zenodo.org/badge/latestdoi/234439870)
 <!-- badges: end -->
+
 `treeducken` is a phylogenetic simulation package with the primary purpose of simulating host and symbiont phylogenies simultaneously
 using the machinery of birth-death models. This extends work on simulating cophylogenetic systems by allowing for scenarios
 where speciation in the host does not always imply speciation in the symbiont (Keller-Schmidt et al. 2011). 
