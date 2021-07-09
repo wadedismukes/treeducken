@@ -3,7 +3,7 @@
 \name{is.cophy}
 \alias{is.cophy}
 \alias{is.multiCophylo}
-\title{Test for the cophygenetic set object}
+\title{Test for the cophylogenetic set object}
 \usage{
 is.cophy(cophy)
 
@@ -22,7 +22,7 @@ Tests if an object is of class `cophy`
 }
 \details{
 Checks that an object is of class `cophy`. For multicophy checks that
-the class is `multiCophylo` and that each element is of class `cophy`.
+the class is `multiCophy` and that each element is of class `cophy`.
 }
 \section{Functions}{
 \itemize{

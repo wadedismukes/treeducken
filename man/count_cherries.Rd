@@ -10,7 +10,7 @@ count_cherries(tree)
 \item{tree}{an object of class "phylo"}
 }
 \value{
-The value fo cherries on a tree
+The value of cherries on a tree
 }
 \description{
 Calculate cherry statistic according to the definition given in  McKenzie and Steel 2000 (see below for reference)

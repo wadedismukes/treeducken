@@ -16,18 +16,19 @@ Rcpp::List bdsim_species_tree(double sbr,
 
     List multiphy(numbsim);
     for(int i = 0; i < numbsim; i++){
-        std::shared_ptr<Simulator> phySimulator = std::shared_ptr<Simulator>(new Simulator(n_tips,
-                                                                                            sbr,
-                                                                                            sdr,
-                                                                                            1));
-        phySimulator->setGSAStop(gsa_stop);
-        phySimulator->simSpeciesTree();
+ //       std::shared_ptr<Simulator> phySimulator = std::shared_ptr<Simulator>(new Simulator(n_tips,
+                                                                 //                           sbr,
+                                                                  //                          sdr,
+                                                                   //                         1));
+        Simulator phySimulator(Simulator::SpeciesSimTips(sbr, sdr, gsa_stop, n_tips));
+        //phySimulator.setGSAStop(gsa_stop);
+        phySimulator.simSpeciesTree();
 
-        List phy = List::create(Named("edge") = phySimulator->getSpeciesEdges(),
-                                Named("edge.length") = phySimulator->getSpeciesEdgeLengths(),
-                                Named("Nnode") = phySimulator->getSpeciesNnodes(),
-                                Named("tip.label") = phySimulator->getSpeciesTipNames(),
-                                Named("root.edge") = phySimulator->getSpeciesTreeRootEdge());;
+        List phy = List::create(Named("edge") = phySimulator.getSpeciesEdges(),
+                                Named("edge.length") = phySimulator.getSpeciesEdgeLengths(),
+                                Named("Nnode") = phySimulator.getSpeciesNnodes(),
+                                Named("tip.label") = phySimulator.getSpeciesTipNames(),
+                                Named("root.edge") = phySimulator.getSpeciesTreeRootEdge());;
         phy.attr("class") = "phylo";
         multiphy[i] = phy;
     }
@@ -46,18 +47,20 @@ Rcpp::List sim_bdsimple_species_tree(double sbr,
     List multiphy(numbsim);
     for(int i = 0; i < numbsim; i++){
 
-        auto phySimulator = std::shared_ptr<Simulator>(new Simulator(1,
-                                                                      sbr,
-                                                                      sdr,
-                                                                      1));
-        phySimulator->setTimeToSim(timeToSimTo);
-        phySimulator->simSpeciesTreeTime();
+        // auto phySimulator = std::shared_ptr<Simulator>(new Simulator(1,
+        //                                                               sbr,
+        //                                                               sdr,
+        //                                                               1));
+        Simulator phySimulator(Simulator::SpeciesSimTime(sbr,sdr, timeToSimTo));
 
-        List phy = List::create(Named("edge") = phySimulator->getSpeciesEdges(),
-                                Named("edge.length") = phySimulator->getSpeciesEdgeLengths(),
-                                Named("Nnode") = phySimulator->getSpeciesNnodes(),
-                                Named("tip.label") = phySimulator->getSpeciesTipNames(),
-                                Named("root.edge") = phySimulator->getSpeciesTreeRootEdge());
+//        phySimulator.setTimeToSim(timeToSimTo);
+        phySimulator.simSpeciesTreeTime();
+
+        List phy = List::create(Named("edge") = phySimulator.getSpeciesEdges(),
+                                Named("edge.length") = phySimulator.getSpeciesEdgeLengths(),
+                                Named("Nnode") = phySimulator.getSpeciesNnodes(),
+                                Named("tip.label") = phySimulator.getSpeciesTipNames(),
+                                Named("root.edge") = phySimulator.getSpeciesTreeRootEdge());
         phy.attr("class") = "phylo";
         multiphy[i] = phy;
     }
@@ -70,34 +73,34 @@ Rcpp::List sim_locus_tree(std::shared_ptr<SpeciesTree> species_tree,
                           double gbr,
                           double gdr,
                           double lgtr,
-                          int numbsim,
+                          int numLoci,
                           std::string trans_type){
     Rcpp::List multiphy;
-    int ntax = species_tree->getNumExtant();
+   // int ntax = species_tree.getNumExtant();
     double lambda = 0.0;
     double mu = 0.0;
     double rho = 0.0;
-    unsigned numLociToSim = numbsim;
-    for(int i = 0; i < numbsim; i++){
+    unsigned numLociToSim = numLoci;
+    for(int i = 0; i < numLoci; i++){
 
-        auto phySimulator = std::shared_ptr<Simulator>(new Simulator( ntax,
-                                                        lambda,
-                                                        mu,
-                                                        rho,
-                                                        numLociToSim,
-                                                        gbr,
-                                                        gdr,
-                                                        lgtr,
-                                                        trans_type));
-        phySimulator->setSpeciesTree(species_tree);
-
-        phySimulator->simLocusTree();
-        List phy = List::create(Named("edge") = phySimulator->getLocusEdges(),
-                                Named("edge.length") = phySimulator->getLocusEdgeLengths(),
-                                Named("Nnode") = phySimulator->getLocusNnodes(),
-                                Named("tip.label") = phySimulator->getLocusTipNames(),
-                                Named("root.edge") = phySimulator->getLocusTreeRootEdge(),
-                                Named("node.label") = phySimulator->getLocusTreeNodeLabels());
+        // auto phySimulator = std::shared_ptr<Simulator>(new Simulator( ntax,
+        //                                                 lambda,
+        //                                                 mu,
+        //                                                 rho,
+        //                                                 numLociToSim,
+        //                                                 gbr,
+        //                                                 gdr,
+        //                                                 lgtr,
+        //                                                 trans_type));
+        // phySimulator.setSpeciesTree(species_tree);
+        Simulator phySimulator(Simulator::LocusSim(species_tree, gbr, gdr, lgtr, trans_type));
+        phySimulator.simLocusTree();
+        List phy = List::create(Named("edge") = phySimulator.getLocusEdges(),
+                                Named("edge.length") = phySimulator.getLocusEdgeLengths(),
+                                Named("Nnode") = phySimulator.getLocusNnodes(),
+                                Named("tip.label") = phySimulator.getLocusTipNames(),
+                                Named("root.edge") = phySimulator.getLocusTreeRootEdge(),
+                                Named("node.label") = phySimulator.getLocusTreeNodeLabels());
 
         phy.attr("class") = "phylo";
 
@@ -119,39 +122,39 @@ Rcpp::List sim_locus_tree_gene_tree(std::shared_ptr<SpeciesTree> species_tree,
                                     int numGenesPerLocus){
     Rcpp::List multiphy;
     int ntax = species_tree->getNumExtant();
-    double lambda = 0.0;
-    double mu = 0.0;
-    double rho = 1.0;
+    // double lambda = 0.0;
+    // double mu = 0.0;
+    // double rho = 1.0;
     unsigned numLociToSim = numLoci;
     double genTime = 1.0;
-    double ts = 1.0;
-    bool sout = false;
-    double og = 0.0;
+    // double ts = 1.0;
+    // bool sout = false;
+    // double og = 0.0;
     for(int i = 0; i < numLoci; i++){
 
-        auto phySimulator = std::shared_ptr<Simulator>(new Simulator(ntax,
-                                                        lambda,
-                                                        mu,
-                                                        rho,
-                                                        numLociToSim,
-                                                        gbr,
-                                                        gdr,
-                                                        lgtr,
-                                                        samples_per_lineage,
-                                                        popsize,
-                                                        genTime,
-                                                        numGenesPerLocus,
-                                                        og,
-                                                        ts,
-                                                        sout));
+        // auto phySimulator = std::shared_ptr<Simulator>(new Simulator(ntax,
+        //                                                 lambda,
+        //                                                 mu,
+        //                                                 rho,
+        //                                                 numLociToSim,
+        //                                                 gbr,
+        //                                                 gdr,
+        //                                                 lgtr,
+        //                                                 samples_per_lineage,
+        //                                                 popsize,
+        //                                                 genTime,
+        //                                                 numGenesPerLocus,
+        //                                                 og,
+        //                                                 ts,
+        //                                                 sout));
 
-
-        phySimulator->setSpeciesTree(species_tree);
+        Simulator phySimulator(Simulator::LocusAndGeneMSCSim(species_tree, gbr, gdr, lgtr, popsize, numLoci, samples_per_lineage, numGenesPerLocus));
+//        phySimulator.setSpeciesTree(species_tree);
         if(gbr + gdr + lgtr > 0.0){
-            phySimulator->simLocusTree();
+            phySimulator.simLocusTree();
         }
         else{
-            phySimulator->setLocusTree(std::shared_ptr<LocusTree>(new LocusTree(*species_tree, 
+            phySimulator.setLocusTree(std::shared_ptr<LocusTree>(new LocusTree(*species_tree, 
                                                                                  ntax, 
                                                                                  0.0, 
                                                                                  0.0, 
@@ -160,22 +163,22 @@ Rcpp::List sim_locus_tree_gene_tree(std::shared_ptr<SpeciesTree> species_tree,
         List phyGenesPerLoc(numGenesPerLocus);
 
         for(int j=0; j<numGenesPerLocus; j++){
-            phySimulator->simGeneTree(j);
+            phySimulator.simGeneTree(j);
 
-            List phyGene = List::create(Named("edge") = phySimulator->getGeneEdges(j),
-                         _("edge.length") = phySimulator->getGeneEdgeLengths(j),
-                         _("Nnode") = phySimulator->getGeneNnodes(j),
-                         _("tip.label") = phySimulator->getGeneTipNames(j),
-                         _("root.edge") = phySimulator->getGeneTreeRootEdge(j));
+            List phyGene = List::create(Named("edge") = phySimulator.getGeneEdges(j),
+                         _("edge.length") = phySimulator.getGeneEdgeLengths(j),
+                         _("Nnode") = phySimulator.getGeneNnodes(j),
+                         _("tip.label") = phySimulator.getGeneTipNames(j),
+                         _("root.edge") = phySimulator.getGeneTreeRootEdge(j));
             phyGene.attr("class") = "phylo";
             phyGenesPerLoc[j] = phyGene;
         }
 
-        List phyLoc = List::create(Named("edge") = phySimulator->getLocusEdges(),
-                                   Named("edge.length") = phySimulator->getLocusEdgeLengths(),
-                                   Named("Nnode") = phySimulator->getLocusNnodes(),
-                                   Named("tip.label") = phySimulator->getLocusTipNames(),
-                                   Named("root.edge") = phySimulator->getLocusTreeRootEdge());
+        List phyLoc = List::create(Named("edge") = phySimulator.getLocusEdges(),
+                                   Named("edge.length") = phySimulator.getLocusEdgeLengths(),
+                                   Named("Nnode") = phySimulator.getLocusNnodes(),
+                                   Named("tip.label") = phySimulator.getLocusTipNames(),
+                                   Named("root.edge") = phySimulator.getLocusTreeRootEdge());
 
         phyLoc.attr("class") = "phylo";
         List locusGeneSet = List::create(Named("container.tree") = phyLoc,

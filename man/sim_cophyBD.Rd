@@ -53,7 +53,7 @@ sim_cophylo_bdp(
 }
 \value{
 A list containing the `host_tree`, the `symbiont_tree`, the
-    association matrix in the present, with hosts as rows and smybionts as columns, and the history of events that have
+    association matrix in the present, with hosts as rows and symbionts as columns, and the history of events that have
     occurred.
 }
 \description{
@@ -71,11 +71,11 @@ Simulates a cophylogenetic system using birth-death processes. The
     that allows for the addition of more associated hosts upon symbiont
     speciation.
 
-    Host expansions are similar to the more commonly found host switching. 
-    In this model, host-expansion speciation describes events where a symbiont 
-    speciates and at that time, both descendants retain the ancestral host 
-    associations. Randomly one of these descendant symbionts then randomly acquires a new 
-    host. When the option `host_switch_mode = TRUE`, the behavior of this changes to a 
+    Host expansions are similar to the more commonly found host switching.
+    In this model, host-expansion speciation describes events where a symbiont
+    speciates and at that time, both descendants retain the ancestral host
+    associations. Randomly one of these descendant symbionts then randomly acquires a new
+    host. When the option `host_switch_mode = TRUE`, the behavior of this changes to a
     more traditional host switching where one descendant retains the ancestral range and
     the other gains a novel host association.
 }

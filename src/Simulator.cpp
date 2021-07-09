@@ -5,165 +5,239 @@
 #include <RcppArmadillo.h>
 
 // [[Rcpp::depends(RcppArmadillo)]]
-Simulator::Simulator(unsigned nt, double lambda, double mu, double rho)
-{
-    spTree = nullptr;
-    geneTree = nullptr;
-    lociTree = nullptr;
-    simType = 1;
-    currentSimTime = 0.0;
-    numTaxaToSim = nt;
-    speciationRate = lambda;
-    extinctionRate = mu;
-    samplingRate = rho;
+// Simulator::Simulator(unsigned nt, double lambda, double mu, double rho)
+// {
+//     spTree = nullptr;
+//     geneTree = nullptr;
+//     lociTree = nullptr;
+//     currentSimTime = 0.0;
+//     numTaxaToSim = nt;
+//     speciationRate = lambda;
+//     extinctionRate = mu;
+//     samplingRate = rho;
 
-    treeScale = -1;
-    numLoci = 0;
-    numGenes = 0;
-    geneBirthRate = 0.0;
-    geneDeathRate = 0.0;
-    transferRate = 0.0;
-    propTransfer = 0.0;
-    indPerPop = 0;
-    popSize = 0.0;
+//     treeScale = -1;
+//     numLoci = 0;
+//     numGenes = 0;
+//     geneBirthRate = 0.0;
+//     geneDeathRate = 0.0;
+//     transferRate = 0.0;
+//     propTransfer = 0.0;
+//     indPerPop = 0;
+//     popSize = 0.0;
+
+// }
+
+
+// Simulator::Simulator(unsigned ntax,
+//                      double lambda,
+//                      double mu,
+//                      double rho,
+//                      unsigned numLociToSim,
+//                      double gbr,
+//                      double gdr,
+//                      double lgtr,
+//                      std::string transfType)
+// {
+//     spTree = nullptr;
+//     geneTree = nullptr;
+//     lociTree = nullptr;
+//     simType = 2;
+//     currentSimTime = 0.0;
+//     numTaxaToSim = ntax;
+//     gsaStop = 100*ntax;
+//     speciationRate = lambda;
+//     extinctionRate = mu;
+//     samplingRate = rho;
+
+//     numLoci = numLociToSim;
+//     geneBirthRate = gbr;
+//     geneDeathRate = gdr;
+//     transferRate = lgtr;
+//     propTransfer = 0.0;
+//     indPerPop = 0;
+//     popSize = 0;
+//     transferType = transfType;
+
+// }
+
+// Simulator::Simulator(unsigned ntax,
+//                      double lambda,
+//                      double mu,
+//                      double rho,
+//                      unsigned numLociToSim,
+//                      double gbr,
+//                      double gdr,
+//                      double lgtr,
+//                      unsigned ipp,
+//                      double Ne,
+//                      double genTime,
+//                      int ng,
+//                      double og,
+//                      double ts,
+//                      bool sout)
+// {
+//     spTree = nullptr;
+//     geneTree = nullptr;
+//     lociTree = nullptr;
+//     currentSimTime = 0.0;
+//     numTaxaToSim = ntax;
+//     speciationRate = lambda;
+//     extinctionRate = mu;
+//     samplingRate = rho;
+//     numLoci = numLociToSim;
+//     numGenes = ng;
+//     geneBirthRate = gbr;
+//     geneDeathRate = gdr;
+//     transferRate = lgtr;
+//     propTransfer = 0.0;
+//     indPerPop = ipp;
+//     popSize = Ne;
+//     printSOUT = sout;
+//     generationTime = genTime;
+//     geneTrees.resize(ng);
+//     treeScale = ts;
+// }
+
+// Simulator::Simulator(double stopTime,
+//           double hostSpeciationRate,
+//           double hostExtinctionRate,
+//           double symbSpeciationRate,
+//           double symbExtinctionRate,
+//           double switchingRate,
+//           double csr,
+//           double rho,
+//           int hl,
+//           bool hsMode){
+//     host_switch_mode = hsMode;
+//     speciationRate = hostSpeciationRate;
+//     extinctionRate = hostExtinctionRate;
+//     samplingRate = rho;
+//     cospeciationRate = csr;
+//     geneBirthRate = symbSpeciationRate;
+//     geneDeathRate = symbExtinctionRate;
+//     transferRate = switchingRate;
+//     timeToSim = stopTime;
+
+//     hostLimit = hl;
+
+//     spTree = nullptr;
+//     geneTree = nullptr;
+//     lociTree = nullptr;
+//     symbiontTree = nullptr;
+
+// }
+
+
+// Simulator::Simulator(double stopTime,
+//                      double hostSpeciationRate,
+//                      double hostExtinctionRate,
+//                      double symbSpeciationRate,
+//                      double symbExtinctionRate,
+//                      double symbDispersalRate,
+//                      double symbExtirpationRate,
+//                      double switchingRate,
+//                      double csr,
+//                      double rho,
+//                      int hl,
+//                      bool hsMode){
+//   speciationRate = hostSpeciationRate;
+//   extinctionRate = hostExtinctionRate;
+//   samplingRate = rho;
+//   cospeciationRate = csr;
+//   geneBirthRate = symbSpeciationRate;
+//   geneDeathRate = symbExtinctionRate;
+//   transferRate = switchingRate;
+//   timeToSim = stopTime;
+
+//   hostLimit = hl;
+
+
+//   host_switch_mode = hsMode;
+
+//   extirpationRate = symbExtirpationRate;
+//   dispersalRate = symbDispersalRate;
+//   spTree = nullptr;
+//   geneTree = nullptr;
+//   lociTree = nullptr;
+//   symbiontTree = nullptr;
+
+// }
+
+Simulator::Simulator(const SpeciesSimTime &spSimTime) {
+    currentSimTime = 0;
+    timeToSim = spSimTime.t;
+    speciationRate = spSimTime.sbr;
+    extinctionRate = spSimTime.sdr;
+    spTree = nullptr;
+
+}
+Simulator::Simulator(const SpeciesSimTips &spSimTips) {
+    currentSimTime = 0;
+    gsaStop = spSimTips.gsaStop;
+    numTaxaToSim = spSimTips.numTaxaToSim;
+    speciationRate = spSimTips.sbr;
+    extinctionRate = spSimTips.sdr;
+    spTree = nullptr;
 
 }
 
-
-Simulator::Simulator(unsigned ntax,
-                     double lambda,
-                     double mu,
-                     double rho,
-                     unsigned numLociToSim,
-                     double gbr,
-                     double gdr,
-                     double lgtr,
-                     std::string transfType)
-{
-    spTree = nullptr;
+Simulator::Simulator(const LocusSim &locSim) {
+    currentSimTime = 0;
+    spTree = locSim.spTree;
     geneTree = nullptr;
     lociTree = nullptr;
-    simType = 2;
-    currentSimTime = 0.0;
-    numTaxaToSim = ntax;
-    gsaStop = 100*ntax;
-    speciationRate = lambda;
-    extinctionRate = mu;
-    samplingRate = rho;
-
-    numLoci = numLociToSim;
-    geneBirthRate = gbr;
-    geneDeathRate = gdr;
-    transferRate = lgtr;
-    propTransfer = 0.0;
-    indPerPop = 0;
-    popSize = 0;
-    transferType = transfType;
+    geneBirthRate = locSim.geneBirthRate;
+    geneDeathRate = locSim.geneDeathRate;
+    transferRate = locSim.transferRate;
+    transferType = locSim.transferType;
+    lociTree = nullptr;
 
 }
 
-Simulator::Simulator(unsigned ntax,
-                     double lambda,
-                     double mu,
-                     double rho,
-                     unsigned numLociToSim,
-                     double gbr,
-                     double gdr,
-                     double lgtr,
-                     unsigned ipp,
-                     double Ne,
-                     double genTime,
-                     int ng,
-                     double og,
-                     double ts,
-                     bool sout)
-{
-    spTree = nullptr;
-    geneTree = nullptr;
-    lociTree = nullptr;
-    simType = 3;
+Simulator::Simulator(const LocusAndGeneMSCSim &lgMSC) {
     currentSimTime = 0.0;
-    numTaxaToSim = ntax;
-    speciationRate = lambda;
-    extinctionRate = mu;
-    samplingRate = rho;
-    numLoci = numLociToSim;
-    numGenes = ng;
-    geneBirthRate = gbr;
-    geneDeathRate = gdr;
-    transferRate = lgtr;
-    propTransfer = 0.0;
-    indPerPop = ipp;
-    popSize = Ne;
-    printSOUT = sout;
-    generationTime = genTime;
-    geneTrees.resize(ng);
-    treeScale = ts;
+    spTree = lgMSC.spTree;
+    indPerPop = lgMSC.samples_per_lineage;
+    popSize = lgMSC.popsize;
+    numLoci = lgMSC.numLoci;
+    geneBirthRate = lgMSC.geneBirthRate;
+    geneDeathRate = lgMSC.geneDeathRate;
+    transferRate = lgMSC.transferRate;
+    geneTrees.resize(lgMSC.numbsim);
+    geneTree = nullptr;
+
 }
 
-Simulator::Simulator(double stopTime,
-          double hostSpeciationRate,
-          double hostExtinctionRate,
-          double symbSpeciationRate,
-          double symbExtinctionRate,
-          double switchingRate,
-          double csr,
-          double rho,
-          int hl,
-          bool hsMode){
-    host_switch_mode = hsMode;
-    speciationRate = hostSpeciationRate;
-    extinctionRate = hostExtinctionRate;
-    samplingRate = rho;
-    cospeciationRate = csr;
-    geneBirthRate = symbSpeciationRate;
-    geneDeathRate = symbExtinctionRate;
-    transferRate = switchingRate;
-    timeToSim = stopTime;
-
-    hostLimit = hl;
-
-    spTree = nullptr;
-    geneTree = nullptr;
-    lociTree = nullptr;
+Simulator::Simulator(const CophySim &cophySim) {
+    speciationRate = cophySim.hostBirthRate;
+    extinctionRate = cophySim.hostDeathRate;
+    cospeciationRate = cophySim.cospeciationRate;
+    geneBirthRate = cophySim.symbBirthRate;
+    geneDeathRate = cophySim.symbDeathRate;
+    transferRate = cophySim.switchingRate;
+    timeToSim = cophySim.timeToSimTo;
+    host_switch_mode = cophySim.hsMode;
+    hostLimit = cophySim.hostLimit;
     symbiontTree = nullptr;
-
+    spTree = nullptr;
 }
 
+Simulator::Simulator(const CophySimAna &cophyAna) {
+    speciationRate = cophyAna.hostBirthRate;
+    extinctionRate = cophyAna.hostDeathRate;
+    cospeciationRate = cophyAna.cospeciationRate;
+    geneBirthRate = cophyAna.symbBirthRate;
+    geneDeathRate = cophyAna.symbDeathRate;
+    transferRate = cophyAna.switchingRate;
+    timeToSim = cophyAna.timeToSimTo;
+    hostLimit = cophyAna.hostLimit;
+    host_switch_mode = cophyAna.hsMode;
+    symbiontTree = nullptr;
+    spTree = nullptr;
 
-Simulator::Simulator(double stopTime,
-                     double hostSpeciationRate,
-                     double hostExtinctionRate,
-                     double symbSpeciationRate,
-                     double symbExtinctionRate,
-                     double symbDispersalRate,
-                     double symbExtirpationRate,
-                     double switchingRate,
-                     double csr,
-                     double rho,
-                     int hl,
-                     bool hsMode){
-  speciationRate = hostSpeciationRate;
-  extinctionRate = hostExtinctionRate;
-  samplingRate = rho;
-  cospeciationRate = csr;
-  geneBirthRate = symbSpeciationRate;
-  geneDeathRate = symbExtinctionRate;
-  transferRate = switchingRate;
-  timeToSim = stopTime;
-
-  hostLimit = hl;
-
-
-  host_switch_mode = hsMode;
-
-  extirpationRate = symbExtirpationRate;
-  dispersalRate = symbDispersalRate;
-  spTree = nullptr;
-  geneTree = nullptr;
-  lociTree = nullptr;
-  symbiontTree = nullptr;
-
+    extirpationRate = cophyAna.symbExtRate;
+    dispersalRate = cophyAna.symbDispRate;
 }
 
 Simulator::~Simulator(){

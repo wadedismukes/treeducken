@@ -19,49 +19,59 @@ Rcpp::List sim_host_symb_treepair_ana(double hostbr,
     Rcpp::List multiphy;
     Rcpp::List hostSymbPair;
     for(int i = 0; i < numbsim; i++){
-        auto phySimulator = std::shared_ptr<Simulator>(new Simulator( timeToSimTo,
-                                                                      hostbr,
-                                                                      hostdr,
-                                                                      symbbr,
-                                                                      symbdr,
-                                                                      symb_dispersal,
-                                                                      symb_extirpation,
-                                                                      switchRate,
-                                                                      cospeciationRate,
-                                                                      rho,
-                                                                      host_limit,
-                                                                      hsMode));
+        // auto phySimulator = std::shared_ptr<Simulator>(new Simulator( timeToSimTo,
+        //                                                               hostbr,
+        //                                                               hostdr,
+        //                                                               symbbr,
+        //                                                               symbdr,
+        //                                                               symb_dispersal,
+        //                                                               symb_extirpation,
+        //                                                               switchRate,
+        //                                                               cospeciationRate,
+        //                                                               rho,
+        //                                                               host_limit,
+        //                                                               hsMode));
+        Simulator phySimulator(Simulator::CophySimAna(hostbr, 
+                                                hostdr, 
+                                                symbdr, 
+                                                symbbr, 
+                                                switchRate, 
+                                                cospeciationRate, 
+                                                timeToSimTo, 
+                                                host_limit, 
+                                                hsMode, 
+                                                symb_dispersal, 
+                                                symb_extirpation));
+        phySimulator.simHostSymbSpeciesTreePairWithAnagenesis();
 
-        phySimulator->simHostSymbSpeciesTreePairWithAnagenesis();
 
 
 
 
-
-        List phyHost = List::create(Named("edge") = phySimulator->getSpeciesEdges(),
-                                    Named("edge.length") = phySimulator->getSpeciesEdgeLengths(),
-                                    Named("Nnode") = phySimulator->getSpeciesNnodes(),
-                                    Named("tip.label") = phySimulator->getSpeciesTipNames(),
-                                    Named("root.edge") = phySimulator->getSpeciesTreeRootEdge());
+        List phyHost = List::create(Named("edge") = phySimulator.getSpeciesEdges(),
+                                    Named("edge.length") = phySimulator.getSpeciesEdgeLengths(),
+                                    Named("Nnode") = phySimulator.getSpeciesNnodes(),
+                                    Named("tip.label") = phySimulator.getSpeciesTipNames(),
+                                    Named("root.edge") = phySimulator.getSpeciesTreeRootEdge());
         phyHost.attr("class") = "phylo";
 
 
-        List phySymb = List::create(Named("edge") = phySimulator->getSymbiontEdges(),
-                                    Named("edge.length") = phySimulator->getSymbiontEdgeLengths(),
-                                    Named("Nnode") = phySimulator->getSymbiontNnodes(),
-                                    Named("tip.label") = phySimulator->getSymbiontTipNames(),
-                                    Named("root.edge") = phySimulator->getSymbiontTreeRootEdge());
+        List phySymb = List::create(Named("edge") = phySimulator.getSymbiontEdges(),
+                                    Named("edge.length") = phySimulator.getSymbiontEdgeLengths(),
+                                    Named("Nnode") = phySimulator.getSymbiontNnodes(),
+                                    Named("tip.label") = phySimulator.getSymbiontTipNames(),
+                                    Named("root.edge") = phySimulator.getSymbiontTreeRootEdge());
         phySymb.attr("class") = "phylo";
-        Rcpp::NumericMatrix assocMat = Rcpp::wrap(phySimulator->getAssociationMatrix());
+        Rcpp::NumericMatrix assocMat = Rcpp::wrap(phySimulator.getAssociationMatrix());
         assocMat = Rcpp::transpose(assocMat);
-        Rcpp::CharacterVector hostNames = phySimulator->getExtantHostNames(phySimulator->getSpeciesTipNames());
-        Rcpp::CharacterVector symbNames = phySimulator->getExtantSymbNames(phySimulator->getSymbiontTipNames());
+        Rcpp::CharacterVector hostNames = phySimulator.getExtantHostNames(phySimulator.getSpeciesTipNames());
+        Rcpp::CharacterVector symbNames = phySimulator.getExtantSymbNames(phySimulator.getSymbiontTipNames());
         Rcpp::rownames(assocMat) = hostNames;
         Rcpp::colnames(assocMat) = symbNames;
         hostSymbPair = List::create(Named("host_tree") = phyHost,
                                     Named("symb_tree") = phySymb,
                                     Named("association_mat") = assocMat,
-                                    Named("event_history") = phySimulator->createEventDF());
+                                    Named("event_history") = phySimulator.createEventDF());
         hostSymbPair.attr("class") = "cophy";
         multiphy.push_back(hostSymbPair);
     }
@@ -86,47 +96,47 @@ Rcpp::List sim_host_symb_treepair(double hostbr,
     Rcpp::List multiphy;
     Rcpp::List hostSymbPair;
     for(int i = 0; i < numbsim; i++){
-        auto phySimulator = std::shared_ptr<Simulator>(new Simulator( timeToSimTo,
-                                                 hostbr,
-                                                 hostdr,
-                                                 symbbr,
-                                                 symbdr,
-                                                 switchRate,
-                                                 cospeciationRate,
-                                                 rho,
-                                                 host_limit,
-                                                 hsMode));
-
-        phySimulator->simHostSymbSpeciesTreePair();
-
-
+        // auto phySimulator = std::shared_ptr<Simulator>(new Simulator( timeToSimTo,
+        //                                          hostbr,
+        //                                          hostdr,
+        //                                          symbbr,
+        //                                          symbdr,
+        //                                          switchRate,
+        //                                          cospeciationRate,
+        //                                          rho,
+        //                                          host_limit,
+        //                                          hsMode));
+        Simulator phySimulator(Simulator::CophySim(hostbr, hostdr, symbdr, symbbr, switchRate, cospeciationRate, timeToSimTo, host_limit, hsMode));
+        phySimulator.simHostSymbSpeciesTreePair();
 
 
 
-        List phyHost = List::create(Named("edge") = phySimulator->getSpeciesEdges(),
-                                    Named("edge.length") = phySimulator->getSpeciesEdgeLengths(),
-                                    Named("Nnode") = phySimulator->getSpeciesNnodes(),
-                                    Named("tip.label") = phySimulator->getSpeciesTipNames(),
-                                    Named("root.edge") = phySimulator->getSpeciesTreeRootEdge());
+
+
+        List phyHost = List::create(Named("edge") = phySimulator.getSpeciesEdges(),
+                                    Named("edge.length") = phySimulator.getSpeciesEdgeLengths(),
+                                    Named("Nnode") = phySimulator.getSpeciesNnodes(),
+                                    Named("tip.label") = phySimulator.getSpeciesTipNames(),
+                                    Named("root.edge") = phySimulator.getSpeciesTreeRootEdge());
         phyHost.attr("class") = "phylo";
 
 
-        List phySymb = List::create(Named("edge") = phySimulator->getSymbiontEdges(),
-                                Named("edge.length") = phySimulator->getSymbiontEdgeLengths(),
-                                Named("Nnode") = phySimulator->getSymbiontNnodes(),
-                                Named("tip.label") = phySimulator->getSymbiontTipNames(),
-                                Named("root.edge") = phySimulator->getSymbiontTreeRootEdge());
+        List phySymb = List::create(Named("edge") = phySimulator.getSymbiontEdges(),
+                                Named("edge.length") = phySimulator.getSymbiontEdgeLengths(),
+                                Named("Nnode") = phySimulator.getSymbiontNnodes(),
+                                Named("tip.label") = phySimulator.getSymbiontTipNames(),
+                                Named("root.edge") = phySimulator.getSymbiontTreeRootEdge());
         phySymb.attr("class") = "phylo";
-        Rcpp::NumericMatrix assocMat = Rcpp::wrap(phySimulator->getAssociationMatrix());
+        Rcpp::NumericMatrix assocMat = Rcpp::wrap(phySimulator.getAssociationMatrix());
         assocMat = Rcpp::transpose(assocMat);
-        Rcpp::CharacterVector hostNames = phySimulator->getExtantHostNames(phySimulator->getSpeciesTipNames());
-        Rcpp::CharacterVector symbNames = phySimulator->getExtantSymbNames(phySimulator->getSymbiontTipNames());
+        Rcpp::CharacterVector hostNames = phySimulator.getExtantHostNames(phySimulator.getSpeciesTipNames());
+        Rcpp::CharacterVector symbNames = phySimulator.getExtantSymbNames(phySimulator.getSymbiontTipNames());
         Rcpp::rownames(assocMat) = hostNames;
         Rcpp::colnames(assocMat) = symbNames;
         hostSymbPair = List::create(Named("host_tree") = phyHost,
                                     Named("symb_tree") = phySymb,
                                     Named("association_mat") = assocMat,
-                                    Named("event_history") = phySimulator->createEventDF());
+                                    Named("event_history") = phySimulator.createEventDF());
         hostSymbPair.attr("class") = "cophy";
         multiphy.push_back(hostSymbPair);
     }
