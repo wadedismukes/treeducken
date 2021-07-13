@@ -19,22 +19,10 @@ Rcpp::List sim_host_symb_treepair_ana(double hostbr,
     Rcpp::List multiphy;
     Rcpp::List hostSymbPair;
     for(int i = 0; i < numbsim; i++){
-        // auto phySimulator = std::shared_ptr<Simulator>(new Simulator( timeToSimTo,
-        //                                                               hostbr,
-        //                                                               hostdr,
-        //                                                               symbbr,
-        //                                                               symbdr,
-        //                                                               symb_dispersal,
-        //                                                               symb_extirpation,
-        //                                                               switchRate,
-        //                                                               cospeciationRate,
-        //                                                               rho,
-        //                                                               host_limit,
-        //                                                               hsMode));
         Simulator phySimulator(Simulator::CophySimAna(hostbr, 
                                                 hostdr, 
-                                                symbdr, 
                                                 symbbr, 
+                                                symbdr, 
                                                 switchRate, 
                                                 cospeciationRate, 
                                                 timeToSimTo, 
@@ -106,8 +94,9 @@ Rcpp::List sim_host_symb_treepair(double hostbr,
         //                                          rho,
         //                                          host_limit,
         //                                          hsMode));
-        Simulator phySimulator(Simulator::CophySim(hostbr, hostdr, symbdr, symbbr, switchRate, cospeciationRate, timeToSimTo, host_limit, hsMode));
+        Simulator phySimulator(Simulator::CophySim(hostbr, hostdr, symbdr, symbdr, switchRate, cospeciationRate, timeToSimTo, host_limit, hsMode));
         phySimulator.simHostSymbSpeciesTreePair();
+
 
 
 
