@@ -18,7 +18,7 @@ summarize_gt(lt_obj, lt_indx)
 Dataframe with summary statistics for each gene tree
 }
 \description{
-Calculates summary statistics including Colless' statistic, gamma statistic of the locus tree input as an index as part of a list, gamma statistic of gene tree, sackin statistic, cherry statistic, and time to most recent common ancestor
+Calculates summary statistics including Colless' statistic, gamma statistic of the locus tree input as an index as part of a list, gamma statistic of gene tree, Sackin statistic, cherry statistic, and time to most recent common ancestor
 }
 \examples{
 # first simulate a species tree

@@ -118,6 +118,7 @@ This tabulates the number of each event in the `event_history` data frame, and t
 # we can instead use cophylo_summary_stat
 host_symb_summary_df <- summarize_cophy(host_symb_sets)
 host_symb_summary_df
+summarize_1cophy(host_symb_sets, 1)
 ```
 
 ## Simulating locus trees on host and symbiont trees

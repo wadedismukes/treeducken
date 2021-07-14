@@ -57,16 +57,27 @@ summarize_1cophy <- function(cophy_obj, cophy_obj_indx) {
   #                                   cophy_obj[[cophy_obj_indx]]$symb_tree,
   #                                   cophy_obj[[cophy_obj_indx]]$association_mat)
   # }
-  c(cospeciations,
-    host_speciations,
-    host_extinctions,
-    symbiont_speciations,
-    symbiont_extinctions,
-    host_expansions,
-    symb_dispersals,
-    symb_extirpations,
-    parafits,
-    parafit_test)
+  stat_row <- c(cospeciations,
+                host_speciations,
+                host_extinctions,
+                symbiont_speciations,
+                symbiont_extinctions,
+                host_expansions,
+                symb_dispersals,
+                symb_extirpations,
+                parafits,
+                parafit_test)
+  names(stat_row) <- c("Cospeciations",
+                         "Host_Speciations",
+                         "Host_Extinctions",
+                         "Symbiont_Speciations",
+                         "Symbiont_Extinctions",
+                         "Host_Spread/Switches",
+                         "Dispersals",
+                         "Extirpations",
+                         "Parafit_Stat",
+                         "Parafit_P-value")
+  stat_row
   # cophy_eigen)
 }
 #' Calculates summary statistics for cophylogenetic objects
@@ -109,6 +120,16 @@ summarize_cophy <- function(cophy_obj) {
       mult_cophy_obj <- list(cophy_obj)
       class(mult_cophy_obj) <- "multiCophy"
       stat_df <- data.frame(matrix(0, nrow = 1, ncol = 10))
+      colnames(stat_df) <- c("Cospeciations",
+                             "Host_Speciations",
+                             "Host_Extinctions",
+                             "Symbiont_Speciations",
+                             "Symbiont_Extinctions",
+                             "Host_Spread/Switches",
+                             "Dispersals",
+                             "Extirpations",
+                             "Parafit_Stat",
+                             "Parafit_P-value")
       stat_df[1,] <- treeducken::summarize_1cophy(mult_cophy_obj, 1)
     }
     else
@@ -117,20 +138,21 @@ summarize_cophy <- function(cophy_obj) {
   else{
     num_cophy_obj <- length(cophy_obj)
     stat_df <- data.frame(matrix(0, nrow = num_cophy_obj, ncol = 10))
+    colnames(stat_df) <- c("Cospeciations",
+                           "Host_Speciations",
+                           "Host_Extinctions",
+                           "Symbiont_Speciations",
+                           "Symbiont_Extinctions",
+                           "Host_Spread/Switches",
+                           "Dispersals",
+                           "Extirpations",
+                           "Parafit_Stat",
+                           "Parafit_P-value")
     for(i in 1:num_cophy_obj){
       stat_df[i,] <- treeducken::summarize_1cophy(cophy_obj, i)
     }
   }
-  colnames(stat_df) <- c("Cospeciations",
-                         "Host_Speciations",
-                         "Host_Extinctions",
-                         "Symbiont_Speciations",
-                         "Symbiont_Extinctions",
-                         "Host_Spread/Switches",
-                         "Dispersals",
-                         "Extirpations",
-                         "Parafit_Stat",
-                         "Parafit_P-value")
+
   ##                           "Cophylo_Eigen")
   if(!is.null(cophy_obj$event_history)){
     stat_df[which(is.na(stat_df[, 1:8]), arr.ind = TRUE)] <- 0
@@ -200,9 +222,15 @@ parafit_stat <- function(host_tr, symb_tr, assoc_mat){
       return(NA)
     }
     if(length(host_tree$tip.label) != nrow(assoc_mat))
-      stop("'assoc_mat' must have the same number of columns as extant tips in 'host_tr'. It does not.")
+    {
+      warning("'assoc_mat' must have the same number of columns as extant tips in 'host_tr'. It does not.")
+      return(NA)
+    }
     if(length(symb_tree$tip.label) != ncol(assoc_mat))
-      stop("'assoc_mat' must have the same number of rows as extant tips in 'symb_tr'. It does not.")
+    {
+      warning("'assoc_mat' must have the same number of columns as extant tips in 'symb_tr'. It does not.")
+      return(NA)
+    }
     H <- ape::cophenetic.phylo(host_tree)
     S <- ape::cophenetic.phylo(symb_tree)
     H_pcoas <- ape::pcoa(H)

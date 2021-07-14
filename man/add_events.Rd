@@ -48,7 +48,7 @@ event.
   * Position 5 = symbiont extinction
   * Position 6 = host spread or host-switch symbiont speciation
   * Position 7 = anagenetic symbiont dispersal
-  * Position 8 = anadenetic symbiont extirpation
+  * Position 8 = anagenetic symbiont extirpation
 
  By default a color vector is used in this order: purple, red, blue,
  darkorange, cyan, yellow, brown, seagreen
