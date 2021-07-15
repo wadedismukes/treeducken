@@ -102,12 +102,12 @@ class Simulator
                                         int samples_per_lineage,
                                         int numbsim):
                     spTree(species_tree),
-                    popsize(popsize),
-                    samples_per_lineage(samples_per_lineage),
                     geneBirthRate(gbr),
                     geneDeathRate(gdr),
                     transferRate(lgtr),
+                    popsize(popsize),
                     numLoci(numLoci),
+                    samples_per_lineage(samples_per_lineage),
                     numbsim(numbsim) {}
                 std::shared_ptr<SpeciesTree> spTree;
                 double geneBirthRate;
