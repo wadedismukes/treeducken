@@ -113,8 +113,8 @@ class Simulator
                 double geneBirthRate;
                 double geneDeathRate;
                 double transferRate;
-                unsigned numLoci;
                 double popsize;
+                unsigned numLoci;
                 int samples_per_lineage;
                 int numbsim;
 

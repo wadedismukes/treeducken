@@ -13,6 +13,7 @@ Simulator::Simulator(const SpeciesSimTime &spSimTime) {
     spTree = nullptr;
 
 }
+
 Simulator::Simulator(const SpeciesSimTips &spSimTips) {
     currentSimTime = 0;
     gsaStop =  spSimTips.gsaStop;
