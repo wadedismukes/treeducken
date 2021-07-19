@@ -570,7 +570,6 @@ std::map<int,int> LocusTree::getLocusToSpeciesMap(){
         spID = node->getIndex();
         pp.first = loID;
         pp.second = spID;
-        // std::cout << "locus id " << pp.first << " species id " << pp.second << std::endl;
         locusToSpecies.insert(locusToSpecies.end(), pp);
     }
     return locusToSpecies;

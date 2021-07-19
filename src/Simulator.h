@@ -8,22 +8,19 @@
 
 class Simulator
 {
-    protected:
+    private:
         double      currentSimTime;
-        unsigned    simType;
         unsigned    numTaxaToSim, gsaStop;
         unsigned    numLoci;
         unsigned    numGenes;
         double      speciationRate, extinctionRate;
         double      samplingRate;
-        double      treeScale;
         double      geneBirthRate, geneDeathRate, transferRate;
         double      propTransfer, propDuplicate;
         double      dispersalRate, extirpationRate;
         unsigned    indPerPop;
         double      popSize;
         double      generationTime;
-        bool        printSOUT;
         bool        host_switch_mode;
         std::vector<std::shared_ptr<SpeciesTree>>   gsaTrees;
         std::shared_ptr<SpeciesTree>    spTree;
@@ -45,72 +42,158 @@ class Simulator
         Rcpp::NumericVector inOrderVecOfEventTimes;
 
     public:
-        // Simulating species tree only
-        Simulator(unsigned numTaxaToSim,
-                  double speciationRate,
-                  double extinctionRate,
-                  double rho);
-        // Simulating species and locus tree
-        Simulator(unsigned numTaxaToSim,
-                  double speciationRate,
-                  double extinctionRate,
-                  double rho,
-                  unsigned numLociToSim,
-                  double geneBirthRate,
-                  double geneDeathRate,
-                  double transferRate,
-                  std::string transferRandomly);
-        // Simulating species and locus tree with proportion of transfer
-        // (e.g. hybridization, linkage)
-        //.
-        Simulator(unsigned numTaxaToSim,
-                  double speciationRate,
-                  double extinctionRate,
-                  double rho,
-                  unsigned numLociToSim,
-                  double geneBirthRate,
-                  double geneDeathRate,
-                  double transferRate,
-                  double propTransfer);
-        // Simulating species and locus trees with one gene tree per locus tree
-        Simulator(unsigned numTaxaToSim,
-                double speciationRate,
-                double extinctionRate,
-                double rho,
-                unsigned numLociToSim,
-                double geneBirthRate,
-                double geneDeathRate,
-                double transferRate,
-                unsigned indPerPop,
-                double popSize,
-                double genTime,
-                int ng,
-                double og,
-                double ts,
-                bool sout);
-        //
-        Simulator(double timeToSimTo,
-                  double hostSpeciationRate,
-                  double hostExtinctionRate,
-                  double symbSpeciationRate,
-                  double symbExtinctionRate,
-                  double switchingRate,
-                  double cospeciationRate,
-                  double rho,
-                  int hostLimit,
-                  bool hsMode);
-        Simulator(double timeToSimTo,
-                  double hostSpeciationRate,
-                  double hostExtinctionRate,
-                  double symbSpeciationRate,
-                  double symbExtinctionRate,
-                  double symbDispersalRate,
-                  double symbExtirpationRate,
-                  double switchingRate,
-                  double cospeciationRate,
-                  double rho,
-                  int hostLimit,
-                  bool hsMode);
+        struct SpeciesSimTime
+        {   
+            inline SpeciesSimTime(double speciesBirthRate,
+                    double speciesDeathRate,
+                    double time):
+                        sbr(speciesBirthRate),
+                        sdr(speciesDeathRate),
+                        t(time) {}
+            double sbr;
+            double sdr;
+            double t;
+            double currentSimTime = 0;
+
+        };
+        struct SpeciesSimTips
+        {
+            inline SpeciesSimTips(double speciesBirthRate,
+            double speciesDeathRate,
+            unsigned gsaStop,
+            unsigned targetTips):
+                        sbr(speciesBirthRate),
+                        sdr(speciesDeathRate),
+                        gsaStop(gsaStop),
+                        numTaxaToSim(targetTips) {}
+            double sbr;
+            double sdr;
+            unsigned gsaStop;
+            unsigned numTaxaToSim;
+     
+        };
+
+   
+        struct LocusSim {
+                inline LocusSim(std::shared_ptr<SpeciesTree> species_tree,
+                        double gbr,
+                        double gdr,
+                        double lgtr,
+                        std::string trans_type):
+                            spTree(species_tree),
+                            geneBirthRate(gbr),
+                            geneDeathRate(gdr),
+                            transferRate(lgtr),
+                            transferType(trans_type) {}
+                std::shared_ptr<SpeciesTree> spTree;
+                double geneBirthRate;
+                double geneDeathRate;
+                double transferRate;
+                std::string transferType;
+
+        };  
+        struct LocusAndGeneMSCSim {
+                inline LocusAndGeneMSCSim(std::shared_ptr<SpeciesTree> species_tree,
+                                        double gbr,
+                                        double gdr,
+                                        double lgtr,
+                                        double popsize,
+                                        int numLoci,
+                                        int samples_per_lineage,
+                                        int numbsim):
+                    spTree(species_tree),
+                    geneBirthRate(gbr),
+                    geneDeathRate(gdr),
+                    transferRate(lgtr),
+                    popsize(popsize),
+                    numLoci(numLoci),
+                    samples_per_lineage(samples_per_lineage),
+                    numbsim(numbsim) {}
+                std::shared_ptr<SpeciesTree> spTree;
+                double geneBirthRate;
+                double geneDeathRate;
+                double transferRate;
+                double popsize;
+                unsigned numLoci;
+                int samples_per_lineage;
+                int numbsim;
+
+        };
+        struct CophySim {
+            inline CophySim(double hostbr,
+                                double hostdr,
+                                double symbbr,
+                                double symbdr,
+                                double switchrate,
+                                double cosprate,
+                                double timeToSimTo,
+                                int host_limit,
+                                bool hsMode): 
+                                    hostBirthRate(hostbr),
+                                    hostDeathRate(hostdr),
+                                    symbDeathRate(symbdr),
+                                    symbBirthRate(symbbr),
+                                    switchingRate(switchrate),
+                                    cospeciationRate(cosprate),
+                                    timeToSimTo(timeToSimTo),
+                                    hostLimit(host_limit),
+                                    hsMode(hsMode) {}
+            double hostBirthRate;
+            double hostDeathRate;
+            double symbDeathRate;
+            double symbBirthRate;
+            double switchingRate;
+            double cospeciationRate;
+            double timeToSimTo;
+            unsigned hostLimit;
+            bool hsMode;
+        };
+        struct CophySimAna {
+
+            inline CophySimAna(double hostbr,
+                                double hostdr,
+                                double symbbr,
+                                double symbdr,
+                                double switchrate,
+                                double cosprate,
+                                double timeToSimTo,
+                                int host_limit,
+                                bool hsMode,
+                                double symbdispersal,
+                                double symbextirpation): 
+                                    hostBirthRate(hostbr),
+                                    hostDeathRate(hostdr),
+                                    symbDeathRate(symbdr),
+                                    symbBirthRate(symbbr),
+                                    switchingRate(switchrate),
+                                    cospeciationRate(cosprate),
+                                    timeToSimTo(timeToSimTo),
+                                    hostLimit(host_limit),
+                                    hsMode(hsMode),
+                                    symbDispRate(symbdispersal),
+                                    symbExtRate(symbextirpation) {}
+            double hostBirthRate;
+            double hostDeathRate;
+            double symbDeathRate;
+            double symbBirthRate;
+            double switchingRate;
+            double cospeciationRate;
+            double timeToSimTo;
+            unsigned hostLimit;
+            bool hsMode;
+            double symbDispRate;
+            double symbExtRate;
+                        
+        };
+
+        Simulator(const SpeciesSimTips &spSimTips);
+        Simulator(const SpeciesSimTime &spSimTime);
+        Simulator(const LocusSim &locSim);
+        Simulator(const LocusAndGeneMSCSim &lgMSC);
+        Simulator(const CophySim &cophy);
+        Simulator(const CophySimAna &cophyAna);
+
+
         ~Simulator();
         void    setGSAStop(int g) { gsaStop = g; }
         void    setSpeciesTree(std::shared_ptr<SpeciesTree> st) { spTree = st; }
