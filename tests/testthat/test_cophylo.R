@@ -137,7 +137,7 @@ test_that("sim_cophyBD produces the right number of trees", {
                                         numbsim = 20)), 20)
 })
 
-is_host_and_symbiont_the_same <- function(t, n){
+is_host_and_symbiont_the_same <- function(t, n) {
     pair <- sim_cophyBD(hbr = 0.0,
                             hdr = 0.0,
                             sbr = 0.0,
@@ -159,40 +159,23 @@ test_that("sim_cophyBD produces identical symbiont and host trees when only cosp
     expect_true(is_host_and_symbiont_the_same(t = 1.5, n = 10))
 })
 
-
-are_trees_identical_matrix_not <- function(t, n, disp_rate, ext_rate) {
-    pairs <- sim_cophyBD_ana(hbr = 0.0,
-                            hdr = 0.0,
-                            sbr = 0.0,
-                            sdr = 0.0,
-                            s_disp_r = disp_rate,
-                            s_extp_r = ext_rate,
-                            host_exp_rate = 0.0,
-                            cosp_rate = 1.0,
-                            time_to_sim = t,
-                            numbsim = n,
-                            host_limit = 2)
-    pair_true <- vector(length = n)
-
-    for(i in 1:n){
-        sameTrees <- ape::all.equal.phylo(pairs[[i]]$host_tree,
-                                                    pairs[[i]]$symb_tree,
-                                          use.tip.label = FALSE)
-        mat <- matrix(0, length(pairs[[i]]$symb_tree$tip.label),
-                         length(pairs[[i]]$host_tree$tip.label))
-        if(nrow(mat) == ncol(mat)) {
-            diag(mat) <- 1
-            mat_unequal <- function(x, y)
-                is.matrix(x) && is.matrix(y) && dim(x) == dim(y) && all(x != y)
-            NotIdentityMatrix <- mat_unequal(mat, pairs[[i]]$association_mat)
-        }
-        else
-            NotIdentityMatrix <- TRUE
-        pair_true[i] <- all(c(NotIdentityMatrix, sameTrees))
-    }
-    any(pair_true == TRUE)
+any_host_rows_zero <- function(t, n) {
+    pair <- sim_cophyBD(hbr = 1.0,
+                        hdr = 0.75,
+                        sbr = 1.0,
+                        sdr = 0.75,
+                        host_exp_rate = 1.0,
+                        cosp_rate = 1.0,
+                        time_to_sim = t,
+                        numbsim = n,
+                        mutualism = TRUE)
+    mats <- association_mat(pair)
+    y <- lapply(mats, FUN = function(x) {
+        all(rowSums(x) != 0)
+    })
+    all(unlist(y))
 }
-# this test is bad.
-# test_that("sim_cophy_bdp_ana produces trees but non-identity matrix association matrix", {
-#     expect_true(are_trees_identical_matrix_not(t = 2.0, n = 10, disp_rate = 0.15, ext_rate = 0.01))
-# })
+
+test_that("sim_cophyBD mutualism produces no association matrices with empty rows", {
+    expect_true(any_host_rows_zero(t = 1.0, n = 10))
+})

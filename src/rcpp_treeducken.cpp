@@ -340,6 +340,7 @@ Rcpp::List sim_cophyBD_ana(SEXP hbr,
 //' @param numbsim number of replicates
 //' @param host_limit Maximum number of hosts for symbionts (0 implies no limit)
 //' @param hs_mode Boolean turning host expansion into host switching (explained above) (default = FALSE)
+//' @param mutualism Boolean turning on/off mutualism mode (in mutualism mode hosts are required to have symbionts)
 //' @return A list containing the `host_tree`, the `symbiont_tree`, the
 //'     association matrix in the present, with hosts as rows and symbionts as columns, and the history of events that have
 //'     occurred.
@@ -373,7 +374,8 @@ Rcpp::List sim_cophyBD(SEXP hbr,
                     SEXP time_to_sim,
                     SEXP numbsim,
                     Rcpp::NumericVector host_limit = 0,
-                    Rcpp::LogicalVector hs_mode = false){
+                    Rcpp::LogicalVector hs_mode = false,
+                    Rcpp::LogicalVector mutualism = false){
     double hbr_ = as<double>(hbr);
     double hdr_ = as<double>(hdr);
     double sbr_ = as<double>(sbr);
@@ -384,6 +386,7 @@ Rcpp::List sim_cophyBD(SEXP hbr,
     double timeToSimTo_ = as<double>(time_to_sim);
     int numbsim_ = as<int>(numbsim);
     bool host_switch_mode_ = as<bool>(hs_mode);
+    bool mutualism_ = as<bool>(mutualism);
     RNGScope scope;
     if(hbr_ < 0.0){
          stop("'hbr' must be positive or 0.0.");
@@ -415,7 +418,8 @@ Rcpp::List sim_cophyBD(SEXP hbr,
                                   timeToSimTo_,
                                   hl_,
                                   numbsim_,
-                                  host_switch_mode_);
+                                  host_switch_mode_,
+                                  mutualism_);
 }
 //' Simulate multispecies coalescent on a species tree
 //'
