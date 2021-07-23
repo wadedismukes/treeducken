@@ -15,7 +15,8 @@ sim_cophyBD(
   time_to_sim,
   numbsim,
   host_limit = 0L,
-  hs_mode = FALSE
+  hs_mode = FALSE,
+  mutualism = FALSE
 )
 
 sim_cophylo_bdp(
@@ -50,6 +51,8 @@ sim_cophylo_bdp(
 \item{host_limit}{Maximum number of hosts for symbionts (0 implies no limit)}
 
 \item{hs_mode}{Boolean turning host expansion into host switching (explained above) (default = FALSE)}
+
+\item{mutualism}{Boolean turning on/off mutualism mode (in mutualism mode hosts are required to have symbionts)}
 }
 \value{
 A list containing the `host_tree`, the `symbiont_tree`, the

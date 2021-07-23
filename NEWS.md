@@ -1,4 +1,15 @@
-# treeducken 1.1.0
+# treeducken 1.1.1
+
+## Major changes
+
+* Added mutualism boolean for simulation
+
+
+## Bug fixes
+
+* Fixed a bug where instead of skipping a replicate when using `summarize_cophy` the function would stop when encountering a dataset where the Parafit couldn't be calculated.
+* Fixed a bug where `summarize_1cophy` would have NA as the column name if the column value had NA
+
 
 # treeducken 1.1.0
 

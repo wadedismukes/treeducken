@@ -74,8 +74,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // sim_cophyBD
-Rcpp::List sim_cophyBD(SEXP hbr, SEXP hdr, SEXP sbr, SEXP sdr, SEXP host_exp_rate, SEXP cosp_rate, SEXP time_to_sim, SEXP numbsim, Rcpp::NumericVector host_limit, Rcpp::LogicalVector hs_mode);
-RcppExport SEXP _treeducken_sim_cophyBD(SEXP hbrSEXP, SEXP hdrSEXP, SEXP sbrSEXP, SEXP sdrSEXP, SEXP host_exp_rateSEXP, SEXP cosp_rateSEXP, SEXP time_to_simSEXP, SEXP numbsimSEXP, SEXP host_limitSEXP, SEXP hs_modeSEXP) {
+Rcpp::List sim_cophyBD(SEXP hbr, SEXP hdr, SEXP sbr, SEXP sdr, SEXP host_exp_rate, SEXP cosp_rate, SEXP time_to_sim, SEXP numbsim, Rcpp::NumericVector host_limit, Rcpp::LogicalVector hs_mode, Rcpp::LogicalVector mutualism);
+RcppExport SEXP _treeducken_sim_cophyBD(SEXP hbrSEXP, SEXP hdrSEXP, SEXP sbrSEXP, SEXP sdrSEXP, SEXP host_exp_rateSEXP, SEXP cosp_rateSEXP, SEXP time_to_simSEXP, SEXP numbsimSEXP, SEXP host_limitSEXP, SEXP hs_modeSEXP, SEXP mutualismSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -89,7 +89,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type numbsim(numbsimSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type host_limit(host_limitSEXP);
     Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type hs_mode(hs_modeSEXP);
-    rcpp_result_gen = Rcpp::wrap(sim_cophyBD(hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit, hs_mode));
+    Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type mutualism(mutualismSEXP);
+    rcpp_result_gen = Rcpp::wrap(sim_cophyBD(hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit, hs_mode, mutualism));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -116,7 +117,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_treeducken_sim_stBD_t", (DL_FUNC) &_treeducken_sim_stBD_t, 4},
     {"_treeducken_sim_ltBD", (DL_FUNC) &_treeducken_sim_ltBD, 6},
     {"_treeducken_sim_cophyBD_ana", (DL_FUNC) &_treeducken_sim_cophyBD_ana, 12},
-    {"_treeducken_sim_cophyBD", (DL_FUNC) &_treeducken_sim_cophyBD, 10},
+    {"_treeducken_sim_cophyBD", (DL_FUNC) &_treeducken_sim_cophyBD, 11},
     {"_treeducken_sim_msc", (DL_FUNC) &_treeducken_sim_msc, 7},
     {NULL, NULL, 0}
 };

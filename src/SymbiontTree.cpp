@@ -3,7 +3,6 @@
 //
 
 #include "SymbiontTree.h"
-
 #include "math.h"
 SymbiontTree::SymbiontTree(int nt,
                            double ct,

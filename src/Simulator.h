@@ -22,6 +22,7 @@ class Simulator
         double      popSize;
         double      generationTime;
         bool        host_switch_mode;
+        bool        mutualism;
         std::vector<std::shared_ptr<SpeciesTree>>   gsaTrees;
         std::shared_ptr<SpeciesTree>    spTree;
         std::shared_ptr<LocusTree>      lociTree;
@@ -121,23 +122,25 @@ class Simulator
         };
         struct CophySim {
             inline CophySim(double hostbr,
-                                double hostdr,
-                                double symbbr,
-                                double symbdr,
-                                double switchrate,
-                                double cosprate,
-                                double timeToSimTo,
-                                int host_limit,
-                                bool hsMode): 
-                                    hostBirthRate(hostbr),
-                                    hostDeathRate(hostdr),
-                                    symbDeathRate(symbdr),
-                                    symbBirthRate(symbbr),
-                                    switchingRate(switchrate),
-                                    cospeciationRate(cosprate),
-                                    timeToSimTo(timeToSimTo),
-                                    hostLimit(host_limit),
-                                    hsMode(hsMode) {}
+                            double hostdr,
+                            double symbbr,
+                            double symbdr,
+                            double switchrate,
+                            double cosprate,
+                            double timeToSimTo,
+                            int host_limit,
+                            bool hsMode,
+                            bool mutualism): 
+                                hostBirthRate(hostbr),
+                                hostDeathRate(hostdr),
+                                symbDeathRate(symbdr),
+                                symbBirthRate(symbbr),
+                                switchingRate(switchrate),
+                                cospeciationRate(cosprate),
+                                timeToSimTo(timeToSimTo),
+                                hostLimit(host_limit),
+                                hsMode(hsMode),
+                                mutualism(mutualism) {}
             double hostBirthRate;
             double hostDeathRate;
             double symbDeathRate;
@@ -147,6 +150,7 @@ class Simulator
             double timeToSimTo;
             unsigned hostLimit;
             bool hsMode;
+            bool mutualism;
         };
         struct CophySimAna {
 
@@ -271,6 +275,7 @@ class Simulator
         arma::umat symbiontDispersalEvent(int symbInd, arma::umat assocMat);
         arma::umat symbiontExtirpationEvent(int symbInd, arma::umat assocMat);
         arma::umat anageneticEvent(double dispersalRate, double extirpationRate, double currTime, arma::umat assocMat);
+        arma::umat symbsOnHosts(arma::umat assocMat, unsigned hosts, double t);
 
 };
 
@@ -301,7 +306,8 @@ extern Rcpp::List sim_host_symb_treepair(double hostbr,
                                          double timeToSimTo,
                                          int host_limit,
                                          int numbsim,
-                                         bool hsMode);
+                                         bool hsMode,
+                                         bool mutualism);
 
 extern Rcpp::List sim_host_symb_treepair_ana(double hostbr,
                                             double hostdr,
