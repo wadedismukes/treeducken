@@ -21,7 +21,7 @@ class Simulator
         unsigned    indPerPop;
         double      popSize;
         double      generationTime;
-        bool        host_switch_mode;
+        std::string host_switch_mode;
         bool        mutualism;
         std::vector<std::shared_ptr<SpeciesTree>>   gsaTrees;
         std::shared_ptr<SpeciesTree>    spTree;
@@ -129,7 +129,7 @@ class Simulator
                             double cosprate,
                             double timeToSimTo,
                             int host_limit,
-                            bool hsMode,
+                            std::string hsMode,
                             bool mutualism): 
                                 hostBirthRate(hostbr),
                                 hostDeathRate(hostdr),
@@ -149,7 +149,7 @@ class Simulator
             double cospeciationRate;
             double timeToSimTo;
             unsigned hostLimit;
-            bool hsMode;
+            std::string hsMode;
             bool mutualism;
         };
         struct CophySimAna {
@@ -162,7 +162,7 @@ class Simulator
                                 double cosprate,
                                 double timeToSimTo,
                                 int host_limit,
-                                bool hsMode,
+                                std::string hsMode,
                                 double symbdispersal,
                                 double symbextirpation): 
                                     hostBirthRate(hostbr),
@@ -184,7 +184,7 @@ class Simulator
             double cospeciationRate;
             double timeToSimTo;
             unsigned hostLimit;
-            bool hsMode;
+            std::string hsMode;
             double symbDispRate;
             double symbExtRate;
                         
@@ -306,7 +306,7 @@ extern Rcpp::List sim_host_symb_treepair(double hostbr,
                                          double timeToSimTo,
                                          int host_limit,
                                          int numbsim,
-                                         bool hsMode,
+                                         std::string hsMode,
                                          bool mutualism);
 
 extern Rcpp::List sim_host_symb_treepair_ana(double hostbr,
@@ -320,7 +320,7 @@ extern Rcpp::List sim_host_symb_treepair_ana(double hostbr,
                                             double timeToSimTo,
                                             int host_limit,
                                             int numbsim,
-                                            bool hsMode);
+                                            std::string hsMode);
 
 extern Rcpp::List sim_locus_tree_gene_tree(std::shared_ptr<SpeciesTree> species_tree,
                                            double gbr,

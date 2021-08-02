@@ -218,7 +218,7 @@ Rcpp::List sim_ltBD(Rcpp::List species_tree,
 //' @param time_to_sim time units to simulate until
 //' @param numbsim number of replicates
 //' @param host_limit Maximum number of hosts for symbionts (0 implies no limit)
-//' @param hs_mode Boolean turning host expansion into host switching (explained above) (default = FALSE)
+//' @param hs_mode String allowing these options: host-switching ('switch'), host-spreading ('spread'), or both ('both'), default = 'spread'
 //' @return A list containing the `host_tree`, the `symbiont_tree`, the
 //'     association matrix in the present, with hosts as rows and symbionts as columns, and the history of events that have
 //'     occurred.
@@ -256,7 +256,7 @@ Rcpp::List sim_cophyBD_ana(SEXP hbr,
                         SEXP time_to_sim,
                         SEXP numbsim,
                         Rcpp::NumericVector host_limit = 0,
-                        Rcpp::LogicalVector hs_mode = false){
+                        Rcpp::CharacterVector hs_mode = "spread"){
 
     double hbr_ = as<double>(hbr);
     double hdr_ = as<double>(hdr);
@@ -269,7 +269,7 @@ Rcpp::List sim_cophyBD_ana(SEXP hbr,
     double timeToSimTo_ = as<double>(time_to_sim);
     int hl_ = as<int>(host_limit);
     int numbsim_ = as<int>(numbsim);
-    bool host_switch_mode_ = as<bool>(hs_mode);
+    std::string host_switch_mode_ = as<std::string>(hs_mode);
 
     RNGScope scope;
     if(hbr_ < 0.0){
@@ -297,6 +297,8 @@ Rcpp::List sim_cophyBD_ana(SEXP hbr,
         stop("symbiont dispersal cannot be negative");
     if(symb_ext_ < 0.0)
         stop("symbiont extirpation cannot be negative");
+    if(host_switch_mode_ != "both" && host_switch_mode_ != "spread" && host_switch_mode_ != "switch")
+        stop("'hs_mode' must be one these options: 'both', 'spread' or 'switch'.");
     return sim_host_symb_treepair_ana(hbr_,
                                   hdr_,
                                   sbr_,
@@ -339,8 +341,7 @@ Rcpp::List sim_cophyBD_ana(SEXP hbr,
 //' @param time_to_sim time units to simulate until
 //' @param numbsim number of replicates
 //' @param host_limit Maximum number of hosts for symbionts (0 implies no limit)
-//' @param hs_mode Boolean turning host expansion into host switching (explained above) (default = FALSE)
-//' @param mutualism Boolean turning on/off mutualism mode (in mutualism mode hosts are required to have symbionts)
+//' @param hs_mode String allowing these options: host-switching ('switch'), host-spreading ('spread'), or both ('both'), default = 'spread'//' @param mutualism Boolean turning on/off mutualism mode (in mutualism mode hosts are required to have symbionts)
 //' @return A list containing the `host_tree`, the `symbiont_tree`, the
 //'     association matrix in the present, with hosts as rows and symbionts as columns, and the history of events that have
 //'     occurred.
@@ -374,7 +375,7 @@ Rcpp::List sim_cophyBD(SEXP hbr,
                     SEXP time_to_sim,
                     SEXP numbsim,
                     Rcpp::NumericVector host_limit = 0,
-                    Rcpp::LogicalVector hs_mode = false,
+                    Rcpp::CharacterVector hs_mode = "spread",
                     Rcpp::LogicalVector mutualism = false){
     double hbr_ = as<double>(hbr);
     double hdr_ = as<double>(hdr);
@@ -385,7 +386,7 @@ Rcpp::List sim_cophyBD(SEXP hbr,
     double host_exp_rate_ = as<double>(host_exp_rate);
     double timeToSimTo_ = as<double>(time_to_sim);
     int numbsim_ = as<int>(numbsim);
-    bool host_switch_mode_ = as<bool>(hs_mode);
+    std::string host_switch_mode_ = as<std::string>(hs_mode);
     bool mutualism_ = as<bool>(mutualism);
     RNGScope scope;
     if(hbr_ < 0.0){
@@ -409,6 +410,8 @@ Rcpp::List sim_cophyBD(SEXP hbr,
         stop("'time_to_sim' must be a positive value or 0.0.");
     if(hl_ < 0)
         stop("'host_limit' must be a positive number or 0 (0 turns off the host limit).");
+    if(host_switch_mode_ != "both" && host_switch_mode_ != "spread" && host_switch_mode_ != "switch")
+        stop("'hs_mode' must be one these options: 'both', 'spread' or 'switch'.");
     return sim_host_symb_treepair(hbr_,
                                   hdr_,
                                   sbr_,

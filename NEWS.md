@@ -3,6 +3,7 @@
 ## Major changes
 
 * Added mutualism boolean for simulation
+* Switch `hs_mode` from a boolean to a string. Can now use `switch`, `spread`, or `both`.
 
 
 ## Bug fixes
