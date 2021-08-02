@@ -17,7 +17,7 @@ sim_cophyBD_ana(
   time_to_sim,
   numbsim,
   host_limit = 0L,
-  hs_mode = FALSE
+  hs_mode = "spread"
 )
 
 sim_cophylo_bdp_ana(
@@ -57,7 +57,7 @@ sim_cophylo_bdp_ana(
 
 \item{host_limit}{Maximum number of hosts for symbionts (0 implies no limit)}
 
-\item{hs_mode}{Boolean turning host expansion into host switching (explained above) (default = FALSE)}
+\item{hs_mode}{String allowing these options: host-switching ('switch'), host-spreading ('spread'), or both ('both'), default = 'spread'}
 }
 \value{
 A list containing the `host_tree`, the `symbiont_tree`, the
