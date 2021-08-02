@@ -14,7 +14,7 @@ Rcpp::List sim_host_symb_treepair_ana(double hostbr,
                                       double timeToSimTo,
                                       int host_limit,
                                       int numbsim,
-                                      bool hsMode) {
+                                      std::string hsMode) {
     double rho = 1.0;
     Rcpp::List multiphy;
     Rcpp::List hostSymbPair;
@@ -78,7 +78,7 @@ Rcpp::List sim_host_symb_treepair(double hostbr,
                                   double timeToSimTo,
                                   int host_limit,
                                   int numbsim,
-                                  bool hsMode,
+                                  std::string hsMode,
                                   bool mutualism){
 
     double rho = 1.0;

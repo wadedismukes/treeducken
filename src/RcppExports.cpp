@@ -52,7 +52,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // sim_cophyBD_ana
-Rcpp::List sim_cophyBD_ana(SEXP hbr, SEXP hdr, SEXP sbr, SEXP sdr, SEXP s_disp_r, SEXP s_extp_r, SEXP host_exp_rate, SEXP cosp_rate, SEXP time_to_sim, SEXP numbsim, Rcpp::NumericVector host_limit, Rcpp::LogicalVector hs_mode);
+Rcpp::List sim_cophyBD_ana(SEXP hbr, SEXP hdr, SEXP sbr, SEXP sdr, SEXP s_disp_r, SEXP s_extp_r, SEXP host_exp_rate, SEXP cosp_rate, SEXP time_to_sim, SEXP numbsim, Rcpp::NumericVector host_limit, Rcpp::CharacterVector hs_mode);
 RcppExport SEXP _treeducken_sim_cophyBD_ana(SEXP hbrSEXP, SEXP hdrSEXP, SEXP sbrSEXP, SEXP sdrSEXP, SEXP s_disp_rSEXP, SEXP s_extp_rSEXP, SEXP host_exp_rateSEXP, SEXP cosp_rateSEXP, SEXP time_to_simSEXP, SEXP numbsimSEXP, SEXP host_limitSEXP, SEXP hs_modeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -68,13 +68,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type time_to_sim(time_to_simSEXP);
     Rcpp::traits::input_parameter< SEXP >::type numbsim(numbsimSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type host_limit(host_limitSEXP);
-    Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type hs_mode(hs_modeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type hs_mode(hs_modeSEXP);
     rcpp_result_gen = Rcpp::wrap(sim_cophyBD_ana(hbr, hdr, sbr, sdr, s_disp_r, s_extp_r, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit, hs_mode));
     return rcpp_result_gen;
 END_RCPP
 }
 // sim_cophyBD
-Rcpp::List sim_cophyBD(SEXP hbr, SEXP hdr, SEXP sbr, SEXP sdr, SEXP host_exp_rate, SEXP cosp_rate, SEXP time_to_sim, SEXP numbsim, Rcpp::NumericVector host_limit, Rcpp::LogicalVector hs_mode, Rcpp::LogicalVector mutualism);
+Rcpp::List sim_cophyBD(SEXP hbr, SEXP hdr, SEXP sbr, SEXP sdr, SEXP host_exp_rate, SEXP cosp_rate, SEXP time_to_sim, SEXP numbsim, Rcpp::NumericVector host_limit, Rcpp::CharacterVector hs_mode, Rcpp::LogicalVector mutualism);
 RcppExport SEXP _treeducken_sim_cophyBD(SEXP hbrSEXP, SEXP hdrSEXP, SEXP sbrSEXP, SEXP sdrSEXP, SEXP host_exp_rateSEXP, SEXP cosp_rateSEXP, SEXP time_to_simSEXP, SEXP numbsimSEXP, SEXP host_limitSEXP, SEXP hs_modeSEXP, SEXP mutualismSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -88,7 +88,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type time_to_sim(time_to_simSEXP);
     Rcpp::traits::input_parameter< SEXP >::type numbsim(numbsimSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type host_limit(host_limitSEXP);
-    Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type hs_mode(hs_modeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type hs_mode(hs_modeSEXP);
     Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type mutualism(mutualismSEXP);
     rcpp_result_gen = Rcpp::wrap(sim_cophyBD(hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit, hs_mode, mutualism));
     return rcpp_result_gen;

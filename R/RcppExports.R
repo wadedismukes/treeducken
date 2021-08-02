@@ -149,7 +149,7 @@ sim_ltBD <- function(species_tree, gbr, gdr, lgtr, num_loci, transfer_type = "ra
 #' @param time_to_sim time units to simulate until
 #' @param numbsim number of replicates
 #' @param host_limit Maximum number of hosts for symbionts (0 implies no limit)
-#' @param hs_mode Boolean turning host expansion into host switching (explained above) (default = FALSE)
+#' @param hs_mode String allowing these options: host-switching ('switch'), host-spreading ('spread'), or both ('both'), default = 'spread'
 #' @return A list containing the `host_tree`, the `symbiont_tree`, the
 #'     association matrix in the present, with hosts as rows and symbionts as columns, and the history of events that have
 #'     occurred.
@@ -175,7 +175,7 @@ sim_ltBD <- function(species_tree, gbr, gdr, lgtr, num_loci, transfer_type = "ra
 #'                            numbsim = numb_replicates,
 #'                            time_to_sim = time)
 #'
-sim_cophyBD_ana <- function(hbr, hdr, sbr, sdr, s_disp_r, s_extp_r, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit = 0L, hs_mode = FALSE) {
+sim_cophyBD_ana <- function(hbr, hdr, sbr, sdr, s_disp_r, s_extp_r, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit = 0L, hs_mode = "spread") {
     .Call(`_treeducken_sim_cophyBD_ana`, hbr, hdr, sbr, sdr, s_disp_r, s_extp_r, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit, hs_mode)
 }
 
@@ -208,8 +208,7 @@ sim_cophyBD_ana <- function(hbr, hdr, sbr, sdr, s_disp_r, s_extp_r, host_exp_rat
 #' @param time_to_sim time units to simulate until
 #' @param numbsim number of replicates
 #' @param host_limit Maximum number of hosts for symbionts (0 implies no limit)
-#' @param hs_mode Boolean turning host expansion into host switching (explained above) (default = FALSE)
-#' @param mutualism Boolean turning on/off mutualism mode (in mutualism mode hosts are required to have symbionts)
+#' @param hs_mode String allowing these options: host-switching ('switch'), host-spreading ('spread'), or both ('both'), default = 'spread'//' @param mutualism Boolean turning on/off mutualism mode (in mutualism mode hosts are required to have symbionts)
 #' @return A list containing the `host_tree`, the `symbiont_tree`, the
 #'     association matrix in the present, with hosts as rows and symbionts as columns, and the history of events that have
 #'     occurred.
@@ -233,7 +232,7 @@ sim_cophyBD_ana <- function(hbr, hdr, sbr, sdr, s_disp_r, s_extp_r, host_exp_rat
 #'                            numbsim = numb_replicates,
 #'                            time_to_sim = time)
 #'
-sim_cophyBD <- function(hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit = 0L, hs_mode = FALSE, mutualism = FALSE) {
+sim_cophyBD <- function(hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit = 0L, hs_mode = "spread", mutualism = FALSE) {
     .Call(`_treeducken_sim_cophyBD`, hbr, hdr, sbr, sdr, host_exp_rate, cosp_rate, time_to_sim, numbsim, host_limit, hs_mode, mutualism)
 }
 
