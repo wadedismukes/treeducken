@@ -50,7 +50,9 @@ sim_cophylo_bdp(
 
 \item{host_limit}{Maximum number of hosts for symbionts (0 implies no limit)}
 
-\item{hs_mode}{String allowing these options: host-switching ('switch'), host-spreading ('spread'), or both ('both'), default = 'spread'//' @param mutualism Boolean turning on/off mutualism mode (in mutualism mode hosts are required to have symbionts)}
+\item{hs_mode}{String allowing these options: host-switching ('switch'), host-spreading ('spread'), or both ('both'), default = 'spread'}
+
+\item{mutualism}{Boolean turning on/off mutualism mode (in mutualism mode hosts are required to have symbionts)}
 }
 \value{
 A list containing the `host_tree`, the `symbiont_tree`, the

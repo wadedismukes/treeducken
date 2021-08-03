@@ -208,7 +208,8 @@ sim_cophyBD_ana <- function(hbr, hdr, sbr, sdr, s_disp_r, s_extp_r, host_exp_rat
 #' @param time_to_sim time units to simulate until
 #' @param numbsim number of replicates
 #' @param host_limit Maximum number of hosts for symbionts (0 implies no limit)
-#' @param hs_mode String allowing these options: host-switching ('switch'), host-spreading ('spread'), or both ('both'), default = 'spread'//' @param mutualism Boolean turning on/off mutualism mode (in mutualism mode hosts are required to have symbionts)
+#' @param hs_mode String allowing these options: host-switching ('switch'), host-spreading ('spread'), or both ('both'), default = 'spread'
+#' @param mutualism Boolean turning on/off mutualism mode (in mutualism mode hosts are required to have symbionts)
 #' @return A list containing the `host_tree`, the `symbiont_tree`, the
 #'     association matrix in the present, with hosts as rows and symbionts as columns, and the history of events that have
 #'     occurred.

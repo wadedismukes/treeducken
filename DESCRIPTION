@@ -1,7 +1,7 @@
 Package: treeducken
 Type: Package
 Title: Nested Phylogenetic Tree Simulator
-Version: 1.1.0
+Version: 1.1.0.9999
 Authors@R: c(person("Wade", "Dismukes", email="wade.dismukes@gmail.com",
                     role=c("aut","cre")),
            person(c("Tracy","A."), "Heath", role=c("aut")),

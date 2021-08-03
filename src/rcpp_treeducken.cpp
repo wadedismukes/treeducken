@@ -298,7 +298,7 @@ Rcpp::List sim_cophyBD_ana(SEXP hbr,
     if(symb_ext_ < 0.0)
         stop("symbiont extirpation cannot be negative");
     if(host_switch_mode_ != "both" && host_switch_mode_ != "spread" && host_switch_mode_ != "switch")
-        stop("'hs_mode' must be one these options: 'both', 'spread' or 'switch'.");
+        // stop("'hs_mode' must be one these options: 'both', 'spread' or 'switch'.");
     return sim_host_symb_treepair_ana(hbr_,
                                   hdr_,
                                   sbr_,
@@ -341,7 +341,8 @@ Rcpp::List sim_cophyBD_ana(SEXP hbr,
 //' @param time_to_sim time units to simulate until
 //' @param numbsim number of replicates
 //' @param host_limit Maximum number of hosts for symbionts (0 implies no limit)
-//' @param hs_mode String allowing these options: host-switching ('switch'), host-spreading ('spread'), or both ('both'), default = 'spread'//' @param mutualism Boolean turning on/off mutualism mode (in mutualism mode hosts are required to have symbionts)
+//' @param hs_mode String allowing these options: host-switching ('switch'), host-spreading ('spread'), or both ('both'), default = 'spread'
+//' @param mutualism Boolean turning on/off mutualism mode (in mutualism mode hosts are required to have symbionts)
 //' @return A list containing the `host_tree`, the `symbiont_tree`, the
 //'     association matrix in the present, with hosts as rows and symbionts as columns, and the history of events that have
 //'     occurred.
