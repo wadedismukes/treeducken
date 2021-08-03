@@ -298,7 +298,7 @@ Rcpp::List sim_cophyBD_ana(SEXP hbr,
     if(symb_ext_ < 0.0)
         stop("symbiont extirpation cannot be negative");
     if(host_switch_mode_ != "both" && host_switch_mode_ != "spread" && host_switch_mode_ != "switch")
-        // stop("'hs_mode' must be one these options: 'both', 'spread' or 'switch'.");
+        stop("'hs_mode' must be one these options: 'both', 'spread' or 'switch'.");
     return sim_host_symb_treepair_ana(hbr_,
                                   hdr_,
                                   sbr_,
