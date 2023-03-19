@@ -727,6 +727,10 @@ void Simulator::updateEventVector(int h, int s, int e, double time){
         // host expansion or switching
         inOrderVecOfEvent.push_back("SHS");
         break;
+  case 11:
+      // missed the boat (loss as defined by JANE)
+      inOrderVecOfEvent.push_back("MTB");
+      break;
     default:
       Rcout << "not sure what happened there folks." << std::endl;
   }
@@ -1145,10 +1149,18 @@ arma::umat Simulator::cophyloERMEvent(double eventTime, arma::umat assocMat){
       if(cvec(i) == 1){
         arma::umat rr = arma::randi<arma::umat>(1,2, arma::distr_param(0,1));
          if(rr(0,0) == 0 && rr(0,1) == 1){
-
+             // THIS IS MISSING THE BOAT
+             updateEventVector(spTree->getNodesIndxFromExtantIndx(nodeInd),
+                               symbiontTree->getNodesIndxFromExtantIndx(i),
+                               11,
+                               eventTime);
         }
         else if(rr(0,0) == 1 && rr(0,1) == 0){
-
+            // THIS IS MISSING THE BOAT
+            updateEventVector(spTree->getNodesIndxFromExtantIndx(nodeInd),
+                              symbiontTree->getNodesIndxFromExtantIndx(i),
+                              11,
+                              eventTime);
 
         }
         else if(rr(0,0) == 1 && rr(0,1) == 1){
@@ -1156,8 +1168,6 @@ arma::umat Simulator::cophyloERMEvent(double eventTime, arma::umat assocMat){
         }
         else{
           rr.replace(0,1);
-
-
         }
 
         assocMat(i, arma::span(numExtantHosts-2, numExtantHosts-1)) = rr;
@@ -1167,7 +1177,6 @@ arma::umat Simulator::cophyloERMEvent(double eventTime, arma::umat assocMat){
         arma::umat rr(1,2,arma::fill::zeros);// = arma::zeros<arma::umat>(1,2);
 
         assocMat(i, arma::span(numExtantHosts-2, numExtantHosts-1)) = rr;
-
 
       }
     }

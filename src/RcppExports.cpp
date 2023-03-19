@@ -6,6 +6,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // sim_stBD
 Rcpp::List sim_stBD(SEXP sbr, SEXP sdr, SEXP numbsim, Rcpp::NumericVector n_tips, Rcpp::NumericVector gsa_stop_mult);
 RcppExport SEXP _treeducken_sim_stBD(SEXP sbrSEXP, SEXP sdrSEXP, SEXP numbsimSEXP, SEXP n_tipsSEXP, SEXP gsa_stop_multSEXP) {
